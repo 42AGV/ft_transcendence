@@ -1,0 +1,21 @@
+version: "3.4"
+services:
+  nginx:
+    ports:
+      - "3000:80"
+
+  transcendence-app:
+    build:
+      context: ./transcendence-app
+      target: development
+    volumes:
+      - ./transcendence-app:/transcendence-app
+      - /transcendence-app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  db:
+    environment:
+      - POSTGRES_USER=transcendence
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_DB=transcendence
