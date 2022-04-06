@@ -11,8 +11,6 @@ services:
     volumes:
       - ./transcendence-app:/transcendence-app
       - /transcendence-app/node_modules
-    environment:
-      - NODE_ENV=development
 
   db:
     environment:

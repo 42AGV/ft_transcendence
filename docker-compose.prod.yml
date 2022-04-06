@@ -8,8 +8,6 @@ services:
     build:
       context: ./transcendence-app
       target: production
-    environment:
-      - NODE_ENV=production
 
   db:
     environment:
