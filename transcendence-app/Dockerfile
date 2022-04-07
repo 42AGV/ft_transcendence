@@ -14,6 +14,8 @@ CMD ["npm", "run", "start:dev"]
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS production
 ENV NODE_ENV=production
+ARG TRANSCENDENCE_APP_NAME
+ENV TRANSCENDENCE_APP_NAME=${TRANSCENDENCE_APP_NAME}
 RUN apk add --no-cache dumb-init
 WORKDIR  /transcendence-app
 COPY ["package.json", "package-lock.json", "./"]

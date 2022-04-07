@@ -4,3 +4,4 @@ dist
 Dockerfile
 .dockerignore
 .gitignore
+*.md
