@@ -4,6 +4,13 @@ services:
     ports:
       - "80:80"
 
+  webapp:
+    build:
+      context: ./webapp
+      target: production
+      args:
+        - REACT_APP_NAME=webapp-prod
+
   transcendence-app:
     build:
       context: ./transcendence-app

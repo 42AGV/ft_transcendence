@@ -4,9 +4,15 @@ services:
     image: nginx:1.21.6-alpine
     restart: always
     depends_on:
+      - "webapp"
       - "transcendence-app"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  webapp:
+    restart: always
+    depends_on:
+      - "transcendence-app"
 
   transcendence-app:
     build: ./transcendence-app

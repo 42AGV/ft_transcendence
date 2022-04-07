@@ -4,6 +4,16 @@ services:
     ports:
       - "3000:80"
 
+  webapp:
+    build:
+      context: ./webapp
+      target: development
+    volumes:
+      - ./webapp/src:/webapp/src:ro
+    environment:
+      - REACT_APP_NAME=webapp-dev
+      - PORT=80
+
   transcendence-app:
     build:
       context: ./transcendence-app
