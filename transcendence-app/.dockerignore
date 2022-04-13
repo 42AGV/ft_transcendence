@@ -1,0 +1,7 @@
+# compiled output
+node_modules
+dist
+Dockerfile
+.dockerignore
+.gitignore
+*.md

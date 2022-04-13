@@ -1,0 +1,31 @@
+version: "3.4"
+services:
+  nginx:
+    ports:
+      - "3000:80"
+
+  webapp:
+    build:
+      context: ./webapp
+      target: development
+    volumes:
+      - ./webapp/src:/webapp/src:ro
+    environment:
+      - REACT_APP_NAME=webapp-dev
+      - PORT=80
+
+  transcendence-app:
+    build:
+      context: ./transcendence-app
+      target: development
+    volumes:
+      - ./transcendence-app:/transcendence-app
+      - /transcendence-app/node_modules
+    environment:
+      - TRANSCENDENCE_APP_NAME=transcendence-app-dev
+
+  db:
+    environment:
+      - POSTGRES_USER=transcendence
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_DB=transcendence
