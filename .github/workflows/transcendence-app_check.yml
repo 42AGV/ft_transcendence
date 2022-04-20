@@ -12,18 +12,20 @@ jobs:
     strategy:
       matrix:
         os: [macos-10.15, ubuntu-18.04]
-        steps:
-          - name: Check out Github repository
-            uses: actions/checkout@v2
-          - name: Set up Node
-            uses: actions/setup-node@v3
-            with:
-              node-version: '16'
-          - name: Compile
-            run: npm run build --prefix transcendence-app
-          - name: Check style
-            run: npm run style --prefix transcendence-app
-          - name: Lint
-            run: npm run lint --prefix transcendence-app
-          - name: Test
-            run: npm run test --prefix transcendence-app
+    steps:
+      - name: Check out Github repository
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install dependencies
+        run: npm install --prefix transcendence-app
+      - name: Compile
+        run: npm run build --prefix transcendence-app
+      - name: Check style
+        run: npm run style --prefix transcendence-app
+      - name: Lint
+        run: npm run lint --prefix transcendence-app
+      - name: Test
+        run: npm run test --prefix transcendence-app
