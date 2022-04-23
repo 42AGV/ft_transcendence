@@ -13,9 +13,9 @@ detailed info about what do you want to accomplish.
 
 ### 2. Create a new branch:
    
-- ⚠️ We **do not** push to `master`, never. So you'll need to create a branch
+- ⚠️ We **do not** push to `main`, never. So you'll need to create a branch
 to work on it.
-- Try to start always from `master` and do not forget to bring
+- Try to start always from `main` and do not forget to bring
 all new changes, preferably with `git pull --rebase` so you don't corrupt
 commit history.
 
@@ -33,8 +33,8 @@ because GitHub will link to it. Try something like:
 
 ### 4. Pull Requests:
     
-- When you are ready, you can create a new PR pointing to master. We have defined
-two requisites to be able to merge your branch into master:
+- When you are ready, you can create a new PR pointing to main. We have defined
+two requisites to be able to merge your branch into main:
     - At least **two reviewers approved your changes**
     - You also have **passed all CI checks** (tests, linting etc.)
 - As with the commits, the ideal is to name it with the issue number followed by a general
@@ -45,8 +45,8 @@ We have actually two ways: manually (always with a `merge commit` strategy) or s
 
 ### 5. Conflicts:
 
-- How do I solve conflicts? Most likely, someone merged some commits into `master`
+- How do I solve conflicts? Most likely, someone merged some commits into `main`
 that affect the same files and lines as yours. One of the **cleanest** ways to solve
-this is just to update (pull) master in your local and, then, rebase master into
-your branch: `git rebase master`. Git will make you solve conflicts one by one,
+this is just to update (pull) main in your local and, then, rebase main into
+your branch: `git rebase main`. Git will make you solve conflicts one by one,
 you just have to follow the instructions!
