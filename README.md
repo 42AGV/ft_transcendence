@@ -39,6 +39,8 @@ because GitHub will link to it. Try something like:
 two requisites to be able to merge your branch into main:
     - At least **two reviewers approved your changes**
     - You also have **passed all CI checks** (tests, linting etc.)
+- In the PR description you should add: `closing #11` (number of related issue) so
+when PR gets integrated, issue gets closed automatically
 - As with the commits, the ideal is to name it with the issue number followed by a general
 description of what is about: `#11 / add contributing documentation`
 - Once you pass all these checks, **you are responsible to integrate your changes**.
