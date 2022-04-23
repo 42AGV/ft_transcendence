@@ -10,6 +10,8 @@ If you want to contribute to this project you may follow a set of rules.
 - With every contribution there must be a related issue/task, so if you
 don't have any, create a new one on the project board with some
 detailed info about what do you want to accomplish.
+- Add an appropiate label which describes issue type: `feature`, `bug`,
+`task` etc.
 
 ### 2. Create a new branch:
    
