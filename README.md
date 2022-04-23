@@ -21,9 +21,9 @@ commit history.
 
 ### 3. Naming:
 
-- What about branch naming? A good standard way to name could be your
-GH userName + brief description of the task. For example:
-`marvin/add-contributing-docs`
+- What about branch naming? A good standard way to name could be issue
++ brief description of the task. For example:
+`#11/add-contributing-docs`
 - We also try to have a **normalized way to name commits**. Because is complicated
 to always have great commit messages (despite you should) a good enough 
 naming strategy is adding your issue number followd by the message. This way other devs can
