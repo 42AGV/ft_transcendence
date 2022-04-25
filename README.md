@@ -44,9 +44,11 @@ when PR gets integrated, issue gets closed automatically
 - As with the commits, the ideal is to name it with the issue number followed by a general
 description of what is about: `#11 / add contributing documentation`
 - Once you pass all these checks, **you are responsible to integrate your changes**.
-We have actually two ways: manually (always with a `merge commit` strategy) or setting
+We have actually two ways: manually or automatically with 
 [auto-merge](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request)
-
+- We've decided to integrate our branches using a `squash` strategy. This let
+us to have some freedom when working in our branches. The only requisite is following
+`issue_number + short descriptive message` rule in the squash message.
 ### 5. Conflicts:
 
 - How do I solve conflicts? Most likely, someone merged some commits into `main`
