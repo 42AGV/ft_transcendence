@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
       validationSchema: Joi.object({
         FORTYTWO_APP_ID: Joi.string().required(),
         FORTYTWO_APP_SECRET: Joi.string().required(),
+        FORTYTWO_APP_CALLBACK_URL: Joi.string().uri().required(),
       }),
     }),
     AuthModule,
