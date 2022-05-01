@@ -1,0 +1,42 @@
+import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+
+// This should be a real class/interface representing a user entity
+export type UserEntity = {
+  provider: string;
+  externalProviderId: number;
+  username: string;
+  email: string;
+  image_url: string;
+};
+
+@Injectable()
+export class UsersService {
+  private readonly users = [];
+
+  findOne(username: string) {
+    const user = this.users.find((user) => user.username === username);
+    if (user) {
+      console.log(`Found user: ${username}`);
+    } else {
+      console.log(`Not found user: ${username}`);
+    }
+    return user;
+  }
+
+  create(userDto: CreateUserDto) {
+    this.users.push(userDto);
+    console.log(`Create user: ${userDto.username}`);
+    return userDto;
+  }
+
+  findOrCreateUser(userDto: CreateUserDto) {
+    let user = this.findOne(userDto.username);
+
+    if (!user) {
+      user = this.create(userDto);
+    }
+
+    return user;
+  }
+}

@@ -5,3 +5,4 @@ Dockerfile
 .dockerignore
 .gitignore
 *.md
+.env
