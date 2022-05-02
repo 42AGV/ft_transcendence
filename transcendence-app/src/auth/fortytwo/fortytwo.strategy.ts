@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ClassConstructor, plainToClass } from 'class-transformer';
-import { validateSync } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 import { Strategy } from 'passport-oauth2';
 import { lastValueFrom } from 'rxjs';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
@@ -15,7 +15,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   constructor(
     private usersService: UsersService,
     private httpService: HttpService,
-    private configService: ConfigService<FortyTwoAuthConfig>,
+    protected configService: ConfigService<FortyTwoAuthConfig>,
   ) {
     super({
       authorizationURL: 'https://api.intra.42.fr/oauth/authorize',
@@ -27,15 +27,11 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     });
   }
 
-  validateApiResponse(
-    user: CreateUserDto,
-    createUserDtoClass: ClassConstructor<any>,
-  ) {
-    const validatedUser = plainToClass(createUserDtoClass, user, {
-      enableImplicitConversion: true,
-    });
-    const errors = validateSync(validatedUser, {
+  private async validateFortyTwoResponse(user: CreateUserDto) {
+    const validatedUser = plainToClass(CreateUserDto, user);
+    const errors = await validate(validatedUser, {
       skipMissingProperties: false,
+      forbidUnknownValues: true,
     });
 
     if (errors.length > 0) {
@@ -64,8 +60,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     };
 
     try {
-      const validatedUserDto = this.validateApiResponse(user, CreateUserDto);
-      return this.usersService.findOrCreateUser(validatedUserDto);
+      const validatedUser = await this.validateFortyTwoResponse(user);
+      return this.usersService.findOrCreateUser(validatedUser);
     } catch (err) {
       console.error(err.message);
       throw new BadGatewayException();
