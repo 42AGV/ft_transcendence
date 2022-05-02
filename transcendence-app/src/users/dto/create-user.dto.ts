@@ -1,9 +1,18 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsUrl } from 'class-validator';
+import {
+  IsEmail,
+  IsInt,
+  IsNotEmpty,
+  IsPositive,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export class CreateUserDto {
+  @IsString()
   @IsNotEmpty()
   provider: string;
 
+  @IsString()
   @IsNotEmpty()
   username: string;
 
@@ -13,6 +22,7 @@ export class CreateUserDto {
   @IsUrl()
   image_url: string;
 
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   externalProviderId: number;
 }
