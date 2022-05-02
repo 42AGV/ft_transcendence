@@ -61,7 +61,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
 
     try {
       const validatedUser = await this.validateFortyTwoResponse(user);
-      return this.usersService.findOrCreateUser(validatedUser);
+      return this.usersService.findOneOrCreate(validatedUser);
     } catch (err) {
       console.error(err.message);
       throw new BadGatewayException();

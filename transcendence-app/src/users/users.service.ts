@@ -16,21 +16,15 @@ export class UsersService {
 
   findOne(username: string) {
     const user = this.users.find((user) => user.username === username);
-    if (user) {
-      console.log(`Found user: ${username}`);
-    } else {
-      console.log(`Not found user: ${username}`);
-    }
     return user;
   }
 
   create(userDto: CreateUserDto) {
     this.users.push(userDto);
-    console.log(`Create user: ${userDto.username}`);
     return userDto;
   }
 
-  findOrCreateUser(userDto: CreateUserDto) {
+  findOneOrCreate(userDto: CreateUserDto) {
     let user = this.findOne(userDto.username);
 
     if (!user) {
