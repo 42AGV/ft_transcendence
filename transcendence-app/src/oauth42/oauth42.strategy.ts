@@ -6,16 +6,16 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Strategy } from 'passport-oauth2';
 import { lastValueFrom } from 'rxjs';
-import { CreateUserDto } from '../../users/dto/create-user.dto';
-import { UsersService } from '../../users/users.service';
-import { FortyTwoAuthConfig } from './fortytwo-config.interface';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
+import { OAuth42Config } from './oauth42-config.interface';
 
 @Injectable()
-export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
+export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   constructor(
     private usersService: UsersService,
     private httpService: HttpService,
-    protected configService: ConfigService<FortyTwoAuthConfig>,
+    protected configService: ConfigService<OAuth42Config>,
   ) {
     super({
       authorizationURL: 'https://api.intra.42.fr/oauth/authorize',

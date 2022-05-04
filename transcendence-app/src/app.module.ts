@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { AuthModule } from './auth/auth.module';
+import { OAuth42Module } from './oauth42/oauth42.module';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { AuthModule } from './auth/auth.module';
         FORTYTWO_APP_CALLBACK_URL: Joi.string().uri().required(),
       }),
     }),
-    AuthModule,
+    OAuth42Module,
   ],
 })
 export class AppModule {}
