@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { plainToClass } from 'class-transformer';
@@ -12,6 +12,8 @@ import { OAuth42Config } from './oauth42-config.interface';
 
 @Injectable()
 export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
+  private readonly logger = new Logger(OAuth42Strategy.name);
+
   constructor(
     private usersService: UsersService,
     private httpService: HttpService,
@@ -48,7 +50,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
         headers: { Authorization: `Bearer ${accessToken}` },
       }),
     ).catch((err) => {
-      console.error(err.message);
+      this.logger.error(err.message);
       throw new BadGatewayException();
     });
 
@@ -64,7 +66,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       const validatedUser = await this.validateFortyTwoResponse(user);
       return this.usersService.findOneOrCreate(validatedUser);
     } catch (err) {
-      console.error(err.message);
+      this.logger.error(err.message);
       throw new BadGatewayException();
     }
   }
