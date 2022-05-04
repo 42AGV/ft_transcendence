@@ -18,8 +18,8 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     protected configService: ConfigService<OAuth42Config>,
   ) {
     super({
-      authorizationURL: 'https://api.intra.42.fr/oauth/authorize',
-      tokenURL: 'https://api.intra.42.fr/oauth/token',
+      authorizationURL: configService.get('FORTYTWO_APP_AUTHORIZATION_URL'),
+      tokenURL: configService.get('FORTYTWO_APP_TOKEN_URL'),
       clientID: configService.get('FORTYTWO_APP_ID'),
       clientSecret: configService.get('FORTYTWO_APP_SECRET'),
       callbackURL: configService.get('FORTYTWO_APP_CALLBACK_URL'),
@@ -42,8 +42,9 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   }
 
   async validate(accessToken: string) {
+    const profileUrl = this.configService.get('FORTYTWO_APP_PROFILE_URL');
     const { data } = await lastValueFrom(
-      this.httpService.get('https://api.intra.42.fr/v2/me', {
+      this.httpService.get(profileUrl, {
         headers: { Authorization: `Bearer ${accessToken}` },
       }),
     ).catch((err) => {
