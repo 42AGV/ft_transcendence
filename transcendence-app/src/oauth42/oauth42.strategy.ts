@@ -50,7 +50,9 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
         headers: { Authorization: `Bearer ${accessToken}` },
       }),
     ).catch((err) => {
-      this.logger.error(err.message);
+      if (this.configService.get('NODE_ENV') === 'development') {
+        this.logger.error(err.message);
+      }
       throw new BadGatewayException();
     });
 
@@ -66,7 +68,9 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       const validatedUser = await this.validateFortyTwoResponse(user);
       return this.usersService.findOneOrCreate(validatedUser);
     } catch (err) {
-      this.logger.error(err.message);
+      if (this.configService.get('NODE_ENV') === 'development') {
+        this.logger.error(err.message);
+      }
       throw new BadGatewayException();
     }
   }

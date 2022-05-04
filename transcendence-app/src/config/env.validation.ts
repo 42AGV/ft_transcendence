@@ -6,11 +6,7 @@ import {
   IsUrl,
   validateSync,
 } from 'class-validator';
-
-enum Environment {
-  Development = 'development',
-  Production = 'production',
-}
+import { Environment } from '../shared/enums/environment.enum';
 
 class EnvironmentVariables {
   @IsEnum(Environment)
