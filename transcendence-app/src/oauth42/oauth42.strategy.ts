@@ -67,7 +67,10 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       const validatedUser = await this.validateFortyTwoResponse(user);
       return this.userService.findOneOrCreate(validatedUser);
     } catch (err) {
-      if (this.configService.get('NODE_ENV') === 'development') {
+      if (
+        this.configService.get('NODE_ENV') === 'development' &&
+        err instanceof Error
+      ) {
         this.logger.error(err.message);
       }
       throw new BadGatewayException();

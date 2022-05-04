@@ -3,15 +3,15 @@ import { IsEmail, IsNotEmpty, IsString, IsUrl } from 'class-validator';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  provider: string;
+  provider!: string;
 
   @IsString()
   @IsNotEmpty()
-  username: string;
+  username!: string;
 
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsUrl()
-  image_url: string;
+  image_url!: string;
 }
