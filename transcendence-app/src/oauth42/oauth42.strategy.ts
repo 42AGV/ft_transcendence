@@ -58,7 +58,6 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
 
     const user: CreateUserDto = {
       provider: '42',
-      externalProviderId: Number.parseInt(data.id),
       image_url: data.image_url,
       username: data.login,
       email: data.email,

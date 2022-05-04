@@ -1,13 +1,13 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { UserEntity } from '../user/user.service';
-import { User } from '../user/decorators/user.decorator';
+import { User as GetUser } from '../user/decorators/user.decorator';
+import { User } from '../user/entities/user.entity';
 import { OAuth42Guard } from './oauth42.guard';
 
 @Controller('oauth42')
 export class OAuth42Controller {
   @Get()
   @UseGuards(OAuth42Guard)
-  async getUserFromIntraLogin(@User() user: UserEntity) {
+  async oauth42Login(@GetUser() user: User) {
     return user;
   }
 }
