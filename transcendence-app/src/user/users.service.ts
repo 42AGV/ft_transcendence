@@ -14,12 +14,12 @@ export type UserEntity = {
 export class UsersService {
   private readonly users = [];
 
-  findOne(username: string) {
+  private findOne(username: string) {
     const user = this.users.find((user) => user.username === username);
     return user;
   }
 
-  create(userDto: CreateUserDto) {
+  private create(userDto: CreateUserDto) {
     this.users.push(userDto);
     return userDto;
   }
