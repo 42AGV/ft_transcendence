@@ -11,7 +11,7 @@ export type UserEntity = {
 };
 
 @Injectable()
-export class UsersService {
+export class UserService {
   private readonly users = [];
 
   private findOne(username: string) {

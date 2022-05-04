@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { UserEntity } from '../users/users.service';
-import { User } from '../users/decorators/user.decorator';
+import { UserEntity } from '../user/user.service';
+import { User } from '../user/decorators/user.decorator';
 import { OAuth42Guard } from './oauth42.guard';
 
 @Controller('oauth42')

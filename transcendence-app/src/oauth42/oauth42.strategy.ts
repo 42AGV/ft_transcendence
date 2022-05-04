@@ -6,8 +6,8 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Strategy } from 'passport-oauth2';
 import { lastValueFrom } from 'rxjs';
-import { CreateUserDto } from '../users/dto/create-user.dto';
-import { UsersService } from '../users/users.service';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserService } from '../user/user.service';
 import { OAuth42Config } from './oauth42-config.interface';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   private readonly logger = new Logger(OAuth42Strategy.name);
 
   constructor(
-    private usersService: UsersService,
+    private userService: UserService,
     private httpService: HttpService,
     protected configService: ConfigService<OAuth42Config>,
   ) {
@@ -66,7 +66,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
 
     try {
       const validatedUser = await this.validateFortyTwoResponse(user);
-      return this.usersService.findOneOrCreate(validatedUser);
+      return this.userService.findOneOrCreate(validatedUser);
     } catch (err) {
       if (this.configService.get('NODE_ENV') === 'development') {
         this.logger.error(err.message);
