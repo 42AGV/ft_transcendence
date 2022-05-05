@@ -6,7 +6,7 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Strategy } from 'passport-oauth2';
 import { lastValueFrom } from 'rxjs';
-import { CreateUserDto } from '../user/dto/create-user.dto';
+import { UserDto } from '../user/dto/user.dto';
 import { UserService } from '../user/user.service';
 import { OAuth42Config } from './oauth42-config.interface';
 
@@ -29,8 +29,8 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     });
   }
 
-  private async validateFortyTwoResponse(user: CreateUserDto) {
-    const validatedUser = plainToClass(CreateUserDto, user);
+  private async validateFortyTwoResponse(user: UserDto) {
+    const validatedUser = plainToClass(UserDto, user);
     const errors = await validate(validatedUser, {
       skipMissingProperties: false,
       forbidUnknownValues: true,
@@ -56,7 +56,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       throw new BadGatewayException();
     });
 
-    const user: CreateUserDto = {
+    const user: UserDto = {
       provider: '42',
       image_url: data.image_url,
       username: data.login,

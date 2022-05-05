@@ -1,22 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [];
+  private readonly users: UserDto[] = [];
 
   private findOne(username: string) {
     const user = this.users.find((user) => user.username === username);
     return user;
   }
 
-  private create(userDto: CreateUserDto) {
+  private create(userDto: UserDto) {
     this.users.push(userDto);
     return userDto;
   }
 
-  findOneOrCreate(userDto: CreateUserDto) {
+  findOneOrCreate(userDto: UserDto) {
     let user = this.findOne(userDto.username);
 
     if (!user) {
