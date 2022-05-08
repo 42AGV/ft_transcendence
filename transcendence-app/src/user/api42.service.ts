@@ -1,0 +1,53 @@
+import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
+import { lastValueFrom } from 'rxjs';
+import { OAuth42Config } from '../oauth42/oauth42-config.interface';
+import { UserDto } from './dto/user.dto';
+
+@Injectable()
+export class Api42Service {
+  constructor(
+    private httpService: HttpService,
+    private configService: ConfigService<OAuth42Config>,
+  ) {}
+
+  private async fetch42UserData(accessToken: string) {
+    const profileUrl = this.configService.get('FORTYTWO_APP_PROFILE_URL');
+    const { data } = await lastValueFrom(
+      this.httpService.get(profileUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }),
+    );
+
+    return data;
+  }
+
+  private async validate42ApiResponse(user: UserDto) {
+    const validatedUser = plainToClass(UserDto, user);
+    const errors = await validate(validatedUser, {
+      skipMissingProperties: false,
+      forbidUnknownValues: true,
+    });
+
+    if (errors.length > 0) {
+      throw new Error(errors.toString());
+    }
+
+    return validatedUser;
+  }
+
+  async get42UserData(accessToken: string) {
+    const data = await this.fetch42UserData(accessToken);
+    const user: UserDto = {
+      provider: '42',
+      image_url: data.image_url,
+      username: data.login,
+      email: data.email,
+    };
+
+    return this.validate42ApiResponse(user);
+  }
+}
