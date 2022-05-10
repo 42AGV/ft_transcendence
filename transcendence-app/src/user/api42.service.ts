@@ -25,7 +25,7 @@ export class Api42Service {
     return data;
   }
 
-  private async validate42ApiResponse(user: UserDto): Promise<UserDto> {
+  private static async validate42ApiResponse(user: UserDto): Promise<UserDto> {
     const validatedUser = plainToClass(UserDto, user);
     const errors = await validate(validatedUser, {
       skipMissingProperties: false,
@@ -48,6 +48,6 @@ export class Api42Service {
       email: data.email,
     };
 
-    return this.validate42ApiResponse(user);
+    return Api42Service.validate42ApiResponse(user);
   }
 }
