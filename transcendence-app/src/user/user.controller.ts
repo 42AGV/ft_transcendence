@@ -1,5 +1,13 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { UserService } from './user.service';
+import { UserDto } from './dto/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -18,7 +26,12 @@ export class UserController {
   }
 
   @Get(':id')
-  async getUserById(@Param('id') param: string) {
-    return this.userService.retrieveUserWithId(Number(param));
+  async getUserById(@Param('id') param: string): Promise<UserDto | undefined> {
+    const result: UserDto | undefined = this.userService.retrieveUserWithId(
+      Number(param),
+    );
+    if (result === undefined)
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    return result;
   }
 }
