@@ -17,14 +17,10 @@ describe('User Controller', () => {
   });
 
   it('should create a user', async () => {
-    const server = app.getHttpServer();
-    request(server)
-      .post('/api/v1/user/1')
-      .expect(HttpStatus.CREATED)
-      .then(() => {
-        request(server).get('/api/v1/user/1').expect(HttpStatus.OK);
-      });
-    request(server).get('/api/v1/user/2').expect(HttpStatus.NOT_FOUND);
+    const server = await app.getHttpServer();
+    await request(server).post('/api/v1/user/1').expect(HttpStatus.CREATED);
+    await request(server).get('/api/v1/user/1').expect(HttpStatus.OK);
+    await request(server).get('/api/v1/user/2').expect(HttpStatus.NOT_FOUND);
   });
 
   afterAll(async () => {
