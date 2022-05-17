@@ -21,7 +21,7 @@ export class UserController {
       provider: 'ft_transcendence',
       image_url: 'www.img_url.com',
       username: `user_${id}`,
-      email: 'agpv@github.com',
+      email: 'afgv@github.com',
     });
   }
 

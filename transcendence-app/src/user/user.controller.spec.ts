@@ -18,9 +18,9 @@ describe('User Controller', () => {
 
   it('should create a user', async () => {
     const server = await app.getHttpServer();
-    await request(server).post('/v1/user/1').expect(HttpStatus.CREATED);
-    await request(server).get('/v1/user/1').expect(HttpStatus.OK);
-    await request(server).get('/v1/user/2').expect(HttpStatus.NOT_FOUND);
+    await request(server).post('/user/1').expect(HttpStatus.CREATED);
+    await request(server).get('/user/1').expect(HttpStatus.OK);
+    await request(server).get('/user/2').expect(HttpStatus.NOT_FOUND);
   });
 
   afterAll(async () => {
