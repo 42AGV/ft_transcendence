@@ -1,21 +1,19 @@
-import {Controller, Get, Param, Post} from '@nestjs/common';
+import { Controller, Get, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private userService: UserService,
-  ) {}
+  constructor(private userService: UserService) {}
 
   @Post(':id')
   async addUser(@Param('id') param: string) {
-    const id : number = Number(param);
+    const id = Number(param);
     this.userService.findOneOrCreate({
       id: id,
       provider: 'ft_transcendence',
-      image_url: "www.img_url.com",
+      image_url: 'www.img_url.com',
       username: `user_${id}`,
-      email: "agpv@github.com",
+      email: 'agpv@github.com',
     });
   }
 

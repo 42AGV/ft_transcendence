@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
-import {isUndefined} from "@nestjs/common/utils/shared.utils";
+import { isUndefined } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
 export class UserService {
-  private static lastUserId: number = 1;
+  private static lastUserId = 1;
   private readonly users: UserDto[] = [];
 
   private findOne(username: string) {
