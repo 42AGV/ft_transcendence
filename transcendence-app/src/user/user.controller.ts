@@ -1,8 +1,7 @@
 import {
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
+  NotFoundException,
   Param,
   Post,
 } from '@nestjs/common';
@@ -14,15 +13,17 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post(':id')
-  async addUser(@Param('id') param: string) {
+  async addUser(@Param('id') param: string): Promise<UserDto> {
     const id = Number(param);
-    this.userService.findOneOrCreate({
+    const user: UserDto = {
       id: id,
       provider: 'ft_transcendence',
-      image_url: 'www.img_url.com',
+      image_url: 'www.img_url.com/hello.jpg',
       username: `user_${id}`,
       email: 'afgv@github.com',
-    });
+    };
+    this.userService.findOneOrCreate(user);
+    return user;
   }
 
   @Get(':id')
@@ -30,8 +31,7 @@ export class UserController {
     const result: UserDto | undefined = this.userService.retrieveUserWithId(
       Number(param),
     );
-    if (result === undefined)
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    if (result === undefined) throw new NotFoundException();
     return result;
   }
 }

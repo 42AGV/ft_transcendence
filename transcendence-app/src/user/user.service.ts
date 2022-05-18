@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
 export class UserService {
@@ -17,7 +16,7 @@ export class UserService {
   }
 
   private create(userDto: UserDto) {
-    if (isUndefined(userDto.id)) {
+    if (userDto.id === undefined) {
       userDto.id = UserService.lastUserId++;
     }
     this.users.push(userDto);
