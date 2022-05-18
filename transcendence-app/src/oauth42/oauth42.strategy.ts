@@ -1,22 +1,15 @@
-import { HttpService } from '@nestjs/axios';
-import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { plainToClass } from 'class-transformer';
-import { validate } from 'class-validator';
 import { Strategy } from 'passport-oauth2';
-import { lastValueFrom } from 'rxjs';
+import { Api42Service } from '../user/api42.service';
 import { UserDto } from '../user/dto/user.dto';
-import { UserService } from '../user/user.service';
 import { OAuth42Config } from './oauth42-config.interface';
 
 @Injectable()
 export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
-  private readonly logger = new Logger(OAuth42Strategy.name);
-
   constructor(
-    private userService: UserService,
-    private httpService: HttpService,
+    private api42Service: Api42Service,
     protected configService: ConfigService<OAuth42Config>,
   ) {
     super({
@@ -29,51 +22,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     });
   }
 
-  private async validateFortyTwoResponse(user: UserDto) {
-    const validatedUser = plainToClass(UserDto, user);
-    const errors = await validate(validatedUser, {
-      skipMissingProperties: false,
-      forbidUnknownValues: true,
-    });
-
-    if (errors.length > 0) {
-      throw new Error(errors.toString());
-    }
-
-    return validatedUser;
-  }
-
-  async validate(accessToken: string) {
-    const profileUrl = this.configService.get('FORTYTWO_APP_PROFILE_URL');
-    const { data } = await lastValueFrom(
-      this.httpService.get(profileUrl, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }),
-    ).catch((err) => {
-      if (this.configService.get('NODE_ENV') === 'development') {
-        this.logger.error(err.message);
-      }
-      throw new BadGatewayException();
-    });
-
-    const user: UserDto = {
-      provider: '42',
-      image_url: data.image_url,
-      username: data.login,
-      email: data.email,
-    };
-
-    try {
-      const validatedUser = await this.validateFortyTwoResponse(user);
-      return this.userService.findOneOrCreate(validatedUser);
-    } catch (err) {
-      if (
-        this.configService.get('NODE_ENV') === 'development' &&
-        err instanceof Error
-      ) {
-        this.logger.error(err.message);
-      }
-      throw new BadGatewayException();
-    }
+  validate(accessToken: string): Promise<UserDto> {
+    return this.api42Service.get42UserData(accessToken);
   }
 }
