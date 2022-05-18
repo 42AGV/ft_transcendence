@@ -5,7 +5,7 @@ import * as request from 'supertest';
 import { UserModule } from './user.module';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
-import {NotFoundException} from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 describe('User Controller end to end test', () => {
   let app: INestApplication;
@@ -71,12 +71,13 @@ describe('User Controller unit tests', () => {
   });
 
   it('creates a user', async () => {
-    const user : UserDto = await controller.addUser('123');
+    const user: UserDto = await controller.addUser('123');
     expect(user.id).toEqual(123);
   });
 
   it('returns an existing user', async () => {
     const user = await controller.getUserById('123');
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     expect(user!.id).toEqual(123);
   });
 
