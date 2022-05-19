@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Session, UseGuards } from '@nestjs/common';
 import {
   ApiBadGatewayResponse,
   ApiFoundResponse,
@@ -15,7 +15,11 @@ export class OAuth42Controller {
   @ApiFoundResponse()
   @ApiBadGatewayResponse()
   @UseGuards(OAuth42Guard)
-  async oauth42Login(@User() user: UserDto) {
+  async oauth42Login(
+    @User() user: UserDto,
+    @Session() session: Record<string, any>,
+  ) {
+    session.authenticated = true;
     return user;
   }
 }
