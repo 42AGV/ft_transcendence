@@ -7,27 +7,27 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
+import { UserEntity } from './user.entity';
+import { Constants } from '../shared/enums/commonconsts.enum';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
+  private static Id: number = Constants.UserIdStart;
 
-  @Post(':id')
-  async addUser(@Param('id') param: string): Promise<UserDto> {
-    const id = Number(param);
+  @Post()
+  async addUser(): Promise<UserEntity> {
     const user: UserDto = {
-      id: id,
       provider: 'ft_transcendence',
       image_url: 'www.img_url.com/hello.jpg',
-      username: `user_${id}`,
+      username: `user_${UserController.Id++}`,
       email: 'afgv@github.com',
     };
-    this.userService.findOneOrCreate(user);
-    return user;
+    return this.userService.findOneOrCreate(user);
   }
 
   @Get(':id')
-  async getUserById(@Param('id') param: string): Promise<UserDto> {
+  async getUserById(@Param('id') param: string): Promise<UserEntity> {
     const result = this.userService.retrieveUserWithId(Number(param));
     if (result === undefined) throw new NotFoundException();
     return result;

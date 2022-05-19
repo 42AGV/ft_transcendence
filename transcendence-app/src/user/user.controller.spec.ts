@@ -6,6 +6,8 @@ import { UserModule } from './user.module';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
+import { UserEntity } from './user.entity';
+import { Constants } from '../shared/enums/commonconsts.enum';
 
 describe('User Controller end to end test', () => {
   let app: INestApplication;
@@ -21,9 +23,11 @@ describe('User Controller end to end test', () => {
 
   it('should create a user', async () => {
     const server = await app.getHttpServer();
-    await request(server).post('/user/1').expect(HttpStatus.CREATED);
-    await request(server).get('/user/1').expect(HttpStatus.OK);
-    await request(server).get('/user/2').expect(HttpStatus.NOT_FOUND);
+    await request(server).post('/user/').expect(HttpStatus.CREATED);
+    await request(server)
+      .get(`/user/${Constants.UserIdStart}`)
+      .expect(HttpStatus.OK);
+    await request(server).get('/user/10').expect(HttpStatus.NOT_FOUND);
   });
 
   afterAll(async () => {
@@ -38,22 +42,22 @@ describe('User Controller unit tests', () => {
   beforeEach(async () => {
     mockUserService = {
       findOneOrCreate: (user: UserDto) => {
-        return {
-          id: 123,
+        return new UserEntity({
           provider: user.provider,
           username: user.provider,
           email: user.email,
           image_url: user.image_url,
-        };
+        });
       },
       retrieveUserWithId: (id: number) => {
-        return {
-          id,
+        const ret_val = new UserEntity({
           provider: 'test',
           username: 'test',
           email: 'test@test.com',
           image_url: 'http://test.com/test.jpg',
-        };
+        });
+        ret_val.id = id;
+        return ret_val;
       },
     };
 
@@ -71,13 +75,15 @@ describe('User Controller unit tests', () => {
   });
 
   it('creates a user', async () => {
-    const user: UserDto = await controller.addUser('123');
-    expect(user.id).toEqual(123);
+    for (let i = 0; i < 10; ++i) {
+      const user = await controller.addUser();
+      expect(user.id).toEqual(i + 2);
+    }
   });
 
   it('returns an existing user', async () => {
-    const user = await controller.getUserById('123');
-    expect(user.id).toEqual(123);
+    const user = await controller.getUserById('10');
+    expect(user.id).toEqual(10);
   });
 
   it('throws if user does not exist', async () => {
