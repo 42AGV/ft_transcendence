@@ -77,8 +77,7 @@ describe('User Controller unit tests', () => {
 
   it('returns an existing user', async () => {
     const user = await controller.getUserById('123');
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    expect(user!.id).toEqual(123);
+    expect(user.id).toEqual(123);
   });
 
   it('throws if user does not exist', async () => {

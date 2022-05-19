@@ -27,10 +27,8 @@ export class UserController {
   }
 
   @Get(':id')
-  async getUserById(@Param('id') param: string): Promise<UserDto | undefined> {
-    const result: UserDto | undefined = this.userService.retrieveUserWithId(
-      Number(param),
-    );
+  async getUserById(@Param('id') param: string): Promise<UserDto> {
+    const result = this.userService.retrieveUserWithId(Number(param));
     if (result === undefined) throw new NotFoundException();
     return result;
   }
