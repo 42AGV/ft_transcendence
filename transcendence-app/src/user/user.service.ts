@@ -3,6 +3,7 @@ import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
+  private static lastUserId = 1;
   private readonly users: UserDto[] = [];
 
   private findOne(username: string) {
@@ -10,7 +11,14 @@ export class UserService {
     return user;
   }
 
+  retrieveUserWithId(id: number) {
+    return this.users.find((user) => user.id === id);
+  }
+
   private create(userDto: UserDto) {
+    if (userDto.id === undefined) {
+      userDto.id = UserService.lastUserId++;
+    }
     this.users.push(userDto);
     return userDto;
   }
