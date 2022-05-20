@@ -4,26 +4,31 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './dto/user.dto';
 import { UserEntity } from './user.entity';
-import { Constants } from '../shared/enums/commonconsts.enum';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
-  private static Id: number = Constants.UserIdStart;
 
-  @Post()
-  async addUser(): Promise<UserEntity> {
-    const user: UserDto = {
-      provider: 'ft_transcendence',
-      image_url: 'www.img_url.com/hello.jpg',
-      username: `user_${UserController.Id++}`,
-      email: 'afgv@github.com',
-    };
-    return this.userService.findOneOrCreate(user);
+  @Post('new?')
+  async addUser(
+    @Query()
+    query: {
+      provider: string;
+      username: string;
+      email: string;
+      image_url: string;
+    },
+  ): Promise<UserEntity> {
+    return this.userService.findOneOrCreate({
+      provider: query.provider,
+      username: query.username,
+      email: query.email,
+      image_url: query.image_url,
+    });
   }
 
   @Get(':id')

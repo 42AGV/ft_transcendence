@@ -1,8 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, IsUrl } from 'class-validator';
 
 export class UserDto {
-  id: number | undefined;
-
   @IsString()
   @IsNotEmpty()
   provider!: string;

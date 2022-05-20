@@ -23,7 +23,11 @@ describe('User Controller end to end test', () => {
 
   it('should create a user', async () => {
     const server = await app.getHttpServer();
-    await request(server).post('/user/').expect(HttpStatus.CREATED);
+    await request(server)
+      .post(
+        "/user/new?provider=42&username=afgv&email=hello@example.com&image_url='www.example.com/example.jpg'",
+      )
+      .expect(HttpStatus.CREATED);
     await request(server)
       .get(`/user/${Constants.UserIdStart}`)
       .expect(HttpStatus.OK);
@@ -76,7 +80,12 @@ describe('User Controller unit tests', () => {
 
   it('creates a user', async () => {
     for (let i = 0; i < 10; ++i) {
-      const user = await controller.addUser();
+      const user = await controller.addUser({
+        provider: 'ft_transcendence',
+        image_url: 'www.img_url.com/hello.jpg',
+        username: `user_${i}`,
+        email: 'afgv@github.com',
+      });
       expect(user.id).toEqual(i + 2);
     }
   });
