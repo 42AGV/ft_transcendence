@@ -25,7 +25,7 @@ describe('User Controller end to end test', () => {
     const server = await app.getHttpServer();
     await request(server)
       .post(
-        "/user/new?provider=42&username=afgv&email=hello@example.com&image_url='www.example.com/example.jpg'",
+        '/user/new?provider=42&username=afgv&email=hello@example.com&image_url=www.example.jpg',
       )
       .expect(HttpStatus.CREATED);
     await request(server)
@@ -82,7 +82,7 @@ describe('User Controller unit tests', () => {
     for (let i = 0; i < 10; ++i) {
       const user = await controller.addUser({
         provider: 'ft_transcendence',
-        image_url: 'www.img_url.com/hello.jpg',
+        image_url: 'www.example.jpg',
         username: `user_${i}`,
         email: 'afgv@github.com',
       });

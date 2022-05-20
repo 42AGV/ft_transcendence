@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   NotFoundException,
@@ -8,27 +9,25 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
+import { UserDto } from './dto/user.dto';
+import { plainToClass } from 'class-transformer';
+import { validate } from 'class-validator';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Post('new?')
-  async addUser(
-    @Query()
-    query: {
-      provider: string;
-      username: string;
-      email: string;
-      image_url: string;
-    },
-  ): Promise<UserEntity> {
-    return this.userService.findOneOrCreate({
-      provider: query.provider,
-      username: query.username,
-      email: query.email,
-      image_url: query.image_url,
+  async addUser(@Query() query: UserDto): Promise<UserEntity> {
+    const validatedUser = plainToClass(UserDto, query);
+    const errors = await validate(validatedUser, {
+      skipMissingProperties: false,
+      forbidUnknownValues: true,
     });
+    if (errors.length > 0) {
+      throw new BadRequestException();
+    }
+    return this.userService.findOneOrCreate(query);
   }
 
   @Get(':id')
