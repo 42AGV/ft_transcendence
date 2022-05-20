@@ -6,7 +6,6 @@ interface IRequest extends Request {
 }
 @Injectable()
 export class RouteGuard implements CanActivate {
-  constructor() {}
   canActivate(context: ExecutionContext): boolean {
     const req: IRequest = context.switchToHttp().getRequest();
     return req.session.authenticated;

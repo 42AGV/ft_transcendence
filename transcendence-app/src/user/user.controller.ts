@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { RouteGuard } from 'src/shared/guards/route.guard';
+import { RouteGuard } from '../shared/guards/route.guard';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
