@@ -42,7 +42,6 @@ export class Api42Service {
   async get42UserData(accessToken: string): Promise<UserDto> {
     const data = await this.fetch42UserData(accessToken);
     const user: UserDto = {
-      id: undefined,
       provider: '42',
       image_url: data.image_url,
       username: data.login,

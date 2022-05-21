@@ -1,35 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
+import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UserService {
-  private static lastUserId = 1;
-  private readonly users: UserDto[] = [];
+  private readonly users: UserEntity[] = [];
 
   private findOne(username: string) {
-    const user = this.users.find((user) => user.username === username);
-    return user;
+    return this.users.find((user) => user.Dto.username === username);
   }
 
   retrieveUserWithId(id: number) {
     return this.users.find((user) => user.id === id);
   }
 
-  private create(userDto: UserDto) {
-    if (userDto.id === undefined) {
-      userDto.id = UserService.lastUserId++;
-    }
-    this.users.push(userDto);
-    return userDto;
+  private create(user: UserDto) {
+    const userEntity = new UserEntity(user);
+    this.users.push(userEntity);
+    return userEntity;
   }
 
-  findOneOrCreate(userDto: UserDto) {
-    let user = this.findOne(userDto.username);
-
-    if (!user) {
-      user = this.create(userDto);
+  findOneOrCreate(user: UserDto) {
+    let found = this.findOne(user.username);
+    if (!found) {
+      found = this.create(user);
     }
-
-    return user;
+    return found;
   }
 }
