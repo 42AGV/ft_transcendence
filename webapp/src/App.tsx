@@ -7,17 +7,13 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <p>{`Hello, ${process.env.REACT_APP_NAME}!`}</p>
         <a
           className="App-link"
-          href="https://reactjs.org"
+          href="http://127.0.0.1:3000/api/v1/oauth42"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Login
         </a>
       </header>
     </div>
