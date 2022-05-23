@@ -31,6 +31,14 @@ class EnvironmentVariables {
 
   @IsUrl()
   FORTYTWO_APP_PROFILE_URL!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  SESSION_SECRET!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MEMCACHED_SECRET!: string;
 }
 
 export function validate(config: Record<string, unknown>) {

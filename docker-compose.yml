@@ -17,12 +17,16 @@ services:
     restart: always
     depends_on:
       - "db"
+      - "memcached"
 
   db:
     image: postgres:14.2-alpine3.15
     restart: always
     volumes:
       - transcendence-db:/var/lib/postgresql/data
+
+  memcached:
+    image: memcached:1.6.15-alpine3.15
 
 volumes:
   transcendence-db:

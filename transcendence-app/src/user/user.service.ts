@@ -7,11 +7,11 @@ export class UserService {
   private readonly users: UserEntity[] = [];
 
   private findOne(username: string) {
-    return this.users.find((user) => user.Dto.username === username);
+    return this.users.find((user) => user.Dto.username === username) || null;
   }
 
   retrieveUserWithId(id: number) {
-    return this.users.find((user) => user.id === id);
+    return this.users.find((user) => user.id === id) || null;
   }
 
   private create(user: UserDto) {

@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { lastValueFrom } from 'rxjs';
-import { OAuth42Config } from '../oauth42/oauth42-config.interface';
+import { OAuth42Config } from '../auth/oauth42-config.interface';
 import { UserDto } from './dto/user.dto';
 
 @Injectable()

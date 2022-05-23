@@ -1,43 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
-import { HttpStatus, INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { UserModule } from './user.module';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { UserEntity } from './user.entity';
-import { Constants } from '../shared/enums/commonconsts.enum';
-
-describe('User Controller end to end test', () => {
-  let app: INestApplication;
-  beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [UserModule],
-      controllers: [UserController],
-    }).compile();
-
-    app = module.createNestApplication();
-    await app.init();
-  });
-
-  it('should create a user', async () => {
-    const server = await app.getHttpServer();
-    await request(server)
-      .post(
-        '/user/new?provider=42&username=afgv&email=hello@example.com&image_url=www.example.jpg',
-      )
-      .expect(HttpStatus.CREATED);
-    await request(server)
-      .get(`/user/${Constants.UserIdStart}`)
-      .expect(HttpStatus.OK);
-    await request(server).get('/user/10').expect(HttpStatus.NOT_FOUND);
-  });
-
-  afterAll(async () => {
-    await app.close();
-  });
-});
 
 describe('User Controller unit tests', () => {
   let controller: UserController;
@@ -86,7 +52,7 @@ describe('User Controller unit tests', () => {
         username: `user_${i}`,
         email: 'afgv@github.com',
       });
-      expect(user.id).toEqual(i + 2);
+      expect(user.id).toEqual(i + 1);
     }
   });
 
@@ -96,7 +62,7 @@ describe('User Controller unit tests', () => {
   });
 
   it('throws if user does not exist', async () => {
-    mockUserService.retrieveUserWithId = () => undefined;
+    mockUserService.retrieveUserWithId = () => null;
     expect.assertions(1);
     try {
       await controller.getUserById('123');

@@ -3,13 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-oauth2';
 import { Api42Service } from '../user/api42.service';
-import { UserDto } from '../user/dto/user.dto';
+import { UserEntity } from '../user/user.entity';
+import { UserService } from '../user/user.service';
 import { OAuth42Config } from './oauth42-config.interface';
 
 @Injectable()
 export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   constructor(
     private api42Service: Api42Service,
+    private userService: UserService,
     protected configService: ConfigService<OAuth42Config>,
   ) {
     super({
@@ -22,7 +24,8 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     });
   }
 
-  validate(accessToken: string): Promise<UserDto> {
-    return this.api42Service.get42UserData(accessToken);
+  async validate(accessToken: string): Promise<UserEntity> {
+    const userDto = await this.api42Service.get42UserData(accessToken);
+    return this.userService.findOneOrCreate(userDto);
   }
 }
