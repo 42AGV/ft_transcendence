@@ -4,8 +4,11 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseBoolPipe,
+  ParseIntPipe,
   ParseUUIDPipe,
   Post,
+  Query,
   Request as GetRequest,
   UseGuards,
 } from '@nestjs/common';
@@ -31,6 +34,21 @@ export class UserController {
   @Get('me')
   getCurrentUser(@GetRequest() req: Request) {
     return req.user;
+  }
+
+  @Get('users')
+  getUsers() {
+    return this.userService.retrieveUsers();
+  }
+
+  @Get('usernames?')
+  getUsernames(
+    @Query('take', ParseIntPipe) take: number,
+    @Query('skip', ParseIntPipe) skip: number,
+    @Query('sort', ParseBoolPipe) sort: boolean,
+  ) {
+    take = take > 20 ? 20 : take;
+    return this.userService.retrieveUsernames(take, skip, sort);
   }
 
   @Get(':uuid')
