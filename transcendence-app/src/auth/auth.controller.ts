@@ -15,7 +15,7 @@ import { OAuth42Guard } from './oauth42.guard';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  @Get('oauth42')
+  @Get('login')
   @ApiFoundResponse()
   @ApiBadGatewayResponse()
   @UseGuards(OAuth42Guard)

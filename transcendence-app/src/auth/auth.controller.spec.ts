@@ -32,7 +32,7 @@ describe('Auth Controller', () => {
 
   it('should redirect to 42 oauth page', async () => {
     const response = await request(app.getHttpServer())
-      .get('/auth/oauth42')
+      .get('/auth/login')
       .expect(HttpStatus.FOUND);
     const authUrl = config.get('FORTYTWO_APP_AUTHORIZATION_URL');
     expect(response.headers['location']).toMatch(new RegExp(`^${authUrl}?`));
