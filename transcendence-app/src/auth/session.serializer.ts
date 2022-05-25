@@ -12,7 +12,7 @@ export class SessionSerializer extends PassportSerializer {
     done(null, user.id);
   }
 
-  deserializeUser(userId: number, done: CallableFunction) {
+  deserializeUser(userId: string, done: CallableFunction) {
     const user = this.userService.retrieveUserWithId(userId);
     done(null, user);
   }

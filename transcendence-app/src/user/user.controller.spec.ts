@@ -1,9 +1,64 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
+import { HttpStatus, INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { UserModule } from './user.module';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
-import { UserEntity } from './user.entity';
+import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { v4 as uuidv4 } from 'uuid';
+
+const testUserDto: UserDto = {
+  provider: 'ft_transcendence',
+  image_url: 'www.example.jpg',
+  username: 'user',
+  email: 'afgv@github.com',
+};
+const testUserId = uuidv4();
+
+describe('User Controller end to end test', () => {
+  let app: INestApplication;
+  const canActivate = jest.fn(() => true);
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [UserModule],
+      controllers: [UserController],
+    })
+      .overrideGuard(AuthenticatedGuard)
+      .useValue({ canActivate })
+      .compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  });
+
+  it('should create a user', async () => {
+    const server = await app.getHttpServer();
+    const response = await request(server)
+      .post('/user')
+      .send(testUserDto)
+      .expect(HttpStatus.CREATED);
+    await request(server)
+      .get(`/user/${response.body.id}`)
+      .expect(HttpStatus.OK);
+    await request(server)
+      .get(`/user/${testUserId}`)
+      .expect(HttpStatus.NOT_FOUND);
+  });
+
+  it('returns forbidden if guard fails', () => {
+    canActivate.mockReturnValueOnce(false);
+    return request(app.getHttpServer())
+      .get('/user/me')
+      .expect(HttpStatus.FORBIDDEN);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+});
 
 describe('User Controller unit tests', () => {
   let controller: UserController;
@@ -12,22 +67,16 @@ describe('User Controller unit tests', () => {
   beforeEach(async () => {
     mockUserService = {
       findOneOrCreate: (user: UserDto) => {
-        return new UserEntity({
-          provider: user.provider,
-          username: user.provider,
-          email: user.email,
-          image_url: user.image_url,
-        });
+        return {
+          id: testUserId,
+          ...user,
+        };
       },
-      retrieveUserWithId: (id: number) => {
-        const ret_val = new UserEntity({
-          provider: 'test',
-          username: 'test',
-          email: 'test@test.com',
-          image_url: 'http://test.com/test.jpg',
-        });
-        ret_val.id = id;
-        return ret_val;
+      retrieveUserWithId: (id: string) => {
+        return {
+          id,
+          ...testUserDto,
+        };
       },
     };
 
@@ -45,27 +94,21 @@ describe('User Controller unit tests', () => {
   });
 
   it('creates a user', async () => {
-    for (let i = 0; i < 10; ++i) {
-      const user = await controller.addUser({
-        provider: 'ft_transcendence',
-        image_url: 'www.example.jpg',
-        username: `user_${i}`,
-        email: 'afgv@github.com',
-      });
-      expect(user.id).toEqual(i + 1);
-    }
+    const user = await controller.addUser(testUserDto);
+    expect(user.id).toEqual(testUserId);
+    expect(user.username).toEqual(testUserDto.username);
   });
 
   it('returns an existing user', async () => {
-    const user = await controller.getUserById('10');
-    expect(user.id).toEqual(10);
+    const user = await controller.getUserById(testUserId);
+    expect(user.id).toEqual(testUserId);
   });
 
   it('throws if user does not exist', async () => {
     mockUserService.retrieveUserWithId = () => null;
     expect.assertions(1);
     try {
-      await controller.getUserById('123');
+      await controller.getUserById(testUserId);
     } catch (err) {
       expect(err).toBeInstanceOf(NotFoundException);
     }
