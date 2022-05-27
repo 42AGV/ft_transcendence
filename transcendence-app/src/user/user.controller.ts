@@ -19,6 +19,7 @@ import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { Request } from 'express';
 import { ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
 
+const MAX_USER_ENTRIES_PER_PAGE = 20;
 @ApiTags('user')
 @ApiForbiddenResponse()
 @UseGuards(AuthenticatedGuard)
@@ -47,7 +48,7 @@ export class UserController {
     @Query('skip', ParseIntPipe) skip: number,
     @Query('sort', ParseBoolPipe) sort: boolean,
   ) {
-    take = take > 20 ? 20 : take;
+    take = take > MAX_USER_ENTRIES_PER_PAGE ? MAX_USER_ENTRIES_PER_PAGE : take;
     return this.userService.retrieveUsernames(take, skip, sort);
   }
 
