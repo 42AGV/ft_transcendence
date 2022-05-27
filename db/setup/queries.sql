@@ -1,0 +1,41 @@
+\c ft_transcendence;
+
+INSERT INTO users (
+     username,
+     email,
+     img
+) VALUES (
+    'gbudau-admin',
+    'gbudau-admin@transcendence.com',
+    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+);
+
+INSERT INTO users (
+     username,
+     email,
+     img
+) VALUES (
+    'vdedios-admin',
+    'vdedios-admin@transcendence.com',
+    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+);
+
+INSERT INTO users (
+     username,
+     email,
+     img
+) VALUES (
+    'aollero-admin',
+    'aollero-admin@transcendence.com',
+    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+);
+
+INSERT INTO users (
+     username,
+     email,
+     img
+) VALUES (
+    'fportela-admin',
+    'fportela-admin@transcendence.com',
+    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+);

@@ -26,6 +26,6 @@ services:
 
   db:
     environment:
-      - POSTGRES_USER=transcendence
-      - POSTGRES_PASSWORD=example
-      - POSTGRES_DB=transcendence
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ft_transcendence
