@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { lastValueFrom } from 'rxjs';
-import { OAuth42Config } from '../oauth42/oauth42-config.interface';
+import { OAuth42Config } from '../auth/oauth42-config.interface';
 import { UserDto } from './dto/user.dto';
 
 @Injectable()
@@ -42,8 +42,7 @@ export class Api42Service {
   async get42UserData(accessToken: string): Promise<UserDto> {
     const data = await this.fetch42UserData(accessToken);
     const user: UserDto = {
-      provider: '42',
-      image_url: data.image_url,
+      avatar: data.image_url,
       username: data.login,
       email: data.email,
     };

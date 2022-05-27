@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { OAuth42Controller } from './oauth42.controller';
+import { AuthController } from './auth.controller';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { OAuth42Module } from './oauth42.module';
+import { AuthModule } from './auth.module';
 import * as request from 'supertest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from '../config/env.validation';
@@ -20,9 +20,9 @@ describe('Auth Controller', () => {
           cache: true,
           validate,
         }),
-        OAuth42Module,
+        AuthModule,
       ],
-      controllers: [OAuth42Controller],
+      controllers: [AuthController],
     }).compile();
 
     config = module.get<ConfigService<OAuth42Config>>(ConfigService);
@@ -32,7 +32,7 @@ describe('Auth Controller', () => {
 
   it('should redirect to 42 oauth page', async () => {
     const response = await request(app.getHttpServer())
-      .get('/oauth42')
+      .get('/auth/login')
       .expect(HttpStatus.FOUND);
     const authUrl = config.get('FORTYTWO_APP_AUTHORIZATION_URL');
     expect(response.headers['location']).toMatch(new RegExp(`^${authUrl}?`));

@@ -17,6 +17,7 @@ services:
     restart: always
     depends_on:
       - "db"
+      - "memcached"
 
   db:
     image: postgres:14.2-alpine3.15
@@ -26,6 +27,9 @@ services:
       - transcendence-db:/var/lib/postgresql/data
       - ./db/fill-db.sh:/docker-entrypoint-initdb.d/fill-db.sh
       - ./db/setup/:/var/lib/postgresql/setup/
+
+  memcached:
+    image: memcached:1.6.15-alpine3.15
 
 volumes:
   transcendence-db:

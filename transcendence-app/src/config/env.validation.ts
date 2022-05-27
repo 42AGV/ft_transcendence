@@ -2,13 +2,15 @@ import { plainToClass } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
+  IsPort,
   IsString,
   IsUrl,
+  IsUUID,
   validateSync,
 } from 'class-validator';
 import { Environment } from '../shared/enums/environment.enum';
 
-class EnvironmentVariables {
+export class EnvironmentVariables {
   @IsEnum(Environment)
   NODE_ENV!: Environment;
 
@@ -31,6 +33,19 @@ class EnvironmentVariables {
 
   @IsUrl()
   FORTYTWO_APP_PROFILE_URL!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  MEMCACHED_HOST!: string;
+
+  @IsPort()
+  MEMCACHED_PORT!: string;
+
+  @IsUUID()
+  SESSION_SECRET!: string;
+
+  @IsUUID()
+  MEMCACHED_SECRET!: string;
 }
 
 export function validate(config: Record<string, unknown>) {

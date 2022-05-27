@@ -3,7 +3,7 @@
 INSERT INTO users (
      username,
      email,
-     img
+     avatar
 ) VALUES (
     'gbudau-admin',
     'gbudau-admin@transcendence.com',
@@ -13,7 +13,7 @@ INSERT INTO users (
 INSERT INTO users (
      username,
      email,
-     img
+     avatar
 ) VALUES (
     'vdedios-admin',
     'vdedios-admin@transcendence.com',
@@ -23,7 +23,7 @@ INSERT INTO users (
 INSERT INTO users (
      username,
      email,
-     img
+     avatar
 ) VALUES (
     'aollero-admin',
     'aollero-admin@transcendence.com',
@@ -33,7 +33,7 @@ INSERT INTO users (
 INSERT INTO users (
      username,
      email,
-     img
+     avatar
 ) VALUES (
     'fportela-admin',
     'fportela-admin@transcendence.com',
