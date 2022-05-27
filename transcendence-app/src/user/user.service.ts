@@ -19,8 +19,9 @@ export class UserService {
   }
   retrieveUsernames(take: number, skip: number, sort: boolean): string[] {
     const ret: string[] = [];
-    if (take < 0 || skip < 0 || skip >= this.users.length)
+    if (take < 0 || skip < 0 || skip >= this.users.length) {
       throw new BadRequestException('Provided values incorrect');
+    }
     take = skip + take > this.users.length ? this.users.length : skip + take;
     for (let i = skip; i < take; i++) {
       ret.push(this.users[i].username);
