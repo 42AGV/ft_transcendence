@@ -26,8 +26,7 @@ export class UserService {
     for (let i = skip; i < take; i++) {
       ret.push(this.users[i].username);
     }
-    if (sort) return ret.sort();
-    return ret;
+     return sort ? ret.sort() : ret;
   }
 
   private create(user: UserDto) {
