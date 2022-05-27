@@ -11,7 +11,6 @@ export class SessionSerializer extends PassportSerializer {
   serializeUser(user: UserEntity, done: CallableFunction) {
     done(null, user.id);
   }
-
   deserializeUser(userId: string, done: CallableFunction) {
     const user = this.userService.retrieveUserWithId(userId);
     done(null, user);
