@@ -1,7 +1,7 @@
-export interface UserEntity {
-  id: string;
-  provider: string;
-  username: string;
-  email: string;
-  image_url: string;
+export class UserEntity {
+  id!: string;
+  username!: string;
+  email!: string;
+  avatar!: string;
+  createdAt!: Date;
 }

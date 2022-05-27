@@ -10,10 +10,9 @@ import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { v4 as uuidv4 } from 'uuid';
 
 const testUserDto: UserDto = {
-  provider: 'ft_transcendence',
-  image_url: 'www.example.jpg',
   username: 'user',
   email: 'afgv@github.com',
+  avatar: 'www.example.jpg',
 };
 const testUserId = uuidv4();
 
@@ -69,12 +68,14 @@ describe('User Controller unit tests', () => {
       findOneOrCreate: (user: UserDto) => {
         return {
           id: testUserId,
+          createdAt: new Date(Date.now()),
           ...user,
         };
       },
       retrieveUserWithId: (id: string) => {
         return {
           id,
+          createdAt: new Date(Date.now()),
           ...testUserDto,
         };
       },

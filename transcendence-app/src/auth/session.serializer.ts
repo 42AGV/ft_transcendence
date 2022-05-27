@@ -8,6 +8,7 @@ export class SessionSerializer extends PassportSerializer {
   constructor(private readonly userService: UserService) {
     super();
   }
+
   serializeUser(user: UserEntity, done: CallableFunction) {
     done(null, user.id);
   }
