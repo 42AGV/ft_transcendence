@@ -30,7 +30,11 @@ export class UserService {
   }
 
   private create(user: UserDto) {
-    const userEntity: UserEntity = { id: uuidv4(), ...user };
+    const userEntity: UserEntity = {
+      id: uuidv4(),
+      createdAt: new Date(Date.now()),
+      ...user,
+    };
     this.users.push(userEntity);
     return userEntity;
   }

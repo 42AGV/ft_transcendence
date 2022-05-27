@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { validate } from './config/env.validation';
+import { EnvironmentVariables, validate } from './config/env.validation';
 import * as session from 'express-session';
 import * as ConnectMemcached from 'connect-memcached';
 import * as passport from 'passport';
@@ -17,10 +17,12 @@ import * as passport from 'passport';
   ],
 })
 export class AppModule {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService<EnvironmentVariables>) {}
 
   configure(consumer: MiddlewareConsumer) {
     const MemcachedStore = ConnectMemcached(session);
+    const memcachedHost = this.configService.get('MEMCACHED_HOST') as string;
+    const memcachedPort = this.configService.get('MEMCACHED_PORT') as string;
 
     consumer
       .apply(
@@ -29,7 +31,7 @@ export class AppModule {
           resave: false,
           saveUninitialized: false,
           store: new MemcachedStore({
-            hosts: ['memcached:11211'],
+            hosts: [`${memcachedHost}:${memcachedPort}`],
             secret: this.configService.get('MEMCACHED_SECRET'),
           }),
         }),

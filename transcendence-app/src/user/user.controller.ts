@@ -17,9 +17,10 @@ import { UserEntity } from './user.entity';
 import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { Request } from 'express';
-import { ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
 
 const MAX_USER_ENTRIES_PER_PAGE = 20;
+
 @ApiTags('user')
 @ApiForbiddenResponse()
 @UseGuards(AuthenticatedGuard)
@@ -57,7 +58,9 @@ export class UserController {
     @Param('uuid', ParseUUIDPipe) uuid: string,
   ): Promise<UserEntity> {
     const result = this.userService.retrieveUserWithId(uuid);
-    if (result === null) throw new NotFoundException();
+    if (result === null) {
+      throw new NotFoundException();
+    }
     return result;
   }
 }
