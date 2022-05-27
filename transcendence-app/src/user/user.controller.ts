@@ -17,7 +17,7 @@ import { UserEntity } from './user.entity';
 import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { Request } from 'express';
-import { ApiBody, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
+import { ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
 
 const MAX_USER_ENTRIES_PER_PAGE = 20;
 
