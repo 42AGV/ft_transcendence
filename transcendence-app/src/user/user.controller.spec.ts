@@ -68,20 +68,14 @@ describe('User Controller unit tests', () => {
       findOneOrCreate: (user: UserDto) => {
         return {
           id: testUserId,
-<<<<<<< HEAD
-=======
           createdAt: new Date(Date.now()),
->>>>>>> a026334d605912be987ba821f69f383c60583b80
           ...user,
         };
       },
       retrieveUserWithId: (id: string) => {
         return {
           id,
-<<<<<<< HEAD
-=======
           createdAt: new Date(Date.now()),
->>>>>>> a026334d605912be987ba821f69f383c60583b80
           ...testUserDto,
         };
       },
