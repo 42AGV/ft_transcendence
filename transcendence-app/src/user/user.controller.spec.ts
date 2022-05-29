@@ -36,21 +36,39 @@ describe('User Controller end to end test', () => {
   it('should create a user', async () => {
     const server = await app.getHttpServer();
     const response = await request(server)
-      .post('/user')
+      .post('/users')
       .send(testUserDto)
       .expect(HttpStatus.CREATED);
     await request(server)
-      .get(`/user/${response.body.id}`)
+      .get(`/users/${response.body.id}`)
       .expect(HttpStatus.OK);
     await request(server)
-      .get(`/user/${testUserId}`)
+      .get(`/users/${testUserId}`)
       .expect(HttpStatus.NOT_FOUND);
+  });
+
+  it('should return an array of usernames', async () => {
+    const server = await app.getHttpServer();
+    for (let i = 0; i < 50; i++) {
+      await request(server)
+        .post('/users')
+        .send({
+          username: 'user' + i,
+          email: 'afgv@github.com',
+          avatar: 'www.example.jpg',
+        });
+    }
+    const response = await request(server)
+      .get('/users/?limit=20&offset=0&sort=true')
+      .expect(HttpStatus.OK);
+    expect(response.body.length).toBe(20);
+    await request(server).get('/users/').expect(HttpStatus.OK);
   });
 
   it('returns forbidden if guard fails', () => {
     canActivate.mockReturnValueOnce(false);
     return request(app.getHttpServer())
-      .get('/user/me')
+      .get('/users/me')
       .expect(HttpStatus.FORBIDDEN);
   });
 

@@ -15,13 +15,13 @@ import { UserEntity } from './user.entity';
 import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { Request } from 'express';
-import { ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
 import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 
-@ApiTags('user')
+@ApiTags('users')
 @ApiForbiddenResponse()
 @UseGuards(AuthenticatedGuard)
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -30,12 +30,13 @@ export class UserController {
     return this.userService.findOneOrCreate(user);
   }
 
+  @ApiBody({ type: UserEntity })
   @Get('me')
   getCurrentUser(@GetRequest() req: Request) {
     return req.user;
   }
 
-  @Get('users')
+  @Get()
   getUsers(@Query() usersPaginationQueryDto: UsersPaginationQueryDto) {
     return this.userService.retrieveUsers(usersPaginationQueryDto);
   }

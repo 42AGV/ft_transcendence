@@ -12,7 +12,6 @@ export class UsersPaginationQueryDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  @Max(MAX_USER_ENTRIES_PER_PAGE)
   offset!: number;
 
   @IsOptional()
