@@ -4,8 +4,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  ParseBoolPipe,
-  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   Query,
@@ -18,8 +16,7 @@ import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { Request } from 'express';
 import { ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
-
-const MAX_USER_ENTRIES_PER_PAGE = 20;
+import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 
 @ApiTags('user')
 @ApiForbiddenResponse()
@@ -39,18 +36,8 @@ export class UserController {
   }
 
   @Get('users')
-  getUsers() {
-    return this.userService.retrieveUsers();
-  }
-
-  @Get('usernames?')
-  getUsernames(
-    @Query('take', ParseIntPipe) take: number,
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('sort', ParseBoolPipe) sort: boolean,
-  ) {
-    take = take > MAX_USER_ENTRIES_PER_PAGE ? MAX_USER_ENTRIES_PER_PAGE : take;
-    return this.userService.retrieveUsernames(take, skip, sort);
+  getUsers(@Query() usersPaginationQueryDto: UsersPaginationQueryDto) {
+    return this.userService.retrieveUsers(usersPaginationQueryDto);
   }
 
   @Get(':uuid')
