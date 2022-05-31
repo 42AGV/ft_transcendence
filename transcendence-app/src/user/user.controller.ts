@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
   Request as GetRequest,
   UseGuards,
 } from '@nestjs/common';
@@ -15,11 +16,12 @@ import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { Request } from 'express';
 import { ApiBody, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
+import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 
-@ApiTags('user')
+@ApiTags('users')
 @ApiForbiddenResponse()
 @UseGuards(AuthenticatedGuard)
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -32,6 +34,11 @@ export class UserController {
   @Get('me')
   getCurrentUser(@GetRequest() req: Request) {
     return req.user;
+  }
+
+  @Get()
+  getUsers(@Query() usersPaginationQueryDto: UsersPaginationQueryDto) {
+    return this.userService.retrieveUsers(usersPaginationQueryDto);
   }
 
   @Get(':uuid')
