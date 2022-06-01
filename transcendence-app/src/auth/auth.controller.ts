@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Request as GetRequest,
   UseGuards,
@@ -7,6 +8,7 @@ import {
 import {
   ApiBadGatewayResponse,
   ApiFoundResponse,
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -16,16 +18,17 @@ import { OAuth42Guard } from './oauth42.guard';
 @Controller('auth')
 export class AuthController {
   @Get('login')
-  @ApiFoundResponse()
-  @ApiBadGatewayResponse()
+  @ApiOkResponse({ description: 'Login successfully' })
+  @ApiFoundResponse({ description: 'Redirect to 42 OAuth server' })
+  @ApiBadGatewayResponse({ description: 'Bad Gateway' })
   @UseGuards(OAuth42Guard)
-  async oauth42Login() {
-    return 'Login successfully';
+  oauth42Login() {
+    // Guard implementation
   }
 
-  @Get('logout')
+  @Delete('logout')
+  @ApiOkResponse({ description: 'Logout successfully' })
   logout(@GetRequest() req: Request) {
     req.logout();
-    return 'Logout successfully';
   }
 }
