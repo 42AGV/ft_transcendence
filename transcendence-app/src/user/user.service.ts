@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { UserEntity } from './user.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
-
-const MAX_USER_ENTRIES_PER_PAGE = 20;
+import {
+  MAX_USER_ENTRIES_PER_PAGE,
+  UsersPaginationQueryDto,
+} from './dto/user.pagination.dto';
+import { BooleanString } from '../shared/enums/boolean-string.enum';
 
 @Injectable()
 export class UserService {
@@ -22,7 +24,7 @@ export class UserService {
     const offset = queryDto.offset ?? 0;
     const usersCopy = [...this.users];
 
-    if (queryDto.sort) {
+    if (queryDto.sort === BooleanString.True) {
       usersCopy.sort((a, b) =>
         a.username > b.username ? 1 : a.username === b.username ? 0 : -1,
       );
