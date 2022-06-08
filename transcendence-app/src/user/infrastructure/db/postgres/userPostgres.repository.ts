@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { Injectable } from '@nestjs/common';
 
 import { BasePostgresRepository } from 'src/shared/db/postgres/postgres.repository';
 import { User } from '../../../user.domain';
@@ -7,12 +8,17 @@ import { UserEntity, userKeys } from '../../db/user.entity';
 import { DataResponseWrapper } from 'src/shared/db/base.repository';
 import { IUserRepository } from '../user.repository';
 
+@Injectable()
 export class UserPostgresRepository
   extends BasePostgresRepository<UserEntity>
   implements IUserRepository
 {
   constructor(protected pool: Pool) {
     super(pool, table.USERS);
+  }
+
+  async getById(id: string): Promise<DataResponseWrapper<User>> {
+    return this.getByKey(userKeys.ID, id);
   }
 
   async getByUsername(username: string): Promise<DataResponseWrapper<User>> {
