@@ -3,7 +3,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PostgresPool {
-  constructor(private pool: Pool) {
+  private pool: Pool;
+
+  constructor() {
     this.pool = new Pool({
       // this may come from config module
       user: 'postgres',

@@ -1,14 +1,14 @@
-import { Pool } from 'pg';
 import { entityQueryMapper } from './utils';
 import { BaseEntity, table, ID } from '../models';
 import { IBaseRepository } from '../base.repository';
 import { makeQuery } from './utils';
 import { DataResponseWrapper } from '../base.repository';
+import { PostgresPool } from './postgresConnection.provider';
 
 export class BasePostgresRepository<T extends BaseEntity>
   implements IBaseRepository<T>
 {
-  constructor(protected pool: Pool, protected table: table) {
+  constructor(protected pool: PostgresPool, protected table: table) {
     (this.pool = pool), (this.table = table);
   }
 

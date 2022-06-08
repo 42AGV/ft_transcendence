@@ -1,4 +1,3 @@
-import { Pool } from 'pg';
 import { Injectable } from '@nestjs/common';
 
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
@@ -7,13 +6,14 @@ import { table } from '../../../../shared/db/models';
 import { UserEntity, userKeys } from '../../db/user.entity';
 import { DataResponseWrapper } from '../../../../shared/db/base.repository';
 import { IUserRepository } from '../user.repository';
+import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 
 @Injectable()
 export class UserPostgresRepository
   extends BasePostgresRepository<UserEntity>
   implements IUserRepository
 {
-  constructor(protected pool: Pool) {
+  constructor(protected pool: PostgresPool) {
     super(pool, table.USERS);
   }
 
