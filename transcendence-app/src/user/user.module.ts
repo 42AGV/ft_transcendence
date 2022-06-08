@@ -1,7 +1,7 @@
 import { Module, Logger } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { DbModule } from 'src/shared/db/db.module';
+import { DbModule } from '../shared/db/db.module';
 
 @Module({
   imports: [DbModule],

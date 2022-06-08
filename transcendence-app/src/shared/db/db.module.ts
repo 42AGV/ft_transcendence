@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PostgresPool } from './postgres/postgresConnection.provider';
-import { IUserRepository } from 'src/user/infrastructure/db/user.repository';
-import { UserPostgresRepository } from 'src/user/infrastructure/db/postgres/userPostgres.repository';
+import { IUserRepository } from '../../user/infrastructure/db/user.repository';
+import { UserPostgresRepository } from '../../user/infrastructure/db/postgres/userPostgres.repository';
 
 @Module({
   providers: [

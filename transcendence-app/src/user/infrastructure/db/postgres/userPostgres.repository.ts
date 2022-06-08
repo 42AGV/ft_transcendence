@@ -1,11 +1,11 @@
 import { Pool } from 'pg';
 import { Injectable } from '@nestjs/common';
 
-import { BasePostgresRepository } from 'src/shared/db/postgres/postgres.repository';
+import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { User } from '../../../user.domain';
-import { table } from 'src/shared/db/models';
+import { table } from '../../../../shared/db/models';
 import { UserEntity, userKeys } from '../../db/user.entity';
-import { DataResponseWrapper } from 'src/shared/db/base.repository';
+import { DataResponseWrapper } from '../../../../shared/db/base.repository';
 import { IUserRepository } from '../user.repository';
 
 @Injectable()
