@@ -7,7 +7,7 @@ export class PostgresPool {
 
   constructor() {
     this.pool = new Pool({
-      // this may come from config module
+      // TODO - #52 Create logs and tests and read from config in db repository
       user: 'postgres',
       host: 'localhost',
       database: 'ft_transcendence',
