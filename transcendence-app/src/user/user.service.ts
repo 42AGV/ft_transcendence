@@ -11,7 +11,9 @@ import { IUserRepository } from './infrastructure/db/user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private repository: IUserRepository, private logger: Logger) {}
+  private logger = new Logger(UserService.name);
+
+  constructor(private repository: IUserRepository) {}
 
   retrieveUserWithId(id: string) {
     return this.users.find((user) => user.id === id) || null;
