@@ -4,15 +4,17 @@ import { DataResponseWrapper } from '../base.repository';
 import { PostgresPool } from './postgresConnection.provider';
 
 export const entityQueryMapper = (entity: Partial<BaseEntity>): MappedQuery => {
-  const args = Object.entries(entity).filter(
-    ([, value]) => value !== null && value !== undefined,
+  return Object.keys(entity).reduce<MappedQuery>(
+    (mappedQuery, [key, value], index) => {
+      if (value !== undefined) {
+        mappedQuery.cols.push(key);
+        mappedQuery.params.push(`$${index + 1}`);
+        mappedQuery.values.push(value);
+      }
+      return mappedQuery;
+    },
+    { cols: [], params: [], values: [] },
   );
-
-  return {
-    cols: args.map(([key]) => key),
-    params: args.map((el, i) => `$${i + 1}`),
-    values: args.map(([, value]) => value as string),
-  };
 };
 
 export const makeQuery = async <T>(
