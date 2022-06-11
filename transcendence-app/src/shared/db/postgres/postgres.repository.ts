@@ -8,9 +8,7 @@ import { PostgresPool } from './postgresConnection.provider';
 export class BasePostgresRepository<T extends BaseEntity>
   implements IBaseRepository<T>
 {
-  constructor(protected pool: PostgresPool, protected table: table) {
-    (this.pool = pool), (this.table = table);
-  }
+  constructor(protected pool: PostgresPool, protected table: table) {}
 
   async getByKey(key: string, value: ID): Promise<DataResponseWrapper<T>> {
     return await makeQuery<T>(this.pool, {
