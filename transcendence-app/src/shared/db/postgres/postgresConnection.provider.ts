@@ -1,5 +1,6 @@
-import { Pool } from 'pg';
+import { Pool, QueryResult } from 'pg';
 import { Injectable } from '@nestjs/common';
+import { Query } from '../models';
 
 @Injectable()
 export class PostgresPool {
@@ -18,6 +19,10 @@ export class PostgresPool {
 
   connect() {
     return this.pool.connect();
+  }
+
+  query(query: Query): Promise<QueryResult<any>> {
+    return this.pool.query(query);
   }
 
   end() {

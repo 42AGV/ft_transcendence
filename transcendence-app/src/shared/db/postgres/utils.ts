@@ -21,14 +21,11 @@ export const makeQuery = async <T>(
   pool: PostgresPool,
   query: Query,
 ): Promise<DataResponseWrapper<T>> => {
-  const client = await pool.connect();
   try {
-    const res = await client.query(query);
+    const res = await pool.query(query);
     return buildWrappedResponse(res);
   } catch (e) {
     return buildWrappedResponse(null, e);
-  } finally {
-    client.release();
   }
 };
 
