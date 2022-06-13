@@ -1,10 +1,9 @@
 export class User {
-  username: string;
-  email: string;
-  avatar?: string | null;
-  constructor(username: string, email: string, avatar: string) {
-    this.username = username;
-    this.email = email;
-    this.avatar = avatar;
-  }
+  constructor(
+    public username: string,
+    public email: string,
+    public avatar: string | null,
+    public id: string,
+    public created_at: number,
+  ) {}
 }

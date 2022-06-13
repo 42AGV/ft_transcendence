@@ -17,26 +17,30 @@ export class UserPostgresRepository
     super(pool, table.USERS);
   }
 
-  async getById(id: string): Promise<DataResponseWrapper<User>> {
+  async getById(id: string): Promise<DataResponseWrapper<UserEntity>> {
     return this.getByKey(userKeys.ID, id);
   }
 
-  async getByUsername(username: string): Promise<DataResponseWrapper<User>> {
+  async getByUsername(
+    username: string,
+  ): Promise<DataResponseWrapper<UserEntity>> {
     return this.getByKey(userKeys.USERNAME, username);
   }
 
-  async getByEmail(email: string): Promise<DataResponseWrapper<User>> {
+  async getByEmail(email: string): Promise<DataResponseWrapper<UserEntity>> {
     return this.getByKey(userKeys.EMAIL, email);
   }
 
-  async deleteByUsername(username: string): Promise<DataResponseWrapper<User>> {
+  async deleteByUsername(
+    username: string,
+  ): Promise<DataResponseWrapper<UserEntity>> {
     return this.deleteByKey(userKeys.USERNAME, username);
   }
 
   async updateByUsername(
     username: string,
     user: Partial<User>,
-  ): Promise<DataResponseWrapper<User>> {
+  ): Promise<DataResponseWrapper<UserEntity>> {
     return this.updateByKey(userKeys.USERNAME, username, user);
   }
 }

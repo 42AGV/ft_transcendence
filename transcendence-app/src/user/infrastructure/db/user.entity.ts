@@ -7,24 +7,13 @@ export enum userKeys {
   AVATAR = 'avatar',
   TIMESTAMP = 'timestamp',
 }
-export class UserEntity implements BaseEntity {
-  username: string;
-  email: string;
-  avatar?: string | null;
-  id?: string;
-  created_at?: number;
 
+export class UserEntity implements BaseEntity {
   constructor(
-    username: string,
-    email: string,
-    avatar?: string | null,
-    id?: string,
-    created_at?: number,
-  ) {
-    this.username = username;
-    this.email = email;
-    this.avatar = avatar;
-    this.id = id;
-    this.created_at = created_at;
-  }
+    public username: string,
+    public email: string,
+    public avatar: string | null,
+    public id: string,
+    public created_at: number,
+  ) {}
 }
