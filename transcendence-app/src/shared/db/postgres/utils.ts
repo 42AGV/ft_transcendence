@@ -1,6 +1,4 @@
 import { BaseEntity, Query, MappedQuery } from '../models';
-import { QueryResult } from 'pg';
-import { DataResponseWrapper } from '../base.repository';
 import { PostgresPool } from './postgresConnection.provider';
 
 export const entityQueryMapper = (entity: Partial<BaseEntity>): MappedQuery => {
@@ -20,23 +18,15 @@ export const entityQueryMapper = (entity: Partial<BaseEntity>): MappedQuery => {
 export const makeQuery = async <T>(
   pool: PostgresPool,
   query: Query,
-): Promise<DataResponseWrapper<T>> => {
+): Promise<T[] | null> => {
   try {
     const res = await pool.query(query);
-    return buildWrappedResponse(res);
+    return res?.rows?.length ? (res.rows as T[]) : null;
   } catch (e) {
-    return buildWrappedResponse(null, e);
+    // TODO temp solution until we implement logging
+    throw new Error(stringifyPostgresError(e));
   }
 };
-
-const buildWrappedResponse = <T>(
-  res?: QueryResult | null,
-  error?: any,
-): DataResponseWrapper<T> => ({
-  data: res?.rows as T[],
-  entries: res?.rowCount ?? null,
-  error: error ? stringifyPostgresError(error) : null,
-});
 
 const stringifyPostgresError = (err: any): string => {
   const unkownError = 'unknown error';

@@ -42,12 +42,13 @@ export class UserService {
   }
 
   async retrieveUserWithUserName(username: string) {
-    const res = await this.repository.getByUsername(username);
-    if (res.error) {
-      this.logger.warn(res.error);
-      return null;
+    try {
+      const data = await this.repository.getByUsername(username);
+      return data;
+    } catch (e) {
+      // TODO logging task
+      this.logger.warn(e);
     }
-    return res.data;
   }
 
   private readonly users: UserEntity[] = [];
