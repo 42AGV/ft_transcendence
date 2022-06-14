@@ -1,5 +1,6 @@
 {
-  "eslint.workingDirectories": ["webapp", "transcendence-app"],
-  "vim.vimrc.enable": true,
-  "vim.vimrc.path": "/home/cx02791/.ideavimrc"
+  "eslint.workingDirectories": [
+    "webapp",
+    "transcendence-app"
+  ]
 }
