@@ -46,6 +46,7 @@ type IconPropsType = {
   color?: string | undefined;
   size?: number | string | undefined;
   className?: string | undefined;
+  title?: string | undefined;
 };
 
 export function Icon({ type, size, ...restProps }: IconPropsType) {
