@@ -45,9 +45,10 @@ type IconPropsType = {
   type: IconType;
   color?: string | undefined;
   size?: number | string | undefined;
+  className?: string | undefined;
 };
 
-export function Icon({ type, color, size }: IconPropsType) {
+export function Icon({ type, size, ...restProps }: IconPropsType) {
   const IconComponent = Icons[type];
-  return <IconComponent color={color} height={size} width={size} />;
+  return <IconComponent height={size} width={size} {...restProps} />;
 }
