@@ -1,55 +1,51 @@
-import { ReactComponent as IconArrowBack } from './icons/arrow-back.svg';
-import { ReactComponent as IconArrowForward } from './icons/arrow-forward.svg';
-import { ReactComponent as IconChat } from './icons/chat.svg';
-import { ReactComponent as IconEdit } from './icons/edit.svg';
-import { ReactComponent as IconFile } from './icons/file.svg';
-import { ReactComponent as IconLogin } from './icons/login.svg';
-import { ReactComponent as IconLogout } from './icons/logout.svg';
-import { ReactComponent as IconPlay } from './icons/play.svg';
-import { ReactComponent as IconSearch } from './icons/search.svg';
-import { ReactComponent as IconUsers } from './icons/users.svg';
+import { ReactComponent as ArrowBack } from './icons/arrow-back.svg';
+import { ReactComponent as ArrowForward } from './icons/arrow-forward.svg';
+import { ReactComponent as Chat } from './icons/chat.svg';
+import { ReactComponent as Edit } from './icons/edit.svg';
+import { ReactComponent as File } from './icons/file.svg';
+import { ReactComponent as Login } from './icons/login.svg';
+import { ReactComponent as Logout } from './icons/logout.svg';
+import { ReactComponent as Play } from './icons/play.svg';
+import { ReactComponent as Search } from './icons/search.svg';
+import { ReactComponent as Users } from './icons/users.svg';
 
-export enum IconType {
-  ARROW_BACK = 'arrowBack',
-  ARROW_FORWARD = 'arrowForward',
-  CHAT = 'chat',
-  EDIT = 'edit',
-  FILE = 'file',
-  LOGIN = 'login',
-  LOGOUT = 'logout',
-  PLAY = 'play',
-  SEARCH = 'search',
-  USERS = 'users',
-}
+type IconType =
+  | 'ARROW_BACK'
+  | 'ARROW_FORWARD'
+  | 'CHAT'
+  | 'EDIT'
+  | 'FILE'
+  | 'LOGIN'
+  | 'LOGOUT'
+  | 'PLAY'
+  | 'SEARCH'
+  | 'USERS';
 
-type SVGPropsType = React.SVGProps<SVGSVGElement> & {
+type SVGProps = React.SVGProps<SVGSVGElement> & {
   title?: string | undefined;
 };
 
-type IconComponentType = React.FunctionComponent<SVGPropsType>;
+type SVGComponent = React.FunctionComponent<SVGProps>;
 
-const Icons: { [key in IconType]: IconComponentType } = {
-  arrowBack: IconArrowBack,
-  arrowForward: IconArrowForward,
-  chat: IconChat,
-  edit: IconEdit,
-  file: IconFile,
-  login: IconLogin,
-  logout: IconLogout,
-  play: IconPlay,
-  search: IconSearch,
-  users: IconUsers,
+const Icons: { [key in IconType]: SVGComponent } = {
+  ARROW_BACK: ArrowBack,
+  ARROW_FORWARD: ArrowForward,
+  CHAT: Chat,
+  EDIT: Edit,
+  FILE: File,
+  LOGIN: Login,
+  LOGOUT: Logout,
+  PLAY: Play,
+  SEARCH: Search,
+  USERS: Users,
 };
 
-type IconPropsType = {
+type IconProps = Pick<SVGProps, 'color' | 'className' | 'title'> & {
   type: IconType;
-  color?: string | undefined;
-  size?: number | string | undefined;
-  className?: string | undefined;
-  title?: string | undefined;
+  size?: SVGProps['width'];
 };
 
-export function Icon({ type, size, ...restProps }: IconPropsType) {
+export default function Icon({ type, size, ...restProps }: IconProps) {
   const IconComponent = Icons[type];
   return <IconComponent height={size} width={size} {...restProps} />;
 }
