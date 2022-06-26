@@ -41,11 +41,13 @@ const Icons: { [key in IconType]: IconComponentType } = {
   users: IconUsers,
 };
 
-type IconPropsType = SVGPropsType & {
+type IconPropsType = {
   type: IconType;
+  color?: string | undefined;
+  size?: number | string | undefined;
 };
 
-export function Icon({ type, ...restProps }: IconPropsType) {
+export function Icon({ type, color, size }: IconPropsType) {
   const IconComponent = Icons[type];
-  return <IconComponent {...restProps} />;
+  return <IconComponent color={color} height={size} width={size} />;
 }
