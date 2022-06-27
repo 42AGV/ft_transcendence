@@ -40,12 +40,13 @@ const Icons: { [key in IconType]: SVGComponent } = {
   USERS: Users,
 };
 
-type IconProps = Pick<SVGProps, 'color' | 'className' | 'title'> & {
+interface IconProps {
   type: IconType;
-  size?: SVGProps['width'];
-};
+  size?: string | number | undefined;
+  color?: string | undefined;
+}
 
-export default function Icon({ type, size, ...restProps }: IconProps) {
+export default function Icon({ type, color, size }: IconProps) {
   const IconComponent = Icons[type];
-  return <IconComponent height={size} width={size} {...restProps} />;
+  return <IconComponent color={color} height={size} width={size} />;
 }
