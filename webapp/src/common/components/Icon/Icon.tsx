@@ -1,13 +1,13 @@
-import { ReactComponent as ArrowBack } from './icons/arrow-back.svg';
-import { ReactComponent as ArrowForward } from './icons/arrow-forward.svg';
-import { ReactComponent as Chat } from './icons/chat.svg';
-import { ReactComponent as Edit } from './icons/edit.svg';
-import { ReactComponent as File } from './icons/file.svg';
-import { ReactComponent as Login } from './icons/login.svg';
-import { ReactComponent as Logout } from './icons/logout.svg';
-import { ReactComponent as Play } from './icons/play.svg';
-import { ReactComponent as Search } from './icons/search.svg';
-import { ReactComponent as Users } from './icons/users.svg';
+import { ReactComponent as ArrowBack } from './assets/icons/arrow-back.svg';
+import { ReactComponent as ArrowForward } from './assets/icons/arrow-forward.svg';
+import { ReactComponent as Chat } from './assets/icons/chat.svg';
+import { ReactComponent as Edit } from './assets/icons/edit.svg';
+import { ReactComponent as File } from './assets/icons/file.svg';
+import { ReactComponent as Login } from './assets/icons/login.svg';
+import { ReactComponent as Logout } from './assets/icons/logout.svg';
+import { ReactComponent as Play } from './assets/icons/play.svg';
+import { ReactComponent as Search } from './assets/icons/search.svg';
+import { ReactComponent as Users } from './assets/icons/users.svg';
 
 type IconType =
   | 'ARROW_BACK'
