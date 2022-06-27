@@ -33,36 +33,6 @@ body {
   padding: 0;
 }
 
-/* dm-sans-regular - latin */
-@font-face {
-  font-family: 'DM Sans';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('./assets/fonts/dm-sans-v11-latin-regular.woff2') format('woff2'),
-    url('./assets/fonts/dm-sans-v11-latin-regular.woff') format('woff');
-}
-
-/* dm-sans-500 - latin */
-@font-face {
-  font-family: 'DM Sans';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('./assets/fonts/dm-sans-v11-latin-500.woff2') format('woff2'),
-    url('./assets/fonts/dm-sans-v11-latin-500.woff') format('woff');
-}
-
-/* dm-sans-700 - latin */
-@font-face {
-  font-family: 'DM Sans';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('./assets/fonts/dm-sans-v11-latin-700.woff2') format('woff2'),
-    url('./assets/fonts/dm-sans-v11-latin-700.woff') format('woff');
-}
-
 .text-style-0-bold {
   font-size: 3rem;
   font-family: 'DM Sans', sans-serif;
