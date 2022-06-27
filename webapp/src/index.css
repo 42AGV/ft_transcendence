@@ -1,13 +1,118 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import-normalize;
+/* bring in normalize.css styles */
+
+:root {
+  --color-warning: #ff3a6a;
+  --color-submit: #4b52ee;
+  --color-online: #3fc6a2;
+  --color-offline: #dfc04d;
+  --color-light: #ffffff;
+  --color-background: #191b1f;
+  --color-dark: #262934;
+  --color-game: linear-gradient(
+    to bottom,
+    #4b52ee 0%,
+    #fb4e78 64.06%,
+    #3fc6a2 100%
+  );
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* dm-sans-regular - latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/dm-sans-v11-latin-regular.woff2') format('woff2'),
+    url('./assets/fonts/dm-sans-v11-latin-regular.woff') format('woff');
+}
+
+/* dm-sans-500 - latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/dm-sans-v11-latin-500.woff2') format('woff2'),
+    url('./assets/fonts/dm-sans-v11-latin-500.woff') format('woff');
+}
+
+/* dm-sans-700 - latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/dm-sans-v11-latin-700.woff2') format('woff2'),
+    url('./assets/fonts/dm-sans-v11-latin-700.woff') format('woff');
+}
+
+.text-style-text-0-bold {
+  font-size: 3rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+}
+
+.text-style-text-1-bold {
+  font-size: 3rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+}
+
+.text-style-text-2-bold {
+  font-size: 1.5rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+}
+
+.text-style-text-3-bold {
+  font-size: 1.25rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+}
+
+.text-style-text-4-regular {
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+}
+
+.text-style-text-4-medium {
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+}
+
+.text-style-text-4-bold {
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+}
+
+.text-style-text-5-regular {
+  font-size: 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+}
+
+.text-style-text-6-regular {
+  font-size: 0.75rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
 }
