@@ -1,5 +1,5 @@
-@import-normalize;
 /* bring in normalize.css styles */
+@import-normalize;
 
 :root {
   --color-warning: #ff3a6a;
@@ -63,55 +63,55 @@ body {
     url('./assets/fonts/dm-sans-v11-latin-700.woff') format('woff');
 }
 
-.text-style-text-0-bold {
+.text-style-0-bold {
   font-size: 3rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
 }
 
-.text-style-text-1-bold {
+.text-style-1-bold {
   font-size: 3rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
 }
 
-.text-style-text-2-bold {
+.text-style-2-bold {
   font-size: 1.5rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
 }
 
-.text-style-text-3-bold {
+.text-style-3-bold {
   font-size: 1.25rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
 }
 
-.text-style-text-4-regular {
+.text-style-4-regular {
   font-size: 1rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 400;
 }
 
-.text-style-text-4-medium {
+.text-style-4-medium {
   font-size: 1rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
 }
 
-.text-style-text-4-bold {
+.text-style-4-bold {
   font-size: 1rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
 }
 
-.text-style-text-5-regular {
+.text-style-5-regular {
   font-size: 0.875rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 400;
 }
 
-.text-style-text-6-regular {
+.text-style-6-regular {
   font-size: 0.75rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 400;
