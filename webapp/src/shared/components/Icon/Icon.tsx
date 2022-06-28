@@ -1,3 +1,4 @@
+import { Color } from '../../types';
 import { ReactComponent as ArrowBack } from './assets/icons/arrow-back.svg';
 import { ReactComponent as ArrowForward } from './assets/icons/arrow-forward.svg';
 import { ReactComponent as Chat } from './assets/icons/chat.svg';
@@ -40,22 +41,12 @@ const Icons: { [key in Type]: SVGComponent } = {
   USERS: Users,
 };
 
-type Size = '24px' | '48px' | undefined;
-
-type Color =
-  | '--color-warning'
-  | '--color-submit'
-  | '--color-online'
-  | '--color-offline'
-  | '--color-light'
-  | '--color-background'
-  | '--color-dark'
-  | undefined;
+type Size = '24px' | '48px';
 
 interface IconProps {
   type: Type;
-  size?: Size;
-  color?: Color;
+  size?: Size | undefined;
+  color?: Color | undefined;
 }
 
 export default function Icon({ type, color, size }: IconProps) {
