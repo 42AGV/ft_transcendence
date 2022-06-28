@@ -1,4 +1,4 @@
-import { Color } from '../../types';
+import { Color } from '../../types/colors';
 import { ReactComponent as ArrowBack } from './assets/icons/arrow-back.svg';
 import { ReactComponent as ArrowForward } from './assets/icons/arrow-forward.svg';
 import { ReactComponent as Chat } from './assets/icons/chat.svg';
