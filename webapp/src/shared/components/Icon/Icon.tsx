@@ -9,7 +9,7 @@ import { ReactComponent as Play } from './assets/icons/play.svg';
 import { ReactComponent as Search } from './assets/icons/search.svg';
 import { ReactComponent as Users } from './assets/icons/users.svg';
 
-type IconType =
+type Type =
   | 'ARROW_BACK'
   | 'ARROW_FORWARD'
   | 'CHAT'
@@ -27,7 +27,7 @@ type SVGProps = React.SVGProps<SVGSVGElement> & {
 
 type SVGComponent = React.FunctionComponent<SVGProps>;
 
-const Icons: { [key in IconType]: SVGComponent } = {
+const Icons: { [key in Type]: SVGComponent } = {
   ARROW_BACK: ArrowBack,
   ARROW_FORWARD: ArrowForward,
   CHAT: Chat,
@@ -40,13 +40,31 @@ const Icons: { [key in IconType]: SVGComponent } = {
   USERS: Users,
 };
 
+type Size = '24px' | '48px' | undefined;
+
+type Color =
+  | '--color-warning'
+  | '--color-submit'
+  | '--color-online'
+  | '--color-offline'
+  | '--color-light'
+  | '--color-background'
+  | '--color-dark'
+  | undefined;
+
 interface IconProps {
-  type: IconType;
-  size?: string | number | undefined;
-  color?: string | undefined;
+  type: Type;
+  size?: Size;
+  color?: Color;
 }
 
 export default function Icon({ type, color, size }: IconProps) {
   const IconComponent = Icons[type];
-  return <IconComponent color={color} height={size} width={size} />;
+  return (
+    <IconComponent
+      style={{ color: `var(${color})` }}
+      height={size}
+      width={size}
+    />
+  );
 }
