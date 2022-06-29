@@ -1,4 +1,4 @@
-import { Color } from '../../types/colors';
+import { Color } from '../../types';
 import {
   ArrowBack,
   ArrowForward,
@@ -12,17 +12,18 @@ import {
   Users,
 } from './assets/icons';
 
-type Type =
-  | 'ARROW_BACK'
-  | 'ARROW_FORWARD'
-  | 'CHAT'
-  | 'EDIT'
-  | 'FILE'
-  | 'LOGIN'
-  | 'LOGOUT'
-  | 'PLAY'
-  | 'SEARCH'
-  | 'USERS';
+export enum IconType {
+  ARROW_BACK = 'ARROW_BACK',
+  ARROW_FORWARD = 'ARROW_FORWARD',
+  CHAT = 'CHAT',
+  EDIT = 'EDIT',
+  FILE = 'FILE',
+  LOGIN = 'LOGIN',
+  LOGOUT = 'LOGOUT',
+  PLAY = 'PLAY',
+  SEARCH = 'SEARCH',
+  USERS = 'USERS',
+}
 
 type SVGProps = React.SVGProps<SVGSVGElement> & {
   title?: string | undefined;
@@ -30,7 +31,7 @@ type SVGProps = React.SVGProps<SVGSVGElement> & {
 
 type SVGComponent = React.FunctionComponent<SVGProps>;
 
-const Icons: { [key in Type]: SVGComponent } = {
+const Icons: { [key in IconType]: SVGComponent } = {
   ARROW_BACK: ArrowBack,
   ARROW_FORWARD: ArrowForward,
   CHAT: Chat,
@@ -43,21 +44,20 @@ const Icons: { [key in Type]: SVGComponent } = {
   USERS: Users,
 };
 
-type Size = '24px' | '48px';
+export enum IconSize {
+  SMALL = '24px',
+  LARGE = '48px',
+}
 
 type IconProps = {
-  type: Type;
-  size?: Size | undefined;
+  type: IconType;
+  size?: IconSize | undefined;
   color?: Color | undefined;
 };
 
 export default function Icon({ type, color, size }: IconProps) {
-  const IconComponent = Icons[type];
+  const NameTag = Icons[type];
   return (
-    <IconComponent
-      style={{ color: `var(${color})` }}
-      height={size}
-      width={size}
-    />
+    <NameTag style={{ color: `var(${color})` }} height={size} width={size} />
   );
 }
