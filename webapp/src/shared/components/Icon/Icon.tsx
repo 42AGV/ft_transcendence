@@ -1,14 +1,16 @@
 import { Color } from '../../types/colors';
-import { ReactComponent as ArrowBack } from './assets/icons/arrow-back.svg';
-import { ReactComponent as ArrowForward } from './assets/icons/arrow-forward.svg';
-import { ReactComponent as Chat } from './assets/icons/chat.svg';
-import { ReactComponent as Edit } from './assets/icons/edit.svg';
-import { ReactComponent as File } from './assets/icons/file.svg';
-import { ReactComponent as Login } from './assets/icons/login.svg';
-import { ReactComponent as Logout } from './assets/icons/logout.svg';
-import { ReactComponent as Play } from './assets/icons/play.svg';
-import { ReactComponent as Search } from './assets/icons/search.svg';
-import { ReactComponent as Users } from './assets/icons/users.svg';
+import {
+  ArrowBack,
+  ArrowForward,
+  Chat,
+  Edit,
+  File,
+  Login,
+  Logout,
+  Play,
+  Search,
+  Users,
+} from './assets/icons';
 
 type Type =
   | 'ARROW_BACK'
@@ -43,11 +45,11 @@ const Icons: { [key in Type]: SVGComponent } = {
 
 type Size = '24px' | '48px';
 
-interface IconProps {
+type IconProps = {
   type: Type;
   size?: Size | undefined;
   color?: Color | undefined;
-}
+};
 
 export default function Icon({ type, color, size }: IconProps) {
   const IconComponent = Icons[type];
