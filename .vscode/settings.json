@@ -2,5 +2,6 @@
   "eslint.workingDirectories": [
     "webapp",
     "transcendence-app"
-  ]
+  ],
+  "css.lint.unknownAtRules": "ignore"
 }
