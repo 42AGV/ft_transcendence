@@ -1,4 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { create } from 'react-test-renderer';
+import { Color } from '../../../types';
 import Text, { TextSize, TextWeight } from '../Text';
 
 test('renders default text', () => {
@@ -25,4 +27,22 @@ test('renders custom text', () => {
     fontSize: TextSize.EXTRA_LARGE,
     fontWeight: TextWeight.BOLD,
   });
+});
+
+test('renders correctly with default text', () => {
+  const tree = create(<Text>Hello World!</Text>).toJSON();
+  expect(tree).toMatchSnapshot();
+});
+
+test('renders correctly with custom text', () => {
+  const tree = create(
+    <Text
+      size={TextSize.EXTRA_LARGE}
+      color={Color.LIGHT}
+      weight={TextWeight.BOLD}
+    >
+      Hello World!
+    </Text>,
+  ).toJSON();
+  expect(tree).toMatchSnapshot();
 });

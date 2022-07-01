@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with custom text 1`] = `
+<div
+  style={
+    Object {
+      "color": "var(--color-light)",
+      "fontSize": "3rem",
+      "fontWeight": "700",
+    }
+  }
+>
+  Hello World!
+</div>
+`;
+
+exports[`renders correctly with default text 1`] = `
+<div
+  style={
+    Object {
+      "color": "var(--color-dark)",
+      "fontSize": "1.25rem",
+      "fontWeight": "400",
+    }
+  }
+>
+  Hello World!
+</div>
+`;
