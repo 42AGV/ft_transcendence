@@ -1,4 +1,11 @@
-import { Icon, IconSize, IconType } from '../../shared/components';
+import {
+  Icon,
+  IconSize,
+  IconType,
+  Text,
+  TextSize,
+  TextWeight,
+} from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
 
@@ -7,10 +14,16 @@ export default function Landing() {
     <section className="Landing">
       <Icon
         type={IconType.PLAY}
-        color={Color.LIGHT}
+        color={Color.ONLINE}
         size={IconSize.LARGE}
       ></Icon>
-      <h1 className="text-style-0-bold">Landing 🚀</h1>
+      <Text
+        size={TextSize.LARGE}
+        color={Color.ONLINE}
+        weight={TextWeight.MEDIUM}
+      >
+        Landing 🚀
+      </Text>
     </section>
   );
 }
