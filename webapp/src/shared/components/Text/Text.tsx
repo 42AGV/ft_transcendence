@@ -8,14 +8,14 @@ export enum TextType {
 }
 
 export enum TextColor {
-  WARNING = 'Text-warning',
-  SUBMIT = 'Text-submit',
-  ONLINE = 'Text-online',
-  OFFLINE = 'Text-offline',
-  LIGHT = 'Text-light',
-  BACKGROUND = 'Text-background',
-  DARK = 'Text-dark',
-  GAME = 'Text-game',
+  WARNING = 'text-warning',
+  SUBMIT = 'text-submit',
+  ONLINE = 'text-online',
+  OFFLINE = 'text-offline',
+  LIGHT = 'text-light',
+  BACKGROUND = 'text-background',
+  DARK = 'text-dark',
+  GAME = 'text-game',
 }
 
 export enum TextSize {

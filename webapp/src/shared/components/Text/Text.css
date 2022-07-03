@@ -1,32 +1,32 @@
-.Text-warning {
+.text-warning {
   color: var(--color-warning);
 }
 
-.Text-submit {
+.text-submit {
   color: var(--color-submit);
 }
 
-.Text-online {
+.text-online {
   color: var(--color-online);
 }
 
-.Text-offline {
+.text-offline {
   color: var(--color-offline);
 }
 
-.Text-light {
+.text-light {
   color: var(--color-light);
 }
 
-.Text-background {
+.text-background {
   color: var(--color-background);
 }
 
-.Text-dark {
+.text-dark {
   color: var(--color-dark);
 }
 
-.Text-game {
+.text-game {
   background: var(--gradient-game);
   background-clip: text;
   -webkit-background-clip: text;

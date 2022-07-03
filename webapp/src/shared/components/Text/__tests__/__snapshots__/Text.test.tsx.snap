@@ -2,7 +2,7 @@
 
 exports[`renders correctly with custom text 1`] = `
 <h3
-  className="Text-light"
+  className="text-light"
   style={
     Object {
       "fontSize": "3rem",
@@ -16,7 +16,7 @@ exports[`renders correctly with custom text 1`] = `
 
 exports[`renders correctly with default text 1`] = `
 <h3
-  className="Text-dark"
+  className="text-dark"
   style={
     Object {
       "fontSize": "1.25rem",
