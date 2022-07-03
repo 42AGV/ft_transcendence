@@ -1,5 +1,12 @@
 import './Text.css';
 
+export enum TextType {
+  HEADER = 'h1',
+  TITLE = 'h3',
+  SUBTITLE = 'h5',
+  DESCRIPTION = 'p',
+}
+
 export enum TextColor {
   WARNING = 'Text-warning',
   SUBMIT = 'Text-submit',
@@ -29,20 +36,24 @@ export enum TextWeight {
 
 type TextProps = {
   children: string;
+  type: TextType;
   color?: TextColor;
   size?: TextSize;
   weight?: TextWeight;
 };
 
 export default function Text({
+  type,
   size = TextSize.MEDIUM,
   color = TextColor.DARK,
   weight = TextWeight.REGULAR,
   children,
 }: TextProps) {
+  const TextTag = type as React.ElementType;
+
   return (
-    <div style={{ fontSize: size, fontWeight: weight }} className={color}>
+    <TextTag style={{ fontSize: size, fontWeight: weight }} className={color}>
       {children}
-    </div>
+    </TextTag>
   );
 }

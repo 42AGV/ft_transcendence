@@ -5,6 +5,7 @@ import {
   Text,
   TextColor,
   TextSize,
+  TextType,
   TextWeight,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
@@ -19,6 +20,7 @@ export default function Landing() {
         size={IconSize.LARGE}
       ></Icon>
       <Text
+        type={TextType.HEADER}
         size={TextSize.LARGE}
         color={TextColor.GAME}
         weight={TextWeight.MEDIUM}
