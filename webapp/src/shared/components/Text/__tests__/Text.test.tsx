@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { create } from 'react-test-renderer';
-import { Color } from '../../../types';
-import Text, { TextSize, TextWeight } from '../Text';
+import Text, { TextColor, TextSize, TextWeight } from '../Text';
 
 test('renders default text', () => {
   render(<Text>Hello World!</Text>);
@@ -38,7 +37,7 @@ test('renders correctly with custom text', () => {
   const tree = create(
     <Text
       size={TextSize.EXTRA_LARGE}
-      color={Color.LIGHT}
+      color={TextColor.LIGHT}
       weight={TextWeight.BOLD}
     >
       Hello World!

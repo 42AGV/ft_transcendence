@@ -2,9 +2,9 @@
 
 exports[`renders correctly with custom text 1`] = `
 <div
+  className="Text-light"
   style={
     Object {
-      "color": "var(--color-light)",
       "fontSize": "3rem",
       "fontWeight": "700",
     }
@@ -16,9 +16,9 @@ exports[`renders correctly with custom text 1`] = `
 
 exports[`renders correctly with default text 1`] = `
 <div
+  className="Text-dark"
   style={
     Object {
-      "color": "var(--color-dark)",
       "fontSize": "1.25rem",
       "fontWeight": "400",
     }
