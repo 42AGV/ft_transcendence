@@ -1,4 +1,15 @@
-import { Color } from '../../types';
+import './Text.css';
+
+export enum TextColor {
+  WARNING = 'Text-warning',
+  SUBMIT = 'Text-submit',
+  ONLINE = 'Text-online',
+  OFFLINE = 'Text-offline',
+  LIGHT = 'Text-light',
+  BACKGROUND = 'Text-background',
+  DARK = 'Text-dark',
+  GAME = 'Text-game',
+}
 
 export enum TextSize {
   EXTRA_SMALL = '0.75rem',
@@ -18,19 +29,19 @@ export enum TextWeight {
 
 type TextProps = {
   children: string;
+  color?: TextColor;
   size?: TextSize;
-  color?: Color;
   weight?: TextWeight;
 };
 
 export default function Text({
   size = TextSize.MEDIUM,
-  color = Color.DARK,
+  color = TextColor.DARK,
   weight = TextWeight.REGULAR,
   children,
 }: TextProps) {
   return (
-    <div style={{ fontSize: size, color: `var(${color})`, fontWeight: weight }}>
+    <div style={{ fontSize: size, fontWeight: weight }} className={color}>
       {children}
     </div>
   );

@@ -3,6 +3,7 @@ import {
   IconSize,
   IconType,
   Text,
+  TextColor,
   TextSize,
   TextWeight,
 } from '../../shared/components';
@@ -19,7 +20,7 @@ export default function Landing() {
       ></Icon>
       <Text
         size={TextSize.LARGE}
-        color={Color.ONLINE}
+        color={TextColor.GAME}
         weight={TextWeight.MEDIUM}
       >
         Landing 🚀

@@ -1,0 +1,34 @@
+.Text-warning {
+  color: var(--color-warning);
+}
+
+.Text-submit {
+  color: var(--color-submit);
+}
+
+.Text-online {
+  color: var(--color-online);
+}
+
+.Text-offline {
+  color: var(--color-offline);
+}
+
+.Text-light {
+  color: var(--color-light);
+}
+
+.Text-background {
+  color: var(--color-background);
+}
+
+.Text-dark {
+  color: var(--color-dark);
+}
+
+.Text-game {
+  background: var(--gradient-game);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

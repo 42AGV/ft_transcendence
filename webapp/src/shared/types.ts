@@ -6,5 +6,4 @@ export enum Color {
   LIGHT = '--color-light',
   BACKGROUND = '--color-background',
   DARK = '--color-dark',
-  GAME = '--color-game',
 }
