@@ -1,0 +1,36 @@
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+.status-icon {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+}
+
+.status-icon-offline {
+  background: var(--color-offline);
+}
+
+.status-icon-online,
+.status-icon-playing {
+  background: var(--color-online);
+}
+
+.status-text-offline {
+  color: var(--color-offline);
+}
+
+.status-text-online {
+  color: var(--color-online);
+}
+
+.status-text-playing {
+  background: var(--color-game);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
