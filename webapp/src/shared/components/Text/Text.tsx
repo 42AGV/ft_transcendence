@@ -1,10 +1,14 @@
 import './Text.css';
 
-export enum TextType {
-  HEADER = 'h1',
-  TITLE = 'h3',
-  SUBTITLE = 'h5',
-  DESCRIPTION = 'p',
+export class TextVariant {
+  public static TITLE = new TextVariant('h1', '3rem');
+  public static SUBTITLE = new TextVariant('h2', '2.5rem');
+  public static HEADING = new TextVariant('h3', '1.5rem');
+  public static SUBHEADING = new TextVariant('h4', '1.25rem');
+  public static PARAGRAPH = new TextVariant('p', '1rem');
+  public static CAPTION = new TextVariant('p', '0.875rem');
+
+  private constructor(public tag: string, public size: string) {}
 }
 
 export enum TextColor {
@@ -18,16 +22,6 @@ export enum TextColor {
   GAME = 'text-game',
 }
 
-export enum TextSize {
-  EXTRA_SMALL = '0.75rem',
-  SMALL = '0.875rem',
-  SMALL_MEDIUM = '1rem',
-  MEDIUM = '1.25rem',
-  MEDIUM_LARGE = '1.5rem',
-  LARGE = '2.5rem',
-  EXTRA_LARGE = '3rem',
-}
-
 export enum TextWeight {
   REGULAR = '400',
   MEDIUM = '500',
@@ -35,21 +29,20 @@ export enum TextWeight {
 }
 
 type TextProps = {
-  children: string;
-  type: TextType;
+  variant: TextVariant;
   color?: TextColor;
-  size?: TextSize;
   weight?: TextWeight;
+  children: string;
 };
 
 export default function Text({
-  type,
-  size = TextSize.MEDIUM,
+  variant,
   color = TextColor.DARK,
   weight = TextWeight.REGULAR,
   children,
 }: TextProps) {
-  const TextTag = type as React.ElementType;
+  const { tag, size } = variant;
+  const TextTag = tag as React.ElementType;
 
   return (
     <TextTag style={{ fontSize: size, fontWeight: weight }} className={color}>

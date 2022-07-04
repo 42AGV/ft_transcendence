@@ -36,56 +36,50 @@ body {
   padding: 0;
 }
 
-.text-style-0-bold {
+.title-bold {
   font-size: 3rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
-.text-style-1-bold {
+.subtitle-bold {
   font-size: 2.5rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
-.text-style-2-bold {
+.heading-bold {
   font-size: 1.5rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
-.text-style-3-bold {
+.subheading-bold {
   font-size: 1.25rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
-.text-style-4-regular {
+.paragraph-regular {
   font-size: 1rem;
   font-family: var(--primary-font);
   font-weight: 400;
 }
 
-.text-style-4-medium {
+.paragraph-medium {
   font-size: 1rem;
   font-family: var(--primary-font);
   font-weight: 500;
 }
 
-.text-style-4-bold {
+.paragraph-bold {
   font-size: 1rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
-.text-style-5-regular {
+.caption-regular {
   font-size: 0.875rem;
-  font-family: var(--primary-font);
-  font-weight: 400;
-}
-
-.text-style-6-regular {
-  font-size: 0.75rem;
   font-family: var(--primary-font);
   font-weight: 400;
 }

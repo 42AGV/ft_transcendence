@@ -1,11 +1,10 @@
 import {
   Icon,
   IconSize,
-  IconType,
+  IconVariant,
   Text,
   TextColor,
-  TextSize,
-  TextType,
+  TextVariant,
   TextWeight,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
@@ -15,13 +14,12 @@ export default function Landing() {
   return (
     <section className="Landing">
       <Icon
-        type={IconType.PLAY}
+        variant={IconVariant.PLAY}
         color={Color.ONLINE}
         size={IconSize.LARGE}
       ></Icon>
       <Text
-        type={TextType.HEADER}
-        size={TextSize.LARGE}
+        variant={TextVariant.TITLE}
         color={TextColor.GAME}
         weight={TextWeight.MEDIUM}
       >
