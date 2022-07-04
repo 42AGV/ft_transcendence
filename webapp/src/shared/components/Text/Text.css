@@ -1,32 +1,4 @@
-.text-warning {
-  color: var(--color-warning);
-}
-
-.text-submit {
-  color: var(--color-submit);
-}
-
-.text-online {
-  color: var(--color-online);
-}
-
-.text-offline {
-  color: var(--color-offline);
-}
-
-.text-light {
-  color: var(--color-light);
-}
-
-.text-background {
-  color: var(--color-background);
-}
-
-.text-dark {
-  color: var(--color-dark);
-}
-
-.text-game {
+.text-color-game {
   background: var(--gradient-game);
   background-clip: text;
   -webkit-background-clip: text;

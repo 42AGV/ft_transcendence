@@ -36,6 +36,7 @@ body {
   padding: 0;
 }
 
+/* text styles */
 .title-bold {
   font-size: 3rem;
   font-family: var(--primary-font);
@@ -82,4 +83,33 @@ body {
   font-size: 0.875rem;
   font-family: var(--primary-font);
   font-weight: 400;
+}
+
+/* colors */
+.color-warning {
+  color: var(--color-warning);
+}
+
+.color-submit {
+  color: var(--color-submit);
+}
+
+.color-online {
+  color: var(--color-online);
+}
+
+.color-offline {
+  color: var(--color-offline);
+}
+
+.color-light {
+  color: var(--color-light);
+}
+
+.color-background {
+  color: var(--color-background);
+}
+
+.color-dark {
+  color: var(--color-dark);
 }

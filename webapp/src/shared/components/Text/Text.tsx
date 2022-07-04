@@ -1,3 +1,4 @@
+import { Color } from '../../types';
 import './Text.css';
 
 export class TextVariant {
@@ -11,16 +12,13 @@ export class TextVariant {
   private constructor(public tag: string, public size: string) {}
 }
 
-export enum TextColor {
-  WARNING = 'text-warning',
-  SUBMIT = 'text-submit',
-  ONLINE = 'text-online',
-  OFFLINE = 'text-offline',
-  LIGHT = 'text-light',
-  BACKGROUND = 'text-background',
-  DARK = 'text-dark',
-  GAME = 'text-game',
+enum CustomTextColor {
+  GAME = 'text-color-game',
 }
+
+type TextColor = Color | CustomTextColor;
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- intentionally naming the variable the same as the type
+export const TextColor = { ...Color, ...CustomTextColor };
 
 export enum TextWeight {
   REGULAR = '400',
