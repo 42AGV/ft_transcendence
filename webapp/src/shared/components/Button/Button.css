@@ -1,0 +1,27 @@
+.button {
+  width: 312px;
+  height: 58px;
+  border-radius: 8px;
+  color: var(--color-light);
+  border: 0;
+  align-items: center;
+  cursor: pointer;
+}
+.button-warning {
+  background: var(--color-warning);
+}
+
+.button-submit {
+  background: var(--color-submit);
+}
+
+.button-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.button-icon {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 0px 15px;
+}
