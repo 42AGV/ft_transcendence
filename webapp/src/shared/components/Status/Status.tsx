@@ -1,8 +1,6 @@
 import './Status.css';
 
-type BaseStatusProps = {};
-
-type DefaultStatusProps = {
+type NoStatusProps = {
   offline?: never;
   online?: never;
   playing?: never;
@@ -26,13 +24,11 @@ type PlayingStatusProps = {
   playing: boolean;
 };
 
-type StatusProps = BaseStatusProps &
-  (
-    | DefaultStatusProps
-    | OfflineStatusProps
-    | OnlineStatusProps
-    | PlayingStatusProps
-  );
+type StatusProps =
+  | NoStatusProps
+  | OfflineStatusProps
+  | OnlineStatusProps
+  | PlayingStatusProps;
 
 const createVariant = (variant: { [key: string]: boolean }): string => {
   for (const [key, value] of Object.entries(variant)) {
@@ -52,7 +48,7 @@ export default function Status({
 
   return (
     <div className="status">
-      <div className={`status-icon status-icon-${variant}`}></div>
+      <div className={`status-icon status-icon-${variant}`} />
       <div className={`status-text-${variant} caption-regular`}>{variant}</div>
     </div>
   );
