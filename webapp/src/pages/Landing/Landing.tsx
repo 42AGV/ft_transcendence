@@ -1,5 +1,13 @@
-import { Icon, IconSize, IconType } from '../../shared/components';
-import Status from '../../shared/components/Status/Status';
+import {
+  Icon,
+  IconSize,
+  IconVariant,
+  Status,
+  Text,
+  TextColor,
+  TextVariant,
+  TextWeight,
+} from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
 
@@ -7,8 +15,18 @@ export default function Landing() {
   return (
     <section className="landing">
       <Status playing />
-      <Icon type={IconType.PLAY} color={Color.LIGHT} size={IconSize.LARGE} />
-      <h1 className="text-style-0-bold">Landing 🚀</h1>
+      <Icon
+        variant={IconVariant.PLAY}
+        color={Color.ONLINE}
+        size={IconSize.LARGE}
+      ></Icon>
+      <Text
+        variant={TextVariant.TITLE}
+        color={TextColor.GAME}
+        weight={TextWeight.MEDIUM}
+      >
+        Landing 🚀
+      </Text>
     </section>
   );
 }

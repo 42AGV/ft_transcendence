@@ -53,9 +53,7 @@ export default function Status({
   return (
     <div className="status">
       <div className={`status-icon status-icon-${variant}`}></div>
-      <div className={`status-text-${variant} text-style-5-regular`}>
-        {variant}
-      </div>
+      <div className={`status-text-${variant} caption-regular`}>{variant}</div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import {
   Users,
 } from './assets/icons';
 
-export enum IconType {
+export enum IconVariant {
   ARROW_BACK = 'ARROW_BACK',
   ARROW_FORWARD = 'ARROW_FORWARD',
   CHAT = 'CHAT',
@@ -31,7 +31,7 @@ type SVGProps = React.SVGProps<SVGSVGElement> & {
 
 type SVGComponent = React.FunctionComponent<SVGProps>;
 
-const Icons: { [key in IconType]: SVGComponent } = {
+const Icons: { [key in IconVariant]: SVGComponent } = {
   ARROW_BACK: ArrowBack,
   ARROW_FORWARD: ArrowForward,
   CHAT: Chat,
@@ -50,14 +50,12 @@ export enum IconSize {
 }
 
 type IconProps = {
-  type: IconType;
+  variant: IconVariant;
   size?: IconSize | undefined;
   color?: Color | undefined;
 };
 
-export default function Icon({ type, color, size }: IconProps) {
-  const NameTag = Icons[type];
-  return (
-    <NameTag style={{ color: `var(${color})` }} height={size} width={size} />
-  );
+export default function Icon({ variant, color, size }: IconProps) {
+  const IconTag = Icons[variant];
+  return <IconTag className={color} height={size} width={size} />;
 }
