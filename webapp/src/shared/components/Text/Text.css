@@ -1,0 +1,6 @@
+.text-color-game {
+  background: var(--gradient-game);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
