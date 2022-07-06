@@ -4,8 +4,18 @@
   border-radius: 8px;
   color: var(--color-light);
   border: 0;
+  position: relative;
   align-items: center;
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .button-warning {
   background: var(--color-warning);
@@ -15,13 +25,8 @@
   background: var(--color-submit);
 }
 
-.button-disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
 .button-icon {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  padding: 0px 15px;
+  display: flex;
+  position: absolute;
+  left: 20px;
 }

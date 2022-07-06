@@ -1,6 +1,6 @@
 import {
   Button,
-  ButtonTypes,
+  ButtonVariant,
   Icon,
   IconSize,
   IconType,
@@ -22,22 +22,22 @@ export default function Landing() {
   };
   return (
     <section className="Landing">
-      <Button buttonType={ButtonTypes.SUBMIT} action={btn_action}>
+      <Button variant={ButtonVariant.SUBMIT} onClick={btn_action}>
         ALERT
       </Button>
-      <Button buttonType={ButtonTypes.WARNING} buttonIcon={btn_icon} disabled>
+      <Button variant={ButtonVariant.WARNING} icon={btn_icon} disabled>
         LOGOUT BUTTON
       </Button>
       <Button
-        buttonType={ButtonTypes.SUBMIT}
-        buttonIcon={
+        variant={ButtonVariant.SUBMIT}
+        icon={
           <Icon
             type={IconType.ARROW_FORWARD}
             color={Color.DARK}
             size={IconSize.SMALL}
           ></Icon>
         }
-        action={btn_link}
+        onClick={btn_link}
       >
         To Google
       </Button>

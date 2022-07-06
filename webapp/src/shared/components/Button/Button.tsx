@@ -1,42 +1,38 @@
-import { ReactNode } from 'react';
 import './Button.css';
 
-export enum ButtonTypes {
+export enum ButtonVariant {
   SUBMIT = 'submit',
   WARNING = 'warning',
 }
 
-type Buttonprops = {
-  buttonType: ButtonTypes;
-  buttonIcon?: JSX.Element;
-  action?: () => void;
+type ButtonProps = {
+  variant: ButtonVariant;
+  icon?: JSX.Element;
+  onClick?: () => void;
   disabled?: boolean;
-  children: ReactNode;
+  children: string;
 };
 
 export default function Button({
-  buttonType,
-  buttonIcon,
-  action,
+  variant,
+  icon,
+  onClick,
   disabled = false,
   children,
-}: Buttonprops) {
-  let buttonClassName = 'button text-style-3-bold';
-  if (buttonType === ButtonTypes.SUBMIT) {
-    buttonClassName += ' button-submit';
-  } else if (buttonType === ButtonTypes.WARNING) {
-    buttonClassName += ' button-warning';
-  }
-  if (buttonIcon) {
-    buttonClassName += ' button-icon';
-  }
-  if (disabled) {
-    buttonClassName += ' button-disabled';
+}: ButtonProps) {
+  let className = 'button text-style-3-bold';
+  className += ` button-${variant}`;
+  if (icon) {
+    className += ' button-icon';
   }
 
   return (
-    <button className={buttonClassName} disabled={disabled} onClick={action}>
-      {buttonIcon}
+    <button
+      className={`button text-style-3-bold button-${variant}`}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      {icon && <div className="button-icon">{icon}</div>}
       {children}
     </button>
   );
