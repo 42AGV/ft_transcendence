@@ -20,15 +20,9 @@ export default function Button({
   disabled = false,
   children,
 }: ButtonProps) {
-  let className = 'button text-style-3-bold';
-  className += ` button-${variant}`;
-  if (icon) {
-    className += ' button-icon';
-  }
-
   return (
     <button
-      className={`button text-style-3-bold button-${variant}`}
+      className={`button subheading-bold button-${variant}`}
       disabled={disabled}
       onClick={onClick}
     >
