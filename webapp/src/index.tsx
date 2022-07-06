@@ -2,13 +2,19 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Landing } from './pages';
+import { Landing, Users } from './pages';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <Landing />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/users" element={<Users />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
 );
 

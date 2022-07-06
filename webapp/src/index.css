@@ -20,6 +20,13 @@
   --primary-font: 'DM Sans', sans-serif;
 }
 
+/* Styles for viewports wider than 768 pixels. */
+@media (min-width: 768px) {
+  :root {
+    font-size: 120%;
+  }
+}
+
 html {
   box-sizing: border-box;
 }
