@@ -3,7 +3,11 @@ import {
   ButtonVariant,
   Icon,
   IconSize,
-  IconType,
+  IconVariant,
+  Text,
+  TextColor,
+  TextVariant,
+  TextWeight,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
@@ -11,7 +15,7 @@ import './Landing.css';
 export default function Landing() {
   const btn_icon = (
     <Icon
-      type={IconType.LOGOUT}
+      variant={IconVariant.LOGOUT}
       color={Color.LIGHT}
       size={IconSize.SMALL}
     ></Icon>
@@ -32,7 +36,7 @@ export default function Landing() {
         variant={ButtonVariant.SUBMIT}
         icon={
           <Icon
-            type={IconType.ARROW_FORWARD}
+            variant={IconVariant.ARROW_FORWARD}
             color={Color.DARK}
             size={IconSize.SMALL}
           ></Icon>
@@ -41,7 +45,18 @@ export default function Landing() {
       >
         To Google
       </Button>
-      <h1 className="text-style-0-bold">Landing 🚀</h1>
+      <Icon
+        variant={IconVariant.PLAY}
+        color={Color.ONLINE}
+        size={IconSize.LARGE}
+      ></Icon>
+      <Text
+        variant={TextVariant.TITLE}
+        color={TextColor.GAME}
+        weight={TextWeight.MEDIUM}
+      >
+        Landing 🚀
+      </Text>
     </section>
   );
 }

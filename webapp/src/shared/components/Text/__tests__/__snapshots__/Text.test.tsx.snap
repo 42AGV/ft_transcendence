@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with custom text 1`] = `
+<h1
+  className="color-light"
+  style={
+    Object {
+      "fontSize": "3rem",
+      "fontWeight": "700",
+    }
+  }
+>
+  Hello World!
+</h1>
+`;
+
+exports[`renders correctly with default text 1`] = `
+<h1
+  className="color-dark"
+  style={
+    Object {
+      "fontSize": "3rem",
+      "fontWeight": "400",
+    }
+  }
+>
+  Hello World!
+</h1>
+`;
