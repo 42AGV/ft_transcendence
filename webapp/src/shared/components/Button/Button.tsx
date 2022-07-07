@@ -1,3 +1,4 @@
+import Icon, { IconVariant, IconSize } from '../Icon/Icon';
 import './Button.css';
 
 export enum ButtonVariant {
@@ -7,7 +8,7 @@ export enum ButtonVariant {
 
 type ButtonProps = {
   variant: ButtonVariant;
-  icon?: JSX.Element;
+  iconVariant?: IconVariant;
   onClick?: () => void;
   disabled?: boolean;
   children: string;
@@ -15,7 +16,7 @@ type ButtonProps = {
 
 export default function Button({
   variant,
-  icon,
+  iconVariant,
   onClick,
   disabled = false,
   children,
@@ -26,7 +27,11 @@ export default function Button({
       disabled={disabled}
       onClick={onClick}
     >
-      {icon && <div className="button-icon">{icon}</div>}
+      {iconVariant && (
+        <div className="button-icon">
+          {<Icon variant={iconVariant} size={IconSize.SMALL}></Icon>}
+        </div>
+      )}
       {children}
     </button>
   );

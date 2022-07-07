@@ -13,13 +13,6 @@ import { Color } from '../../shared/types';
 import './Landing.css';
 
 export default function Landing() {
-  const btn_icon = (
-    <Icon
-      variant={IconVariant.LOGOUT}
-      color={Color.LIGHT}
-      size={IconSize.SMALL}
-    ></Icon>
-  );
   const btn_action = (): void => alert('This is an alert');
   const btn_link = (): void => {
     window.location.href = 'http://google.com';
@@ -29,18 +22,16 @@ export default function Landing() {
       <Button variant={ButtonVariant.SUBMIT} onClick={btn_action}>
         ALERT
       </Button>
-      <Button variant={ButtonVariant.WARNING} icon={btn_icon} disabled>
+      <Button
+        variant={ButtonVariant.WARNING}
+        iconVariant={IconVariant.LOGOUT}
+        disabled
+      >
         LOGOUT BUTTON
       </Button>
       <Button
         variant={ButtonVariant.SUBMIT}
-        icon={
-          <Icon
-            variant={IconVariant.ARROW_FORWARD}
-            color={Color.DARK}
-            size={IconSize.SMALL}
-          ></Icon>
-        }
+        iconVariant={IconVariant.ARROW_FORWARD}
         onClick={btn_link}
       >
         To Google
