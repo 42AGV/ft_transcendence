@@ -18,5 +18,12 @@ export default function Input({
   iconVariant,
   input,
 }: InputProps) {
-  return <form className="input-form"></form>;
+  return (
+    <form className="input-form">
+      <label>
+        {label}
+        <input type="text" />
+      </label>
+    </form>
+  );
 }

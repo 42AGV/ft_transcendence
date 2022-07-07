@@ -2,6 +2,8 @@ import {
   Icon,
   IconSize,
   IconVariant,
+  Input,
+  InputColor,
   Text,
   TextColor,
   TextVariant,
