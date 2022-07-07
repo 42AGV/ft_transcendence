@@ -49,7 +49,7 @@ export default function Status({
   return (
     <div className="status">
       <div className={`status-icon status-icon-${variant}`} />
-      <div className={`status-text-${variant} caption-regular`}>{variant}</div>
+      <div className={`text-color-${variant} caption-regular`}>{variant}</div>
     </div>
   );
 }

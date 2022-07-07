@@ -19,18 +19,3 @@
 .status-icon-playing {
   background: var(--color-online);
 }
-
-.status-text-offline {
-  color: var(--color-offline);
-}
-
-.status-text-online {
-  color: var(--color-online);
-}
-
-.status-text-playing {
-  background: var(--gradient-game);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
