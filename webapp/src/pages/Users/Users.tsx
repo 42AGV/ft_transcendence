@@ -1,16 +1,11 @@
-import {
-  Icon,
-  IconSize,
-  IconVariant,
-  NavigationItem,
-} from '../../shared/components';
+import { IconVariant, NavigationItem } from '../../shared/components';
 import './Users.css';
 
 export default function Users() {
   return (
     <div className="users">
       <NavigationItem
-        icon={<Icon variant={IconVariant.USERS} size={IconSize.SMALL} />}
+        iconVariant={IconVariant.USERS}
         title="Users"
         urlNavigation="/users"
       />

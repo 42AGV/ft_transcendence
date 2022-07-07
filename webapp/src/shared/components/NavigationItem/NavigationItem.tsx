@@ -1,14 +1,15 @@
 import { NavLink } from 'react-router-dom';
+import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import './NavigationItem.css';
 
 type NavigationItemProps = {
-  icon: JSX.Element;
+  iconVariant: IconVariant;
   title: string;
   urlNavigation: string;
 };
 
 export default function NavigationItem({
-  icon,
+  iconVariant,
   title,
   urlNavigation,
 }: NavigationItemProps) {
@@ -21,7 +22,7 @@ export default function NavigationItem({
         isActive ? `${className} color-submit` : `${className} color-light`
       }
     >
-      {icon}
+      <Icon variant={iconVariant} size={IconSize.SMALL} />
       {title}
     </NavLink>
   );

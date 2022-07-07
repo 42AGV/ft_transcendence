@@ -27,7 +27,7 @@ export default function Landing() {
         Landing 🚀
       </Text>
       <NavigationItem
-        icon={<Icon variant={IconVariant.USERS} size={IconSize.SMALL} />}
+        iconVariant={IconVariant.USERS}
         title="Users"
         urlNavigation="/users"
       />
