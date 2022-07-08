@@ -5,7 +5,6 @@ import {
   Input,
   InputColor,
   Text,
-  TextColor,
   TextVariant,
   TextWeight,
 } from '../../shared/components';
@@ -15,14 +14,21 @@ import './Landing.css';
 export default function Landing() {
   return (
     <section className="Landing">
-      <Icon
-        variant={IconVariant.PLAY}
-        color={Color.ONLINE}
-        size={IconSize.LARGE}
-      ></Icon>
+      <Input
+        color={InputColor.DARK}
+        label="My Label"
+        iconVariant={IconVariant.SEARCH}
+        input="Placeholder"
+      />
+      <Input
+        color={InputColor.LIGHT}
+        label="My Label"
+        iconVariant={IconVariant.SEARCH}
+        input="Placeholder"
+      />
       <Text
         variant={TextVariant.TITLE}
-        color={TextColor.GAME}
+        color={Color.LIGHT}
         weight={TextWeight.MEDIUM}
       >
         Landing 🚀

@@ -1,0 +1,23 @@
+.form-container {
+  width: 312px;
+  /* background-color: var(--color-light); */
+}
+
+.input-container {
+  margin-top: 6px;
+  background-color: var(--color-light);
+  display: flex;
+  padding: 16px 12px;
+  border: 1px solid var(--color-submit);
+  border-radius: 8px;
+  gap: 8px;
+}
+
+.input-form {
+  border: 0;
+}
+
+.input-form:focus {
+  outline: none;
+  width: 100%;
+}
