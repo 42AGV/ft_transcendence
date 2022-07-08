@@ -88,6 +88,7 @@ FORTYTWO_APP_SECRET=42-intra-app-secret
 ```
 
 Generate two UUIDs using for example the `uuidgen` command
+
 Replace the SESSION_SECRET and the MEMCACHED_SECRET with the UUIDs from the previous step
 
 ```
@@ -101,7 +102,7 @@ Change the working directory to the root directory
 cd ..
 ```
 
-Start the application using Docker
+Start the application using `Docker`
 
 ```
 docker compose up -d --build
