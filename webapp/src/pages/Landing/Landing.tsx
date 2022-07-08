@@ -14,7 +14,7 @@ import './Landing.css';
 export default function Landing() {
   return (
     <section className="landing">
-      <Status playing />
+      <Status variant="playing" />
       <Icon
         variant={IconVariant.PLAY}
         color={Color.ONLINE}
