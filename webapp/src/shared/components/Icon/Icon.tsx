@@ -45,8 +45,8 @@ const Icons: { [key in IconVariant]: SVGComponent } = {
 };
 
 export enum IconSize {
-  SMALL = '24px',
-  LARGE = '48px',
+  SMALL = '1.25rem',
+  LARGE = '1.5rem',
 }
 
 type IconProps = {
