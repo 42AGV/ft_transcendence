@@ -18,6 +18,8 @@
   );
 
   --primary-font: 'DM Sans', sans-serif;
+
+  font-size: 100%;
 }
 
 /* Styles for viewports wider than 768 pixels. */
