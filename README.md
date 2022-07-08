@@ -26,7 +26,6 @@
 - [Usage](#usage)
 - [Built Using](#built_using)
 - [Contributing](#contributing)
-- [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
@@ -217,15 +216,6 @@ that affect the same files and lines as yours. One of the **cleanest** ways to s
 this is just to update (pull) main in your local and, then, rebase main into
 your branch: `git rebase main`. Git will make you solve conflicts one by one,
 you just have to follow the instructions!
-
-## ✍️ Authors <a name = "authors"></a>
-
-- [@Damrod](https://github.com/Damrod)
-- [@fizcamposancos](https://github.com/fizcamposancos)
-- [@gbudau](https://github.com/gbudau)
-- [@vdedios](https://github.com/vdedios)
-
-See also the list of [contributors](https://github.com/42agv/ft_transcendence/contributors) who participated in this project.
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
