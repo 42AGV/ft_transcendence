@@ -85,31 +85,39 @@ body {
   font-weight: 400;
 }
 
-/* colors */
-.color-warning {
+/* text colors */
+.text-color-warning {
   color: var(--color-warning);
 }
 
-.color-submit {
+.text-color-submit {
   color: var(--color-submit);
 }
 
-.color-online {
+.text-color-online {
   color: var(--color-online);
 }
 
-.color-offline {
+.text-color-offline {
   color: var(--color-offline);
 }
 
-.color-light {
+.text-color-light {
   color: var(--color-light);
 }
 
-.color-background {
+.text-color-background {
   color: var(--color-background);
 }
 
-.color-dark {
+.text-color-dark {
   color: var(--color-dark);
+}
+
+.text-color-game,
+.text-color-playing {
+  background: var(--gradient-game);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
