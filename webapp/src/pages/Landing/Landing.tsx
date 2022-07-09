@@ -4,6 +4,7 @@ import {
   Icon,
   IconSize,
   IconVariant,
+  NavigationItem,
   Status,
   Text,
   TextColor,
@@ -50,6 +51,11 @@ export default function Landing() {
       >
         Landing 🚀
       </Text>
+      <NavigationItem
+        iconVariant={IconVariant.USERS}
+        title="Users"
+        urlNavigation="/users"
+      />
     </section>
   );
 }
