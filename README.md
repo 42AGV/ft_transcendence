@@ -107,6 +107,8 @@ Start the application using `Docker`
 docker compose up -d --build
 ```
 
+> **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
+
 You can now access the web application at http://localhost:3000 and the Swagger documentation for the API at http://localhost:3000/api
 
 Install the node packages required for the web and server application.
@@ -126,6 +128,8 @@ docker compose logs -f webapp
 docker compose logs -f transcendence-app
 docker compose logs -f db
 ```
+
+> **_NOTE:_**  The logs of the transcendence-app don't include the version in the routes
 
 ## 🔧 Running the tests <a name = "tests"></a>
 
