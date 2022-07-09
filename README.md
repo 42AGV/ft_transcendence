@@ -131,6 +131,16 @@ docker compose logs -f db
 
 > **_NOTE:_**  The logs of the transcendence-app don't include the version in the routes
 
+> **_NOTE:_**  For advanced use cases, you can connect to a service using the Docker container IP and port 
+
+Inspect the container using the container name or ID
+
+```
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ft_transcendence-webapp-1
+```
+
+Access using the Docker container IP and the service port
+
 ## 🔧 Running the tests <a name = "tests"></a>
 
 Change the working directory to `webapp` or `transcendence-app`
