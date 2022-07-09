@@ -6,3 +6,5 @@ export * from './Text/Text';
 
 export { default as Button } from './Button/Button';
 export * from './Button/Button';
+
+export { default as Status } from './Status/Status';

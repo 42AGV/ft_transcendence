@@ -4,6 +4,7 @@ import {
   Icon,
   IconSize,
   IconVariant,
+  Status,
   Text,
   TextColor,
   TextVariant,
@@ -18,7 +19,8 @@ export default function Landing() {
     window.location.href = 'http://google.com';
   };
   return (
-    <section className="Landing">
+    <section className="landing">
+      <Status variant="playing" />
       <Button variant={ButtonVariant.SUBMIT} onClick={btn_action}>
         ALERT
       </Button>
@@ -40,7 +42,7 @@ export default function Landing() {
         variant={IconVariant.PLAY}
         color={Color.ONLINE}
         size={IconSize.LARGE}
-      ></Icon>
+      />
       <Text
         variant={TextVariant.TITLE}
         color={TextColor.GAME}
