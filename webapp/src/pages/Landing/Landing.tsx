@@ -23,9 +23,10 @@ export default function Landing() {
       <Input
         color={InputColor.LIGHT}
         label="My Label"
-        iconVariant={IconVariant.SEARCH}
+        iconVariant={IconVariant.FILE}
         input="Placeholder"
       />
+      <Input color={InputColor.LIGHT} label="Email" input="Your email here" />
       <Text
         variant={TextVariant.TITLE}
         color={Color.LIGHT}

@@ -1,16 +1,42 @@
-.form-container {
+.form-container-light {
   width: 312px;
-  /* background-color: var(--color-light); */
+  color: var(--color-dark);
+}
+
+.form-container-dark {
+  width: 312px;
+  color: var(--color-light);
 }
 
 .input-container {
   margin-top: 6px;
-  background-color: var(--color-light);
   display: flex;
   padding: 16px 12px;
   border: 1px solid var(--color-submit);
   border-radius: 8px;
   gap: 8px;
+}
+
+.input-container-light {
+  background-color: var(--color-light);
+  color: var(--color-light);
+}
+
+.input-container-dark {
+  background-color: var(--color-dark);
+  color: var(--color-dark);
+}
+
+.input-form-light {
+  border: 0;
+  background-color: var(--color-light);
+  color: var(--color-dark);
+}
+
+.input-form-dark {
+  border: 0;
+  background-color: var(--color-dark);
+  color: var(--color-light);
 }
 
 .input-form {

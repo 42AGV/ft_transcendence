@@ -4,8 +4,8 @@ import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import './Input.css';
 
 export enum InputColor {
-  LIGHT = 'color-light',
-  DARK = 'color-dark',
+  LIGHT = 'light',
+  DARK = 'dark',
 }
 
 type InputProps = {
@@ -23,18 +23,21 @@ export default function Input({
 }: InputProps) {
   const [content, setContent] = useState();
   return (
-    <form className="form-container subheading-bold">
-      <label>{label}</label>
-      <div className="input-container">
-        {iconVariant && (
-          <Icon
-            variant={iconVariant}
-            size={IconSize.SMALL}
-            color={Color.DARK}
-          ></Icon>
-        )}
-        <input className="input-form paragraph-regular" placeholder={input} />
-      </div>
-    </form>
+    // <form className={`form-container-${color} subheading-bold`}>
+    //   <label>{label}</label>
+    <div className={`input-container input-container-${color}`}>
+      {iconVariant && (
+        <Icon
+          variant={iconVariant}
+          size={IconSize.SMALL}
+          color={color === InputColor.DARK ? Color.LIGHT : Color.DARK}
+        ></Icon>
+      )}
+      <input
+        className={`input-form input-form-${color} paragraph-regular`}
+        placeholder={input}
+      />
+    </div>
+    // </form>
   );
 }
