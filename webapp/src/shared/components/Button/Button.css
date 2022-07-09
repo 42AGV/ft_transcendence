@@ -1,0 +1,32 @@
+.button {
+  width: 312px;
+  height: 58px;
+  border-radius: 8px;
+  color: var(--color-light);
+  border: 0;
+  position: relative;
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.button-warning {
+  background: var(--color-warning);
+}
+
+.button-submit {
+  background: var(--color-submit);
+}
+
+.button-icon {
+  display: flex;
+  position: absolute;
+  left: 20px;
+}

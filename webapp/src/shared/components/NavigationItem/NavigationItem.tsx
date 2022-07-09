@@ -19,7 +19,9 @@ export default function NavigationItem({
     <NavLink
       to={urlNavigation}
       className={({ isActive }) =>
-        isActive ? `${className} color-submit` : `${className} color-light`
+        isActive
+          ? `${className} text-color-submit`
+          : `${className} text-color-light`
       }
     >
       <Icon variant={iconVariant} size={IconSize.SMALL} />
