@@ -1,9 +1,9 @@
 import { NavigationBar } from '../../shared/components';
-import './Users.css';
+import './Chat.css';
 
-export default function Users() {
+export default function Chat() {
   return (
-    <div className="users">
+    <div className="chat">
       <NavigationBar users play chat />
     </div>
   );
