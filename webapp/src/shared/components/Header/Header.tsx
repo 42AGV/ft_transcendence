@@ -21,16 +21,14 @@ export default function Header({
   return (
     <header className="header">
       <div className="header-navigation">
-        {navigation in IconVariant ? (
-          <Link to={urlNavigation}>
+        <Link to={urlNavigation}>
+          {navigation in IconVariant ? (
             <Icon
               variant={navigation as IconVariant}
               size={IconSize.SMALL}
               color={Color.LIGHT}
             />
-          </Link>
-        ) : (
-          <Link to={urlNavigation}>
+          ) : (
             <img
               src={navigation}
               alt="avatar"
@@ -38,8 +36,8 @@ export default function Header({
               height="50px"
               style={{ borderRadius: '50%' }}
             />
-          </Link>
-        )}
+          )}
+        </Link>
       </div>
       <div className="header-text">{children}</div>
       <div className="header-status">
