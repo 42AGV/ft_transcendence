@@ -1,0 +1,23 @@
+.header {
+  width: 100%;
+  height: 4rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.header-navigation,
+.header-navigation svg,
+.header-navigation img,
+.header-text,
+.header-status {
+  display: flex;
+  align-items: center;
+}
+
+.header-text {
+  justify-content: center;
+}
+
+.header-status {
+  justify-content: flex-end;
+}
