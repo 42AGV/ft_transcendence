@@ -22,7 +22,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: |
             transcendence-app/package-lock.json
-            webapp/package-lock.json
       - name: Install dependencies
         run: npm install --prefix transcendence-app
       - name: Compile
