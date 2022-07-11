@@ -5,7 +5,7 @@ import Status, { StatusVariant } from '../Status/Status';
 import './Header.css';
 
 type HeaderProps = {
-  navigation: IconVariant | string;
+  navigation: string;
   urlNavigation: string;
   status?: StatusVariant;
   children: string;
