@@ -20,25 +20,23 @@ export default function Header({
   console.log(typeof navigation);
   return (
     <header className="header">
-      <div className="header-navigation">
-        <Link to={urlNavigation}>
-          {navigation in IconVariant ? (
-            <Icon
-              variant={navigation as IconVariant}
-              size={IconSize.SMALL}
-              color={Color.LIGHT}
-            />
-          ) : (
-            <img
-              src={navigation}
-              alt="avatar"
-              width="50px"
-              height="50px"
-              style={{ borderRadius: '50%' }}
-            />
-          )}
-        </Link>
-      </div>
+      <Link className="header-navigation" to={urlNavigation}>
+        {navigation in IconVariant ? (
+          <Icon
+            variant={navigation as IconVariant}
+            size={IconSize.SMALL}
+            color={Color.LIGHT}
+          />
+        ) : (
+          <img
+            src={navigation}
+            alt="avatar"
+            width="50px"
+            height="50px"
+            style={{ borderRadius: '50%' }}
+          />
+        )}
+      </Link>
       <div className="header-text">{children}</div>
       <div className="header-status">
         {status && <Status variant={status} />}
