@@ -17,7 +17,6 @@ export default function Header({
   status,
   children,
 }: HeaderProps) {
-  console.log(typeof navigation);
   return (
     <header className="header">
       <Link className="header-navigation" to={urlNavigation}>
