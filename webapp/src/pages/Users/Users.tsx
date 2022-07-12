@@ -6,23 +6,23 @@ export default function Users() {
     <div className="users">
       <div className="users-wrapper">
         <Header
-          navigation={IconVariant.ARROW_BACK}
-          urlNavigation="/"
-          status="online"
+          navigationFigure={IconVariant.ARROW_BACK}
+          navigationUrl="/"
+          statusVariant="online"
         >
           edit profile
         </Header>
         <Header
-          navigation="https://i.pravatar.cc/1000"
-          urlNavigation="/"
-          status="playing"
+          navigationFigure="https://i.pravatar.cc/1000"
+          navigationUrl="/"
+          statusVariant="playing"
         >
           edit profile
         </Header>
-        <Header navigation={IconVariant.ARROW_BACK} urlNavigation="/">
+        <Header navigationFigure={IconVariant.ARROW_BACK} navigationUrl="/">
           edit profile
         </Header>
-        <Header navigation="https://i.pravatar.cc/1000" urlNavigation="/">
+        <Header navigationFigure="https://i.pravatar.cc/1000" navigationUrl="/">
           edit profile
         </Header>
         <NavigationItem

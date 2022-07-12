@@ -5,30 +5,30 @@ import Status, { StatusVariant } from '../Status/Status';
 import './Header.css';
 
 type HeaderProps = {
-  navigation: string;
-  urlNavigation: string;
-  status?: StatusVariant;
+  navigationFigure: string;
+  navigationUrl: string;
+  statusVariant?: StatusVariant;
   children: string;
 };
 
 export default function Header({
-  navigation,
-  urlNavigation,
-  status,
+  navigationFigure,
+  navigationUrl,
+  statusVariant,
   children,
 }: HeaderProps) {
   return (
     <header className="header">
-      <Link className="header-navigation" to={urlNavigation}>
-        {navigation in IconVariant ? (
+      <Link className="header-navigation" to={navigationUrl}>
+        {navigationFigure in IconVariant ? (
           <Icon
-            variant={navigation as IconVariant}
+            variant={navigationFigure as IconVariant}
             size={IconSize.SMALL}
             color={Color.LIGHT}
           />
         ) : (
           <img
-            src={navigation}
+            src={navigationFigure}
             alt="avatar"
             width="50px"
             height="50px"
@@ -38,7 +38,7 @@ export default function Header({
       </Link>
       <div className="header-text">{children}</div>
       <div className="header-status">
-        {status && <Status variant={status} />}
+        {statusVariant && <Status variant={statusVariant} />}
       </div>
     </header>
   );
