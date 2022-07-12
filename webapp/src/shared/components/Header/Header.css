@@ -6,8 +6,7 @@
 }
 
 .header-navigation,
-.header-navigation svg,
-.header-navigation img,
+.header-navigation a,
 .header-text,
 .header-status {
   display: flex;
