@@ -45,8 +45,8 @@ const Icons: { [key in IconVariant]: SVGComponent } = {
 };
 
 export enum IconSize {
-  SMALL = '24px',
-  LARGE = '48px',
+  SMALL = '1.25rem',
+  LARGE = '1.5rem',
 }
 
 type IconProps = {
@@ -57,5 +57,5 @@ type IconProps = {
 
 export default function Icon({ variant, color, size }: IconProps) {
   const IconTag = Icons[variant];
-  return <IconTag className={color} height={size} width={size} />;
+  return <IconTag className={color} style={{width: size, height: size}} />;
 }

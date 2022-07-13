@@ -10,3 +10,5 @@ export * from './Button/Button';
 export { default as Status } from './Status/Status';
 
 export { default as NavigationItem } from './NavigationItem/NavigationItem';
+
+export * from './Avatar/Avatar';
