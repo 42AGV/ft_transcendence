@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   nginx:
-    image: nginx:1.21.6-alpine
+    image: nginx:1.22.0-alpine
     restart: always
     depends_on:
       - "webapp"
@@ -20,7 +20,7 @@ services:
       - "memcached"
 
   db:
-    image: postgres:14.2-alpine3.15
+    image: postgres:14.4-alpine3.16
     restart: always
     user: postgres
     volumes:
@@ -29,7 +29,7 @@ services:
       - ./db/setup/:/var/lib/postgresql/setup/
 
   memcached:
-    image: memcached:1.6.15-alpine3.15
+    image: memcached:1.6.15-alpine3.16
 
 volumes:
   transcendence-db:

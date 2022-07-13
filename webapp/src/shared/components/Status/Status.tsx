@@ -1,6 +1,6 @@
 import './Status.css';
 
-type StatusVariant = 'online' | 'offline' | 'playing';
+export type StatusVariant = 'online' | 'offline' | 'playing';
 
 type StatusProps = {
   variant: StatusVariant;
