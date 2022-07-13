@@ -12,4 +12,6 @@ export * from './Status/Status';
 
 export { default as NavigationItem } from './NavigationItem/NavigationItem';
 
+export * from './Avatar/Avatar';
+
 export { default as Header } from './Header/Header';
