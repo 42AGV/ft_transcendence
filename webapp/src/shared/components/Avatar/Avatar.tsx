@@ -1,7 +1,7 @@
 import './Avatar.css';
 
 import { Icon, IconVariant, IconSize } from '../index';
-import { Color } from '../../../shared/types';
+import { Color } from '../../types';
 
 type AvatarStatus = 'online' | 'offline' | 'playing';
 
@@ -17,9 +17,9 @@ type LargeAvatarProps = AvatarProps & {
 
 export function SmallAvatar({ url, status }: AvatarProps) {
   return (
-    <div className={`avatar-small__image-wrapper  avatar-status--${status}`}>
+    <figure className={`avatar-small__image-wrapper  avatar-status--${status}`}>
       <img src={url} alt={url} className="avatar-small__image" />
-    </div>
+    </figure>
   );
 }
 
@@ -29,8 +29,11 @@ export function LargeAvatar({
   edit = false,
   caption,
 }: LargeAvatarProps) {
+
+  const statusClass = status ? `avatar-status--${status}` : '';
+
   return (
-    <div className="avatar-large">
+    <figure className="avatar-large">
       {edit && (
         <div className="avatar-large__edit">
           <Icon
@@ -40,14 +43,14 @@ export function LargeAvatar({
           />
         </div>
       )}
-      <div className={`avatar-large__image-wrapper  avatar-status--${status}`}>
+      <div className={`avatar-large__image-wrapper  ${statusClass}`}>
         <img src={url} alt={url} className="avatar-large__image" />
       </div>
       {caption && (
-        <caption className="avatar-large__caption caption-regular">
+        <figcaption className="avatar-large__caption caption-regular">
           {caption}
-        </caption>
+        </figcaption>
       )}
-    </div>
+    </figure>
   );
 }

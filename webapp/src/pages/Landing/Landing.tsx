@@ -25,16 +25,22 @@ export default function Landing() {
     const randomAvatar = 'https://i.pravatar.cc/1000'
   return (
     <section className="landing">
-      <Status variant="playing" />
-      <Button variant={ButtonVariant.SUBMIT} onClick={btn_action}>
-        ALERT
+      <Text
+        variant={TextVariant.TITLE}
+        color={TextColor.GAME}
+        weight={TextWeight.MEDIUM}
+      >
+        Landing 🚀
+      </Text>
+      <Button variant={ButtonVariant.WARNING} onClick={btn_action}>
+        Alert
       </Button>
       <Button
         variant={ButtonVariant.WARNING}
         iconVariant={IconVariant.LOGOUT}
         disabled
       >
-        LOGOUT BUTTON
+        Logout
       </Button>
       <Button
         variant={ButtonVariant.SUBMIT}
@@ -48,18 +54,12 @@ export default function Landing() {
         color={Color.ONLINE}
         size={IconSize.LARGE}
       />
-      <Text
-        variant={TextVariant.TITLE}
-        color={TextColor.GAME}
-        weight={TextWeight.MEDIUM}
-      >
-        Landing 🚀
-      </Text>
       <NavigationItem
         iconVariant={IconVariant.USERS}
         title="Users"
         urlNavigation="/users"
       />
+      <Status variant="playing" />
 			<SmallAvatar url={randomAvatar} />
 			<LargeAvatar url={randomAvatar} />
 			<SmallAvatar url={randomAvatar} status='offline'/>

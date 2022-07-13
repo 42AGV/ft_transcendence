@@ -57,5 +57,5 @@ type IconProps = {
 
 export default function Icon({ variant, color, size }: IconProps) {
   const IconTag = Icons[variant];
-  return <IconTag className={color} height={size} width={size} />;
+  return <IconTag className={color} style={{width: size, height: size}} />;
 }
