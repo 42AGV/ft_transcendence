@@ -30,7 +30,7 @@ export default function Landing() {
         color={TextColor.LIGHT}
         weight={TextWeight.BOLD}
       >
-      Play online pong with your friends
+      Landing 🚀
       </Text>
       <Button variant={ButtonVariant.WARNING} onClick={btn_action}>
         Alert
