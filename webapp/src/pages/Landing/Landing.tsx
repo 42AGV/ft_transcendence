@@ -27,10 +27,10 @@ export default function Landing() {
     <section className="landing">
       <Text
         variant={TextVariant.TITLE}
-        color={TextColor.GAME}
-        weight={TextWeight.MEDIUM}
+        color={TextColor.LIGHT}
+        weight={TextWeight.BOLD}
       >
-        Landing 🚀
+      Play online pong with your friends
       </Text>
       <Button variant={ButtonVariant.WARNING} onClick={btn_action}>
         Alert

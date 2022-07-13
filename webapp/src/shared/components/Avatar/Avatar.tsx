@@ -1,13 +1,12 @@
 import './Avatar.css';
 
 import { Icon, IconVariant, IconSize } from '../index';
+import { StatusVariant } from '../Status/Status';
 import { Color } from '../../types';
-
-type AvatarStatus = 'online' | 'offline' | 'playing';
 
 type AvatarProps = {
   url: string;
-  status?: AvatarStatus;
+  status?: StatusVariant;
 };
 
 type LargeAvatarProps = AvatarProps & {
