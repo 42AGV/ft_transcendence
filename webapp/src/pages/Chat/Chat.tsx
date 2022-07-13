@@ -4,7 +4,9 @@ import './Chat.css';
 export default function Chat() {
   return (
     <div className="chat">
-      <NavigationBar users play chat />
+      <div className="chat-nav-container">
+        <NavigationBar />
+      </div>
     </div>
   );
 }

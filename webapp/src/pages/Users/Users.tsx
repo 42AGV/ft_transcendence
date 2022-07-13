@@ -4,7 +4,9 @@ import './Users.css';
 export default function Users() {
   return (
     <div className="users">
-      <NavigationBar users play chat />
+      <div className="users-nav-container">
+        <NavigationBar />
+      </div>
     </div>
   );
 }

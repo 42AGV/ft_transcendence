@@ -4,7 +4,9 @@ import './Play.css';
 export default function Play() {
   return (
     <div className="play">
-      <NavigationBar users play chat />
+      <div className="play-nav-container">
+        <NavigationBar />
+      </div>
     </div>
   );
 }

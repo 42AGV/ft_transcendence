@@ -2,47 +2,43 @@ import { IconVariant } from '../Icon/Icon';
 import NavigationItem from '../NavigationItem/NavigationItem';
 import './NavigationBar.css';
 
-type NavigationBarProps = {
-  users?: boolean;
-  play?: boolean;
-  chat?: boolean;
+type NavItemContent = {
+  icon: IconVariant;
+  title: string;
+  url: string;
 };
 
-export default function NavigationBar({
-  users,
-  play,
-  chat,
-}: NavigationBarProps) {
+const NAV_ITEMS_CONTENT: NavItemContent[] = [
+  {
+    icon: IconVariant.USERS,
+    title: 'Users',
+    url: '/users',
+  },
+  {
+    icon: IconVariant.PLAY,
+    title: 'Play',
+    url: '/play',
+  },
+  {
+    icon: IconVariant.CHAT,
+    title: 'Chat',
+    url: '/chat',
+  },
+];
+
+export default function NavigationBar() {
   return (
     <nav className="navigation-bar">
       <ul>
-        {users && (
-          <li>
+        {NAV_ITEMS_CONTENT.map((item: NavItemContent) => (
+          <li key={item.title}>
             <NavigationItem
-              iconVariant={IconVariant.USERS}
-              title="Users"
-              urlNavigation="/users"
+              iconVariant={item.icon}
+              title={item.title}
+              urlNavigation={item.url}
             />
           </li>
-        )}
-        {play && (
-          <li>
-            <NavigationItem
-              iconVariant={IconVariant.PLAY}
-              title="Play"
-              urlNavigation="/play"
-            />
-          </li>
-        )}
-        {chat && (
-          <li>
-            <NavigationItem
-              iconVariant={IconVariant.CHAT}
-              title="Chat"
-              urlNavigation="/chat"
-            />
-          </li>
-        )}
+        ))}
       </ul>
     </nav>
   );

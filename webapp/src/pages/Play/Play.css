@@ -10,3 +10,7 @@
   background-color: var(--color-background);
   color: var(--color-light);
 }
+
+.play-nav-container {
+  width: 80%;
+}
