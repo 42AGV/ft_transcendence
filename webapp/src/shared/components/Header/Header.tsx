@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Color } from '../../types';
+import { SmallAvatar } from '../Avatar/Avatar';
 import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import Status, { StatusVariant } from '../Status/Status';
 import './Header.css';
@@ -28,13 +29,7 @@ export default function Header({
               color={Color.LIGHT}
             />
           ) : (
-            <img
-              src={navigationFigure}
-              alt="avatar"
-              width="50px"
-              height="50px"
-              style={{ borderRadius: '50%' }}
-            />
+            <SmallAvatar url={navigationFigure} />
           )}
         </Link>
       </div>
