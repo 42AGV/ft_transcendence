@@ -19,23 +19,25 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="header">
-      <Link className="header-navigation" to={navigationUrl}>
-        {navigationFigure in IconVariant ? (
-          <Icon
-            variant={navigationFigure as IconVariant}
-            size={IconSize.SMALL}
-            color={Color.LIGHT}
-          />
-        ) : (
-          <img
-            src={navigationFigure}
-            alt="avatar"
-            width="50px"
-            height="50px"
-            style={{ borderRadius: '50%' }}
-          />
-        )}
-      </Link>
+      <div className="header-navigation">
+        <Link to={navigationUrl}>
+          {navigationFigure in IconVariant ? (
+            <Icon
+              variant={navigationFigure as IconVariant}
+              size={IconSize.SMALL}
+              color={Color.LIGHT}
+            />
+          ) : (
+            <img
+              src={navigationFigure}
+              alt="avatar"
+              width="50px"
+              height="50px"
+              style={{ borderRadius: '50%' }}
+            />
+          )}
+        </Link>
+      </div>
       <div className="header-text">{children}</div>
       <div className="header-status">
         {statusVariant && <Status variant={statusVariant} />}
