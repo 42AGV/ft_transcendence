@@ -13,17 +13,33 @@
 }
 
 .row_wrapper {
-  width: 159px;
+  width: 80%;
+  position: absolute;
+  left: 15px;
   display: flex;
   justify-content: space-evenly;
   flex-direction: row;
 }
 
 .text_box_wrapper {
-  width: 87px;
+  width: 70%;
   height: 47px;
   display: flex;
+  padding: 0;
+  justify-content: left;
+  align-items: flex-start;
   flex-direction: column;
+}
+
+
+h4 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+p {
+  margin-top: 5px;
+  margin-bottom: 2px;
 }
 
 .row-icon {

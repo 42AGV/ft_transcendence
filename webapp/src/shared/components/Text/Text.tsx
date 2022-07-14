@@ -1,4 +1,5 @@
 import { Color } from '../../types';
+import React from "react";
 
 export class TextVariant {
   public static TITLE = new TextVariant('h1', '3rem');

@@ -67,7 +67,7 @@ export default function Landing() {
 			<SmallAvatar url={randomAvatar} status='playing'/>
 			<LargeAvatar url={randomAvatar} edit status='playing' caption='level 21'/>
       <Row iconVariant={IconVariant.ARROW_FORWARD} avProps={{url:randomAvatar, status:'online'}} >
-        {'asd'} {'dffw3'}</Row>
+        {['John Doe','level 3']}</Row>
     </section>
   );
 }
