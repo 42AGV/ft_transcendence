@@ -11,7 +11,7 @@ import {
   TextVariant,
   TextWeight,
   SmallAvatar,
-  LargeAvatar
+  LargeAvatar, Row
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
@@ -66,6 +66,7 @@ export default function Landing() {
 			<LargeAvatar url={randomAvatar} edit status='online' caption='level 21'/>
 			<SmallAvatar url={randomAvatar} status='playing'/>
 			<LargeAvatar url={randomAvatar} edit status='playing' caption='level 21'/>
+      <Row iconVariant={IconVariant.USERS}>Row</Row>
     </section>
   );
 }
