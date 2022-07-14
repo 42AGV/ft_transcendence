@@ -13,4 +13,4 @@ export { default as NavigationItem } from './NavigationItem/NavigationItem';
 
 export * from './Avatar/Avatar';
 
-export {default as Row} from './Row/Row'
+export { default as Row } from './Row/Row'

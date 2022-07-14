@@ -1,30 +1,34 @@
 import Icon, { IconVariant, IconSize } from '../Icon/Icon';
 import './Row.css';
-import {SmallAvatar} from '../Avatar/Avatar';
+import '../Button/Button.css'
+import {SmallAvatar, AvatarProps} from '../Avatar/Avatar';
 
 type RowProps = {
   iconVariant?: IconVariant;
   onClick?: () => void;
-  children: string;
+  avProps : AvatarProps;
+  children: string[];
 };
 
 export default function Row({
   iconVariant,
   onClick,
+  avProps,
   children,
 }: RowProps) {
-  const randomAvatar = 'https://i.pravatar.cc/1000'
   return (
     <button
-      className={`Row subheading-bold`}
+      className={`row paragraph-regular`}
       onClick={onClick}
     >
-      <div>
-      <SmallAvatar url={randomAvatar} />
+      <div className={`row_wrapper`}>
+        <SmallAvatar {...avProps} />
+        <div className={`text_box_wrapper`}>
+          `{children[0]} {children[1]}`
+        </div>
       </div>
-      <div>{children}</div>
       {iconVariant && (
-        <div className="Row-icon">
+        <div className="row-icon">
           {<Icon variant={iconVariant} size={IconSize.SMALL}/>}
         </div>
       )}

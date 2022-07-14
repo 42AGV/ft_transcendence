@@ -2,14 +2,28 @@
   width: 322px;
   height: 82px;
   border-radius: 8px;
-  color: var(--color-dark);
+  color: var(--color-light);
+  background-color: var(--color-dark);
   border: 0;
   position: relative;
   align-items: center;
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+}
+
+.row_wrapper {
+  width: 159px;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+}
+
+.text_box_wrapper {
+  width: 87px;
+  height: 47px;
+  display: flex;
+  flex-direction: column;
 }
 
 .row-icon {
