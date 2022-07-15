@@ -75,8 +75,8 @@ Register a new OAuth application on the [42 intranet](https://profile.intra.42.f
 Set the Redirect URIs
 
 ```
-http://127.0.0.1:3000/api/v1/auth/login
-http://127.0.0.1/api/v1/auth/login
+http://localhost:3000/api/v1/auth/login
+http://localhost/api/v1/auth/login
 ```
 
 Open the `.env` file with your favorite text editor and replace the ID and SECRET with the ones from the OAuth application you create in the previous step
