@@ -31,20 +31,31 @@ type TextProps = {
   color?: TextColor;
   weight?: TextWeight;
   children: string;
+  classname?: string;
 };
 
 export default function Text({
   variant,
-  color = TextColor.DARK,
+  color,
   weight = TextWeight.REGULAR,
   children,
+  classname
 }: TextProps) {
   const { tag, size } = variant;
   const TextTag = tag as React.ElementType;
+  const classesnames = color ?
+    (classname ? `${color} ${classname}` : `${color}`) :
+    (classname ? `${classname}` : undefined);
 
   return (
-    <TextTag style={{ fontSize: size, fontWeight: weight }} className={color}>
+    <div>
+    {classesnames && (
+      <TextTag style={{ fontSize: size, fontWeight: weight }} className={classesnames}>
       {children}
     </TextTag>
+    ) || (<TextTag style={{ fontSize: size, fontWeight: weight }} className={TextColor.DARK}>
+      {children}
+    </TextTag>)}
+    </div>
   );
 }
