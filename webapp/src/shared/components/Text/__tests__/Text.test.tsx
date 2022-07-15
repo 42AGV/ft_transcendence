@@ -7,15 +7,11 @@ test('renders default text', () => {
 
   const textElement = screen.getByText(/hello world!/i);
   expect(textElement).toBeInTheDocument();
-  expect(textElement).toHaveStyle({
-    fontSize: TextVariant.PARAGRAPH.size,
-    fontWeight: TextWeight.REGULAR,
-  });
 });
 
 test('renders custom text', () => {
   render(
-    <Text variant={TextVariant.HEADING} weight={TextWeight.BOLD}>
+    <Text variant={TextVariant.CAPTION} weight={TextWeight.BOLD}>
       Hello World!
     </Text>,
   );
@@ -23,7 +19,6 @@ test('renders custom text', () => {
   const textElement = screen.getByText(/hello world!/i);
   expect(textElement).toBeInTheDocument();
   expect(textElement).toHaveStyle({
-    fontSize: TextVariant.HEADING.size,
     fontWeight: TextWeight.BOLD,
   });
 });

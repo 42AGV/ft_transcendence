@@ -17,6 +17,11 @@
   justify-content: center;
 }
 
+.header-text > * {
+  margin: 0;
+  white-space: nowrap;
+}
+
 .header-status {
   justify-content: flex-end;
 }

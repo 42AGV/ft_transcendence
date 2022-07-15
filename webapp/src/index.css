@@ -10,6 +10,13 @@
   --color-background: #191b1f;
   --color-dark: #262934;
 
+  --title-font-size: 3rem;
+  --subtitle-font-size: 2.5rem;
+  --heading-font-size: 2rem;
+  --subheading-font-size: 1.5rem;
+  --paragraph-font-size: 1.25rem;
+  --caption-font-size: 1rem;
+
   --gradient-game: linear-gradient(
     269.73deg,
     #4b52ee 40.15%,
@@ -47,49 +54,49 @@ body {
 
 /* text styles */
 .title-bold {
-  font-size: 3rem;
+  font-size: var(--title-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .subtitle-bold {
-  font-size: 2.5rem;
+  font-size: var(--subtitle-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .heading-bold {
-  font-size: 2rem;
+  font-size: var(--heading-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .subheading-bold {
-  font-size: 1.5rem;
+  font-size: var(--subheading-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .paragraph-regular {
-  font-size: 1.25rem;
+  font-size: var(--paragraph-font-size);
   font-family: var(--primary-font);
   font-weight: 400;
 }
 
 .paragraph-medium {
-  font-size: 1.25rem;
+  font-size: var(--paragraph-font-size);
   font-family: var(--primary-font);
   font-weight: 500;
 }
 
 .paragraph-bold {
-  font-size: 1.25rem;
+  font-size: var(--paragraph-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .caption-regular {
-  font-size: 1rem;
+  font-size: var(--caption-font-size);
   font-family: var(--primary-font);
   font-weight: 400;
 }

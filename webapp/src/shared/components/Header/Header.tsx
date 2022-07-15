@@ -3,6 +3,7 @@ import { Color } from '../../types';
 import { SmallAvatar } from '../Avatar/Avatar';
 import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import Status, { StatusVariant } from '../Status/Status';
+import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './Header.css';
 
 type HeaderProps = {
@@ -33,7 +34,15 @@ export default function Header({
           )}
         </Link>
       </div>
-      <div className="header-text">{children}</div>
+      <div className="header-text">
+        <Text
+          variant={TextVariant.HEADING}
+          color={TextColor.LIGHT}
+          weight={TextWeight.BOLD}
+        >
+          {children}
+        </Text>
+      </div>
       <div className="header-status">
         {statusVariant && <Status variant={statusVariant} />}
       </div>
