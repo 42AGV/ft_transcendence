@@ -10,12 +10,12 @@
   --color-background: #191b1f;
   --color-dark: #262934;
 
-  --title-font-size: 3rem;
-  --subtitle-font-size: 2.5rem;
-  --heading-font-size: 2rem;
-  --subheading-font-size: 1.5rem;
-  --paragraph-font-size: 1.25rem;
-  --caption-font-size: 1rem;
+  --title-font-size: 2.5rem;
+  --subtitle-font-size: 2rem;
+  --heading-font-size: 1.5rem;
+  --subheading-font-size: 1.25rem;
+  --paragraph-font-size: 1rem;
+  --caption-font-size: 0.875rem;
 
   --gradient-game: linear-gradient(
     269.73deg,
@@ -32,7 +32,12 @@
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
   :root {
-    font-size: 20px;
+    --title-font-size: 3rem;
+    --subtitle-font-size: 2.5rem;
+    --heading-font-size: 2rem;
+    --subheading-font-size: 1.5rem;
+    --paragraph-font-size: 1.25rem;
+    --caption-font-size: 1rem;
   }
 }
 
@@ -50,6 +55,10 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+
+body {
+  font-family: var(--primary-font);
 }
 
 /* text styles */
