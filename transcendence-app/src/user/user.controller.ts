@@ -7,7 +7,9 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
@@ -15,6 +17,7 @@ import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
   ApiBadRequestResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -26,6 +29,9 @@ import {
   UsersPaginationQueryDto,
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { ApiFile } from './decorators/api-file.decorator';
 
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
@@ -68,5 +74,22 @@ export class UserController {
       throw new NotFoundException();
     }
     return result;
+  }
+
+  @Post(':uuid/avatar')
+  @ApiConsumes('multipart/form-data')
+  @ApiFile('avatar')
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: diskStorage({
+        destination: './upload/avatars',
+      }),
+    }),
+  )
+  uploadAvatar(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @UploadedFile() avatar: Express.Multer.File,
+  ) {
+    console.log(uuid, avatar);
   }
 }
