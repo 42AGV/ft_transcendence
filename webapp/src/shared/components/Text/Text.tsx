@@ -49,11 +49,11 @@ export default function Text({
 
   return (
     <div>
-    {classesnames && (
+    {(classesnames && (
       <TextTag style={{ fontSize: size, fontWeight: weight }} className={classesnames}>
       {children}
     </TextTag>
-    ) || (<TextTag style={{ fontSize: size, fontWeight: weight }} className={TextColor.DARK}>
+    )) || (<TextTag style={{ fontSize: size, fontWeight: weight }} className={TextColor.DARK}>
       {children}
     </TextTag>)}
     </div>
