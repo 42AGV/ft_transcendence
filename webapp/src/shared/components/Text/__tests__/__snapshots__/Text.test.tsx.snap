@@ -1,29 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly with custom text 1`] = `
-<h1
-  className="text-color-light"
-  style={
-    Object {
-      "fontSize": "3rem",
-      "fontWeight": "700",
+<div>
+  <h1
+    className="text-color-light"
+    style={
+      Object {
+        "fontSize": "3rem",
+        "fontWeight": "700",
+      }
     }
-  }
->
-  Hello World!
-</h1>
+  >
+    Hello World!
+  </h1>
+</div>
 `;
 
 exports[`renders correctly with default text 1`] = `
-<h1
-  className="text-color-dark"
-  style={
-    Object {
-      "fontSize": "3rem",
-      "fontWeight": "400",
+<div>
+  <h1
+    className="text-color-dark"
+    style={
+      Object {
+        "fontSize": "3rem",
+        "fontWeight": "400",
+      }
     }
-  }
->
-  Hello World!
-</h1>
+  >
+    Hello World!
+  </h1>
+</div>
 `;
