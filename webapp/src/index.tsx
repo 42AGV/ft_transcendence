@@ -4,6 +4,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { Chat, Landing, Play, Users } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { CHAT_URL, PLAY_URL, USERS_URL } from './shared/urls';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -12,9 +13,9 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/play" element={<Play />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path={USERS_URL} element={<Users />} />
+        <Route path={PLAY_URL} element={<Play />} />
+        <Route path={CHAT_URL} element={<Chat />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

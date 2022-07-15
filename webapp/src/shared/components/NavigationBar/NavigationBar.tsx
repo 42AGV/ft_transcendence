@@ -1,3 +1,4 @@
+import { CHAT_URL, PLAY_URL, USERS_URL } from '../../urls';
 import { IconVariant } from '../Icon/Icon';
 import NavigationItem from '../NavigationItem/NavigationItem';
 import './NavigationBar.css';
@@ -12,17 +13,17 @@ const NAV_ITEMS_CONTENT: NavItemContent[] = [
   {
     icon: IconVariant.USERS,
     title: 'Users',
-    url: '/users',
+    url: USERS_URL,
   },
   {
     icon: IconVariant.PLAY,
     title: 'Play',
-    url: '/play',
+    url: PLAY_URL,
   },
   {
     icon: IconVariant.CHAT,
     title: 'Chat',
-    url: '/chat',
+    url: CHAT_URL,
   },
 ];
 
