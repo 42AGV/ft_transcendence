@@ -9,7 +9,7 @@ type RowProps = {
   iconVariant?: IconVariant;
   onClick?: () => void;
   avProps : AvatarProps;
-  children: string[];
+  children: [string, string];
 };
 
 export default function Row({
