@@ -29,33 +29,30 @@ export enum TextWeight {
 type TextProps = {
   variant: TextVariant;
   color?: TextColor;
+  parent_class?: string;
   weight?: TextWeight;
   children: string;
-  classname?: string;
 };
 
 export default function Text({
   variant,
   color,
+  parent_class,
   weight = TextWeight.REGULAR,
   children,
-  classname
 }: TextProps) {
   const { tag, size } = variant;
   const TextTag = tag as React.ElementType;
-  const classesnames = color ?
-    (classname ? `${color} ${classname}` : `${color}`) :
-    (classname ? `${classname}` : undefined);
+  const classes = [
+    !color && !parent_class ? TextColor.DARK : color,
+    parent_class,
+  ]
+    .join(' ')
+    .trim();
 
   return (
-    <div>
-    {(classesnames && (
-      <TextTag style={{ fontSize: size, fontWeight: weight }} className={classesnames}>
+    <TextTag style={{ fontSize: size, fontWeight: weight }} className={classes}>
       {children}
     </TextTag>
-    )) || (<TextTag style={{ fontSize: size, fontWeight: weight }} className={TextColor.DARK}>
-      {children}
-    </TextTag>)}
-    </div>
   );
 }
