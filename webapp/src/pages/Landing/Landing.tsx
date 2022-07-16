@@ -4,14 +4,14 @@ import {
   Icon,
   IconSize,
   IconVariant,
-  NavigationItem,
   Status,
   Text,
   TextColor,
   TextVariant,
   TextWeight,
   SmallAvatar,
-  LargeAvatar
+  LargeAvatar,
+  NavigationBar,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
@@ -22,15 +22,16 @@ export default function Landing() {
     window.location.href = 'http://google.com';
   };
 
-    const randomAvatar = 'https://i.pravatar.cc/1000'
+  const randomAvatar = 'https://i.pravatar.cc/1000';
   return (
     <section className="landing">
+      <NavigationBar />
       <Text
         variant={TextVariant.TITLE}
         color={TextColor.LIGHT}
         weight={TextWeight.BOLD}
       >
-      Landing 🚀
+        Landing 🚀
       </Text>
       <Button variant={ButtonVariant.WARNING} onClick={btn_action}>
         Alert
@@ -54,18 +55,18 @@ export default function Landing() {
         color={Color.ONLINE}
         size={IconSize.LARGE}
       />
-      <NavigationItem
-        iconVariant={IconVariant.USERS}
-        title="Users"
-        urlNavigation="/users"
-      />
       <Status variant="playing" />
-			<SmallAvatar url={randomAvatar} />
-			<LargeAvatar url={randomAvatar} />
-			<SmallAvatar url={randomAvatar} status='offline'/>
-			<LargeAvatar url={randomAvatar} edit status='online' caption='level 21'/>
-			<SmallAvatar url={randomAvatar} status='playing'/>
-			<LargeAvatar url={randomAvatar} edit status='playing' caption='level 21'/>
+      <SmallAvatar url={randomAvatar} />
+      <LargeAvatar url={randomAvatar} />
+      <SmallAvatar url={randomAvatar} status="offline" />
+      <LargeAvatar url={randomAvatar} edit status="online" caption="level 21" />
+      <SmallAvatar url={randomAvatar} status="playing" />
+      <LargeAvatar
+        url={randomAvatar}
+        edit
+        status="playing"
+        caption="level 21"
+      />
     </section>
   );
 }

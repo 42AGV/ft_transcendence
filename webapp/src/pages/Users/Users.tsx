@@ -1,4 +1,4 @@
-import { Header, IconVariant, NavigationItem } from '../../shared/components';
+import { Header, IconVariant, NavigationBar } from '../../shared/components';
 import './Users.css';
 
 export default function Users() {
@@ -25,11 +25,9 @@ export default function Users() {
         <Header navigationFigure="https://i.pravatar.cc/1000" navigationUrl="/">
           edit profile
         </Header>
-        <NavigationItem
-          iconVariant={IconVariant.USERS}
-          title="Users"
-          urlNavigation="/users"
-        />
+        <div className="users-nav-container">
+          <NavigationBar />
+        </div>
       </div>
     </div>
   );
