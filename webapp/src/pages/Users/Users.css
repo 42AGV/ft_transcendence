@@ -10,3 +10,7 @@
   background-color: var(--color-background);
   color: var(--color-light);
 }
+
+.users-nav-container {
+  width: 80%;
+}

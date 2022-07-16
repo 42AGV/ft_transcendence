@@ -59,37 +59,37 @@ body {
 }
 
 .heading-bold {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .subheading-bold {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .paragraph-regular {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-family: var(--primary-font);
   font-weight: 400;
 }
 
 .paragraph-medium {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-family: var(--primary-font);
   font-weight: 500;
 }
 
 .paragraph-bold {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-family: var(--primary-font);
   font-weight: 700;
 }
 
 .caption-regular {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-family: var(--primary-font);
   font-weight: 400;
 }

@@ -1,14 +1,12 @@
-import { IconVariant, NavigationItem } from '../../shared/components';
+import { NavigationBar } from '../../shared/components';
 import './Users.css';
 
 export default function Users() {
   return (
     <div className="users">
-      <NavigationItem
-        iconVariant={IconVariant.USERS}
-        title="Users"
-        urlNavigation="/users"
-      />
+      <div className="users-nav-container">
+        <NavigationBar />
+      </div>
     </div>
   );
 }

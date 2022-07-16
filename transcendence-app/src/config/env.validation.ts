@@ -22,7 +22,7 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   FORTYTWO_APP_SECRET!: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   FORTYTWO_APP_CALLBACK_URL!: string;
 
   @IsUrl()
