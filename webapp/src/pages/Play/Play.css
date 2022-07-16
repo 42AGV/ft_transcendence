@@ -1,4 +1,4 @@
-.users {
+.play {
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -11,6 +11,6 @@
   color: var(--color-light);
 }
 
-.users-nav-container {
+.play-nav-container {
   width: 80%;
 }
