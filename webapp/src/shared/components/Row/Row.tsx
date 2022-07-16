@@ -1,6 +1,5 @@
 import Icon, { IconVariant, IconSize } from '../Icon/Icon';
 import './Row.css';
-import '../Button/Button.css';
 import { SmallAvatar, AvatarProps } from '../Avatar/Avatar';
 import { TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';

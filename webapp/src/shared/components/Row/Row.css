@@ -10,6 +10,7 @@
   cursor: pointer;
   display: flex;
   flex-direction: row;
+  min-width: 230px;
 }
 
 .row_wrapper {
