@@ -24,10 +24,7 @@ export default function Row({
 }: RowProps) {
   return (
     <button className={`row paragraph-regular`} onClick={onClick}>
-      {avatarUrl &&
-        ((avatarStatus && (
-          <SmallAvatar url={avatarUrl} status={avatarStatus} />
-        )) || <SmallAvatar url={avatarUrl} />)}
+      {avatarUrl && <SmallAvatar url={avatarUrl} status={avatarStatus} />}
       <div className={`row_text_wrapper`}>
         {title && (
           <Text
