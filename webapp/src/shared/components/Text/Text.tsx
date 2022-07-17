@@ -1,5 +1,4 @@
 import { Color } from '../../types';
-import React from "react";
 
 export class TextVariant {
   public static TITLE = new TextVariant('h1', '3rem');
@@ -29,29 +28,21 @@ export enum TextWeight {
 type TextProps = {
   variant: TextVariant;
   color?: TextColor;
-  parent_class?: string;
   weight?: TextWeight;
   children: string;
 };
 
 export default function Text({
   variant,
-  color,
-  parent_class,
+  color = TextColor.DARK,
   weight = TextWeight.REGULAR,
   children,
 }: TextProps) {
   const { tag, size } = variant;
   const TextTag = tag as React.ElementType;
-  const classes = [
-    !color && !parent_class ? TextColor.DARK : color,
-    parent_class,
-  ]
-    .join(' ')
-    .trim();
 
   return (
-    <TextTag style={{ fontSize: size, fontWeight: weight }} className={classes}>
+    <TextTag style={{ fontSize: size, fontWeight: weight }} className={color}>
       {children}
     </TextTag>
   );
