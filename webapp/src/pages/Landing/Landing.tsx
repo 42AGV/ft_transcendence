@@ -18,8 +18,8 @@ import { Color } from '../../shared/types';
 import './Landing.css';
 
 export default function Landing() {
-  const btn_action = (): void => alert('This is an alert');
-  const btn_link = (): void => {
+  const buttonAction = (): void => alert('This is an alert');
+  const buttonLink = (): void => {
     window.location.href = 'http://google.com';
   };
 
@@ -34,7 +34,7 @@ export default function Landing() {
       >
         Landing 🚀
       </Text>
-      <Button variant={ButtonVariant.WARNING} onClick={btn_action}>
+      <Button variant={ButtonVariant.WARNING} onClick={buttonAction}>
         Alert
       </Button>
       <Button
@@ -47,7 +47,7 @@ export default function Landing() {
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}
-        onClick={btn_link}
+        onClick={buttonLink}
       >
         To Google
       </Button>
@@ -70,8 +70,8 @@ export default function Landing() {
       />
       <Row
         iconVariant={IconVariant.ARROW_FORWARD}
-        avatarProps={{ url: randomAvatar, status: 'online' }}
-        onClick={btn_action}
+        avatar={<SmallAvatar url={randomAvatar} status="offline" />}
+        onClick={buttonAction}
         title="John Doe"
         subtitle="level 3"
       />
