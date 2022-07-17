@@ -21,28 +21,26 @@ export default function Row({
 }: RowProps) {
   return (
     <button className={`row paragraph-regular`} onClick={onClick}>
-      <div className={`row_wrapper`}>
-        {avatarProps && <SmallAvatar {...avatarProps} />}
-        <div className={`row_text_wrapper`}>
-          {title && (
-            <Text
-              variant={TextVariant.PARAGRAPH}
-              weight={TextWeight.MEDIUM}
-              parent_class="row_text_wrapper"
-            >
-              {title}
-            </Text>
-          )}
-          {subtitle && (
-            <Text
-              variant={TextVariant.CAPTION}
-              weight={TextWeight.REGULAR}
-              parent_class="row_text_wrapper"
-            >
-              {subtitle}
-            </Text>
-          )}
-        </div>
+      {avatarProps && <SmallAvatar {...avatarProps} />}
+      <div className={`row_text_wrapper`}>
+        {title && (
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            weight={TextWeight.MEDIUM}
+            parent_class="row_text_wrapper"
+          >
+            {title}
+          </Text>
+        )}
+        {subtitle && (
+          <Text
+            variant={TextVariant.CAPTION}
+            weight={TextWeight.REGULAR}
+            parent_class="row_text_wrapper"
+          >
+            {subtitle}
+          </Text>
+        )}
       </div>
       {iconVariant && (
         <div className="row-icon">
