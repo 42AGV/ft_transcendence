@@ -12,7 +12,7 @@ import {
   SmallAvatar,
   LargeAvatar,
   NavigationBar,
-  Row
+  Row,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
@@ -68,8 +68,13 @@ export default function Landing() {
         status="playing"
         caption="level 21"
       />
-      <Row iconVariant={IconVariant.ARROW_FORWARD} avProps={{url:randomAvatar, status:'online'}} onClick={btn_action}>
-        {['John Doe','level 3']}</Row>
+      <Row
+        iconVariant={IconVariant.ARROW_FORWARD}
+        avatarProps={{ url: randomAvatar, status: 'online' }}
+        onClick={btn_action}
+        title="John Doe"
+        subtitle="level 3"
+      />
     </section>
   );
 }
