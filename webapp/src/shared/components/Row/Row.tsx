@@ -18,7 +18,7 @@ export default function Row({
   iconVariant,
   onClick,
   avatarUrl,
-  avatarStatus,
+  avatarStatus = 'offline',
   title,
   subtitle,
 }: RowProps) {
