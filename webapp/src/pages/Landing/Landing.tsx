@@ -16,6 +16,7 @@ import {
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
+import {RowProps} from "../../shared/components/Row/Row";
 
 export default function Landing() {
   const btn_action = (): void => alert('This is an alert');
@@ -24,6 +25,13 @@ export default function Landing() {
   };
 
   const randomAvatar = 'https://i.pravatar.cc/1000';
+  const Rows : JSX.Element[] = [<Row
+    iconVariant={IconVariant.ARROW_FORWARD}
+    avatarProps={{ url: randomAvatar, status: 'online' }}
+    onClick={btn_action}
+    title="John Doe"
+    subtitle="level 3"
+  />, <NavigationBar /> ];
   return (
     <section className="landing">
       <NavigationBar />

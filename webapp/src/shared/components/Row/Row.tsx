@@ -4,7 +4,7 @@ import { SmallAvatar, AvatarProps } from '../Avatar/Avatar';
 import { TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';
 
-type RowProps = {
+export type RowProps = {
   iconVariant?: IconVariant;
   onClick?: () => void;
   avatarProps?: AvatarProps;
