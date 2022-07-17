@@ -18,13 +18,16 @@ export default function Row({
   iconVariant,
   onClick,
   avatarUrl,
-  avatarStatus = 'offline',
+  avatarStatus,
   title,
   subtitle,
 }: RowProps) {
   return (
     <button className={`row paragraph-regular`} onClick={onClick}>
-      {avatarUrl && <SmallAvatar url={avatarUrl} status={avatarStatus} />}
+      {avatarUrl &&
+        ((avatarStatus && (
+          <SmallAvatar url={avatarUrl} status={avatarStatus} />
+        )) || <SmallAvatar url={avatarUrl} />)}
       <div className={`row_text_wrapper`}>
         {title && (
           <Text
