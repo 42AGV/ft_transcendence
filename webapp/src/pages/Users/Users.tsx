@@ -17,7 +17,7 @@ export default function Users() {
           navigationUrl="/"
           statusVariant="playing"
         >
-          edit profile
+          Lorem ipsum dolor sit amet.
         </Header>
         <Header navigationFigure={IconVariant.ARROW_BACK} navigationUrl="/">
           edit profile
