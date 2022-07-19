@@ -1,5 +1,4 @@
 import { Color } from '../../types';
-import './Text.css';
 
 export class TextVariant {
   public static TITLE = new TextVariant('h1', '3rem');

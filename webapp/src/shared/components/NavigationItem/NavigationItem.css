@@ -1,0 +1,16 @@
+.navigation-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  text-decoration: none;
+}
+
+/* Styles for viewports wider than 768 pixels. */
+@media (min-width: 768px) {
+  .navigation-item {
+    flex-direction: row;
+    column-gap: 0.25rem;
+  }
+}

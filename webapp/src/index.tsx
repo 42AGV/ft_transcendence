@@ -2,13 +2,22 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Landing } from './pages';
+import { Chat, Landing, Play, Users } from './pages';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { CHAT_URL, PLAY_URL, USERS_URL } from './shared/urls';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <Landing />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path={USERS_URL} element={<Users />} />
+        <Route path={PLAY_URL} element={<Play />} />
+        <Route path={CHAT_URL} element={<Chat />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
 );
 

@@ -1,0 +1,13 @@
+
+.navigation-bar {
+  width: 100%;
+}
+
+.navigation-bar ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
