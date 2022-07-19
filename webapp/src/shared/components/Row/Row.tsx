@@ -5,7 +5,7 @@ import { default as Text } from '../Text/Text';
 import { SmallAvatar } from '../Avatar/Avatar';
 import { StatusVariant } from '../Status/Status';
 
-export type RowProps = {
+type RowProps = {
   iconVariant?: IconVariant;
   onClick?: () => void;
   avatarUrl?: string;
