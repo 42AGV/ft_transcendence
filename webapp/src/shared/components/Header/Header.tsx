@@ -7,7 +7,7 @@ import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './Header.css';
 
 type HeaderProps = {
-  navigationFigure: string;
+  navigationFigure: IconVariant | string;
   navigationUrl: string;
   statusVariant?: StatusVariant;
   children: string;
