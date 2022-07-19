@@ -32,6 +32,7 @@ import { User as GetUser } from './decorators/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ApiFile } from './decorators/api-file.decorator';
+import { TRANSCENDENCE_APP_DATA } from '../shared/constants';
 
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
@@ -76,20 +77,20 @@ export class UserController {
     return result;
   }
 
-  @Post(':uuid/avatar')
+  @Post('avatar')
   @ApiConsumes('multipart/form-data')
   @ApiFile('avatar')
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: diskStorage({
-        destination: './upload/avatars',
+        destination: `${TRANSCENDENCE_APP_DATA}/avatars`,
       }),
     }),
   )
   uploadAvatar(
-    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @GetUser() user: UserEntity,
     @UploadedFile() avatar: Express.Multer.File,
   ) {
-    console.log(uuid, avatar);
+    console.log(user.id, avatar);
   }
 }

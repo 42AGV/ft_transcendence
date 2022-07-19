@@ -3,22 +3,28 @@ ARG ALPINE_VERSION=3.16
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS development
 ENV NODE_ENV=development
-RUN apk add --no-cache dumb-init
+RUN apk add --no-cache dumb-init \
+  && mkdir -p /var/lib/transcendence-app \
+  && chown -R node:node /var/lib/transcendence-app
 WORKDIR  /transcendence-app
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm clean-install
 COPY . .
 RUN npm run build
+VOLUME /var/lib/transcendence-app
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["npm", "run", "start:dev"]
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS production
 ENV NODE_ENV=production
-RUN apk add --no-cache dumb-init
+RUN apk add --no-cache dumb-init \
+  && mkdir -p /var/lib/transcendence-app \
+  && chown -R node:node /var/lib/transcendence-app
 WORKDIR  /transcendence-app
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm clean-install --production
 COPY --from=development --chown=node:node /transcendence-app/dist ./dist
 USER node
+VOLUME /var/lib/transcendence-app
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["node", "dist/main"]
