@@ -36,6 +36,10 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
+  TRANSCENDENCE_APP_DATA!: string;
+
+  @IsString()
+  @IsNotEmpty()
   MEMCACHED_HOST!: string;
 
   @IsPort()

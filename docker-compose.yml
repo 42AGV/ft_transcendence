@@ -18,8 +18,11 @@ services:
     depends_on:
       - "db"
       - "memcached"
+    build:
+      args:
+        - TRANSCENDENCE_APP_DATA=${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
     volumes:
-      - transcendence-app-data:/var/lib/transcendence-app
+      - transcendence-app-data:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
 
   db:
     image: postgres:14.4-alpine3.16

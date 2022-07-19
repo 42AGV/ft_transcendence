@@ -29,10 +29,8 @@ import {
   UsersPaginationQueryDto,
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { ApiFile } from './decorators/api-file.decorator';
-import { TRANSCENDENCE_APP_DATA } from '../shared/constants';
+import LocalFileInterceptor from '../shared/interceptors/local-file.interceptor';
 
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
@@ -79,18 +77,17 @@ export class UserController {
 
   @Post('avatar')
   @ApiConsumes('multipart/form-data')
-  @ApiFile('avatar')
+  @ApiFile('file')
   @UseInterceptors(
-    FileInterceptor('avatar', {
-      storage: diskStorage({
-        destination: `${TRANSCENDENCE_APP_DATA}/avatars`,
-      }),
+    LocalFileInterceptor({
+      fieldName: 'file',
+      path: '/avatars',
     }),
   )
   uploadAvatar(
     @GetUser() user: UserEntity,
-    @UploadedFile() avatar: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(user.id, avatar);
+    console.log(user.id, file);
   }
 }
