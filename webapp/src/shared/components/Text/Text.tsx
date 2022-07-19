@@ -2,14 +2,14 @@ import { Color } from '../../types';
 import React from "react";
 
 export class TextVariant {
-  public static TITLE = new TextVariant('h1', '3rem');
-  public static SUBTITLE = new TextVariant('h2', '2.5rem');
-  public static HEADING = new TextVariant('h3', '1.5rem');
-  public static SUBHEADING = new TextVariant('h4', '1.25rem');
-  public static PARAGRAPH = new TextVariant('p', '1rem');
-  public static CAPTION = new TextVariant('p', '0.875rem');
+  public static TITLE = new TextVariant('h1', 'title-bold');
+  public static SUBTITLE = new TextVariant('h2', 'subtitle-bold');
+  public static HEADING = new TextVariant('h3', 'heading-bold');
+  public static SUBHEADING = new TextVariant('h4', 'subheading-bold');
+  public static PARAGRAPH = new TextVariant('p', 'paragraph-regular');
+  public static CAPTION = new TextVariant('p', 'caption-regular');
 
-  private constructor(public tag: string, public size: string) {}
+  private constructor(public tag: string, public className: string) {}
 }
 
 enum CustomTextColor {
@@ -29,29 +29,17 @@ export enum TextWeight {
 type TextProps = {
   variant: TextVariant;
   color?: TextColor;
-  parent_class?: string;
   weight?: TextWeight;
   children: string;
 };
 
-export default function Text({
-  variant,
-  color,
-  parent_class,
-  weight = TextWeight.REGULAR,
-  children,
-}: TextProps) {
-  const { tag, size } = variant;
+export default function Text({ variant, color, weight, children }: TextProps) {
+  const { tag, className } = variant;
   const TextTag = tag as React.ElementType;
-  const classes = [
-    !color && !parent_class ? TextColor.DARK : color,
-    parent_class,
-  ]
-    .join(' ')
-    .trim();
+  const textClassName = `${className} ${color ? color : ''}`;
 
   return (
-    <TextTag style={{ fontSize: size, fontWeight: weight }} className={classes}>
+    <TextTag style={{ fontWeight: weight }} className={textClassName}>
       {children}
     </TextTag>
   );

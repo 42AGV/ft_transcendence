@@ -4,7 +4,7 @@ import { Icon, IconVariant, IconSize } from '../index';
 import { StatusVariant } from '../Status/Status';
 import { Color } from '../../types';
 
-export type AvatarProps = {
+type AvatarProps = {
   url: string;
   status?: StatusVariant;
 };

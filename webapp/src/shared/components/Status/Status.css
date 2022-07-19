@@ -1,6 +1,5 @@
 .status {
-  display: flex;
-  justify-content: space-between;
+  display: inline-flex;
   align-items: center;
   column-gap: 0.5rem;
 }

@@ -2,13 +2,13 @@
   display: flex;
   width: 100%;
   min-width: fit-content;
-  height: 82px;
-  padding: 16px 28px;
-  border-radius: 8px;
+  height: 4.5rem;
+  padding: 0.9rem 1.56rem;
+  border-radius: 0.44rem;
   color: var(--color-light);
   background-color: var(--color-dark);
   border: 0;
-  column-gap: 22px;
+  column-gap: 1.22rem;
   align-items: center;
   cursor: pointer;
   flex-direction: row;
@@ -22,5 +22,6 @@
 }
 
 .row-icon {
+  display: flex;
   margin-left: auto;
 }
