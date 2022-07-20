@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { Color } from '../../types';
 import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import './Input.css';
 
 export enum InputColor {
-  LIGHT = 'color-light',
-  DARK = 'color-dark',
+  LIGHT = 'light',
+  DARK = 'dark',
 }
 
 type InputProps = {
@@ -21,20 +20,22 @@ export default function Input({
   iconVariant,
   input,
 }: InputProps) {
-  const [content, setContent] = useState();
   return (
-    <form className="form-container subheading-bold">
-      <label>{label}</label>
-      <div className="input-container">
+    <div className="form-container subheading-bold">
+      {label && <label>{label}</label>}
+      <div className={`input-container input-container-${color}`}>
         {iconVariant && (
           <Icon
             variant={iconVariant}
-            size={IconSize.SMALL}
-            color={Color.DARK}
+            size={IconSize.LARGE}
+            color={color === InputColor.DARK ? Color.LIGHT : Color.DARK}
           ></Icon>
         )}
-        <input className="input-form paragraph-regular" placeholder={input} />
+        <input
+          className={`input-form input-form-${color} paragraph-regular `}
+          placeholder={input}
+        />
       </div>
-    </form>
+    </div>
   );
 }

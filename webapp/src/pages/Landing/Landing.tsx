@@ -26,19 +26,7 @@ export default function Landing() {
 
   const randomAvatar = 'https://i.pravatar.cc/1000';
   return (
-    <section className="Landing">
-      <Input
-        color={InputColor.DARK}
-        label="My Label"
-        iconVariant={IconVariant.SEARCH}
-        input="Placeholder"
-      />
-      <Input
-        color={InputColor.LIGHT}
-        label="My Label"
-        iconVariant={IconVariant.SEARCH}
-        input="Placeholder"
-      />
+    <section className="landing">
       <NavigationBar />
       <Text
         variant={TextVariant.TITLE}
@@ -81,6 +69,13 @@ export default function Landing() {
         status="playing"
         caption="level 21"
       />
+      <Input
+        color={InputColor.DARK}
+        label="Dark Input"
+        iconVariant={IconVariant.SEARCH}
+        input="Search"
+      />
+      <Input color={InputColor.LIGHT} label="Light Input" input="Your email" />
     </section>
   );
 }
