@@ -1,0 +1,26 @@
+.header {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+
+.header-navigation,
+.header-navigation a,
+.header-text,
+.header-status {
+  display: flex;
+  align-items: center;
+}
+
+.header-text {
+  justify-content: center;
+}
+
+.header-text > * {
+  margin: 0;
+  text-align: center;
+}
+
+.header-status {
+  justify-content: flex-end;
+}
