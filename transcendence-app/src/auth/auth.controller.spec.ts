@@ -6,10 +6,12 @@ import * as request from 'supertest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from '../config/env.validation';
 import { OAuth42Config } from './oauth42-config.interface';
+import { OAuth42Guard } from './oauth42.guard';
 
 describe('Auth Controller', () => {
   let app: INestApplication;
   let config: ConfigService<OAuth42Config>;
+  const canActivate = jest.fn(() => true);
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,7 +25,10 @@ describe('Auth Controller', () => {
         AuthModule,
       ],
       controllers: [AuthController],
-    }).compile();
+    })
+      .overrideGuard(OAuth42Guard)
+      .useValue({ canActivate })
+      .compile();
 
     config = module.get<ConfigService<OAuth42Config>>(ConfigService);
     app = module.createNestApplication();

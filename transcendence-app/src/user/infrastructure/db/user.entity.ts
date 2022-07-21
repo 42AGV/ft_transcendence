@@ -4,16 +4,16 @@ export enum userKeys {
   ID = 'id',
   USERNAME = 'username',
   EMAIL = 'email',
-  AVATAR = 'avatar',
-  TIMESTAMP = 'timestamp',
+  AVATAR_ID = 'avatar_id',
+  CREATED_AT = 'created_at',
 }
 
 export class UserEntity implements BaseEntity {
   constructor(
     public username: string,
     public email: string,
-    public avatar: string | null,
+    public avatar_id: string | null,
     public id: string,
-    public created_at: number,
+    public created_at: Date,
   ) {}
 }

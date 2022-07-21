@@ -1,3 +1,4 @@
+import { UsersPaginationQueryDto } from '../../dto/user.pagination.dto';
 import { User } from '../../user.domain';
 
 export abstract class IUserRepository {
@@ -10,4 +11,7 @@ export abstract class IUserRepository {
     user: Partial<User>,
   ): Promise<User | null>;
   abstract add(user: User): Promise<User | null>;
+  abstract getPaginatedUsers(
+    queryDto: Required<UsersPaginationQueryDto>,
+  ): Promise<User[] | null>;
 }

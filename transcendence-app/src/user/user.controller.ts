@@ -6,23 +6,26 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
+  ServiceUnavailableException,
+  UnprocessableEntityException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserEntity } from './user.entity';
 import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
-  ApiBadRequestResponse,
   ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiServiceUnavailableResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import {
   MAX_USER_ENTRIES_PER_PAGE,
@@ -30,25 +33,38 @@ import {
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
 import { ApiFile } from './decorators/api-file.decorator';
-import LocalFileInterceptor from '../shared/interceptors/local-file.interceptor';
+import { User } from './user.domain';
+import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
+import { AVATARS_PATH } from './constants';
 
+@Controller('users')
+@UseGuards(AuthenticatedGuard)
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
-@UseGuards(AuthenticatedGuard)
-@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
   @ApiCreatedResponse({ description: 'Create a user' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  async addUser(@Body() user: UserDto): Promise<UserEntity> {
-    return this.userService.findOneOrCreate(user);
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async addUser(@Body() userDto: UserDto): Promise<User> {
+    let user = await this.userService.retrieveUserWithUserName(
+      userDto.username,
+    );
+    if (user) {
+      throw new UnprocessableEntityException();
+    }
+    user = await this.userService.addUser(userDto);
+    if (!user) {
+      throw new ServiceUnavailableException();
+    }
+    return user;
   }
 
   @Get('me')
   @ApiOkResponse({ description: 'Get the authenticated user' })
-  getCurrentUser(@GetUser() user: UserEntity) {
+  getCurrentUser(@GetUser() user: User) {
     return user;
   }
 
@@ -56,38 +72,90 @@ export class UserController {
   @ApiOkResponse({
     description: `Lists all users (max ${MAX_USER_ENTRIES_PER_PAGE})`,
   })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  getUsers(@Query() usersPaginationQueryDto: UsersPaginationQueryDto) {
-    return this.userService.retrieveUsers(usersPaginationQueryDto);
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getUsers(
+    @Query() usersPaginationQueryDto: UsersPaginationQueryDto,
+  ): Promise<User[]> {
+    const users = await this.userService.retrieveUsers(usersPaginationQueryDto);
+    if (!users) {
+      throw new ServiceUnavailableException();
+    }
+    return users;
+  }
+
+  @Put('avatar')
+  @ApiConsumes('multipart/form-data')
+  @ApiFile('file')
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  @UseInterceptors(
+    LocalFileInterceptor({
+      fieldName: 'file',
+      path: AVATARS_PATH,
+      fileFilter: (request, file, callback) => {
+        if (file.mimetype !== 'image/jpeg') {
+          return callback(
+            new UnprocessableEntityException(
+              'Validation failed (expected type is jpeg)',
+            ),
+            false,
+          );
+        }
+        callback(null, true);
+      },
+      limits: {
+        fileSize: Math.pow(1024, 2), // 1MB
+      },
+    }),
+  )
+  async uploadAvatar(
+    @GetUser() user: User,
+    @UploadedFile()
+    file: Express.Multer.File,
+  ): Promise<User> {
+    const updatedUser = await this.userService.addAvatar(user, {
+      filename: file.filename,
+      path: file.path,
+      mimetype: file.mimetype,
+      size: file.size,
+    });
+
+    if (!updatedUser) {
+      throw new ServiceUnavailableException();
+    }
+    return updatedUser;
+  }
+
+  @Get('avatar')
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getCurrentUserAvatar(@GetUser() user: User) {
+    const streamableFile = await this.userService.getAvatar(user.id);
+
+    if (!streamableFile) {
+      throw new NotFoundException();
+    }
+    return streamableFile;
+  }
+
+  @Get(':uuid/avatar')
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getAvatar(@Param('uuid', ParseUUIDPipe) id: string) {
+    const streamableFile = await this.userService.getAvatar(id);
+
+    if (!streamableFile) {
+      throw new NotFoundException();
+    }
+    return streamableFile;
   }
 
   @Get(':uuid')
   @ApiOkResponse({ description: 'Get a user' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserById(
-    @Param('uuid', ParseUUIDPipe) uuid: string,
-  ): Promise<UserEntity> {
-    const result = this.userService.retrieveUserWithId(uuid);
-    if (result === null) {
+  async getUserById(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<User> {
+    const user = await this.userService.retrieveUserWithId(uuid);
+    if (user === null) {
       throw new NotFoundException();
     }
-    return result;
-  }
-
-  @Post('avatar')
-  @ApiConsumes('multipart/form-data')
-  @ApiFile('file')
-  @UseInterceptors(
-    LocalFileInterceptor({
-      fieldName: 'file',
-      path: '/avatars',
-    }),
-  )
-  uploadAvatar(
-    @GetUser() user: UserEntity,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    console.log(user.id, file);
+    return user;
   }
 }

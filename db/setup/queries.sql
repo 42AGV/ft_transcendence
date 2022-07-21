@@ -2,40 +2,32 @@
 
 INSERT INTO users (
      username,
-     email,
-     avatar
+     email
 ) VALUES (
     'gbudau-admin',
-    'gbudau-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'gbudau-admin@transcendence.com'
 );
 
 INSERT INTO users (
      username,
-     email,
-     avatar
+     email
 ) VALUES (
     'vdedios-admin',
-    'vdedios-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'vdedios-admin@transcendence.com'
 );
 
 INSERT INTO users (
      username,
-     email,
-     avatar
+     email
 ) VALUES (
     'aollero-admin',
-    'aollero-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'aollero-admin@transcendence.com'
 );
 
 INSERT INTO users (
      username,
-     email,
-     avatar
+     email
 ) VALUES (
     'fportela-admin',
-    'fportela-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'fportela-admin@transcendence.com'
 );

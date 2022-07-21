@@ -8,11 +8,13 @@ import { UserDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { v4 as uuidv4 } from 'uuid';
+import { ConfigModule } from '@nestjs/config';
+import { validate } from '../config/env.validation';
 
 const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
-  avatar: 'www.example.jpg',
+  avatar_id: uuidv4(),
 };
 const testUserId = uuidv4();
 
@@ -55,7 +57,7 @@ describe('User Controller end to end test', () => {
         .send({
           username: 'user' + i,
           email: 'afgv@github.com',
-          avatar: 'www.example.jpg',
+          avatar_id: uuidv4(),
         });
     }
     const response = await request(server)
@@ -83,23 +85,38 @@ describe('User Controller unit tests', () => {
 
   beforeEach(async () => {
     mockUserService = {
-      findOneOrCreate: (user: UserDto) => {
-        return {
+      retrieveUserWithUserName: (username: string) => {
+        return Promise.resolve({
           id: testUserId,
-          createdAt: new Date(Date.now()),
-          ...user,
-        };
+          created_at: new Date(Date.now()),
+          ...testUserDto,
+          username,
+        });
       },
       retrieveUserWithId: (id: string) => {
-        return {
+        return Promise.resolve({
           id,
-          createdAt: new Date(Date.now()),
+          created_at: new Date(Date.now()),
           ...testUserDto,
-        };
+        });
+      },
+      addUser: (userDto: UserDto) => {
+        return Promise.resolve({
+          id: testUserId,
+          created_at: new Date(Date.now()),
+          ...userDto,
+        });
       },
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          cache: true,
+          validate,
+        }),
+      ],
       controllers: [UserController],
       providers: [
         {
@@ -124,7 +141,7 @@ describe('User Controller unit tests', () => {
   });
 
   it('throws if user does not exist', async () => {
-    mockUserService.retrieveUserWithId = () => null;
+    mockUserService.retrieveUserWithId = () => Promise.resolve(null);
     expect.assertions(1);
     try {
       await controller.getUserById(testUserId);

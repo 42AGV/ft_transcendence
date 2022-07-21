@@ -14,7 +14,7 @@ export class Api42Service {
     private configService: ConfigService<OAuth42Config>,
   ) {}
 
-  private async fetch42UserData(accessToken: string): Promise<any> {
+  async fetch42UserData(accessToken: string): Promise<any> {
     const profileUrl = this.configService.get('FORTYTWO_APP_PROFILE_URL');
     const { data } = await lastValueFrom(
       this.httpService.get(profileUrl, {
@@ -25,7 +25,16 @@ export class Api42Service {
     return data;
   }
 
-  private static async validate42ApiResponse(user: UserDto): Promise<UserDto> {
+  downloadUserAvatar(accessToken: string, url: string) {
+    return lastValueFrom(
+      this.httpService.get(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        responseType: 'stream',
+      }),
+    );
+  }
+
+  static async validate42ApiResponse(user: UserDto): Promise<UserDto> {
     const validatedUser = plainToClass(UserDto, user);
     const errors = await validate(validatedUser, {
       skipMissingProperties: false,
@@ -37,16 +46,5 @@ export class Api42Service {
     }
 
     return validatedUser;
-  }
-
-  async get42UserData(accessToken: string): Promise<UserDto> {
-    const data = await this.fetch42UserData(accessToken);
-    const user: UserDto = {
-      avatar: data.image_url,
-      username: data.login,
-      email: data.email,
-    };
-
-    return Api42Service.validate42ApiResponse(user);
   }
 }

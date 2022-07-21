@@ -10,7 +10,7 @@ export class PostgresPool {
     this.pool = new Pool({
       // TODO - #52 Create logs and tests and read from config in db repository
       user: 'postgres',
-      host: 'localhost',
+      host: 'db',
       database: 'ft_transcendence',
       password: 'postgres',
       port: 5432,
