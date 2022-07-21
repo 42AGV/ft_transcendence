@@ -5,7 +5,7 @@ import {
   IconSize,
   IconVariant,
   Input,
-  InputColor,
+  InputVariant,
   Status,
   Text,
   TextVariant,
@@ -79,12 +79,16 @@ export default function Landing() {
         subtitle="level 3"
       />
       <Input
-        color={InputColor.DARK}
+        variant={InputVariant.DARK}
         label="Dark Input"
         iconVariant={IconVariant.SEARCH}
-        input="Search"
+        placeholder="Search"
       />
-      <Input color={InputColor.LIGHT} label="Light Input" input="Your email" />
+      <Input
+        variant={InputVariant.LIGHT}
+        label="Light Input"
+        placeholder="Your email"
+      />
     </section>
   );
 }

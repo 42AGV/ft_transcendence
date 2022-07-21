@@ -2,40 +2,46 @@ import { Color } from '../../types';
 import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import './Input.css';
 
-export enum InputColor {
+export enum InputVariant {
   LIGHT = 'light',
   DARK = 'dark',
 }
 
 type InputProps = {
-  color?: InputColor;
+  variant?: InputVariant;
   label?: string;
   iconVariant?: IconVariant;
-  input?: string;
+  placeholder?: string;
+  value?: string | number | readonly string[];
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  name?: string;
 };
 
 export default function Input({
-  color,
+  variant,
   label,
   iconVariant,
-  input,
+  placeholder,
+  value,
+  onChange,
+  name,
 }: InputProps) {
   return (
-    <div className="form-container subheading-bold">
-      {label && <label>{label}</label>}
-      <div className={`input-container input-container-${color}`}>
+    <label className="input subheading-bold">
+      {label}
+      <div className={`input-container input-container-${variant}`}>
         {iconVariant && (
           <Icon
             variant={iconVariant}
             size={IconSize.LARGE}
-            color={color === InputColor.DARK ? Color.LIGHT : Color.DARK}
+            color={variant === InputVariant.DARK ? Color.LIGHT : Color.DARK}
           ></Icon>
         )}
         <input
-          className={`input-form input-form-${color} paragraph-regular `}
-          placeholder={input}
+          className={`input-form input-form-${variant} paragraph-regular `}
+          placeholder={placeholder}
         />
       </div>
-    </div>
+    </label>
   );
 }
