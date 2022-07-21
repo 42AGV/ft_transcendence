@@ -1,0 +1,20 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+.status-icon {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+}
+
+.status-icon-offline {
+  background: var(--color-offline);
+}
+
+.status-icon-online,
+.status-icon-playing {
+  background: var(--color-online);
+}

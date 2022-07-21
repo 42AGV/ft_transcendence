@@ -1,9 +1,9 @@
 export enum Color {
-  WARNING = 'color-warning',
-  SUBMIT = 'color-submit',
-  ONLINE = 'color-online',
-  OFFLINE = 'color-offline',
-  LIGHT = 'color-light',
-  BACKGROUND = 'color-background',
-  DARK = 'color-dark',
+  WARNING = 'text-color-warning',
+  SUBMIT = 'text-color-submit',
+  ONLINE = 'text-color-online',
+  OFFLINE = 'text-color-offline',
+  LIGHT = 'text-color-light',
+  BACKGROUND = 'text-color-background',
+  DARK = 'text-color-dark',
 }
