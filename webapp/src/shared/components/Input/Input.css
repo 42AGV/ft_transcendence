@@ -1,6 +1,7 @@
 .input {
   width: 100%;
   min-width: 200px;
+  color: var(--color-light);
 }
 
 .input-container {
