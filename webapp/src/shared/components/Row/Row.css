@@ -2,12 +2,12 @@
   display: flex;
   width: 100%;
   min-width: fit-content;
-  padding: 0.9rem 1.56rem;
-  border-radius: 0.44rem;
+  padding: 1rem 1.75rem;
+  border-radius: 0.5rem;
+  column-gap: 1.25rem;
   color: var(--color-light);
   background-color: var(--color-dark);
   border: 0;
-  column-gap: 1.22rem;
   align-items: center;
   cursor: pointer;
   flex-direction: row;

@@ -7,8 +7,13 @@ export type RowsListProps = {
 
 export default function RowsList({ rows }: RowsListProps) {
   return (
-    <div className="rows-list-wrapper">
-      {rows && rows.map((rowProps) => <Row {...rowProps} />)}
-    </div>
+    <ul className="rows-list">
+      {rows &&
+        rows.map((rowProps) => (
+          <li className="rows-list-item" key={rowProps.title}>
+            <Row {...rowProps} />
+          </li>
+        ))}
+    </ul>
   );
 }
