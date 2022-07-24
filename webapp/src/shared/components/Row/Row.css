@@ -2,7 +2,6 @@
   display: flex;
   width: 100%;
   min-width: fit-content;
-  height: 4.5rem;
   padding: 0.9rem 1.56rem;
   border-radius: 0.44rem;
   color: var(--color-light);
