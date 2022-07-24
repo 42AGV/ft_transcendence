@@ -1,0 +1,6 @@
+.rows-list-wrapper {
+  display: grid;
+  grid-auto-flow: row;
+  grid-row-gap: 10px;
+  width: 100%;
+}

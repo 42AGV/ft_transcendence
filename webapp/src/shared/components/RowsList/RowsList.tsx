@@ -1,6 +1,16 @@
 import './RowsList.css';
-import { RowProps } from '../Row/Row'
+import Row, { RowProps } from '../Row/Row';
 
 export type RowsListProps = {
   rows: RowProps[];
+};
+
+export default function RowsList({ rows }: RowsListProps) {
+  return (
+    <div className="rows-list-wrapper">
+      {rows.map((rowProps) => (
+        <Row {...rowProps} />
+      ))}
+    </div>
+  );
 }
