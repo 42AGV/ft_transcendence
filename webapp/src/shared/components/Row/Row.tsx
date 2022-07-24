@@ -2,14 +2,12 @@ import Icon, { IconVariant, IconSize } from '../Icon/Icon';
 import './Row.css';
 import { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';
-import { SmallAvatar } from '../Avatar/Avatar';
-import { StatusVariant } from '../Status/Status';
+import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
 
-type RowProps = {
+export type RowProps = {
   iconVariant?: IconVariant;
   onClick?: () => void;
-  avatarUrl?: string;
-  avatarStatus?: StatusVariant;
+  avatarProps?: AvatarProps;
   title?: string;
   subtitle?: string;
 };
@@ -17,14 +15,13 @@ type RowProps = {
 export default function Row({
   iconVariant,
   onClick,
-  avatarUrl,
-  avatarStatus,
+  avatarProps,
   title,
   subtitle,
 }: RowProps) {
   return (
     <button className={`row paragraph-regular`} onClick={onClick}>
-      {avatarUrl && <SmallAvatar url={avatarUrl} status={avatarStatus} />}
+      {avatarProps && <SmallAvatar {...avatarProps} />}
       <div className={`row_text_wrapper`}>
         {title && (
           <Text
