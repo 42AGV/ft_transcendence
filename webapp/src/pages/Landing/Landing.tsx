@@ -16,8 +16,6 @@ import {
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
-import { RowProps } from '../../shared/components/Row/Row';
-import RowsList from '../../shared/components/RowsList/RowsList';
 
 export default function Landing() {
   const buttonAction = (): void => alert('This is an alert');
@@ -26,31 +24,6 @@ export default function Landing() {
   };
 
   const randomAvatar = 'https://i.pravatar.cc/1000';
-  const randomAvatar2 = 'https://i.pravatar.cc/2000';
-  const randomAvatar3 = 'https://i.pravatar.cc/3000';
-  const Rows: RowProps[] = [
-    {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: { url: randomAvatar, status: 'online' },
-      onClick: buttonAction,
-      title: 'John Doe',
-      subtitle: 'level 3',
-    },
-    {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: { url: randomAvatar2, status: 'offline' },
-      onClick: buttonLink,
-      title: 'Jane Doe',
-      subtitle: 'level 99',
-    },
-    {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: { url: randomAvatar3, status: 'playing' },
-      onClick: buttonAction,
-      title: 'Joe Shmoe',
-      subtitle: 'level 0',
-    },
-  ];
   return (
     <section className="landing">
       <NavigationBar />
@@ -102,7 +75,6 @@ export default function Landing() {
         title="John Doe"
         subtitle="level 3"
       />
-      <RowsList rows={Rows} />
     </section>
   );
 }
