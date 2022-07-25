@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { AvatarFileInterceptor, UserController } from './user.controller';
+import {
+  HttpStatus,
+  INestApplication,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import * as request from 'supertest';
 import { UserModule } from './user.module';
 import { UserService } from './user.service';
@@ -24,7 +28,15 @@ describe('User Controller end to end test', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [UserModule],
+      imports: [
+        UserModule,
+        ConfigModule.forRoot({
+          envFilePath: '.env.sample',
+          isGlobal: true,
+          cache: true,
+          validate,
+        }),
+      ],
       controllers: [UserController],
     })
       .overrideGuard(AuthenticatedGuard)
@@ -82,6 +94,7 @@ describe('User Controller end to end test', () => {
 describe('User Controller unit tests', () => {
   let controller: UserController;
   let mockUserService: Partial<UserService>;
+  const mockAvatarFileInterceptor = {};
 
   beforeEach(async () => {
     mockUserService = {
@@ -110,13 +123,6 @@ describe('User Controller unit tests', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          cache: true,
-          validate,
-        }),
-      ],
       controllers: [UserController],
       providers: [
         {
@@ -124,23 +130,36 @@ describe('User Controller unit tests', () => {
           useValue: mockUserService,
         },
       ],
-    }).compile();
+    })
+      .overrideInterceptor(AvatarFileInterceptor)
+      .useValue(mockAvatarFileInterceptor)
+      .compile();
 
     controller = module.get<UserController>(UserController);
   });
 
-  it('creates a user', async () => {
+  it('addUser create a new user if one does not exist', async () => {
+    mockUserService.retrieveUserWithUserName = () => Promise.resolve(null);
     const user = await controller.addUser(testUserDto);
     expect(user.id).toEqual(testUserId);
     expect(user.username).toEqual(testUserDto.username);
   });
 
-  it('returns an existing user', async () => {
+  it('addUser throws if the user exist', async () => {
+    expect.assertions(1);
+    try {
+      await controller.addUser(testUserDto);
+    } catch (err) {
+      expect(err).toBeInstanceOf(UnprocessableEntityException);
+    }
+  });
+
+  it('getUserById returns an existing user', async () => {
     const user = await controller.getUserById(testUserId);
     expect(user.id).toEqual(testUserId);
   });
 
-  it('throws if user does not exist', async () => {
+  it('getUserById throws if user does not exist', async () => {
     mockUserService.retrieveUserWithId = () => Promise.resolve(null);
     expect.assertions(1);
     try {

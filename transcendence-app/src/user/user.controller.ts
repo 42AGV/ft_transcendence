@@ -37,6 +37,25 @@ import { User } from './user.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
 import { AVATARS_PATH } from './constants';
 
+export const AvatarFileInterceptor = LocalFileInterceptor({
+  fieldName: 'file',
+  path: AVATARS_PATH,
+  fileFilter: (request, file, callback) => {
+    if (file.mimetype !== 'image/jpeg') {
+      return callback(
+        new UnprocessableEntityException(
+          'Validation failed (expected type is jpeg)',
+        ),
+        false,
+      );
+    }
+    callback(null, true);
+  },
+  limits: {
+    fileSize: Math.pow(1024, 2), // 1MB
+  },
+});
+
 @Controller('users')
 @UseGuards(AuthenticatedGuard)
 @ApiTags('users')
@@ -88,26 +107,7 @@ export class UserController {
   @ApiFile('file')
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  @UseInterceptors(
-    LocalFileInterceptor({
-      fieldName: 'file',
-      path: AVATARS_PATH,
-      fileFilter: (request, file, callback) => {
-        if (file.mimetype !== 'image/jpeg') {
-          return callback(
-            new UnprocessableEntityException(
-              'Validation failed (expected type is jpeg)',
-            ),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-      limits: {
-        fileSize: Math.pow(1024, 2), // 1MB
-      },
-    }),
-  )
+  @UseInterceptors(AvatarFileInterceptor)
   async uploadAvatar(
     @GetUser() user: User,
     @UploadedFile()
