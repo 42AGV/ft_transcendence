@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
+import { AuthController } from '../../src/auth/auth.controller';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { AuthModule } from './auth.module';
+import { AuthModule } from '../../src/auth/auth.module';
 import * as request from 'supertest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { validate } from '../config/env.validation';
-import { OAuth42Config } from './oauth42-config.interface';
-import { OAuth42Guard } from './oauth42.guard';
+import { validate } from '../../src/config/env.validation';
+import { OAuth42Config } from '../../src/auth/oauth42-config.interface';
+import { OAuth42Guard } from '../../src/auth/oauth42.guard';
 
 describe('Auth Controller', () => {
   let app: INestApplication;
