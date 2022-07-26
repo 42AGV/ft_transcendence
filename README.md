@@ -64,10 +64,10 @@ Change the current working directory to `transcendence-app`
 cd ft_transcendence/transcendence-app
 ```
 
-Copy the `.env.sample` to `.env`
+Copy the `.env.sample` to `.env.development`
 
 ```
-cp .env.sample .env
+cp .env.sample .env.development
 ```
 
 Register a new OAuth application on the [42 intranet](https://profile.intra.42.fr/oauth/applications/new)
@@ -79,7 +79,7 @@ http://localhost:3000/api/v1/auth/login
 http://localhost/api/v1/auth/login
 ```
 
-Open the `.env` file with your favorite text editor and replace the ID and SECRET with the ones from the OAuth application you create in the previous step
+Open the `.env.development` file with your favorite text editor and replace the ID and SECRET with the ones from the OAuth application you create in the previous step
 
 ```
 FORTYTWO_APP_ID=42-intra-app-id
@@ -147,7 +147,8 @@ Change the working directory to `webapp` or `transcendence-app`
 
 ```
 cd webapp
-npm t
+npm test
+npm run test:e2e
 ```
 
 ### And coding style tests
