@@ -14,5 +14,6 @@ services:
       - POSTGRES_DB=ft_transcendence
   memcached:
     image: memcached:1.6.15-alpine3.16
+    restart: always
     ports:
       - "11212:11211"

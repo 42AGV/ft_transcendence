@@ -65,7 +65,7 @@ export class UserService {
     );
 
     if (oldUserAvatarId) {
-      this.localFileService.deleteFileById(oldUserAvatarId);
+      await this.localFileService.deleteFileById(oldUserAvatarId);
     }
 
     return updatedUser;

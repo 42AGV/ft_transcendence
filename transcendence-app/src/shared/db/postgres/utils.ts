@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { BaseEntity, Query, MappedQuery } from '../models';
 import { PostgresPool } from './postgresConnection.provider';
 
@@ -21,23 +22,9 @@ export const makeQuery = async <T>(
 ): Promise<T[] | null> => {
   try {
     const res = await pool.query(query);
-    return res?.rows?.length ? (res.rows as T[]) : null;
+    return res.rows;
   } catch (e: any) {
-    // TODO temp solution until we implement logging
-    // throw new Error(stringifyPostgresError(e.message));
-    console.log(e.message);
+    Logger.error(e.message);
     return null;
   }
 };
-
-// const stringifyPostgresError = (err: any): string => {
-//   const unkownError = 'unknown error';
-//   const severity = err?.severity ?? null;
-//   const code = err?.code ?? null;
-//   const detail = err?.detail ?? null;
-
-//   if (!severity || !code || !detail) {
-//     return unkownError;
-//   }
-//   return `${severity}: ${code}, ${detail}`;
-// };

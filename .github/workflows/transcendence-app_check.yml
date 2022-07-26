@@ -29,5 +29,5 @@ jobs:
         run: npm run lint --prefix transcendence-app
       - name: Test
         run: npm run test --prefix transcendence-app
-      - name: E2E Test
+      - name: Test e2e
         run: npm run test:e2e --prefix transcendence-app
