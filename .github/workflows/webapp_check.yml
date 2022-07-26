@@ -8,10 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-10.15, ubuntu-18.04]
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out Github repository
         uses: actions/checkout@v2
