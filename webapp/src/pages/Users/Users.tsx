@@ -40,27 +40,33 @@ export default function Users() {
         <RowsList
           rows={[
             {
-              iconVariant: IconVariant.ARROW_FORWARD,
-              avatarProps: { url: randomAvatar, status: 'online' },
-              onClick: buttonAction,
-              title: 'John Doe',
-              subtitle: 'level 3',
+              rowDto: {
+                iconVariant: IconVariant.ARROW_FORWARD,
+                avatarProps: { url: randomAvatar, status: 'online' },
+                onClick: buttonAction,
+                title: 'John Doe',
+                subtitle: 'level 3',
+              },
               key: '75442486-0878-440c-9db1-a7006c25a39f',
             },
             {
-              iconVariant: IconVariant.ARROW_FORWARD,
-              avatarProps: { url: randomAvatar2, status: 'offline' },
-              onClick: buttonLink,
-              title: 'Jane Doe',
-              subtitle: 'level 99',
+              rowDto: {
+                iconVariant: IconVariant.ARROW_FORWARD,
+                avatarProps: { url: randomAvatar2, status: 'offline' },
+                onClick: buttonLink,
+                title: 'Jane Doe',
+                subtitle: 'level 99',
+              },
               key: '99a46451-975e-4d08-a697-9fa9c15f47a6',
             },
             {
-              iconVariant: IconVariant.ARROW_FORWARD,
-              avatarProps: { url: randomAvatar3, status: 'playing' },
-              onClick: buttonAction,
-              title: 'Joe Shmoe',
-              subtitle: 'level 0',
+              rowDto: {
+                iconVariant: IconVariant.ARROW_FORWARD,
+                avatarProps: { url: randomAvatar3, status: 'playing' },
+                onClick: buttonAction,
+                title: 'Joe Shmoe',
+                subtitle: 'level 0',
+              },
               key: '5c2013ba-45a0-45b9-b65e-750757df21a0',
             },
           ]}

@@ -74,7 +74,6 @@ export default function Landing() {
         onClick={buttonAction}
         title="John Doe"
         subtitle="level 3"
-        key="75442486-0878-440c-9db1-a7006c25a39f"
       />
     </section>
   );
