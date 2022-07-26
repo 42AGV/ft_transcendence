@@ -9,6 +9,7 @@ import * as passport from 'passport';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
       cache: true,
       validate,

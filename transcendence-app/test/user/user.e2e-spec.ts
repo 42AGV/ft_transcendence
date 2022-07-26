@@ -1,4 +1,4 @@
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -38,10 +38,20 @@ describe('[Feature] User - /users', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+        forbidUnknownValues: true,
+      }),
+    );
     await app.init();
   });
 
-  it('should create a user', async () => {
+  it('Creates an user [POST /]', async () => {
     const server = await app.getHttpServer();
     const response = await request(server)
       .post('/users')
@@ -55,7 +65,7 @@ describe('[Feature] User - /users', () => {
       .expect(HttpStatus.NOT_FOUND);
   });
 
-  it('should return an array of usernames', async () => {
+  it('Get all users [GET /]', async () => {
     const server = await app.getHttpServer();
     for (let i = 0; i < 50; i++) {
       await request(server)
@@ -70,10 +80,9 @@ describe('[Feature] User - /users', () => {
       .get('/users/?limit=20&offset=0&sort=true')
       .expect(HttpStatus.OK);
     expect(response.body.length).toBe(20);
-    await request(server).get('/users/').expect(HttpStatus.OK);
   });
 
-  it('returns forbidden if guard fails', () => {
+  it('Get current user [GET /me]', () => {
     canActivate.mockReturnValueOnce(false);
     return request(app.getHttpServer())
       .get('/users/me')
