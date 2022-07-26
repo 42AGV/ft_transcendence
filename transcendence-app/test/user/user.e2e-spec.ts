@@ -12,20 +12,20 @@ import { UserDto } from '../../src/user/dto/user.dto';
 const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
-  avatar_id: uuidv4(),
+  avatar_id: null,
 };
 const testUserId = uuidv4();
 
-describe('User', () => {
+describe('[Feature] User - /users', () => {
   let app: INestApplication;
   const canActivate = jest.fn(() => true);
 
   beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         UserModule,
         ConfigModule.forRoot({
-          envFilePath: '.env.sample',
+          envFilePath: '.env.test',
           isGlobal: true,
           cache: true,
           validate,
@@ -37,7 +37,7 @@ describe('User', () => {
       .useValue({ canActivate })
       .compile();
 
-    app = module.createNestApplication();
+    app = moduleFixture.createNestApplication();
     await app.init();
   });
 
@@ -62,8 +62,8 @@ describe('User', () => {
         .post('/users')
         .send({
           username: 'user' + i,
-          email: 'afgv@github.com',
-          avatar_id: uuidv4(),
+          email: i + 'afgv@github.com',
+          avatar_id: null,
         });
     }
     const response = await request(server)

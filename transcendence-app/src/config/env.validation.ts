@@ -38,8 +38,7 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   TRANSCENDENCE_APP_DATA!: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsUrl({ require_tld: false })
   MEMCACHED_HOST!: string;
 
   @IsPort()
@@ -50,14 +49,31 @@ export class EnvironmentVariables {
 
   @IsUUID()
   MEMCACHED_SECRET!: string;
+
+  @IsUrl({ require_tld: false })
+  POSTGRES_HOST!: string;
+
+  @IsPort()
+  POSTGRES_PORT!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_DB!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_USER!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_PASSWORD!: string;
 }
 
 export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToClass(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
-  });
+  const validatedConfig = plainToClass(EnvironmentVariables, config);
   const errors = validateSync(validatedConfig, {
     skipMissingProperties: false,
+    forbidUnknownValues: true,
   });
 
   if (errors.length > 0) {

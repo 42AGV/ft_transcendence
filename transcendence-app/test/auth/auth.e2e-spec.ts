@@ -6,18 +6,16 @@ import * as request from 'supertest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from '../../src/config/env.validation';
 import { OAuth42Config } from '../../src/auth/oauth42-config.interface';
-import { OAuth42Guard } from '../../src/auth/oauth42.guard';
 
-describe('Auth Controller', () => {
+describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
   let config: ConfigService<OAuth42Config>;
-  const canActivate = jest.fn(() => true);
 
   beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
-          envFilePath: '.env.sample',
+          envFilePath: '.env.test',
           isGlobal: true,
           cache: true,
           validate,
@@ -25,13 +23,10 @@ describe('Auth Controller', () => {
         AuthModule,
       ],
       controllers: [AuthController],
-    })
-      .overrideGuard(OAuth42Guard)
-      .useValue({ canActivate })
-      .compile();
+    }).compile();
 
-    config = module.get<ConfigService<OAuth42Config>>(ConfigService);
-    app = module.createNestApplication();
+    config = moduleFixture.get<ConfigService<OAuth42Config>>(ConfigService);
+    app = moduleFixture.createNestApplication();
     app.init();
   });
 
