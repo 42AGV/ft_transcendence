@@ -1,4 +1,9 @@
-import { Header, IconVariant, NavigationBar, RowsList } from '../../shared/components';
+import {
+  Header,
+  IconVariant,
+  NavigationBar,
+  RowsList,
+} from '../../shared/components';
 import './Users.css';
 
 export default function Users() {
@@ -40,6 +45,7 @@ export default function Users() {
               onClick: buttonAction,
               title: 'John Doe',
               subtitle: 'level 3',
+              key: '75442486-0878-440c-9db1-a7006c25a39f',
             },
             {
               iconVariant: IconVariant.ARROW_FORWARD,
@@ -47,6 +53,7 @@ export default function Users() {
               onClick: buttonLink,
               title: 'Jane Doe',
               subtitle: 'level 99',
+              key: '99a46451-975e-4d08-a697-9fa9c15f47a6',
             },
             {
               iconVariant: IconVariant.ARROW_FORWARD,
@@ -54,6 +61,7 @@ export default function Users() {
               onClick: buttonAction,
               title: 'Joe Shmoe',
               subtitle: 'level 0',
+              key: '5c2013ba-45a0-45b9-b65e-750757df21a0',
             },
           ]}
         />

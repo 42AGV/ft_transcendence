@@ -10,7 +10,7 @@ export default function RowsList({ rows }: RowsListProps) {
     <ul className="rows-list">
       {rows &&
         rows.map((rowProps) => (
-          <li className="rows-list-item" key={rowProps.title}>
+          <li className="rows-list-item" key={rowProps.key}>
             <Row {...rowProps} />
           </li>
         ))}

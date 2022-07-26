@@ -10,6 +10,7 @@ export type RowProps = {
   avatarProps?: AvatarProps;
   title?: string;
   subtitle?: string;
+  key: string;
 };
 
 export default function Row({
@@ -18,9 +19,10 @@ export default function Row({
   avatarProps,
   title,
   subtitle,
+  key,
 }: RowProps) {
   return (
-    <button className={`row paragraph-regular`} onClick={onClick}>
+    <button className={`row paragraph-regular`} onClick={onClick} key={key}>
       {avatarProps && <SmallAvatar {...avatarProps} />}
       <div className={`row_text_wrapper`}>
         {title && (
