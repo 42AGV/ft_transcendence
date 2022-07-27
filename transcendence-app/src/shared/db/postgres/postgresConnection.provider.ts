@@ -1,12 +1,18 @@
 import { Pool, QueryResult } from 'pg';
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Query } from '../models';
 import { ConfigService } from '@nestjs/config';
 import { PostgresConfig } from './postgres.config.interface';
 
 @Injectable()
-export class PostgresPool implements OnModuleDestroy {
+export class PostgresPool implements OnModuleInit, OnModuleDestroy {
   private pool: Pool;
+  private logger = new Logger(PostgresPool.name);
 
   constructor(private configService: ConfigService<PostgresConfig>) {
     this.pool = new Pool({
@@ -16,10 +22,20 @@ export class PostgresPool implements OnModuleDestroy {
       user: this.configService.get('POSTGRES_USER'),
       password: this.configService.get('POSTGRES_PASSWORD'),
     });
+
+    this.pool.on('error', (err: Error) => this.logger.error(err.message));
+  }
+
+  async onModuleInit() {
+    try {
+      await this.pool.query('SELECT 1');
+    } catch (err) {
+      this.logger.error(err);
+    }
   }
 
   async onModuleDestroy() {
-    this.pool.end();
+    await this.pool.end();
   }
 
   connect() {

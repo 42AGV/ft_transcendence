@@ -1,15 +1,16 @@
 import { Logger } from '@nestjs/common';
+import { DatabaseError } from 'pg';
 import { BaseEntity, Query, MappedQuery } from '../models';
 import { PostgresPool } from './postgresConnection.provider';
+
+const PostgresLogger = new Logger('Database');
 
 export const entityQueryMapper = (entity: Partial<BaseEntity>): MappedQuery => {
   return Object.entries(entity).reduce<MappedQuery>(
     (mappedQuery, [key, value], index) => {
-      if (value !== undefined) {
-        mappedQuery.cols.push(key);
-        mappedQuery.params.push(`$${index + 1}`);
-        mappedQuery.values.push(value);
-      }
+      mappedQuery.cols.push(key);
+      mappedQuery.params.push(`$${index + 1}`);
+      mappedQuery.values.push(value);
       return mappedQuery;
     },
     { cols: [], params: [], values: [] },
@@ -23,8 +24,13 @@ export const makeQuery = async <T>(
   try {
     const res = await pool.query(query);
     return res.rows;
-  } catch (e: any) {
-    Logger.error(e.message);
+  } catch (err) {
+    if (
+      err instanceof DatabaseError &&
+      (err.severity === 'FATAL' || err.severity === 'PANIC')
+    ) {
+      PostgresLogger.error(err.message);
+    }
     return null;
   }
 };
