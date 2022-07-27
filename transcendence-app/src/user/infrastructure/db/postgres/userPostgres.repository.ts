@@ -19,26 +19,31 @@ export class UserPostgresRepository
   }
 
   async getById(id: string): Promise<UserEntity | null> {
-    return this.getByKey(userKeys.ID, id);
+    const users = await this.getByKey(userKeys.ID, id);
+    return users && users.length ? users[0] : null;
   }
 
   async getByUsername(username: string): Promise<UserEntity | null> {
-    return this.getByKey(userKeys.USERNAME, username);
+    const users = await this.getByKey(userKeys.USERNAME, username);
+    return users && users.length ? users[0] : null;
   }
 
   async getByEmail(email: string): Promise<UserEntity | null> {
-    return this.getByKey(userKeys.EMAIL, email);
+    const users = await this.getByKey(userKeys.EMAIL, email);
+    return users && users.length ? users[0] : null;
   }
 
   async deleteByUsername(username: string): Promise<UserEntity | null> {
-    return this.deleteByKey(userKeys.USERNAME, username);
+    const users = await this.deleteByKey(userKeys.USERNAME, username);
+    return users && users.length ? users[0] : null;
   }
 
   async updateByUsername(
     username: string,
     user: Partial<UserEntity>,
   ): Promise<UserEntity | null> {
-    return this.updateByKey(userKeys.USERNAME, username, user);
+    const users = await this.updateByKey(userKeys.USERNAME, username, user);
+    return users && users.length ? users[0] : null;
   }
 
   async getPaginatedUsers(

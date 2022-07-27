@@ -15,19 +15,22 @@ export class LocalFilePostgresRepository
     super(pool, table.LOCAL_FILE);
   }
 
-  getById(id: string): Promise<LocalFileEntity | null> {
-    return this.getByKey(LocalFileKeys.ID, id);
+  async getById(id: string): Promise<LocalFileEntity | null> {
+    const files = await this.getByKey(LocalFileKeys.ID, id);
+    return files && files.length ? files[0] : null;
   }
 
-  deleteById(id: string): Promise<LocalFileEntity | null> {
-    return this.deleteByKey(LocalFileKeys.ID, id);
+  async deleteById(id: string): Promise<LocalFileEntity | null> {
+    const files = await this.deleteByKey(LocalFileKeys.ID, id);
+    return files && files.length ? files[0] : null;
   }
 
-  updateById(
+  async updateById(
     id: string,
     file: Partial<LocalFileEntity>,
   ): Promise<LocalFileEntity | null> {
-    return this.updateByKey(LocalFileKeys.ID, id, file);
+    const files = await this.updateByKey(LocalFileKeys.ID, id, file);
+    return files && files.length ? files[0] : null;
   }
 
   addFile(file: LocalFileEntity): Promise<LocalFileEntity | null> {

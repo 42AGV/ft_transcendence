@@ -11,11 +11,11 @@ export interface BaseEntity {
 
 export interface Query {
   text: string;
-  values: Array<string | null>;
+  values: any[];
 }
 
 export interface MappedQuery {
-  cols: Array<string>;
-  params: Array<string>;
-  values: Array<string | null>;
+  cols: string[];
+  params: string[];
+  values: any[];
 }
