@@ -7,11 +7,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBadGatewayResponse,
   ApiForbiddenResponse,
   ApiFoundResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiServiceUnavailableResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -24,7 +24,7 @@ export class AuthController {
   @Get('login')
   @ApiOkResponse({ description: 'Login successfully' })
   @ApiFoundResponse({ description: 'Redirect to 42 OAuth server' })
-  @ApiBadGatewayResponse({ description: 'Bad Gateway' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseGuards(OAuth42Guard)
   oauth42Login() {
     // Guard implementation

@@ -1,8 +1,8 @@
 import {
-  BadGatewayException,
   ExecutionContext,
   Injectable,
   Logger,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -20,7 +20,7 @@ export class OAuth42Guard extends AuthGuard('oauth42') {
   handleRequest(err: Error, user: any) {
     if (err || !user) {
       this.logger.error(err.message);
-      throw new BadGatewayException(err.message);
+      throw new ServiceUnavailableException(err.message);
     }
     return user;
   }

@@ -18,6 +18,7 @@ import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
+  ApiBadRequestResponse,
   ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -66,7 +67,6 @@ export class UserController {
   @Post()
   @ApiCreatedResponse({ description: 'Create a user' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async addUser(@Body() userDto: UserDto): Promise<User> {
     let user = await this.userService.retrieveUserWithUserName(
       userDto.username,
@@ -76,7 +76,7 @@ export class UserController {
     }
     user = await this.userService.addUser(userDto);
     if (!user) {
-      throw new ServiceUnavailableException();
+      throw new UnprocessableEntityException();
     }
     return user;
   }
@@ -91,6 +91,7 @@ export class UserController {
   @ApiOkResponse({
     description: `Lists all users (max ${MAX_USER_ENTRIES_PER_PAGE})`,
   })
+  @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUsers(
     @Query() usersPaginationQueryDto: UsersPaginationQueryDto,
@@ -138,6 +139,7 @@ export class UserController {
   }
 
   @Get(':uuid/avatar')
+  @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getAvatar(@Param('uuid', ParseUUIDPipe) id: string) {
     const streamableFile = await this.userService.getAvatar(id);
@@ -150,6 +152,7 @@ export class UserController {
 
   @Get(':uuid')
   @ApiOkResponse({ description: 'Get a user' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getUserById(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<User> {
     const user = await this.userService.retrieveUserWithId(uuid);

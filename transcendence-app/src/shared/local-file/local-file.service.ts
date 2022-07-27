@@ -66,13 +66,12 @@ export class LocalFileService {
   }
 
   async deleteFileById(id: string): Promise<LocalFile | null> {
-    const file = await this.repository.getById(id);
+    const file = await this.repository.deleteById(id);
 
     if (!file) {
       return null;
     }
-
     this.deleteFileData(file.path);
-    return this.deleteFile(id);
+    return file;
   }
 }
