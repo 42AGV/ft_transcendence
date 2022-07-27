@@ -20,8 +20,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:e2e": "docker compose -f docker-compose.test.yml up -d",
-    "test:e2e": "jest --config ./test/jest-e2e.json; ret=$?; npm run cleanup-test:e2e; exit $ret",
-    "cleanup-test:e2e": "docker compose -f docker-compose.test.yml down -v"
+    "test:e2e": "jest --config ./test/jest-e2e.json; ret=$?; npm run post:test:e2e; exit $ret",
+    "post:test:e2e": "docker compose -f docker-compose.test.yml down -v"
   },
   "dependencies": {
     "@nestjs/axios": "^0.1.0",
