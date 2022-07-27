@@ -9,7 +9,7 @@ export enum ButtonVariant {
 type ButtonProps = {
   variant: ButtonVariant;
   iconVariant?: IconVariant;
-  onClick?: () => void;
+  onClick?: (any: any | undefined) => void;
   disabled?: boolean;
   children: string;
 };
