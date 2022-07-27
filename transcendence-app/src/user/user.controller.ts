@@ -9,6 +9,7 @@ import {
   Put,
   Query,
   ServiceUnavailableException,
+  StreamableFile,
   UnprocessableEntityException,
   UploadedFile,
   UseGuards,
@@ -24,6 +25,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiProduces,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -65,7 +67,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  @ApiCreatedResponse({ description: 'Create a user' })
+  @ApiCreatedResponse({ description: 'Create a user', type: User })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async addUser(@Body() userDto: UserDto): Promise<User> {
     let user = await this.userService.retrieveUserWithUserName(
@@ -82,7 +84,7 @@ export class UserController {
   }
 
   @Get('me')
-  @ApiOkResponse({ description: 'Get the authenticated user' })
+  @ApiOkResponse({ description: 'Get the authenticated user', type: User })
   getCurrentUser(@GetUser() user: User) {
     return user;
   }
@@ -90,6 +92,7 @@ export class UserController {
   @Get()
   @ApiOkResponse({
     description: `Lists all users (max ${MAX_USER_ENTRIES_PER_PAGE})`,
+    type: [User],
   })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
@@ -128,8 +131,15 @@ export class UserController {
   }
 
   @Get('avatar')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  async getCurrentUserAvatar(@GetUser() user: User) {
+  async getCurrentUserAvatar(@GetUser() user: User): Promise<StreamableFile> {
     const streamableFile = await this.userService.getAvatar(user.id);
 
     if (!streamableFile) {
@@ -139,9 +149,18 @@ export class UserController {
   }
 
   @Get(':uuid/avatar')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  async getAvatar(@Param('uuid', ParseUUIDPipe) id: string) {
+  async getAvatar(
+    @Param('uuid', ParseUUIDPipe) id: string,
+  ): Promise<StreamableFile> {
     const streamableFile = await this.userService.getAvatar(id);
 
     if (!streamableFile) {
@@ -151,7 +170,7 @@ export class UserController {
   }
 
   @Get(':uuid')
-  @ApiOkResponse({ description: 'Get a user' })
+  @ApiOkResponse({ description: 'Get a user', type: User })
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getUserById(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<User> {
