@@ -9,12 +9,11 @@ export class BasePostgresRepository<T extends BaseEntity>
 {
   constructor(protected pool: PostgresPool, protected table: table) {}
 
-  async getByKey(key: string, value: any): Promise<T[] | null> {
-    const data = await makeQuery<T>(this.pool, {
+  getByKey(key: string, value: any): Promise<T[] | null> {
+    return makeQuery<T>(this.pool, {
       text: `SELECT * FROM ${this.table} WHERE ${key} = $1;`,
-      values: [value as string],
+      values: [value],
     });
-    return data ? data : null;
   }
 
   async add(entity: T): Promise<T | null> {
@@ -29,12 +28,11 @@ export class BasePostgresRepository<T extends BaseEntity>
     return data && data.length ? data[0] : null;
   }
 
-  async deleteByKey(key: string, value: any): Promise<T[] | null> {
-    const data = await makeQuery<T>(this.pool, {
+  deleteByKey(key: string, value: any): Promise<T[] | null> {
+    return makeQuery<T>(this.pool, {
       text: `DELETE FROM ${this.table} WHERE ${key} = $1 RETURNING *;`,
-      values: [value as string],
+      values: [value],
     });
-    return data ? data : null;
   }
 
   async updateByKey(
@@ -45,10 +43,9 @@ export class BasePostgresRepository<T extends BaseEntity>
     const { cols, values } = entityQueryMapper(entity);
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 1}`).join(',');
 
-    const data = await makeQuery<T>(this.pool, {
+    return makeQuery<T>(this.pool, {
       text: `UPDATE ${this.table} SET ${colsToUpdate} WHERE ${key} = '${value}' RETURNING *;`,
       values,
     });
-    return data ? data : null;
   }
 }

@@ -46,20 +46,19 @@ export class UserPostgresRepository
     return users && users.length ? users[0] : null;
   }
 
-  async getPaginatedUsers(
+  getPaginatedUsers(
     paginationDto: Required<UsersPaginationQueryDto>,
   ): Promise<UserEntity[] | null> {
     const { limit, offset, sort } = paginationDto;
-    const order = sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
-    const data = await makeQuery<UserEntity>(this.pool, {
+    const orderBy =
+      sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
+    return makeQuery<UserEntity>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
-      ORDER BY ${order}
-      LIMIT ${limit}
-      OFFSET ${offset};`,
-      values: [],
+      ORDER BY $1
+      LIMIT $2
+      OFFSET $3;`,
+      values: [orderBy, limit, offset],
     });
-
-    return data ? data : null;
   }
 }

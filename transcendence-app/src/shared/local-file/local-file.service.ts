@@ -61,10 +61,6 @@ export class LocalFileService {
     });
   }
 
-  private deleteFile(id: string): Promise<LocalFile | null> {
-    return this.repository.deleteById(id);
-  }
-
   async deleteFileById(id: string): Promise<LocalFile | null> {
     const file = await this.repository.deleteById(id);
 
