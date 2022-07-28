@@ -109,6 +109,13 @@ export class UserController {
   @Put('avatar')
   @ApiConsumes('multipart/form-data')
   @ApiFile('file')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseInterceptors(AvatarFileInterceptor)
@@ -116,7 +123,11 @@ export class UserController {
     @GetUser() user: User,
     @UploadedFile()
     file: Express.Multer.File,
-  ): Promise<User> {
+  ): Promise<StreamableFile> {
+    if (!file) {
+      throw new UnprocessableEntityException();
+    }
+
     const updatedUser = await this.userService.addAvatar(user, {
       filename: file.filename,
       path: file.path,

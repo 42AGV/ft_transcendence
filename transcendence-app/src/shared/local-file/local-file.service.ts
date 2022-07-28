@@ -70,4 +70,11 @@ export class LocalFileService {
     this.deleteFileData(file.path);
     return file;
   }
+
+  updateFileById(
+    id: string,
+    localFileDto: Partial<LocalFileDto>,
+  ): Promise<LocalFile | null> {
+    return this.repository.updateById(id, localFileDto);
+  }
 }

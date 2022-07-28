@@ -11,6 +11,7 @@ import { User } from './user.domain';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { createReadStream } from 'fs';
+import { LocalFile } from '../shared/local-file/local-file.domain';
 
 @Injectable()
 export class UserService {
@@ -47,28 +48,40 @@ export class UserService {
     });
   }
 
-  async addAvatar(user: User, fileDto: LocalFileDto): Promise<User | null> {
-    const oldUserAvatarId = user.avatar_id;
-
-    const file = await this.localFileService.saveFile(fileDto);
-
-    if (!file) {
-      this.localFileService.deleteFileData(fileDto.path);
-      return user;
+  async addAvatar(
+    user: User,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    // If the user doesn't have an avatar yet, save the avatar file in the database and update the user avatar_id
+    if (user.avatar_id === null) {
+      const avatarFile = await this.localFileService.saveFile(newAvatarFileDto);
+      if (!avatarFile) {
+        this.localFileService.deleteFileData(newAvatarFileDto.path);
+        return null;
+      }
+      await this.userRepository.updateByUsername(user.username, {
+        avatar_id: avatarFile.id,
+      });
+      return this.streamAvatarData(avatarFile);
     }
 
-    const updatedUser = await this.userRepository.updateByUsername(
-      user.username,
-      {
-        avatar_id: file.id,
-      },
+    // Otherwise, update the user avatar file and delete the old avatar data from the disk
+    const avatarFile = await this.localFileService.getFileById(user.avatar_id);
+    if (!avatarFile) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+
+    const updatedAvatarFile = await this.localFileService.updateFileById(
+      avatarFile.id,
+      newAvatarFileDto,
     );
-
-    if (oldUserAvatarId) {
-      await this.localFileService.deleteFileById(oldUserAvatarId);
+    if (!updatedAvatarFile) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
     }
-
-    return updatedUser;
+    this.localFileService.deleteFileData(avatarFile.path);
+    return this.streamAvatarData(updatedAvatarFile);
   }
 
   async getAvatar(userId: string): Promise<StreamableFile | null> {
@@ -83,7 +96,10 @@ export class UserService {
     if (!file) {
       return null;
     }
+    return this.streamAvatarData(file);
+  }
 
+  private streamAvatarData(file: LocalFile): StreamableFile {
     const stream = createReadStream(file.path);
 
     return new StreamableFile(stream, {
