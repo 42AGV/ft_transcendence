@@ -70,8 +70,7 @@ export default function Landing() {
       />
       <Row
         iconVariant={IconVariant.ARROW_FORWARD}
-        avatarUrl={randomAvatar}
-        avatarStatus="offline"
+        avatarProps={{ url: randomAvatar, status: 'playing' }}
         onClick={buttonAction}
         title="John Doe"
         subtitle="level 3"

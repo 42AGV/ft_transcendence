@@ -1,0 +1,10 @@
+.rows-list {
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rows-list-item:not(:last-child) {
+  margin-bottom: 1.75rem;
+}
