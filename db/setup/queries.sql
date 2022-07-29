@@ -1,6 +1,6 @@
 \c ft_transcendence;
 
-INSERT INTO users (
+INSERT INTO Users (
      username,
      email
 ) VALUES (
@@ -8,7 +8,7 @@ INSERT INTO users (
     'gbudau-admin@transcendence.com'
 );
 
-INSERT INTO users (
+INSERT INTO Users (
      username,
      email
 ) VALUES (
@@ -16,7 +16,7 @@ INSERT INTO users (
     'vdedios-admin@transcendence.com'
 );
 
-INSERT INTO users (
+INSERT INTO Users (
      username,
      email
 ) VALUES (
@@ -24,7 +24,7 @@ INSERT INTO users (
     'aollero-admin@transcendence.com'
 );
 
-INSERT INTO users (
+INSERT INTO Users (
      username,
      email
 ) VALUES (

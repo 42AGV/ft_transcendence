@@ -43,7 +43,7 @@ export class UserService {
   addUser(user: UserDto): Promise<User | null> {
     return this.userRepository.add({
       id: uuidv4(),
-      created_at: new Date(Date.now()),
+      createdAt: new Date(Date.now()),
       ...user,
     });
   }
@@ -53,20 +53,20 @@ export class UserService {
     newAvatarFileDto: LocalFileDto,
   ): Promise<StreamableFile | null> {
     // If the user doesn't have an avatar yet, save the avatar file in the database and update the user avatar_id
-    if (user.avatar_id === null) {
+    if (user.avatarId === null) {
       const avatarFile = await this.localFileService.saveFile(newAvatarFileDto);
       if (!avatarFile) {
         this.localFileService.deleteFileData(newAvatarFileDto.path);
         return null;
       }
       await this.userRepository.updateByUsername(user.username, {
-        avatar_id: avatarFile.id,
+        avatarId: avatarFile.id,
       });
       return this.streamAvatarData(avatarFile);
     }
 
     // Otherwise, update the user avatar file and delete the old avatar data from the disk
-    const avatarFile = await this.localFileService.getFileById(user.avatar_id);
+    const avatarFile = await this.localFileService.getFileById(user.avatarId);
     if (!avatarFile) {
       this.localFileService.deleteFileData(newAvatarFileDto.path);
       return null;
@@ -87,11 +87,11 @@ export class UserService {
   async getAvatar(userId: string): Promise<StreamableFile | null> {
     const user = await this.userRepository.getById(userId);
 
-    if (!user || !user.avatar_id) {
+    if (!user || !user.avatarId) {
       return null;
     }
 
-    const file = await this.localFileService.getFileById(user.avatar_id);
+    const file = await this.localFileService.getFileById(user.avatarId);
 
     if (!file) {
       return null;

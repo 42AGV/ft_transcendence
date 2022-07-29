@@ -12,7 +12,7 @@ import { UserDto } from '../../src/user/dto/user.dto';
 const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
-  avatar_id: null,
+  avatarId: null,
 };
 const testUserId = uuidv4();
 
@@ -73,7 +73,7 @@ describe('[Feature] User - /users', () => {
         .send({
           username: 'user' + i,
           email: i + 'afgv@github.com',
-          avatar_id: null,
+          avatarId: null,
         });
     }
     const response = await request(server)

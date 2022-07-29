@@ -16,5 +16,5 @@ export class UserDto {
 
   @IsUUID()
   @ValidateIf((object, value) => value !== null)
-  avatar_id!: string | null;
+  avatarId!: string | null;
 }

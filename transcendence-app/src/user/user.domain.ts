@@ -1,21 +1,21 @@
 export class User {
   username: string;
   email: string;
-  avatar_id: string | null;
+  avatarId: string | null;
   id: string;
-  created_at: Date;
+  createdAt: Date;
 
   constructor(
     username: string,
     email: string,
-    avatar_id: string | null,
+    avatarId: string | null,
     id: string,
-    created_at: Date,
+    createdAt: Date,
   ) {
     this.username = username;
     this.email = email;
-    this.avatar_id = avatar_id;
+    this.avatarId = avatarId;
     this.id = id;
-    this.created_at = created_at;
+    this.createdAt = createdAt;
   }
 }

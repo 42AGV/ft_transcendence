@@ -32,7 +32,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     // fetch and validate the user data from the 42 API
     const userData = await this.api42Service.fetch42UserData(accessToken);
     const apiUser: UserDto = {
-      avatar_id: null,
+      avatarId: null,
       username: userData.login,
       email: userData.email,
     };
@@ -61,7 +61,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     const file = await this.localFileService.saveFile(fileDto);
 
     if (file) {
-      apiUser.avatar_id = file.id;
+      apiUser.avatarId = file.id;
     } else {
       this.localFileService.deleteFileData(fileDto.path);
     }

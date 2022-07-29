@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
-  avatar_id: uuidv4(),
+  avatarId: uuidv4(),
 };
 const testUserId = uuidv4();
 

@@ -12,8 +12,8 @@ export class UserEntity implements BaseEntity {
   constructor(
     public username: string,
     public email: string,
-    public avatar_id: string | null,
+    public avatarId: string | null,
     public id: string,
-    public created_at: Date,
+    public createdAt: Date,
   ) {}
 }
