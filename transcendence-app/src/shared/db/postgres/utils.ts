@@ -9,7 +9,7 @@ export const entityQueryMapper = (entity: Partial<BaseEntity>): MappedQuery => {
   return Object.entries(entity).reduce<MappedQuery>(
     (mappedQuery, [key, value], index) => {
       if (value !== undefined) {
-        mappedQuery.cols.push(key);
+        mappedQuery.cols.push(`"${key}"`);
         mappedQuery.params.push(`$${index + 1}`);
         mappedQuery.values.push(value);
       }

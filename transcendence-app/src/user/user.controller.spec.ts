@@ -23,7 +23,7 @@ describe('UserController', () => {
       retrieveUserWithUserName: (username: string) => {
         return Promise.resolve({
           id: testUserId,
-          created_at: new Date(Date.now()),
+          createdAt: new Date(Date.now()),
           ...testUserDto,
           username,
         });
@@ -31,14 +31,14 @@ describe('UserController', () => {
       retrieveUserWithId: (id: string) => {
         return Promise.resolve({
           id,
-          created_at: new Date(Date.now()),
+          createdAt: new Date(Date.now()),
           ...testUserDto,
         });
       },
       addUser: (userDto: UserDto) => {
         return Promise.resolve({
           id: testUserId,
-          created_at: new Date(Date.now()),
+          createdAt: new Date(Date.now()),
           ...userDto,
         });
       },

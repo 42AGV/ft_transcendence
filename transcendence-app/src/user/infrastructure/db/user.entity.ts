@@ -4,8 +4,8 @@ export enum userKeys {
   ID = 'id',
   USERNAME = 'username',
   EMAIL = 'email',
-  AVATAR_ID = 'avatar_id',
-  CREATED_AT = 'created_at',
+  AVATAR_ID = 'avatarId',
+  CREATED_AT = 'createdAt',
 }
 
 export class UserEntity implements BaseEntity {

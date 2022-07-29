@@ -11,7 +11,7 @@ export class BasePostgresRepository<T extends BaseEntity>
 
   getByKey(key: string, value: any): Promise<T[] | null> {
     return makeQuery<T>(this.pool, {
-      text: `SELECT * FROM ${this.table} WHERE ${key} = $1;`,
+      text: `SELECT * FROM ${this.table} WHERE "${key}" = $1;`,
       values: [value],
     });
   }
@@ -30,7 +30,7 @@ export class BasePostgresRepository<T extends BaseEntity>
 
   deleteByKey(key: string, value: any): Promise<T[] | null> {
     return makeQuery<T>(this.pool, {
-      text: `DELETE FROM ${this.table} WHERE ${key} = $1 RETURNING *;`,
+      text: `DELETE FROM ${this.table} WHERE "${key}" = $1 RETURNING *;`,
       values: [value],
     });
   }
@@ -44,8 +44,10 @@ export class BasePostgresRepository<T extends BaseEntity>
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 1}`).join(',');
 
     return makeQuery<T>(this.pool, {
-      text: `UPDATE ${this.table} SET ${colsToUpdate} WHERE ${key} = '${value}' RETURNING *;`,
-      values,
+      text: `UPDATE ${this.table} SET ${colsToUpdate} WHERE "${key}" = $${
+        values.length + 1
+      } RETURNING *;`,
+      values: [...values, value],
     });
   }
 }
