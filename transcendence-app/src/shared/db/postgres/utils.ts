@@ -8,9 +8,11 @@ const PostgresLogger = new Logger('Database');
 export const entityQueryMapper = (entity: Partial<BaseEntity>): MappedQuery => {
   return Object.entries(entity).reduce<MappedQuery>(
     (mappedQuery, [key, value], index) => {
-      mappedQuery.cols.push(key);
-      mappedQuery.params.push(`$${index + 1}`);
-      mappedQuery.values.push(value);
+      if (value !== undefined) {
+        mappedQuery.cols.push(key);
+        mappedQuery.params.push(`$${index + 1}`);
+        mappedQuery.values.push(value);
+      }
       return mappedQuery;
     },
     { cols: [], params: [], values: [] },
