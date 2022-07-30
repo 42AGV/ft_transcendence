@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -26,6 +27,27 @@ import {
   UsersPaginationQueryDto,
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
+import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
+import { AVATARS_PATH } from './constants';
+
+export const AvatarFileInterceptor = LocalFileInterceptor({
+  fieldName: 'file',
+  path: AVATARS_PATH,
+  fileFilter: (request, file, callback) => {
+    if (file.mimetype !== 'image/jpeg') {
+      return callback(
+        new UnprocessableEntityException(
+          'Validation failed (expected type is jpeg)',
+        ),
+        false,
+      );
+    }
+    callback(null, true);
+  },
+  limits: {
+    fileSize: Math.pow(1024, 2), // 1MB
+  },
+});
 
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
