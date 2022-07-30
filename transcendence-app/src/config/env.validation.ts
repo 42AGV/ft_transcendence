@@ -41,6 +41,10 @@ export class EnvironmentVariables {
   @IsPort()
   MEMCACHED_PORT!: string;
 
+  @IsString()
+  @IsNotEmpty()
+  TRANSCENDENCE_APP_DATA!: string;
+
   @IsUUID()
   SESSION_SECRET!: string;
 
