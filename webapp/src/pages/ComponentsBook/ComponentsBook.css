@@ -22,6 +22,14 @@
   margin-bottom: 2rem;
 }
 
+.components-book__sub-section {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
 .components-book__section__title {
   width: 100%;
   border: solid white;
