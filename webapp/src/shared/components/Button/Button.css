@@ -1,7 +1,7 @@
 .button {
   width: 15rem;
   height: 3rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   color: var(--color-light);
   border: 0;
   position: relative;
