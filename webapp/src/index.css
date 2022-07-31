@@ -61,48 +61,57 @@ body {
   font-size: var(--title-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
+  line-height: 60px;
+  line-height: 3rem;
 }
 
 .subtitle-bold {
   font-size: var(--subtitle-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
+  line-height: 2.5rem;
 }
 
 .heading-bold {
   font-size: var(--heading-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
+  line-height: 2rem;
 }
 
 .subheading-bold {
   font-size: var(--subheading-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
+  line-height: 1.75rem;
 }
 
 .paragraph-regular {
   font-size: var(--paragraph-font-size);
   font-family: var(--primary-font);
   font-weight: 400;
+  line-height: 1.5rem;
 }
 
 .paragraph-medium {
   font-size: var(--paragraph-font-size);
   font-family: var(--primary-font);
   font-weight: 500;
+  line-height: 1.5rem;
 }
 
 .paragraph-bold {
   font-size: var(--paragraph-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
+  line-height: 1.5rem;
 }
 
 .caption-regular {
   font-size: var(--caption-font-size);
   font-family: var(--primary-font);
   font-weight: 400;
+  line-height: 1.25rem;
 }
 
 /* text colors */
