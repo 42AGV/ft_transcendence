@@ -16,6 +16,42 @@
   gap: 1rem;
 }
 
-.users-nav-container {
+.rows-list {
+  margin-top: 150px;
+}
+
+.fixed-frame {
+  display: flex;
+  position: fixed;
   width: 80%;
 }
+
+@media all and (min-width: 768px) {
+  .fixed-frame,
+  .fixed-frame > .avatar-search {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    top: 0;
+  }
+  .fixed-frame > .navigation-bar {
+    margin-left: 30px;
+    width: 40%;
+    top: 0;
+  }
+}
+
+@media not all and (min-width: 768px) {
+  .fixed-frame,
+  .fixed-frame > .avatar-search {
+    display: flex;
+    flex-direction: column;
+    top: 0;
+  }
+  .fixed-frame > .navigation-bar {
+    position: fixed;
+    bottom: 0;
+    width: 80%;
+  }
+}
+

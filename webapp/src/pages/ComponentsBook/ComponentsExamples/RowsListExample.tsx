@@ -10,7 +10,7 @@ const buttonLink = (): void => {
   window.location.href = 'https://google.com';
 };
 
-const rowsData: RowItem[] = [
+export const rowsData: RowItem[] = [
   {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: { url: randomAvatar, status: 'online' },
