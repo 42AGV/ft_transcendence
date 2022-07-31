@@ -16,9 +16,13 @@ type LargeAvatarProps = AvatarProps & {
 
 export function SmallAvatar({ url, status }: AvatarProps) {
   return (
-    <figure className={`avatar-small__image-wrapper  avatar-status--${status}`}>
-      <img src={url} alt={url} className="avatar-small__image" />
-    </figure>
+    <div className="avatar-small">
+      <figure
+        className={`avatar-small__image-wrapper  avatar-status--${status}`}
+      >
+        <img src={url} alt={url} className="avatar-small__image" />
+      </figure>
+    </div>
   );
 }
 
@@ -28,7 +32,6 @@ export function LargeAvatar({
   edit = false,
   caption,
 }: LargeAvatarProps) {
-
   const statusClass = status ? `avatar-status--${status}` : '';
 
   return (

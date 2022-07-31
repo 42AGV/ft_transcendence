@@ -40,6 +40,10 @@ export class EnvironmentVariables {
   @IsPort()
   MEMCACHED_PORT!: string;
 
+  @IsString()
+  @IsNotEmpty()
+  TRANSCENDENCE_APP_DATA!: string;
+
   @IsUrl({ require_tld: false })
   POSTGRES_HOST!: string;
 
