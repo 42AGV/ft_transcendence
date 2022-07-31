@@ -5,12 +5,12 @@ const randomAvatar = 'https://i.pravatar.cc/1000';
 const randomAvatar2 = 'https://i.pravatar.cc/2000';
 const randomAvatar3 = 'https://i.pravatar.cc/3000';
 
-const buttonAction = (): void => alert('This is an alert');
-const buttonLink = (): void => {
+export const buttonAction = (): void => alert('This is an alert');
+export const buttonLink = (): void => {
   window.location.href = 'https://google.com';
 };
 
-export const rowsData: RowItem[] = [
+export let rowsData: RowItem[] = [
   {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: { url: randomAvatar, status: 'online' },
