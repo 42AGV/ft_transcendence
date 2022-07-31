@@ -1,6 +1,6 @@
 .button {
-  width: 312px;
-  height: 58px;
+  width: 15rem;
+  height: 3rem;
   border-radius: 8px;
   color: var(--color-light);
   border: 0;
@@ -27,5 +27,5 @@
 .button-icon {
   display: flex;
   position: absolute;
-  left: 20px;
+  left: 1rem;
 }
