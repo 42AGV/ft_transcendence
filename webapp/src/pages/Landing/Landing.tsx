@@ -1,3 +1,4 @@
+import React, { FormEventHandler, useState } from 'react';
 import {
   Button,
   ButtonVariant,
@@ -15,6 +16,7 @@ import {
   NavigationBar,
   TextColor,
   Row,
+  EditUserForm,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
@@ -26,6 +28,13 @@ export default function Landing() {
   };
 
   const randomAvatar = 'https://i.pravatar.cc/1000';
+  const [fullName, setfullName] = useState();
+  const [email, setEmail] = useState();
+  const [inputs, setInputs] = useState();
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    alert(`The message you entered was: ${e.target.search.value}`);
+  };
   return (
     <section className="landing">
       <NavigationBar />
@@ -77,17 +86,7 @@ export default function Landing() {
         title="John Doe"
         subtitle="level 3"
       />
-      <Input
-        variant={InputVariant.DARK}
-        label="Dark Input"
-        iconVariant={IconVariant.SEARCH}
-        placeholder="Search"
-      />
-      <Input
-        variant={InputVariant.LIGHT}
-        label="Light Input"
-        placeholder="Your email"
-      />
+      <EditUserForm />
     </section>
   );
 }
