@@ -16,10 +16,6 @@ services:
       context: ./transcendence-app
       target: production
     environment:
-      - TRANSCENDENCE_APP_NAME=transcendence-app-prod
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=ft_transcendence
       - POSTGRES_USER={POSTGRES_USER:?required}
       - POSTGRES_PASSWORD={POSTGRES_PASSWORD:?required}
 
@@ -27,4 +23,3 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?required}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
-      - POSTGRES_DB=ft_transcendence
