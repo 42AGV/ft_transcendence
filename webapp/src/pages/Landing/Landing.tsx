@@ -4,14 +4,16 @@ import {
   Icon,
   IconSize,
   IconVariant,
+  Input,
+  InputVariant,
   Status,
   Text,
-  TextColor,
   TextVariant,
   TextWeight,
   SmallAvatar,
   LargeAvatar,
   NavigationBar,
+  TextColor,
   Row,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
@@ -74,6 +76,17 @@ export default function Landing() {
         onClick={buttonAction}
         title="John Doe"
         subtitle="level 3"
+      />
+      <Input
+        variant={InputVariant.DARK}
+        label="Dark Input"
+        iconVariant={IconVariant.SEARCH}
+        placeholder="Search"
+      />
+      <Input
+        variant={InputVariant.LIGHT}
+        label="Light Input"
+        placeholder="Your email"
       />
     </section>
   );

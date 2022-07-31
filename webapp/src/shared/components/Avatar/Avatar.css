@@ -10,6 +10,11 @@
     background: var(--gradient-game);
 }
 
+.avatar-small {
+    display: flex;
+}
+
+
 .avatar-large {
     position: relative;
     display: flex;

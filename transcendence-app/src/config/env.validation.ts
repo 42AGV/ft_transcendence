@@ -34,15 +34,15 @@ export class EnvironmentVariables {
   @IsUrl()
   FORTYTWO_APP_PROFILE_URL!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  TRANSCENDENCE_APP_DATA!: string;
-
   @IsUrl({ require_tld: false })
   MEMCACHED_HOST!: string;
 
   @IsPort()
   MEMCACHED_PORT!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  TRANSCENDENCE_APP_DATA!: string;
 
   @IsUUID()
   SESSION_SECRET!: string;
