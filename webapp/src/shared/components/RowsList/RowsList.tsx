@@ -1,7 +1,7 @@
 import './RowsList.css';
 import Row, { RowProps } from '../Row/Row';
 
-type RowItem = RowProps & {
+export type RowItem = RowProps & {
   key: string;
 };
 
@@ -21,7 +21,6 @@ export default function RowsList({ rows }: RowsListProps) {
             </li>
           );
         })}
-      ;
     </ul>
   );
 }
