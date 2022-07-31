@@ -37,6 +37,14 @@
   justify-content: flex-start;
 }
 
+.components-book__section__items-vertical {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
 .components-book__section__example-wrapper {
   width: 100%;
   margin: 0.25rem;

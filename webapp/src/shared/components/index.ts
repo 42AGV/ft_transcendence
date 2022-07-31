@@ -24,3 +24,4 @@ export { default as Header } from './Header/Header';
 export { default as Row } from './Row/Row';
 
 export { default as RowsList } from './RowsList/RowsList';
+export * from './RowsList/RowsList';

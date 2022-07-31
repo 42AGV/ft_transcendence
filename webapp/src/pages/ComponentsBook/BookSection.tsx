@@ -9,6 +9,7 @@ type singleOrMultipleChildren = React.ReactElement | React.ReactElement[];
 
 type bookSectionProps = {
   title: string;
+  displayVertical?: boolean;
   children: singleOrMultipleChildren;
 };
 
@@ -21,7 +22,7 @@ const wrapExample = (elements: singleOrMultipleChildren) =>
     <div className="components-book__section__example-wrapper">{elements}</div>
   );
 
-export const BookSection = ({ title, children }: bookSectionProps) => (
+export const BookSection = ({ title, displayVertical, children }: bookSectionProps) => (
   <section className="components-book__section">
     <div  className="components-book__section__title">
       <Text
@@ -32,7 +33,7 @@ export const BookSection = ({ title, children }: bookSectionProps) => (
         {` ${title}`}
       </Text>
     </div>
-    <div className="components-book__section__items">
+    <div className={`components-book__section__items${displayVertical ? '-vertical' : ''}`}>
       {wrapExample(children)}
     </div>
   </section>

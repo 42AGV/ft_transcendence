@@ -8,7 +8,9 @@ import {
   IconExample,
   AvatarExample,
   RowExample,
+  RowsListExample,
   InputExample,
+  HeaderExample
 } from './ComponentsExamples';
 
 export default function ComponentsBook() {
@@ -26,8 +28,10 @@ export default function ComponentsBook() {
       <StatusExample />
       <ButtonsExample />
       <NavigationExample />
+      <HeaderExample />
       <AvatarExample />
       <RowExample />
+      <RowsListExample />
       <InputExample />
     </div>
   );
