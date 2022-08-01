@@ -37,7 +37,9 @@ export class AuthController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   logout(@GetRequest() req: Request) {
     req.logout((err: Error) => {
-        err && throw new NotFoundException(err.message);
+      if (err) {
+        throw new NotFoundException(err.message);
+      }
     });
   }
 }
