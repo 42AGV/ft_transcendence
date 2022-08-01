@@ -121,7 +121,7 @@ npm ci
 cd ..
 ```
 
-A useful command to see the output logs of the Docker containers
+Some useful commands to see the output logs of the Docker containers
 
 ```
 docker compose logs -f webapp
@@ -140,6 +140,12 @@ docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ft_t
 ```
 
 Access using the Docker container IP and the service port
+
+After a config file change, please run the following command to recreate the images, renew anonymous volumes and restart the Docker containers
+
+```
+docker compose up --build -d -V
+```
 
 ## 🔧 Running the tests <a name = "tests"></a>
 
