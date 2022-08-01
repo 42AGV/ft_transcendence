@@ -85,6 +85,17 @@ export class UserService {
     return this.streamAvatarData(updatedAvatarFile);
   }
 
+  addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
+    return this.userRepository.addAvatarAndAddUser(
+      { id: uuidv4(), ...fileDto },
+      {
+        id: uuidv4(),
+        createdAt: new Date(Date.now()),
+        ...userDto,
+      },
+    );
+  }
+
   async getAvatar(userId: string): Promise<StreamableFile | null> {
     const user = await this.userRepository.getById(userId);
 

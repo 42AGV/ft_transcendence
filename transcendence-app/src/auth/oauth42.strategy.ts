@@ -29,26 +29,24 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   }
 
   async validate(accessToken: string): Promise<User | null> {
-    // fetch and validate the user data from the 42 API
+    // Fetch and validate the user data from the 42 API
     const userData = await this.api42Service.fetch42UserData(accessToken);
     const apiUser: UserDto = {
       avatarId: null,
       username: userData.login,
       email: userData.email,
     };
-
     await Api42Service.validate42ApiResponse(apiUser);
 
-    // check if the user is already in the database
+    // Check if the user is already in the database
     const dbUser = await this.userService.retrieveUserWithUserName(
       apiUser.username,
     );
-
     if (dbUser) {
       return dbUser;
     }
 
-    // download the avatar and save the user in database
+    // Download the avatar and save the avatar metadata and the user in the database
     const response = await this.api42Service.downloadUserAvatar(
       accessToken,
       userData.image_url,
@@ -58,13 +56,10 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       AVATARS_PATH,
       response.headers['content-type'],
     );
-    const file = await this.localFileService.saveFile(fileDto);
-
-    if (file) {
-      apiUser.avatarId = file.id;
-    } else {
+    const user = await this.userService.addAvatarAndUser(fileDto, apiUser);
+    if (!user) {
       this.localFileService.deleteFileData(fileDto.path);
     }
-    return this.userService.addUser(apiUser);
+    return user;
   }
 }

@@ -27,12 +27,16 @@ export const makeQuery = async <T>(
     const res = await pool.query(query);
     return res.rows;
   } catch (err) {
-    if (
-      err instanceof DatabaseError &&
-      (err.severity === 'FATAL' || err.severity === 'PANIC')
-    ) {
+    if (isCriticalDatabaseError(err)) {
       PostgresLogger.error(err.message);
     }
     return null;
   }
 };
+
+export function isCriticalDatabaseError(err: unknown): err is DatabaseError {
+  return (
+    err instanceof DatabaseError &&
+    (err.severity === 'FATAL' || err.severity === 'PANIC')
+  );
+}
