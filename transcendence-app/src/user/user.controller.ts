@@ -35,7 +35,7 @@ import {
   UsersPaginationQueryDto,
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
-import { ApiFile } from './decorators/api-file.decorator';
+import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { User } from './user.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
 import {
@@ -133,17 +133,25 @@ export class UserController {
       throw new UnprocessableEntityException();
     }
 
-    const updatedUser = await this.userService.addAvatar(user, {
+    const isValid = await this.userService.isValidAvatarType(file.path);
+    if (!isValid) {
+      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
+      throw new UnprocessableEntityException(
+        `Validation failed (allowed types are ${allowedTypes})`,
+      );
+    }
+
+    const avatar = await this.userService.addAvatar(user, {
       filename: file.filename,
       path: file.path,
       mimetype: file.mimetype,
       size: file.size,
     });
 
-    if (!updatedUser) {
+    if (!avatar) {
       throw new ServiceUnavailableException();
     }
-    return updatedUser;
+    return avatar;
   }
 
   @Get('avatar')

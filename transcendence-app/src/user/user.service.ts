@@ -12,6 +12,7 @@ import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { createReadStream } from 'fs';
 import { LocalFile } from '../shared/local-file/local-file.domain';
+import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 
 @Injectable()
 export class UserService {
@@ -107,5 +108,21 @@ export class UserService {
       disposition: `inline; filename="${file.filename}"`,
       length: file.size,
     });
+  }
+
+  isValidAvatarType(path: string): Promise<boolean | undefined> {
+    /**
+     * Import 'file-type' ES-Module in CommonJS Node.js module
+     */
+    return (async () => {
+      const { fileTypeFromFile } = await (eval(
+        'import("file-type")',
+      ) as Promise<typeof import('file-type')>);
+      const fileTypeResult = await fileTypeFromFile(path);
+      return (
+        fileTypeResult &&
+        AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime)
+      );
+    })();
   }
 }
