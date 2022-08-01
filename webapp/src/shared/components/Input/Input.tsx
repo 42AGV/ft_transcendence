@@ -27,8 +27,10 @@ export default function Input({
   name,
 }: InputProps) {
   return (
-    <label className="input subheading-bold">
-      {label}
+    <div className="input">
+      <label className="subheading-bold">
+        {label}
+      </label>
       <div className={`input-container input-container-${variant}`}>
         {iconVariant && (
           <Icon
@@ -45,6 +47,6 @@ export default function Input({
           name={name}
         />
       </div>
-    </label>
+    </div>
   );
 }
