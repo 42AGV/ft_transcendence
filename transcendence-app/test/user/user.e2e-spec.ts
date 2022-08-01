@@ -51,7 +51,7 @@ describe('[Feature] User - /users', () => {
     await app.init();
   });
 
-  it('Creates an user [POST /]', async () => {
+  it('Creates a user [POST /]', async () => {
     const server = await app.getHttpServer();
     const response = await request(server)
       .post('/users')
