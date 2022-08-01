@@ -19,8 +19,10 @@ export class OAuth42Guard extends AuthGuard('oauth42') {
 
   handleRequest(err: Error, user: any) {
     if (err || !user) {
-      this.logger.error(err.message);
-      throw new ServiceUnavailableException(err.message);
+      if (err) {
+        this.logger.error(err.message);
+      }
+      throw new ServiceUnavailableException();
     }
     return user;
   }
