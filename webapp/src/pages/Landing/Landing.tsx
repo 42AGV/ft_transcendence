@@ -1,12 +1,10 @@
-import React, { FormEventHandler, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   ButtonVariant,
   Icon,
   IconSize,
   IconVariant,
-  Input,
-  InputVariant,
   Status,
   Text,
   TextVariant,
@@ -28,13 +26,6 @@ export default function Landing() {
   };
 
   const randomAvatar = 'https://i.pravatar.cc/1000';
-  const [fullName, setfullName] = useState();
-  const [email, setEmail] = useState();
-  const [inputs, setInputs] = useState();
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    alert(`The message you entered was: ${e.target.search.value}`);
-  };
   return (
     <section className="landing">
       <NavigationBar />
