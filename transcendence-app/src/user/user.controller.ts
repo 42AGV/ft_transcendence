@@ -28,16 +28,21 @@ import {
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
-import { AVATARS_PATH } from './constants';
+import {
+  AVATARS_PATH,
+  AVATAR_MAX_SIZE,
+  AVATAR_MIMETYPE_WHITELIST,
+} from './constants';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
   path: AVATARS_PATH,
   fileFilter: (request, file, callback) => {
-    if (file.mimetype !== 'image/jpeg') {
+    if (!AVATAR_MIMETYPE_WHITELIST.includes(file.mimetype)) {
+      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
       return callback(
         new UnprocessableEntityException(
-          'Validation failed (expected type is jpeg)',
+          `Validation failed (allowed types are ${allowedTypes})`,
         ),
         false,
       );
@@ -45,7 +50,7 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
     callback(null, true);
   },
   limits: {
-    fileSize: Math.pow(1024, 2), // 1MB
+    fileSize: AVATAR_MAX_SIZE,
   },
 });
 
