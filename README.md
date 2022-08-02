@@ -86,15 +86,6 @@ FORTYTWO_APP_ID=42-intra-app-id
 FORTYTWO_APP_SECRET=42-intra-app-secret
 ```
 
-Generate two UUIDs using for example the `uuidgen` command
-
-Replace the SESSION_SECRET and the MEMCACHED_SECRET with the UUIDs from the previous step
-
-```
-SESSION_SECRET=your-UUID-here
-MEMCACHED_SECRET=your-UUID-here
-```
-
 Change the working directory to the root directory
 
 ```
