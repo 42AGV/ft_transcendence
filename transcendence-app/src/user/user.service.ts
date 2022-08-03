@@ -120,22 +120,19 @@ export class UserService {
     });
   }
 
-  validateAvatarType(path: string): Promise<boolean | undefined> {
+  async validateAvatarType(path: string): Promise<boolean | undefined> {
     /**
      * Import 'file-type' ES-Module in CommonJS Node.js module
      */
-    return (async () => {
-      const { fileTypeFromFile } = await (eval(
-        'import("file-type")',
-      ) as Promise<typeof import('file-type')>);
-      const fileTypeResult = await fileTypeFromFile(path);
-      const isValid =
-        fileTypeResult &&
-        AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
-      if (!isValid) {
-        this.localFileService.deleteFileData(path);
-      }
-      return isValid;
-    })();
+    const { fileTypeFromFile } = await (eval('import("file-type")') as Promise<
+      typeof import('file-type')
+    >);
+    const fileTypeResult = await fileTypeFromFile(path);
+    const isValid =
+      fileTypeResult && AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
+    if (!isValid) {
+      this.localFileService.deleteFileData(path);
+    }
+    return isValid;
   }
 }
