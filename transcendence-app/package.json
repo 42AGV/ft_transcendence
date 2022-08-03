@@ -50,6 +50,7 @@
     "@types/express-session": "^1.17.5",
     "@types/jest": "28.1.4",
     "@types/node": "^18.0.3",
+    "@types/passport": "^1.0.9",
     "@types/passport-oauth2": "^1.4.11",
     "@types/pg": "^8.6.5",
     "@types/supertest": "^2.0.12",
