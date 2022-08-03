@@ -11,7 +11,6 @@ import { User } from './user.domain';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { createReadStream } from 'fs';
-import { LocalFile } from '../shared/local-file/local-file.domain';
 import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 
 @Injectable()
@@ -55,15 +54,15 @@ export class UserService {
   ): Promise<StreamableFile | null> {
     // If the user doesn't have an avatar yet, save the avatar file in the database and update the user avatar_id
     if (user.avatarId === null) {
-      const avatarFile = await this.localFileService.saveFile(newAvatarFileDto);
-      if (!avatarFile) {
+      const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
+        { id: uuidv4(), ...newAvatarFileDto },
+        user,
+      );
+      if (!updatedUser) {
         this.localFileService.deleteFileData(newAvatarFileDto.path);
         return null;
       }
-      await this.userRepository.updateByUsername(user.username, {
-        avatarId: avatarFile.id,
-      });
-      return this.streamAvatarData(avatarFile);
+      return this.streamAvatarData(newAvatarFileDto);
     }
 
     // Otherwise, update the user avatar file and delete the old avatar data from the disk
@@ -111,17 +110,17 @@ export class UserService {
     return this.streamAvatarData(file);
   }
 
-  private streamAvatarData(file: LocalFile): StreamableFile {
-    const stream = createReadStream(file.path);
+  private streamAvatarData(fileDto: LocalFileDto): StreamableFile {
+    const stream = createReadStream(fileDto.path);
 
     return new StreamableFile(stream, {
-      type: file.mimetype,
-      disposition: `inline; filename="${file.filename}"`,
-      length: file.size,
+      type: fileDto.mimetype,
+      disposition: `inline; filename="${fileDto.filename}"`,
+      length: fileDto.size,
     });
   }
 
-  isValidAvatarType(path: string): Promise<boolean | undefined> {
+  validateAvatarType(path: string): Promise<boolean | undefined> {
     /**
      * Import 'file-type' ES-Module in CommonJS Node.js module
      */
@@ -130,10 +129,13 @@ export class UserService {
         'import("file-type")',
       ) as Promise<typeof import('file-type')>);
       const fileTypeResult = await fileTypeFromFile(path);
-      return (
+      const isValid =
         fileTypeResult &&
-        AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime)
-      );
+        AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
+      if (!isValid) {
+        this.localFileService.deleteFileData(path);
+      }
+      return isValid;
     })();
   }
 }

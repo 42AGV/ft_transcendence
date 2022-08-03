@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
-import { BaseEntity, table } from '../../../../shared/db/models';
+import { table } from '../../../../shared/db/models';
 import { UserEntity, userKeys } from '../../db/user.entity';
 import { IUserRepository } from '../user.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
@@ -72,7 +72,7 @@ export class UserPostgresRepository
   private insertWithClient(
     client: PoolClient,
     table: table,
-    entity: BaseEntity,
+    entity: UserEntity | LocalFileEntity,
   ) {
     const { cols, params, values } = entityQueryMapper(entity);
     const text = `INSERT INTO ${table}(${cols.join(
@@ -81,11 +81,22 @@ export class UserPostgresRepository
     return client.query(text, values);
   }
 
+  private updateByIdWithClient(
+    client: PoolClient,
+    id: string,
+    entity: Partial<UserEntity>,
+  ) {
+    const { cols, values } = entityQueryMapper(entity);
+    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
+    const text = `UPDATE ${this.table} SET ${colsToUpdate} WHERE "id"=$1 RETURNING *;`;
+    return client.query(text, [id, ...values]);
+  }
+
   async addAvatarAndAddUser(
     avatar: LocalFileEntity,
     user: UserEntity,
   ): Promise<UserEntity | null> {
-    let userEntity: UserEntity | null;
+    let userEntity: UserEntity | null = null;
     try {
       const client = await this.pool.connect();
       try {
@@ -97,6 +108,41 @@ export class UserPostgresRepository
         );
         user.avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
         const userRes = await this.insertWithClient(client, table.USERS, user);
+        await client.query('COMMIT');
+        userEntity = userRes.rows[0];
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+      } finally {
+        client.release();
+      }
+      return userEntity;
+    } catch (err) {
+      if (isCriticalDatabaseError(err)) {
+        this.logger.error(err.message);
+      }
+      return null;
+    }
+  }
+
+  async addAvatarAndUpdateUser(
+    avatar: LocalFileEntity,
+    user: UserEntity,
+  ): Promise<UserEntity | null> {
+    let userEntity: UserEntity | null = null;
+    try {
+      const client = await this.pool.connect();
+      try {
+        await client.query('BEGIN');
+        const avatarRes = await this.insertWithClient(
+          client,
+          table.LOCAL_FILE,
+          avatar,
+        );
+        const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
+        const userRes = await this.updateByIdWithClient(client, user.id, {
+          avatarId,
+        });
         await client.query('COMMIT');
         userEntity = userRes.rows[0];
       } catch (err) {

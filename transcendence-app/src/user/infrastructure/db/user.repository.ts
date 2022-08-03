@@ -19,4 +19,8 @@ export abstract class IUserRepository {
     avatar: LocalFile,
     user: User,
   ): Promise<User | null>;
+  abstract addAvatarAndUpdateUser(
+    avatar: LocalFile,
+    user: User,
+  ): Promise<User | null>;
 }

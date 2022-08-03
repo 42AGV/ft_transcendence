@@ -41,13 +41,11 @@ export class BasePostgresRepository<T extends BaseEntity>
     entity: Partial<T>,
   ): Promise<T[] | null> {
     const { cols, values } = entityQueryMapper(entity);
-    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 1}`).join(',');
+    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
 
     return makeQuery<T>(this.pool, {
-      text: `UPDATE ${this.table} SET ${colsToUpdate} WHERE "${key}" = $${
-        values.length + 1
-      } RETURNING *;`,
-      values: [...values, value],
+      text: `UPDATE ${this.table} SET ${colsToUpdate} WHERE "${key}" = $1 RETURNING *;`,
+      values: [value, ...values],
     });
   }
 }

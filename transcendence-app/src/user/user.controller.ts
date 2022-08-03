@@ -133,7 +133,7 @@ export class UserController {
       throw new UnprocessableEntityException();
     }
 
-    const isValid = await this.userService.isValidAvatarType(file.path);
+    const isValid = await this.userService.validateAvatarType(file.path);
     if (!isValid) {
       const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
       throw new UnprocessableEntityException(
