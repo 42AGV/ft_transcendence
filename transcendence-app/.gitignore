@@ -4,8 +4,8 @@
 
 # Environment files
 .env
-.env.production
 .env.development
+.env.production
 
 # Logs
 logs
