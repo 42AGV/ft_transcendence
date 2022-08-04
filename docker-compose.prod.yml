@@ -16,10 +16,10 @@ services:
       context: ./transcendence-app
       target: production
     environment:
-      - TRANSCENDENCE_APP_NAME=transcendence-app-prod
+      - POSTGRES_USER={POSTGRES_USER:?required}
+      - POSTGRES_PASSWORD={POSTGRES_PASSWORD:?required}
 
   db:
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=ft_transcendence
+      - POSTGRES_USER=${POSTGRES_USER:?required}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}

@@ -44,12 +44,6 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   TRANSCENDENCE_APP_DATA!: string;
 
-  @IsUUID()
-  SESSION_SECRET!: string;
-
-  @IsUUID()
-  MEMCACHED_SECRET!: string;
-
   @IsUrl({ require_tld: false })
   POSTGRES_HOST!: string;
 
@@ -67,6 +61,12 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   POSTGRES_PASSWORD!: string;
+
+  @IsUUID()
+  SESSION_SECRET!: string;
+
+  @IsUUID()
+  MEMCACHED_SECRET!: string;
 }
 
 export function validate(config: Record<string, unknown>) {

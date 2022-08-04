@@ -45,8 +45,4 @@ export class PostgresPool implements OnModuleInit, OnModuleDestroy {
   query(query: Query): Promise<QueryResult<any>> {
     return this.pool.query(query);
   }
-
-  end() {
-    this.pool.end();
-  }
 }
