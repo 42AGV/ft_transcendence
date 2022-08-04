@@ -34,8 +34,7 @@ export class EnvironmentVariables {
   @IsUrl()
   FORTYTWO_APP_PROFILE_URL!: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsUrl({ require_tld: false })
   MEMCACHED_HOST!: string;
 
   @IsPort()
@@ -45,6 +44,24 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   TRANSCENDENCE_APP_DATA!: string;
 
+  @IsUrl({ require_tld: false })
+  POSTGRES_HOST!: string;
+
+  @IsPort()
+  POSTGRES_PORT!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_DB!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_USER!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_PASSWORD!: string;
+
   @IsUUID()
   SESSION_SECRET!: string;
 
@@ -53,11 +70,10 @@ export class EnvironmentVariables {
 }
 
 export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToClass(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
-  });
+  const validatedConfig = plainToClass(EnvironmentVariables, config);
   const errors = validateSync(validatedConfig, {
     skipMissingProperties: false,
+    forbidUnknownValues: true,
   });
 
   if (errors.length > 0) {

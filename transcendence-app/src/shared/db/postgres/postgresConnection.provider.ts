@@ -1,20 +1,41 @@
 import { Pool, QueryResult } from 'pg';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Query } from '../models';
+import { ConfigService } from '@nestjs/config';
+import { PostgresConfig } from './postgres.config.interface';
 
 @Injectable()
-export class PostgresPool {
+export class PostgresPool implements OnModuleInit, OnModuleDestroy {
   private pool: Pool;
+  private logger = new Logger(PostgresPool.name);
 
-  constructor() {
+  constructor(private configService: ConfigService<PostgresConfig>) {
     this.pool = new Pool({
-      // TODO - #52 Create logs and tests and read from config in db repository
-      user: 'postgres',
-      host: 'localhost',
-      database: 'ft_transcendence',
-      password: 'postgres',
-      port: 5432,
+      host: this.configService.get('POSTGRES_HOST'),
+      port: this.configService.get('POSTGRES_PORT'),
+      database: this.configService.get('POSTGRES_DB'),
+      user: this.configService.get('POSTGRES_USER'),
+      password: this.configService.get('POSTGRES_PASSWORD'),
     });
+
+    this.pool.on('error', (err: Error) => this.logger.error(err.message));
+  }
+
+  async onModuleInit() {
+    try {
+      await this.pool.query('SELECT 1');
+    } catch (err) {
+      this.logger.error(err);
+    }
+  }
+
+  async onModuleDestroy() {
+    await this.pool.end();
   }
 
   connect() {
@@ -23,9 +44,5 @@ export class PostgresPool {
 
   query(query: Query): Promise<QueryResult<any>> {
     return this.pool.query(query);
-  }
-
-  end() {
-    this.pool.end();
   }
 }

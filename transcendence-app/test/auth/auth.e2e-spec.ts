@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
+import { AuthController } from '../../src/auth/auth.controller';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { AuthModule } from './auth.module';
+import { AuthModule } from '../../src/auth/auth.module';
 import * as request from 'supertest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { validate } from '../config/env.validation';
-import { OAuth42Config } from './oauth42-config.interface';
+import { validate } from '../../src/config/env.validation';
+import { OAuth42Config } from '../../src/auth/oauth42-config.interface';
 
 describe('Auth Controller', () => {
   let app: INestApplication;
@@ -15,7 +15,7 @@ describe('Auth Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
-          envFilePath: '.env.sample',
+          envFilePath: '.env.test',
           isGlobal: true,
           cache: true,
           validate,

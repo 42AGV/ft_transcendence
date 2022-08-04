@@ -19,6 +19,7 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
+      forbidUnknownValues: true,
     }),
   );
   const options = new DocumentBuilder()
