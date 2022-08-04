@@ -7,10 +7,11 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  ServiceUnavailableException,
+  UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserEntity } from './user.entity';
 import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
@@ -19,54 +20,73 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiServiceUnavailableResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import {
   MAX_USER_ENTRIES_PER_PAGE,
   UsersPaginationQueryDto,
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
+import { User } from './user.domain';
 
+@Controller('users')
+@UseGuards(AuthenticatedGuard)
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
-@UseGuards(AuthenticatedGuard)
-@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  @ApiCreatedResponse({ description: 'Create a user' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  async addUser(@Body() user: UserDto): Promise<UserEntity> {
-    return this.userService.findOneOrCreate(user);
+  @ApiCreatedResponse({ description: 'Create a user', type: User })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async addUser(@Body() userDto: UserDto): Promise<User> {
+    let user = await this.userService.retrieveUserWithUserName(
+      userDto.username,
+    );
+    if (user) {
+      throw new UnprocessableEntityException();
+    }
+    user = await this.userService.addUser(userDto);
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
+    return user;
   }
 
   @Get('me')
-  @ApiOkResponse({ description: 'Get the authenticated user' })
-  getCurrentUser(@GetUser() user: UserEntity) {
+  @ApiOkResponse({ description: 'Get the authenticated user', type: User })
+  getCurrentUser(@GetUser() user: User) {
     return user;
   }
 
   @Get()
   @ApiOkResponse({
     description: `Lists all users (max ${MAX_USER_ENTRIES_PER_PAGE})`,
+    type: [User],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  getUsers(@Query() usersPaginationQueryDto: UsersPaginationQueryDto) {
-    return this.userService.retrieveUsers(usersPaginationQueryDto);
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getUsers(
+    @Query() usersPaginationQueryDto: UsersPaginationQueryDto,
+  ): Promise<User[]> {
+    const users = await this.userService.retrieveUsers(usersPaginationQueryDto);
+    if (!users) {
+      throw new ServiceUnavailableException();
+    }
+    return users;
   }
 
   @Get(':uuid')
-  @ApiOkResponse({ description: 'Get a user' })
+  @ApiOkResponse({ description: 'Get a user', type: User })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserById(
-    @Param('uuid', ParseUUIDPipe) uuid: string,
-  ): Promise<UserEntity> {
-    const result = this.userService.retrieveUserWithId(uuid);
-    if (result === null) {
+  async getUserById(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<User> {
+    const user = await this.userService.retrieveUserWithId(uuid);
+    if (user === null) {
       throw new NotFoundException();
     }
-    return result;
+    return user;
   }
 }
