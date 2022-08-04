@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -26,6 +27,32 @@ import {
   UsersPaginationQueryDto,
 } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
+import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
+import {
+  AVATARS_PATH,
+  AVATAR_MAX_SIZE,
+  AVATAR_MIMETYPE_WHITELIST,
+} from './constants';
+
+export const AvatarFileInterceptor = LocalFileInterceptor({
+  fieldName: 'file',
+  path: AVATARS_PATH,
+  fileFilter: (request, file, callback) => {
+    if (!AVATAR_MIMETYPE_WHITELIST.includes(file.mimetype)) {
+      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
+      return callback(
+        new UnprocessableEntityException(
+          `Validation failed (allowed types are ${allowedTypes})`,
+        ),
+        false,
+      );
+    }
+    callback(null, true);
+  },
+  limits: {
+    fileSize: AVATAR_MAX_SIZE,
+  },
+});
 
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
