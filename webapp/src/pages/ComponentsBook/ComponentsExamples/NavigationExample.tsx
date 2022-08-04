@@ -1,6 +1,4 @@
-import {
-  NavigationBar,
-} from '../../../shared/components';
+import { NavigationBar } from '../../../shared/components';
 import { BookSection } from '../BookSection';
 
 export const NavigationExample = () => (
