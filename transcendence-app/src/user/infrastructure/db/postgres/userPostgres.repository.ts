@@ -62,7 +62,7 @@ export class UserPostgresRepository
     return makeQuery<UserEntity>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
-      ORDER BY "${orderBy}"
+      ORDER BY ${orderBy}
       LIMIT $1
       OFFSET $2;`,
       values: [limit, offset],
