@@ -1,8 +1,4 @@
-import {
-  Icon,
-  IconVariant,
-  IconSize,
-} from '../../../shared/components';
+import { Icon, IconVariant, IconSize } from '../../../shared/components';
 import { Color } from '../../../shared/types';
 import { BookSection } from '../BookSection';
 
