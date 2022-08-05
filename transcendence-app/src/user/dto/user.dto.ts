@@ -16,5 +16,5 @@ export class UserDto {
 
   @IsUrl()
   @ValidateIf((object, value) => value !== null)
-  avatar!: string;
+  avatar!: string | null;
 }

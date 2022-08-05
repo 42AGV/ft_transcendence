@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
-  avatar: 'www.example.com',
+  avatar: 'www.example.jpg',
 };
 const testUserId = uuidv4();
 
@@ -87,7 +87,7 @@ describe('UserController', () => {
     });
 
     describe('when user with ID does not exists', () => {
-      it('should thow the "NotFoundException"', async () => {
+      it('should throw the "NotFoundException"', async () => {
         mockUserService.retrieveUserWithId = () => Promise.resolve(null);
         expect.assertions(1);
         try {
