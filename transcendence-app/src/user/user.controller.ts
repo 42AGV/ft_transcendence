@@ -73,15 +73,10 @@ export class UserController {
 
   @Post()
   @ApiCreatedResponse({ description: 'Create a user', type: User })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async addUser(@Body() userDto: UserDto): Promise<User> {
-    let user = await this.userService.retrieveUserWithUserName(
-      userDto.username,
-    );
-    if (user) {
-      throw new UnprocessableEntityException();
-    }
-    user = await this.userService.addUser(userDto);
+    const user = await this.userService.addUser(userDto);
     if (!user) {
       throw new UnprocessableEntityException();
     }
@@ -99,7 +94,7 @@ export class UserController {
     description: `Lists all users (max ${MAX_USER_ENTRIES_PER_PAGE})`,
     type: [User],
   })
-  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUsers(
     @Query() usersPaginationQueryDto: UsersPaginationQueryDto,
@@ -121,8 +116,8 @@ export class UserController {
       format: 'binary',
     },
   })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   @UseInterceptors(AvatarFileInterceptor)
   async uploadAvatar(
     @GetUser() user: User,
@@ -180,7 +175,7 @@ export class UserController {
       format: 'binary',
     },
   })
-  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getAvatar(
     @Param('uuid', ParseUUIDPipe) id: string,
@@ -195,8 +190,8 @@ export class UserController {
 
   @Get(':uuid')
   @ApiOkResponse({ description: 'Get a user', type: User })
-  @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   async getUserById(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<User> {
     const user = await this.userService.retrieveUserWithId(uuid);
     if (user === null) {

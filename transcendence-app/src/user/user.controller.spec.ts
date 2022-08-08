@@ -91,7 +91,7 @@ describe('UserController', () => {
     });
 
     describe('when user with ID does not exists', () => {
-      it('should thow the "NotFoundException"', async () => {
+      it('should throw the "NotFoundException"', async () => {
         mockUserService.retrieveUserWithId = () => Promise.resolve(null);
         expect.assertions(1);
         try {

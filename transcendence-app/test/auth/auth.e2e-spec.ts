@@ -54,7 +54,7 @@ describe('[Feature] Auth - /auth', () => {
     app.init();
   });
 
-  it('Login [GET /login]', async () => {
+  it('Login [GET /login] should redirect to the 42 OAuth page', async () => {
     const response = await request(app.getHttpServer())
       .get('/auth/login')
       .expect(HttpStatus.FOUND);
@@ -62,7 +62,7 @@ describe('[Feature] Auth - /auth', () => {
     expect(response.headers['location']).toMatch(new RegExp(`^${authUrl}?`));
   });
 
-  it('Logout [DELETE /logout]', async () => {
+  it('Logout [DELETE /logout] should throw the "ForbiddenException" when the user is not authenticated', async () => {
     return request(app.getHttpServer())
       .delete('/auth/logout')
       .expect(HttpStatus.FORBIDDEN);
