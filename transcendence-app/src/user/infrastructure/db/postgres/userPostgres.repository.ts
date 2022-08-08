@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { table } from '../../../../shared/db/models';
 import { UserEntity, userKeys } from '../../db/user.entity';
@@ -7,7 +7,6 @@ import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.
 import { UsersPaginationQueryDto } from '../../../dto/user.pagination.dto';
 import {
   entityQueryMapper,
-  isCriticalDatabaseError,
   makeQuery,
 } from '../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
@@ -19,8 +18,6 @@ export class UserPostgresRepository
   extends BasePostgresRepository<UserEntity>
   implements IUserRepository
 {
-  private logger = new Logger(UserPostgresRepository.name);
-
   constructor(protected pool: PostgresPool) {
     super(pool, table.USERS);
   }
@@ -81,12 +78,12 @@ export class UserPostgresRepository
     return client.query(text, values);
   }
 
-  private updateByIdWithClient(
+  private updateUserByIdWithClient(
     client: PoolClient,
     id: string,
-    entity: Partial<UserEntity>,
+    userEntity: Partial<UserEntity>,
   ) {
-    const { cols, values } = entityQueryMapper(entity);
+    const { cols, values } = entityQueryMapper(userEntity);
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
     const text = `UPDATE ${this.table} SET ${colsToUpdate} WHERE "id"=$1 RETURNING *;`;
     return client.query(text, [id, ...values]);
@@ -96,67 +93,36 @@ export class UserPostgresRepository
     avatar: LocalFileEntity,
     user: UserEntity,
   ): Promise<UserEntity | null> {
-    let userEntity: UserEntity | null = null;
-    try {
-      const client = await this.pool.connect();
-      try {
-        await client.query('BEGIN');
-        const avatarRes = await this.insertWithClient(
-          client,
-          table.LOCAL_FILE,
-          avatar,
-        );
-        user.avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
-        const userRes = await this.insertWithClient(client, table.USERS, user);
-        await client.query('COMMIT');
-        userEntity = userRes.rows[0];
-      } catch (err) {
-        await client.query('ROLLBACK');
-        throw err;
-      } finally {
-        client.release();
-      }
-      return userEntity;
-    } catch (err) {
-      if (isCriticalDatabaseError(err)) {
-        this.logger.error(err.message);
-      }
-      return null;
-    }
+    return this.pool.transaction<UserEntity>(async (client) => {
+      const avatarRes = await this.insertWithClient(
+        client,
+        table.LOCAL_FILE,
+        avatar,
+      );
+      const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
+      const userRes = await this.insertWithClient(client, table.USERS, {
+        ...user,
+        avatarId,
+      });
+      return userRes.rows[0];
+    });
   }
 
   async addAvatarAndUpdateUser(
     avatar: LocalFileEntity,
     user: UserEntity,
   ): Promise<UserEntity | null> {
-    let userEntity: UserEntity | null = null;
-    try {
-      const client = await this.pool.connect();
-      try {
-        await client.query('BEGIN');
-        const avatarRes = await this.insertWithClient(
-          client,
-          table.LOCAL_FILE,
-          avatar,
-        );
-        const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
-        const userRes = await this.updateByIdWithClient(client, user.id, {
-          avatarId,
-        });
-        await client.query('COMMIT');
-        userEntity = userRes.rows[0];
-      } catch (err) {
-        await client.query('ROLLBACK');
-        throw err;
-      } finally {
-        client.release();
-      }
-      return userEntity;
-    } catch (err) {
-      if (isCriticalDatabaseError(err)) {
-        this.logger.error(err.message);
-      }
-      return null;
-    }
+    return this.pool.transaction<UserEntity>(async (client) => {
+      const avatarRes = await this.insertWithClient(
+        client,
+        table.LOCAL_FILE,
+        avatar,
+      );
+      const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
+      const userRes = await this.updateUserByIdWithClient(client, user.id, {
+        avatarId,
+      });
+      return userRes.rows[0];
+    });
   }
 }
