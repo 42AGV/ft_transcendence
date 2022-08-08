@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-oauth2';
 import { Api42Service } from '../user/api42.service';
-import { UserEntity } from '../user/user.entity';
+import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
 import { OAuth42Config } from './oauth42-config.interface';
 
@@ -24,8 +24,14 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     });
   }
 
-  async validate(accessToken: string): Promise<UserEntity> {
+  async validate(accessToken: string): Promise<User | null> {
     const userDto = await this.api42Service.get42UserData(accessToken);
-    return this.userService.findOneOrCreate(userDto);
+    const dbUser = await this.userService.retrieveUserWithUserName(
+      userDto.username,
+    );
+    if (dbUser) {
+      return dbUser;
+    }
+    return this.userService.addUser(userDto);
   }
 }

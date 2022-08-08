@@ -4,15 +4,20 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { AuthModule } from '../../src/auth/auth.module';
 import * as request from 'supertest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { validate } from '../../src/config/env.validation';
-import { OAuth42Config } from '../../src/auth/oauth42-config.interface';
+import {
+  EnvironmentVariables,
+  validate,
+} from '../../src/config/env.validation';
+import * as session from 'express-session';
+import * as ConnectMemcached from 'connect-memcached';
+import * as passport from 'passport';
 
-describe('Auth Controller', () => {
+describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
-  let config: ConfigService<OAuth42Config>;
+  let config: ConfigService<EnvironmentVariables>;
 
   beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
           envFilePath: '.env.test',
@@ -25,17 +30,42 @@ describe('Auth Controller', () => {
       controllers: [AuthController],
     }).compile();
 
-    config = module.get<ConfigService<OAuth42Config>>(ConfigService);
-    app = module.createNestApplication();
+    app = moduleFixture.createNestApplication();
+    config =
+      moduleFixture.get<ConfigService<EnvironmentVariables>>(ConfigService);
+
+    const MemcachedStore = ConnectMemcached(session);
+    const memcachedHost = config.get('MEMCACHED_HOST') as string;
+    const memcachedPort = config.get('MEMCACHED_PORT') as string;
+
+    app.use(
+      session({
+        secret: config.get('SESSION_SECRET') as string,
+        resave: false,
+        saveUninitialized: false,
+        store: new MemcachedStore({
+          hosts: [`${memcachedHost}:${memcachedPort}`],
+          secret: config.get('MEMCACHED_SECRET'),
+        }),
+      }),
+    );
+    app.use(passport.initialize());
+    app.use(passport.session());
     app.init();
   });
 
-  it('should redirect to 42 oauth page', async () => {
+  it('Login [GET /login] should redirect to the 42 OAuth page', async () => {
     const response = await request(app.getHttpServer())
       .get('/auth/login')
       .expect(HttpStatus.FOUND);
     const authUrl = config.get('FORTYTWO_APP_AUTHORIZATION_URL');
     expect(response.headers['location']).toMatch(new RegExp(`^${authUrl}?`));
+  });
+
+  it('Logout [DELETE /logout] should throw the "ForbiddenException" when the user is not authenticated', async () => {
+    return request(app.getHttpServer())
+      .delete('/auth/logout')
+      .expect(HttpStatus.FORBIDDEN);
   });
 
   afterAll(async () => {
