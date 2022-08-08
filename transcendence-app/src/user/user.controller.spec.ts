@@ -61,17 +61,17 @@ describe('UserController', () => {
   });
 
   describe('addUser', () => {
-    describe('when user with username does not exists', () => {
+    describe('when it succeeds', () => {
       it('should create a new user', async () => {
-        mockUserService.retrieveUserWithUserName = () => Promise.resolve(null);
         const user = await controller.addUser(testUserDto);
         expect(user.id).toEqual(testUserId);
         expect(user.username).toEqual(testUserDto.username);
       });
     });
 
-    describe('when user with username exists', () => {
+    describe('when it fails', () => {
       it('should throw the "UnprocessableEntityException"', async () => {
+        mockUserService.addUser = () => Promise.resolve(null);
         expect.assertions(1);
         try {
           await controller.addUser(testUserDto);
