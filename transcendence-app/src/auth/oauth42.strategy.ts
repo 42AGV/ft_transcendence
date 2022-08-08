@@ -5,7 +5,6 @@ import { Strategy } from 'passport-oauth2';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Api42Service } from '../user/api42.service';
 import { AVATARS_PATH } from '../user/constants';
-import { UserDto } from '../user/dto/user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
 import { OAuth42Config } from './oauth42-config.interface';
@@ -29,16 +28,9 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   }
 
   async validate(accessToken: string): Promise<User | null> {
-    // Fetch and validate the user data from the 42 API
-    const userData = await this.api42Service.fetch42UserData(accessToken);
-    const userDto: UserDto = {
-      avatarId: null,
-      username: userData.login,
-      email: userData.email,
-    };
-    await Api42Service.validate42ApiResponse(userDto);
-
-    // Check if the user is already in the database
+    const { userDto, avatarUrl } = await this.api42Service.get42UserData(
+      accessToken,
+    );
     const dbUser = await this.userService.retrieveUserWithUserName(
       userDto.username,
     );
@@ -49,7 +41,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     // Download the avatar and save the avatar metadata and the user in the database
     const response = await this.api42Service.downloadUserAvatar(
       accessToken,
-      userData.image_url,
+      avatarUrl,
     );
     const fileDto = await this.localFileService.saveFileData(
       response.data,
