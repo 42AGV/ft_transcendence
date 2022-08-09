@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { join } from 'path';
-import { createWriteStream, ReadStream, unlink } from 'fs';
+import { createWriteStream, mkdir, ReadStream, unlink } from 'fs';
 import { LocalFileConfig } from './local-file.config.interface';
 import { LocalFile } from './local-file.domain';
 
@@ -26,7 +26,16 @@ export class LocalFileService {
     return this.repository.addFile({ id: uuidv4(), ...localFileDto });
   }
 
-  saveFileData(
+  private createDirectory(directory: string) {
+    return mkdir(directory, { recursive: true }, (err) => {
+      if (err) {
+        this.logger.error(err.message);
+        throw err;
+      }
+    });
+  }
+
+  async saveFileData(
     data: ReadStream,
     path: string,
     mimetype: string,
@@ -35,9 +44,10 @@ export class LocalFileService {
       'TRANSCENDENCE_APP_DATA',
     ) as string;
     const filename = randomBytes(16).toString('hex');
-    const finalPath = join(filesPath, path, filename);
+    const directory = join(filesPath, path);
+    this.createDirectory(directory);
+    const finalPath = join(directory, filename);
     const outStream = createWriteStream(finalPath);
-
     data.pipe(outStream);
 
     return new Promise((resolve, reject) => {
