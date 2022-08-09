@@ -1,5 +1,6 @@
 export enum table {
   USERS = 'Users',
+  LOCAL_FILE = 'LocalFile',
 }
 
 export type ID = string | number;

@@ -8,10 +8,15 @@ import {
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
 import { User } from './user.domain';
+import { LocalFileService } from '../shared/local-file/local-file.service';
+import { LocalFileDto } from '../shared/local-file/local-file.dto';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private localFileService: LocalFileService,
+  ) {}
 
   retrieveUserWithId(id: string): Promise<User | null> {
     return this.userRepository.getById(id);
@@ -39,5 +44,16 @@ export class UserService {
       createdAt: new Date(Date.now()),
       ...user,
     });
+  }
+
+  addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
+    return this.userRepository.addAvatarAndAddUser(
+      { id: uuidv4(), ...fileDto },
+      {
+        id: uuidv4(),
+        createdAt: new Date(Date.now()),
+        ...userDto,
+      },
+    );
   }
 }

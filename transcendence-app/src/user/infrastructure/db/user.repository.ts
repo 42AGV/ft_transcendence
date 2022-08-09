@@ -1,3 +1,4 @@
+import { LocalFile } from '../../../shared/local-file/local-file.domain';
 import { UsersPaginationQueryDto } from '../../dto/user.pagination.dto';
 import { User } from '../../user.domain';
 
@@ -14,4 +15,8 @@ export abstract class IUserRepository {
   abstract getPaginatedUsers(
     queryDto: Required<UsersPaginationQueryDto>,
   ): Promise<User[] | null>;
+  abstract addAvatarAndAddUser(
+    avatar: LocalFile,
+    user: User,
+  ): Promise<User | null>;
 }

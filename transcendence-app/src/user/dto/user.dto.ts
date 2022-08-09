@@ -2,7 +2,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  IsUrl,
+  IsUUID,
   ValidateIf,
 } from 'class-validator';
 
@@ -14,7 +14,7 @@ export class UserDto {
   @IsEmail()
   email!: string;
 
-  @IsUrl()
+  @IsUUID()
   @ValidateIf((object, value) => value !== null)
-  avatar!: string | null;
+  avatarId!: string | null;
 }
