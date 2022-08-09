@@ -5,8 +5,13 @@ import { UserEntity, userKeys } from '../../db/user.entity';
 import { IUserRepository } from '../user.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import { UsersPaginationQueryDto } from '../../../dto/user.pagination.dto';
+import {
+  entityQueryMapper,
+  makeQuery,
+} from '../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
-import { makeQuery } from '../../../../shared/db/postgres/utils';
+import { LocalFileEntity } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
+import { PoolClient } from 'pg';
 import { UpdateUserDto } from '../../../dto/update-user.dto';
 
 @Injectable()
@@ -59,6 +64,37 @@ export class UserPostgresRepository
       LIMIT $1
       OFFSET $2;`,
       values: [limit, offset],
+    });
+  }
+
+  private insertWithClient(
+    client: PoolClient,
+    table: table,
+    entity: UserEntity | LocalFileEntity,
+  ) {
+    const { cols, params, values } = entityQueryMapper(entity);
+    const text = `INSERT INTO ${table}(${cols.join(
+      ', ',
+    )}) VALUES (${params.join(',')}) RETURNING *;`;
+    return client.query(text, values);
+  }
+
+  async addAvatarAndAddUser(
+    avatar: LocalFileEntity,
+    user: UserEntity,
+  ): Promise<UserEntity | null> {
+    return this.pool.transaction<UserEntity>(async (client) => {
+      const avatarRes = await this.insertWithClient(
+        client,
+        table.LOCAL_FILE,
+        avatar,
+      );
+      const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
+      const userRes = await this.insertWithClient(client, table.USERS, {
+        ...user,
+        avatarId,
+      });
+      return userRes.rows[0];
     });
   }
 }

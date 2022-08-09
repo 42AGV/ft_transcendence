@@ -1,37 +1,33 @@
 \c ft_transcendence;
 
 INSERT INTO
-  Users ("username", "email", "avatar")
+  Users ("username", "email")
 VALUES
   (
     'gbudau-admin',
-    'gbudau-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'gbudau-admin@transcendence.com'
   );
 
 INSERT INTO
-  Users ("username", "email", "avatar")
+  Users ("username", "email")
 VALUES
   (
     'vdedios-admin',
-    'vdedios-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'vdedios-admin@transcendence.com'
   );
 
 INSERT INTO
-  Users ("username", "email", "avatar")
+  Users ("username", "email")
 VALUES
   (
     'aollero-admin',
-    'aollero-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'aollero-admin@transcendence.com'
   );
 
 INSERT INTO
-  Users ("username", "email", "avatar")
+  Users ("username", "email")
 VALUES
   (
     'fportela-admin',
-    'fportela-admin@transcendence.com',
-    'https://upload.wikimedia.org/wikipedia/commons/8/8d/42_Logo.svg'
+    'fportela-admin@transcendence.com'
   );

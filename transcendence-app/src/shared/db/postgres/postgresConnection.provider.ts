@@ -1,4 +1,4 @@
-import { Pool, QueryResult } from 'pg';
+import { Pool, PoolClient, QueryResult } from 'pg';
 import {
   Injectable,
   Logger,
@@ -8,6 +8,7 @@ import {
 import { Query } from '../models';
 import { ConfigService } from '@nestjs/config';
 import { PostgresConfig } from './postgres.config.interface';
+import { isCriticalDatabaseError } from './utils';
 
 @Injectable()
 export class PostgresPool implements OnModuleInit, OnModuleDestroy {
@@ -44,5 +45,28 @@ export class PostgresPool implements OnModuleInit, OnModuleDestroy {
 
   query(query: Query): Promise<QueryResult<any>> {
     return this.pool.query(query);
+  }
+
+  async transaction<T>(callback: (client: PoolClient) => Promise<T | null>) {
+    let data: T | null = null;
+    try {
+      const client = await this.pool.connect();
+      try {
+        await client.query('BEGIN');
+        data = await callback(client);
+        await client.query('COMMIT');
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+      } finally {
+        client.release();
+      }
+      return data;
+    } catch (err) {
+      if (isCriticalDatabaseError(err)) {
+        this.logger.error(err.message);
+      }
+      return null;
+    }
   }
 }
