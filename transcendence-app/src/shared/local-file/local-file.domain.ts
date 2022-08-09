@@ -5,5 +5,6 @@ export class LocalFile {
     public path: string,
     public mimetype: string,
     public size: number,
+    public createdAt: Date,
   ) {}
 }

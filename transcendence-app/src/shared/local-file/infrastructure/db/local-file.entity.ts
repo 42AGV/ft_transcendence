@@ -6,6 +6,7 @@ export enum LocalFileKeys {
   PATH = '"path"',
   MIMETYPE = '"mimetype"',
   SIZE = '"size"',
+  CREATED_AT = '"createdAt"',
 }
 
 export class LocalFileEntity implements BaseEntity {
@@ -15,5 +16,6 @@ export class LocalFileEntity implements BaseEntity {
     public path: string,
     public mimetype: string,
     public size: number,
+    public createdAt: Date,
   ) {}
 }
