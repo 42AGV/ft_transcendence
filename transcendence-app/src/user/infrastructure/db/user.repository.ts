@@ -1,3 +1,4 @@
+import { UpdateUserDto } from '../../dto/update-user.dto';
 import { UsersPaginationQueryDto } from '../../dto/user.pagination.dto';
 import { User } from '../../user.domain';
 
@@ -6,9 +7,9 @@ export abstract class IUserRepository {
   abstract getByUsername(username: string): Promise<User | null>;
   abstract getByEmail(username: string): Promise<User | null>;
   abstract deleteByUsername(username: string): Promise<User | null>;
-  abstract updateByUsername(
+  abstract updateById(
     username: string,
-    user: Partial<User>,
+    updateUserDto: UpdateUserDto,
   ): Promise<User | null>;
   abstract add(user: User): Promise<User | null>;
   abstract getPaginatedUsers(

@@ -8,6 +8,7 @@ import {
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
 import { User } from './user.domain';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -39,5 +40,9 @@ export class UserService {
       createdAt: new Date(Date.now()),
       ...user,
     });
+  }
+
+  updateUser(userId: string, updateUserDto: UpdateUserDto) {
+    return this.userRepository.updateById(userId, updateUserDto);
   }
 }

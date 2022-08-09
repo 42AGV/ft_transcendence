@@ -7,6 +7,7 @@ import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.
 import { UsersPaginationQueryDto } from '../../../dto/user.pagination.dto';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
+import { UpdateUserDto } from '../../../dto/update-user.dto';
 
 @Injectable()
 export class UserPostgresRepository
@@ -37,11 +38,11 @@ export class UserPostgresRepository
     return users && users.length ? users[0] : null;
   }
 
-  async updateByUsername(
-    username: string,
-    user: Partial<UserEntity>,
+  async updateById(
+    id: string,
+    updateUserDto: UpdateUserDto,
   ): Promise<UserEntity | null> {
-    const users = await this.updateByKey(userKeys.USERNAME, username, user);
+    const users = await this.updateByKey(userKeys.ID, id, updateUserDto);
     return users && users.length ? users[0] : null;
   }
 
