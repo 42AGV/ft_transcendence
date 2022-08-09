@@ -5,12 +5,15 @@ import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { Api42Service } from '../user/api42.service';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
+import { HTTP_TIMEOUT_MILLISECONDS } from './constants';
 import { OAuth42Strategy } from './oauth42.strategy';
 import { SessionSerializer } from './session.serializer';
 
 @Module({
   imports: [
-    HttpModule,
+    HttpModule.register({
+      timeout: HTTP_TIMEOUT_MILLISECONDS,
+    }),
     UserModule,
     PassportModule.register({ session: true }),
     LocalFileModule,

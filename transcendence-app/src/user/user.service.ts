@@ -55,7 +55,7 @@ export class UserService {
     // If the user doesn't have an avatar yet, save the avatar file in the database and update the user avatarId
     if (user.avatarId === null) {
       const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
-        { id: uuidv4(), ...newAvatarFileDto },
+        { id: uuidv4(), createdAt: new Date(Date.now()), ...newAvatarFileDto },
         user,
       );
       if (!updatedUser) {
@@ -86,12 +86,8 @@ export class UserService {
 
   addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
     return this.userRepository.addAvatarAndAddUser(
-      { id: uuidv4(), ...fileDto },
-      {
-        id: uuidv4(),
-        createdAt: new Date(Date.now()),
-        ...userDto,
-      },
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...userDto },
     );
   }
 

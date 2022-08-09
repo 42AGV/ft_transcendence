@@ -23,7 +23,11 @@ export class LocalFileService {
   }
 
   saveFile(localFileDto: LocalFileDto): Promise<LocalFile | null> {
-    return this.repository.addFile({ id: uuidv4(), ...localFileDto });
+    return this.repository.addFile({
+      id: uuidv4(),
+      createdAt: new Date(Date.now()),
+      ...localFileDto,
+    });
   }
 
   private createDirectory(directory: string) {
@@ -69,16 +73,6 @@ export class LocalFileService {
         this.logger.error(err.message);
       }
     });
-  }
-
-  async deleteFileById(id: string): Promise<LocalFile | null> {
-    const file = await this.repository.deleteById(id);
-
-    if (!file) {
-      return null;
-    }
-    this.deleteFileData(file.path);
-    return file;
   }
 
   updateFileById(
