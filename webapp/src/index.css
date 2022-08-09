@@ -9,6 +9,7 @@
   --color-light: #ffffff;
   --color-background: #191b1f;
   --color-dark: #262934;
+  --color-dark-variant: #212121;
 
   --title-font-size: 2.5rem;
   --subtitle-font-size: 2rem;
@@ -61,7 +62,6 @@ body {
   font-size: var(--title-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
-  line-height: 60px;
   line-height: 3rem;
 }
 

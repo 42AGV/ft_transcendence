@@ -1,10 +1,20 @@
 import './Users.css';
-import {IconVariant, Input, InputVariant, NavigationBar, RowsList, SmallAvatar} from "../../shared/components";
-import {buttonAction, rowsData} from "../ComponentsBook/ComponentsExamples/RowsListExample";
+import {
+  IconVariant,
+  Input,
+  InputVariant,
+  NavigationBar,
+  RowsList,
+  SmallAvatar,
+} from '../../shared/components';
+import {
+  buttonAction,
+  rowsData,
+} from '../ComponentsBook/ComponentsExamples/RowsListExample';
 
 export default function Users() {
   const randomAvatar = 'https://i.pravatar.cc/9000';
-  rowsData.push(  {
+  rowsData.push({
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: { url: randomAvatar, status: 'offline' },
     onClick: buttonAction,
@@ -12,7 +22,7 @@ export default function Users() {
     subtitle: 'level 16',
     key: '11602486-0878-440c-9db1-a7006c19a39f',
   });
-  rowsData.push(  {
+  rowsData.push({
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: { url: randomAvatar, status: 'playing' },
     onClick: buttonAction,
@@ -23,8 +33,8 @@ export default function Users() {
   return (
     <div className="users">
       <div className="users-wrapper">
-        <div className="fixed-frame">
-          <div className="avatar-search">
+        <div className="users-fixed-frame">
+          <div className="users-avatar-search">
             <SmallAvatar url={randomAvatar} />
             <Input
               iconVariant={IconVariant.SEARCH}
@@ -34,7 +44,7 @@ export default function Users() {
           </div>
           <NavigationBar />
         </div>
-        <div className="scrollable">
+        <div className="users-scrollable">
           <RowsList rows={rowsData} />
         </div>
       </div>
