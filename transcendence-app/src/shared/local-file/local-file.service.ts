@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ILocalFileRepository } from './infrastructure/db/local-file.repository';
 import { LocalFileDto } from './local-file.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { join } from 'path';
@@ -15,19 +14,11 @@ export class LocalFileService {
 
   constructor(
     private configService: ConfigService<LocalFileConfig>,
-    private repository: ILocalFileRepository,
+    private localFileRepository: ILocalFileRepository,
   ) {}
 
   getFileById(id: string): Promise<LocalFile | null> {
-    return this.repository.getById(id);
-  }
-
-  saveFile(localFileDto: LocalFileDto): Promise<LocalFile | null> {
-    return this.repository.addFile({
-      id: uuidv4(),
-      createdAt: new Date(Date.now()),
-      ...localFileDto,
-    });
+    return this.localFileRepository.getById(id);
   }
 
   private createDirectory(directory: string) {
@@ -79,6 +70,6 @@ export class LocalFileService {
     id: string,
     localFileDto: Partial<LocalFileDto>,
   ): Promise<LocalFile | null> {
-    return this.repository.updateById(id, localFileDto);
+    return this.localFileRepository.updateById(id, localFileDto);
   }
 }
