@@ -52,7 +52,7 @@ export class UserService {
     user: User,
     newAvatarFileDto: LocalFileDto,
   ): Promise<StreamableFile | null> {
-    // If the user doesn't have an avatar yet, save the avatar file in the database and update the user avatar_id
+    // If the user doesn't have an avatar yet, save the avatar file in the database and update the user avatarId
     if (user.avatarId === null) {
       const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
         { id: uuidv4(), ...newAvatarFileDto },
