@@ -8,15 +8,11 @@ import {
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
 import { User } from './user.domain';
-import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private userRepository: IUserRepository,
-    private localFileService: LocalFileService,
-  ) {}
+  constructor(private userRepository: IUserRepository) {}
 
   retrieveUserWithId(id: string): Promise<User | null> {
     return this.userRepository.getById(id);
