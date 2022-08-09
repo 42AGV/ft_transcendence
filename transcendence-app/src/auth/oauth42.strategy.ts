@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-oauth2';
+import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Api42Service } from '../user/api42.service';
 import { AVATARS_PATH } from '../user/constants';
+import { UserDto } from '../user/dto/user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
 import { OAuth42Config } from './oauth42-config.interface';
@@ -27,6 +29,32 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     });
   }
 
+  private async saveAvatar(
+    accessToken: string,
+    avatarUrl: string,
+  ): Promise<LocalFileDto> {
+    const response = await this.api42Service.downloadUserAvatar(
+      accessToken,
+      avatarUrl,
+    );
+    return this.localFileService.saveFileData(
+      response.data,
+      AVATARS_PATH,
+      response.headers['content-type'],
+    );
+  }
+
+  private async createUser(
+    fileDto: LocalFileDto,
+    userDto: UserDto,
+  ): Promise<User | null> {
+    const user = await this.userService.addAvatarAndUser(fileDto, userDto);
+    if (!user) {
+      this.localFileService.deleteFileData(fileDto.path);
+    }
+    return user;
+  }
+
   async validate(accessToken: string): Promise<User | null> {
     const { userDto, avatarUrl } = await this.api42Service.get42UserData(
       accessToken,
@@ -38,20 +66,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       return dbUser;
     }
 
-    // Download the avatar and save the avatar metadata and the user in the database
-    const response = await this.api42Service.downloadUserAvatar(
-      accessToken,
-      avatarUrl,
-    );
-    const fileDto = await this.localFileService.saveFileData(
-      response.data,
-      AVATARS_PATH,
-      response.headers['content-type'],
-    );
-    const user = await this.userService.addAvatarAndUser(fileDto, userDto);
-    if (!user) {
-      this.localFileService.deleteFileData(fileDto.path);
-    }
-    return user;
+    const avatarDto = await this.saveAvatar(accessToken, avatarUrl);
+    return this.createUser(avatarDto, userDto);
   }
 }
