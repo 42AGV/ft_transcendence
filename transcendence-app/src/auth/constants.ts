@@ -1,0 +1,1 @@
+export const HTTP_TIMEOUT_MILLISECONDS = 5000;

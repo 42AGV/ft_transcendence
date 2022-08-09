@@ -8,6 +8,7 @@ import {
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
 import { User } from './user.domain';
+import { LocalFileDto } from '../shared/local-file/local-file.dto';
 
 @Injectable()
 export class UserService {
@@ -39,5 +40,12 @@ export class UserService {
       createdAt: new Date(Date.now()),
       ...user,
     });
+  }
+
+  addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
+    return this.userRepository.addAvatarAndAddUser(
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...userDto },
+    );
   }
 }
