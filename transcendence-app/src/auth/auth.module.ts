@@ -10,7 +10,9 @@ import { SessionSerializer } from './session.serializer';
 
 @Module({
   imports: [
-    HttpModule,
+    HttpModule.register({
+      timeout: 5000,
+    }),
     UserModule,
     PassportModule.register({ session: true }),
     LocalFileModule,
