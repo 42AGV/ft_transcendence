@@ -25,15 +25,17 @@ export class UserService {
     return this.userRepository.getById(id);
   }
 
-  retrieveUsers(queryDto: UsersPaginationQueryDto): Promise<User[] | null> {
-    const limit = queryDto.limit ?? MAX_USER_ENTRIES_PER_PAGE;
-    const offset = queryDto.offset ?? 0;
-    const sort = queryDto.sort ?? BooleanString.False;
-
+  retrieveUsers({
+    limit = MAX_USER_ENTRIES_PER_PAGE,
+    offset = 0,
+    sort = BooleanString.False,
+    search = '',
+  }: UsersPaginationQueryDto): Promise<User[] | null> {
     return this.userRepository.getPaginatedUsers({
       limit,
       offset,
       sort,
+      search,
     });
   }
 
@@ -58,6 +60,21 @@ export class UserService {
 
   updateUser(userId: string, updateUserDto: UpdateUserDto) {
     return this.userRepository.updateById(userId, updateUserDto);
+  }
+
+  async getAvatar(userId: string): Promise<StreamableFile | null> {
+    const user = await this.userRepository.getById(userId);
+
+    if (!user || !user.avatarId) {
+      return null;
+    }
+
+    const file = await this.localFileService.getFileById(user.avatarId);
+
+    if (!file) {
+      return null;
+    }
+    return this.streamAvatarData(file);
   }
 
   private async addAvatarAndUpdateUser(
