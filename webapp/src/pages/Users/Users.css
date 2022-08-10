@@ -1,70 +1,80 @@
 .users {
-  margin: 0 auto;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  gap: 1rem;
+  margin: 0;
+  padding: 1rem;
   min-height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
 }
 
-.users-fixed-frame {
-  width: var(--main-canvas-width);
+.users-avatar .avatar-small__image-wrapper {
+  margin: 0;
+}
+
+.users-search {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.users-rows {
+  overflow-y: auto;
+  height: calc(100vh - 16rem);
+}
+
+.users-navigation {
+  margin-top: 1rem;
 }
 
 @media all and (min-width: 768px) {
-  .users-fixed-frame {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+  .users {
+    padding: 1rem 100px;
+    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 6rem auto;
   }
-  .users-fixed-frame > .users-avatar-search {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: baseline;
-    top: 0;
+
+  .users-avatar {
+    align-self: center;
+    grid-column: 1/2;
+    grid-row: 1/2;
   }
-  .users-fixed-frame > .users-avatar-search > .avatar-small {
-    align-self: flex-end;
-    margin-right: 2rem;
+
+  .users-search {
+    align-self: center;
+    margin: 0;
+    grid-column: 2/6;
+    grid-row: 1/2;
   }
-  .users-fixed-frame > .navigation-bar {
-    margin-left: 2rem;
-    width: calc(var(--main-canvas-width) / 2);
-    top: 0;
+
+  .users-search .input-container {
+    margin: 0;
+  }
+
+  .users-navigation {
+    align-self: center;
+    grid-column: 9/13;
+    grid-row: 1/2;
+  }
+
+  .users-rows {
+    grid-column: 1/13;
+    grid-row: 2/3;
+    overflow-y: auto;
+    height: calc(100vh - 10rem);
   }
 }
 
-@media not all and (min-width: 768px) {
-  .users-fixed-frame,
-  .users-fixed-frame > .users-avatar-search {
-    display: flex;
-    flex-direction: column;
-    top: 0;
-  }
-  .users-fixed-frame > .navigation-bar {
-    width: var(--main-canvas-width);
-    position: fixed;
-    bottom: 0;
+@media all and (min-width: 1024px) {
+  .users {
+    padding: 1rem 200px;
   }
 }
 
-.users-scrollable {
-  overflow-y: auto;
-  height: var(--main-canvas-height);
-  width: var(--main-canvas-width);
-}
-
-/* width */
 ::-webkit-scrollbar {
   width: 3px;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
-  background: var(--color-dark-variant);
+  background: var(--color-light);
   border-radius: 10px;
 }
