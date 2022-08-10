@@ -1,57 +1,58 @@
 .avatar-status--online {
-    background-color: var(--color-online);
+  background-color: var(--color-online);
 }
 
 .avatar-status--offline {
-    background-color: var(--color-offline);
+  background-color: var(--color-offline);
 }
 
 .avatar-status--playing {
-    background: var(--gradient-game);
+  background: var(--gradient-game);
 }
 
 .avatar-small {
-    display: flex;
+  display: flex;
 }
-
 
 .avatar-large {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.avatar-small__image-wrapper, .avatar-large__image-wrapper {
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    margin: 0.25rem;
+.avatar-small__image-wrapper,
+.avatar-large__image-wrapper {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  margin: 0.25rem;
 }
 
 .avatar-large__image {
-    width: 200px;
-    height: 200px;
-    padding: 0.35rem;
+  width: 200px;
+  height: 200px;
+  padding: 0.35rem;
 }
 
 .avatar-small__image {
-    width: 50px;
-    height: 50px;
-    padding: 0.15rem;
+  width: 50px;
+  height: 50px;
+  padding: 0.15rem;
 }
 
-.avatar-large__image, .avatar-small__image {
-    border-radius: 50%;
+.avatar-large__image,
+.avatar-small__image {
+  border-radius: 50%;
 }
 
 .avatar-large__edit {
-    position: absolute;
-    top: 0;
-    right: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .avatar-large__caption {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }

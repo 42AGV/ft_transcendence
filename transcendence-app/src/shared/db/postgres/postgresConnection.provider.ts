@@ -1,20 +1,42 @@
-import { Pool, QueryResult } from 'pg';
-import { Injectable } from '@nestjs/common';
+import { Pool, PoolClient, QueryResult } from 'pg';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Query } from '../models';
+import { ConfigService } from '@nestjs/config';
+import { PostgresConfig } from './postgres.config.interface';
+import { isCriticalDatabaseError } from './utils';
 
 @Injectable()
-export class PostgresPool {
+export class PostgresPool implements OnModuleInit, OnModuleDestroy {
   private pool: Pool;
+  private logger = new Logger(PostgresPool.name);
 
-  constructor() {
+  constructor(private configService: ConfigService<PostgresConfig>) {
     this.pool = new Pool({
-      // TODO - #52 Create logs and tests and read from config in db repository
-      user: 'postgres',
-      host: 'localhost',
-      database: 'ft_transcendence',
-      password: 'postgres',
-      port: 5432,
+      host: this.configService.get('POSTGRES_HOST'),
+      port: this.configService.get('POSTGRES_PORT'),
+      database: this.configService.get('POSTGRES_DB'),
+      user: this.configService.get('POSTGRES_USER'),
+      password: this.configService.get('POSTGRES_PASSWORD'),
     });
+
+    this.pool.on('error', (err: Error) => this.logger.error(err.message));
+  }
+
+  async onModuleInit() {
+    try {
+      await this.pool.query('SELECT 1');
+    } catch (err) {
+      this.logger.error(err);
+    }
+  }
+
+  async onModuleDestroy() {
+    await this.pool.end();
   }
 
   connect() {
@@ -25,7 +47,26 @@ export class PostgresPool {
     return this.pool.query(query);
   }
 
-  end() {
-    this.pool.end();
+  async transaction<T>(callback: (client: PoolClient) => Promise<T | null>) {
+    let data: T | null = null;
+    try {
+      const client = await this.pool.connect();
+      try {
+        await client.query('BEGIN');
+        data = await callback(client);
+        await client.query('COMMIT');
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+      } finally {
+        client.release();
+      }
+      return data;
+    } catch (err) {
+      if (isCriticalDatabaseError(err)) {
+        this.logger.error(err.message);
+      }
+      return null;
+    }
   }
 }
