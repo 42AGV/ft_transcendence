@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 import { createReadStream } from 'fs';
+import { loadEsmModule } from '../shared/utils';
 
 @Injectable()
 export class UserService {
@@ -139,9 +140,9 @@ export class UserService {
     /**
      * Import 'file-type' ES-Module in CommonJS Node.js module
      */
-    const { fileTypeFromFile } = await (eval('import("file-type")') as Promise<
+    const { fileTypeFromFile } = await loadEsmModule<
       typeof import('file-type')
-    >);
+    >('file-type');
     const fileTypeResult = await fileTypeFromFile(path);
     const isValid =
       fileTypeResult && AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
