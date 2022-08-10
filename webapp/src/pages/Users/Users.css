@@ -1,6 +1,6 @@
 .users {
   margin: 0;
-  padding: 1rem;
+  padding: 1rem var(--padding-sides);
   min-height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
@@ -26,7 +26,6 @@
 
 @media all and (min-width: 768px) {
   .users {
-    padding: 1rem var(--padding-sides);
     gap: 1rem;
     display: grid;
     grid-template-columns: repeat(var(--column-number), 1fr);
