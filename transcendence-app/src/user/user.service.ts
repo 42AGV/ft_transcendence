@@ -19,15 +19,17 @@ export class UserService {
     return this.userRepository.getById(id);
   }
 
-  retrieveUsers(queryDto: UsersPaginationQueryDto): Promise<User[] | null> {
-    const limit = queryDto.limit ?? MAX_USER_ENTRIES_PER_PAGE;
-    const offset = queryDto.offset ?? 0;
-    const sort = queryDto.sort ?? BooleanString.False;
-
+  retrieveUsers({
+    limit = MAX_USER_ENTRIES_PER_PAGE,
+    offset = 0,
+    sort = BooleanString.False,
+    search = '',
+  }: UsersPaginationQueryDto): Promise<User[] | null> {
     return this.userRepository.getPaginatedUsers({
       limit,
       offset,
       sort,
+      search,
     });
   }
 

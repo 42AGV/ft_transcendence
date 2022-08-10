@@ -54,16 +54,17 @@ export class UserPostgresRepository
   getPaginatedUsers(
     paginationDto: Required<UsersPaginationQueryDto>,
   ): Promise<UserEntity[] | null> {
-    const { limit, offset, sort } = paginationDto;
+    const { limit, offset, sort, search } = paginationDto;
     const orderBy =
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
     return makeQuery<UserEntity>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
+      WHERE ${userKeys.USERNAME} ILIKE $1
       ORDER BY ${orderBy}
-      LIMIT $1
-      OFFSET $2;`,
-      values: [limit, offset],
+      LIMIT $2
+      OFFSET $3;`,
+      values: [`%${search}%`, limit, offset],
     });
   }
 
