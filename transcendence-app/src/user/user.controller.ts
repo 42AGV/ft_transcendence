@@ -10,6 +10,7 @@ import {
   Post,
   Query,
   ServiceUnavailableException,
+  StreamableFile,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiProduces,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -69,15 +71,10 @@ export class UserController {
 
   @Post()
   @ApiCreatedResponse({ description: 'Create a user', type: User })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async addUser(@Body() userDto: UserDto): Promise<User> {
-    let user = await this.userService.retrieveUserWithUserName(
-      userDto.username,
-    );
-    if (user) {
-      throw new UnprocessableEntityException();
-    }
-    user = await this.userService.addUser(userDto);
+    const user = await this.userService.addUser(userDto);
     if (!user) {
       throw new UnprocessableEntityException();
     }
@@ -121,6 +118,45 @@ export class UserController {
       throw new ServiceUnavailableException();
     }
     return users;
+  }
+
+  @Get('avatar')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getCurrentUserAvatar(@GetUser() user: User): Promise<StreamableFile> {
+    const streamableFile = await this.userService.getAvatar(user.id);
+
+    if (!streamableFile) {
+      throw new NotFoundException();
+    }
+    return streamableFile;
+  }
+
+  @Get(':uuid/avatar')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getAvatar(
+    @Param('uuid', ParseUUIDPipe) id: string,
+  ): Promise<StreamableFile> {
+    const streamableFile = await this.userService.getAvatar(id);
+
+    if (!streamableFile) {
+      throw new NotFoundException();
+    }
+    return streamableFile;
   }
 
   @Get(':uuid')
