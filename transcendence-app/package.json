@@ -35,6 +35,7 @@
     "class-validator": "^0.13.2",
     "connect-memcached": "^2.0.0",
     "express-session": "^1.17.3",
+    "file-type": "^17.1.6",
     "passport": "^0.6.0",
     "passport-oauth2": "^1.6.1",
     "pg": "^8.7.3",

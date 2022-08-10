@@ -65,4 +65,11 @@ export class LocalFileService {
   getFileById(id: string): Promise<LocalFile | null> {
     return this.localFileRepository.getById(id);
   }
+
+  updateFileById(
+    id: string,
+    localFileDto: Partial<LocalFileDto>,
+  ): Promise<LocalFile | null> {
+    return this.localFileRepository.updateById(id, localFileDto);
+  }
 }
