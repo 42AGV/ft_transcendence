@@ -9,7 +9,7 @@
   --color-light: #ffffff;
   --color-background: #191b1f;
   --color-dark: #262934;
-  --color-dark-variant: #212121;
+  --color-light-variant: #6a6a6a;
 
   --title-font-size: 2.5rem;
   --subtitle-font-size: 2rem;
@@ -27,17 +27,24 @@
 
   --primary-font: 'DM Sans', sans-serif;
 
-  --main-canvas-width: 90%;
-  --main-canvas-height: 70vh;
   font-size: 16px;
+  --column-number: 4;
+  --column-end: calc(var(--column-number) + 1);
+  --padding-sides: 1rem;
 }
 
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
   :root {
-    --main-canvas-width: 80%;
-    --main-canvas-height: 82vh;
+    --column-number: 12;
+    --padding-sides: 100px;
     font-size: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --padding-sides: 200px;
   }
 }
 

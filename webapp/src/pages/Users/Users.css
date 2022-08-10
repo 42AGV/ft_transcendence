@@ -26,10 +26,10 @@
 
 @media all and (min-width: 768px) {
   .users {
-    padding: 1rem 100px;
+    padding: 1rem var(--padding-sides);
     gap: 1rem;
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(var(--column-number), 1fr);
     grid-template-rows: 6rem auto;
   }
 
@@ -52,29 +52,23 @@
 
   .users-navigation {
     align-self: center;
-    grid-column: 9/13;
+    grid-column: 9/var(--column-end);
     grid-row: 1/2;
   }
 
   .users-rows {
-    grid-column: 1/13;
+    grid-column: 1/var(--column-end);
     grid-row: 2/3;
     overflow-y: auto;
     height: calc(100vh - 10rem);
   }
 }
 
-@media all and (min-width: 1024px) {
-  .users {
-    padding: 1rem 200px;
-  }
-}
-
 ::-webkit-scrollbar {
-  width: 3px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-light);
-  border-radius: 10px;
+  background: var(--color-light-variant);
+  border-radius: 2px;
 }
