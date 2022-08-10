@@ -16,8 +16,9 @@
 
 @media all and (min-width: 768px) {
   .users-fixed-frame {
-    align-items: baseline;
     display: flex;
+    align-items: baseline;
+    justify-content: space-between;
   }
   .users-fixed-frame > .users-avatar-search {
     display: flex;
@@ -52,8 +53,8 @@
 }
 
 .users-scrollable {
-  overflow: auto;
-  height: 70vh;
+  overflow-y: auto;
+  height: var(--main-canvas-height);
   width: var(--main-canvas-width);
 }
 
