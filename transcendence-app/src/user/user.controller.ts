@@ -8,20 +8,26 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Query,
   ServiceUnavailableException,
+  StreamableFile,
   UnprocessableEntityException,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
   ApiBadRequestResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiProduces,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -39,6 +45,7 @@ import {
   AVATAR_MIMETYPE_WHITELIST,
 } from './constants';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiFile } from '../shared/decorators/api-file.decorator';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -133,5 +140,48 @@ export class UserController {
       throw new NotFoundException();
     }
     return user;
+  }
+
+  @Put('avatar')
+  @ApiConsumes('multipart/form-data')
+  @ApiFile('file')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  @UseInterceptors(AvatarFileInterceptor)
+  async uploadAvatar(
+    @GetUser() user: User,
+    @UploadedFile()
+    file: Express.Multer.File,
+  ): Promise<StreamableFile> {
+    if (!file) {
+      throw new UnprocessableEntityException();
+    }
+
+    const isValid = await this.userService.validateAvatarType(file.path);
+    if (!isValid) {
+      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
+      throw new UnprocessableEntityException(
+        `Validation failed (allowed types are ${allowedTypes})`,
+      );
+    }
+
+    const avatar = await this.userService.addAvatar(user, {
+      filename: file.filename,
+      path: file.path,
+      mimetype: file.mimetype,
+      size: file.size,
+    });
+
+    if (!avatar) {
+      throw new ServiceUnavailableException();
+    }
+    return avatar;
   }
 }

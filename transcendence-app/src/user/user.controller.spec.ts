@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
+import { AvatarFileInterceptor, UserController } from './user.controller';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
@@ -16,6 +16,7 @@ const testUserId = uuidv4();
 describe('UserController', () => {
   let controller: UserController;
   let mockUserService: Partial<UserService>;
+  const mockAvatarFileInterceptor = {};
 
   beforeEach(async () => {
     mockUserService = {
@@ -51,7 +52,10 @@ describe('UserController', () => {
           useValue: mockUserService,
         },
       ],
-    }).compile();
+    })
+      .overrideInterceptor(AvatarFileInterceptor)
+      .useValue(mockAvatarFileInterceptor)
+      .compile();
 
     controller = module.get<UserController>(UserController);
   });

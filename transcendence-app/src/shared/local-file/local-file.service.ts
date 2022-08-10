@@ -5,12 +5,17 @@ import { randomBytes } from 'crypto';
 import { join } from 'path';
 import { createWriteStream, mkdir, ReadStream, unlink } from 'fs';
 import { LocalFileConfig } from './local-file.config.interface';
+import { LocalFile } from './local-file.domain';
+import { ILocalFileRepository } from './infrastructure/db/local-file.repository';
 
 @Injectable()
 export class LocalFileService {
   private readonly logger = new Logger(LocalFileService.name);
 
-  constructor(private configService: ConfigService<LocalFileConfig>) {}
+  constructor(
+    private configService: ConfigService<LocalFileConfig>,
+    private localFileRepository: ILocalFileRepository,
+  ) {}
 
   private createDirectory(directory: string) {
     return mkdir(directory, { recursive: true }, (err) => {
@@ -55,5 +60,16 @@ export class LocalFileService {
         this.logger.error(err.message);
       }
     });
+  }
+
+  getFileById(id: string): Promise<LocalFile | null> {
+    return this.localFileRepository.getById(id);
+  }
+
+  updateFileById(
+    id: string,
+    localFileDto: Partial<LocalFileDto>,
+  ): Promise<LocalFile | null> {
+    return this.localFileRepository.updateById(id, localFileDto);
   }
 }
