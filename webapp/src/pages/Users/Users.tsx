@@ -32,21 +32,19 @@ export default function Users() {
   });
   return (
     <div className="users">
-      <div className="users-wrapper">
-        <div className="users-fixed-frame">
-          <div className="users-avatar-search">
-            <SmallAvatar url={randomAvatar} />
-            <Input
-              iconVariant={IconVariant.SEARCH}
-              variant={InputVariant.DARK}
-              placeholder="search"
-            />
-          </div>
-          <NavigationBar />
+      <div className="users-fixed-frame">
+        <div className="users-avatar-search">
+          <SmallAvatar url={randomAvatar} />
+          <Input
+            iconVariant={IconVariant.SEARCH}
+            variant={InputVariant.DARK}
+            placeholder="search"
+          />
         </div>
-        <div className="users-scrollable">
-          <RowsList rows={rowsData} />
-        </div>
+        <NavigationBar />
+      </div>
+      <div className="users-scrollable">
+        <RowsList rows={rowsData} />
       </div>
     </div>
   );
