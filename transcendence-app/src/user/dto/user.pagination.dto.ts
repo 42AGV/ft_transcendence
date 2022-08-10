@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { BooleanString } from '../../shared/enums/boolean-string.enum';
 
 export const MAX_USER_ENTRIES_PER_PAGE = 20;
@@ -22,4 +22,8 @@ export class UsersPaginationQueryDto {
   @IsOptional()
   @IsEnum(BooleanString)
   sort?: BooleanString;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }
