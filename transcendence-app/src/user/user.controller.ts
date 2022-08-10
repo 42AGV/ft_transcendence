@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   ServiceUnavailableException,
@@ -36,6 +38,7 @@ import {
   AVATAR_MAX_SIZE,
   AVATAR_MIMETYPE_WHITELIST,
 } from './constants';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -79,6 +82,22 @@ export class UserController {
       throw new UnprocessableEntityException();
     }
     return user;
+  }
+
+  @Patch()
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  async updateCurrentUser(
+    @GetUser() user: User,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    const updatedUser = await this.userService.updateUser(
+      user.id,
+      updateUserDto,
+    );
+    if (!updatedUser) {
+      throw new BadRequestException();
+    }
+    return updatedUser;
   }
 
   @Get('me')
