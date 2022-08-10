@@ -11,7 +11,9 @@ import { User } from './user.domain';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
+import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 import { createReadStream } from 'fs';
+import { loadEsmModule } from '../shared/utils';
 
 @Injectable()
 export class UserService {
@@ -76,6 +78,54 @@ export class UserService {
     return this.streamAvatarData(file);
   }
 
+  private async addAvatarAndUpdateUser(
+    user: User,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...newAvatarFileDto },
+      user,
+    );
+    if (!updatedUser) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+    return this.streamAvatarData(newAvatarFileDto);
+  }
+
+  private async updateAvatar(
+    avatarId: string,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    const avatarFile = await this.localFileService.getFileById(avatarId);
+    if (!avatarFile) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+
+    const updatedAvatarFile = await this.localFileService.updateFileById(
+      avatarFile.id,
+      newAvatarFileDto,
+    );
+    if (!updatedAvatarFile) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+    this.localFileService.deleteFileData(avatarFile.path);
+    return this.streamAvatarData(updatedAvatarFile);
+  }
+
+  async addAvatar(
+    user: User,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    if (user.avatarId === null) {
+      return this.addAvatarAndUpdateUser(user, newAvatarFileDto);
+    }
+
+    return this.updateAvatar(user.avatarId, newAvatarFileDto);
+  }
+
   private streamAvatarData(fileDto: LocalFileDto): StreamableFile {
     const stream = createReadStream(fileDto.path);
 
@@ -84,5 +134,21 @@ export class UserService {
       disposition: `inline; filename="${fileDto.filename}"`,
       length: fileDto.size,
     });
+  }
+
+  async validateAvatarType(path: string): Promise<boolean | undefined> {
+    /**
+     * Import 'file-type' ES-Module in CommonJS Node.js module
+     */
+    const { fileTypeFromFile } = await loadEsmModule<
+      typeof import('file-type')
+    >('file-type');
+    const fileTypeResult = await fileTypeFromFile(path);
+    const isValid =
+      fileTypeResult && AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
+    if (!isValid) {
+      this.localFileService.deleteFileData(path);
+    }
+    return isValid;
   }
 }

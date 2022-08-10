@@ -80,6 +80,17 @@ export class UserPostgresRepository
     return client.query(text, values);
   }
 
+  private updateUserByIdWithClient(
+    client: PoolClient,
+    id: string,
+    userEntity: Partial<UserEntity>,
+  ) {
+    const { cols, values } = entityQueryMapper(userEntity);
+    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
+    const text = `UPDATE ${this.table} SET ${colsToUpdate} WHERE "id"=$1 RETURNING *;`;
+    return client.query(text, [id, ...values]);
+  }
+
   async addAvatarAndAddUser(
     avatar: LocalFileEntity,
     user: UserEntity,
@@ -93,6 +104,24 @@ export class UserPostgresRepository
       const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
       const userRes = await this.insertWithClient(client, table.USERS, {
         ...user,
+        avatarId,
+      });
+      return userRes.rows[0];
+    });
+  }
+
+  async addAvatarAndUpdateUser(
+    avatar: LocalFileEntity,
+    user: UserEntity,
+  ): Promise<UserEntity | null> {
+    return this.pool.transaction<UserEntity>(async (client) => {
+      const avatarRes = await this.insertWithClient(
+        client,
+        table.LOCAL_FILE,
+        avatar,
+      );
+      const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
+      const userRes = await this.updateUserByIdWithClient(client, user.id, {
         avatarId,
       });
       return userRes.rows[0];
