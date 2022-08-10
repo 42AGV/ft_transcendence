@@ -10,6 +10,7 @@ import { IUserRepository } from './infrastructure/db/user.repository';
 import { User } from './user.domain';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { createReadStream } from 'fs';
 import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 
@@ -46,6 +47,10 @@ export class UserService {
       createdAt: new Date(Date.now()),
       ...user,
     });
+  }
+
+  updateUser(userId: string, updateUserDto: UpdateUserDto) {
+    return this.userRepository.updateById(userId, updateUserDto);
   }
 
   async addAvatar(
