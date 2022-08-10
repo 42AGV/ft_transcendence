@@ -60,25 +60,26 @@ export class UserService {
     return this.userRepository.updateById(userId, updateUserDto);
   }
 
-  async addAvatar(
+  private async addAvatarAndUpdateUser(
     user: User,
     newAvatarFileDto: LocalFileDto,
   ): Promise<StreamableFile | null> {
-    // If the user doesn't have an avatar yet, save the avatar file in the database and update the user avatarId
-    if (user.avatarId === null) {
-      const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
-        { id: uuidv4(), createdAt: new Date(Date.now()), ...newAvatarFileDto },
-        user,
-      );
-      if (!updatedUser) {
-        this.localFileService.deleteFileData(newAvatarFileDto.path);
-        return null;
-      }
-      return this.streamAvatarData(newAvatarFileDto);
+    const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...newAvatarFileDto },
+      user,
+    );
+    if (!updatedUser) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
     }
+    return this.streamAvatarData(newAvatarFileDto);
+  }
 
-    // Otherwise, update the user avatar file and delete the old avatar data from the disk
-    const avatarFile = await this.localFileService.getFileById(user.avatarId);
+  private async updateAvatar(
+    avatarId: string,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    const avatarFile = await this.localFileService.getFileById(avatarId);
     if (!avatarFile) {
       this.localFileService.deleteFileData(newAvatarFileDto.path);
       return null;
@@ -94,6 +95,17 @@ export class UserService {
     }
     this.localFileService.deleteFileData(avatarFile.path);
     return this.streamAvatarData(updatedAvatarFile);
+  }
+
+  async addAvatar(
+    user: User,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    if (user.avatarId === null) {
+      return this.addAvatarAndUpdateUser(user, newAvatarFileDto);
+    }
+
+    return this.updateAvatar(user.avatarId, newAvatarFileDto);
   }
 
   private streamAvatarData(fileDto: LocalFileDto): StreamableFile {

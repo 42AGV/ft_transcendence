@@ -27,6 +27,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiPayloadTooLargeResponse,
   ApiProduces,
   ApiServiceUnavailableResponse,
   ApiTags,
@@ -153,6 +154,7 @@ export class UserController {
     },
   })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  @ApiPayloadTooLargeResponse({ description: 'Payload Too Large' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   @UseInterceptors(AvatarFileInterceptor)
   async uploadAvatar(
