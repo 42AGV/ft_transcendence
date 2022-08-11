@@ -75,7 +75,7 @@ export default class Users extends React.Component<
       );
       this.setState({ ...lRows });
     };
-    fetchUsersList().catch((e) => console.log(e));
+    fetchUsersList().catch((e) => console.error(e));
   }
 
   render(): JSX.Element {
