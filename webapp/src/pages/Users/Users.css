@@ -51,6 +51,7 @@
   }
 
   .users-navigation {
+    margin-top: 0;
     align-self: center;
     grid-column: 9 / var(--column-end);
     grid-row: 1/2;
