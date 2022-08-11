@@ -4,7 +4,6 @@ import {
   Input,
   InputVariant,
   NavigationBar,
-  RowItem,
   RowsList,
   RowsListProps,
   SmallAvatar,
