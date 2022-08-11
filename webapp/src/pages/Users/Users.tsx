@@ -9,7 +9,8 @@ import {
   SmallAvatar,
 } from '../../shared/components';
 import React from 'react';
-import { USERS_EP_URL, USERS_URL } from '../../shared/urls';
+import { USER_URL, USERS_EP_URL, USERS_URL } from '../../shared/urls';
+import { Link } from 'react-router-dom';
 
 class User {
   username: string;
@@ -83,7 +84,9 @@ export default class Users extends React.Component<
     return (
       <div className="users">
         <div className="users-avatar">
-          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
+          <Link to={USER_URL}>
+            <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
+          </Link>
         </div>
         <div className="users-search">
           <Input
