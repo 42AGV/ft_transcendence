@@ -10,7 +10,6 @@ import {
   USERS_URL,
   COMPONENTS_BOOK_URL,
 } from './shared/urls';
-import { RowItem } from './shared/components';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -21,7 +20,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path={USERS_URL} element={<Users {...([] as RowItem[])} />} />
+        <Route path={USERS_URL} element={<Users />} />
         <Route path={PLAY_URL} element={<Play />} />
         <Route path={CHAT_URL} element={<Chat />} />
         {developmentMode && (

@@ -5,7 +5,7 @@ export type RowItem = RowProps & {
   key: string;
 };
 
-type RowsListProps = {
+export type RowsListProps = {
   rows?: RowItem[];
 };
 

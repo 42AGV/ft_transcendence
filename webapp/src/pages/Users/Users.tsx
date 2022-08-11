@@ -6,6 +6,7 @@ import {
   NavigationBar,
   RowItem,
   RowsList,
+  RowsListProps,
   SmallAvatar,
 } from '../../shared/components';
 import {
@@ -36,12 +37,15 @@ class User {
   }
 }
 
-export default class Users extends React.Component<RowItem[], RowItem[]> {
+export default class Users extends React.Component<
+  RowsListProps,
+  RowsListProps
+> {
   private randomAvatar = 'https://i.pravatar.cc/9000';
-  private static async getRows(url: string): Promise<RowItem[]> {
-    let rows: RowItem[] = [];
-    const response = await fetch(url);
+  private static async getRows(url: string): Promise<RowsListProps> {
+    let rows: RowsListProps = { rows: [] };
     try {
+      const response = await fetch(url);
       const array: User[] = await response.json();
       if (array) {
         for (const user of array) {
@@ -56,7 +60,8 @@ export default class Users extends React.Component<RowItem[], RowItem[]> {
             subtitle: 'level x',
             key: user.id,
           };
-          rows.push(item);
+          console.log(rows.rows);
+          rows.rows?.push(item);
         }
       }
     } catch (error) {
@@ -65,16 +70,18 @@ export default class Users extends React.Component<RowItem[], RowItem[]> {
     return rows;
   }
 
-  constructor(props: RowItem[]) {
-    super(props);
+  constructor(props?: RowsListProps) {
+    super(props ?? { rows: [] });
     this.state = { ...props };
   }
 
   componentDidMount() {
     const fetchUsersList = async () => {
-      const lRows: RowItem[] = await Users.getRows(
+      const lRows: RowsListProps = await Users.getRows(
         'http://localhost:3000/api/v1/users',
       );
+      console.log(lRows);
+      lRows?.rows?.forEach((row) => console.log(row));
       this.setState({ ...lRows });
     };
     fetchUsersList();
@@ -94,7 +101,7 @@ export default class Users extends React.Component<RowItem[], RowItem[]> {
           />
         </div>
         <div className="users-rows">
-          <RowsList rows={rowsData} />
+          <RowsList rows={this.state.rows} />
         </div>
         <div className="users-navigation">
           <NavigationBar />
