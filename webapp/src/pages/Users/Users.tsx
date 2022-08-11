@@ -60,7 +60,6 @@ export default class Users extends React.Component<
             subtitle: 'level x',
             key: user.id,
           };
-          console.log(rows.rows);
           rows.rows?.push(item);
         }
       }
@@ -80,8 +79,6 @@ export default class Users extends React.Component<
       const lRows: RowsListProps = await Users.getRows(
         'http://localhost:3000/api/v1/users',
       );
-      console.log(lRows);
-      lRows?.rows?.forEach((row) => console.log(row));
       this.setState({ ...lRows });
     };
     fetchUsersList();
