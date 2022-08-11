@@ -41,8 +41,8 @@ export default class Users extends React.Component<
   RowsListProps,
   RowsListProps
 > {
-  private randomAvatar = 'https://i.pravatar.cc/9000';
-  private static async getRows(url: string): Promise<RowsListProps> {
+  private wildcardAvatar = 'https://i.pravatar.cc/9000';
+  private async getRows(url: string): Promise<RowsListProps> {
     let rows: RowsListProps = { rows: [] };
     try {
       const response = await fetch(url);
@@ -52,7 +52,9 @@ export default class Users extends React.Component<
           const item: RowItem = {
             iconVariant: IconVariant.ARROW_FORWARD,
             avatarProps: {
-              url: `http://localhost:3000/api/v1/users/${user.id}/avatar`,
+              url: user.avatarId
+                ? `http://localhost:3000/api/v1/users/${user.id}/avatar`
+                : this.wildcardAvatar,
               status: 'offline',
             },
             onClick: buttonAction,
@@ -76,7 +78,7 @@ export default class Users extends React.Component<
 
   componentDidMount() {
     const fetchUsersList = async () => {
-      const lRows: RowsListProps = await Users.getRows(
+      const lRows: RowsListProps = await this.getRows(
         'http://localhost:3000/api/v1/users',
       );
       this.setState({ ...lRows });
@@ -88,7 +90,7 @@ export default class Users extends React.Component<
     return (
       <div className="users">
         <div className="users-avatar">
-          <SmallAvatar url={this.randomAvatar} />
+          <SmallAvatar url="http://localhost:3000/api/v1/users/avatar" />
         </div>
         <div className="users-search">
           <Input
