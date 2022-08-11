@@ -6,7 +6,7 @@ const randomAvatar2 = 'https://i.pravatar.cc/2000';
 const randomAvatar3 = 'https://i.pravatar.cc/3000';
 
 export const buttonAction = (): void => alert('This is an alert');
-export const buttonLink = (): void => {
+const buttonLink = (): void => {
   window.location.href = 'https://google.com';
 };
 

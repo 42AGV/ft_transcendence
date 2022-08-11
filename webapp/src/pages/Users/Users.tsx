@@ -8,9 +8,8 @@ import {
   RowsListProps,
   SmallAvatar,
 } from '../../shared/components';
-import { buttonAction } from '../ComponentsBook/ComponentsExamples/RowsListExample';
 import React from 'react';
-import { USERS_EP_URL } from '../../shared/urls';
+import { USERS_EP_URL, USERS_URL } from '../../shared/urls';
 
 class User {
   username: string;
@@ -54,7 +53,9 @@ export default class Users extends React.Component<
               : this.wildcardAvatar,
             status: 'offline',
           },
-          onClick: buttonAction,
+          onClick: () => {
+            window.location.href = `${USERS_URL}/${user.username}`;
+          },
           title: user.username,
           subtitle: 'level x',
           key: user.id,
