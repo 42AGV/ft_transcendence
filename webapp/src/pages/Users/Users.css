@@ -51,12 +51,12 @@
 
   .users-navigation {
     align-self: center;
-    grid-column: 9/var(--column-end);
+    grid-column: 9 / var(--column-end);
     grid-row: 1/2;
   }
 
   .users-rows {
-    grid-column: 1/var(--column-end);
+    grid-column: 1 / var(--column-end);
     grid-row: 2/3;
     overflow-y: auto;
     height: calc(100vh - 10rem);
