@@ -42,29 +42,24 @@ export default class Users extends React.Component<
   private usersApiEndpoint = 'http://localhost:3000/api/v1/users';
   private async getRows(url: string): Promise<RowsListProps> {
     let rows: RowsListProps = { rows: [] };
-    try {
-      const response = await fetch(url);
-      const array: User[] = await response.json();
-      if (array) {
-        for (const user of array) {
-          const item: RowItem = {
-            iconVariant: IconVariant.ARROW_FORWARD,
-            avatarProps: {
-              url: user.avatarId
-                ? `${this.usersApiEndpoint}/${user.id}/avatar`
-                : this.wildcardAvatar,
-              status: 'offline',
-            },
-            onClick: buttonAction,
-            title: user.username,
-            subtitle: 'level x',
-            key: user.id,
-          };
-          rows.rows?.push(item);
-        }
+    const response = await fetch(url);
+    const array: User[] = await response.json();
+    if (array) {
+      for (const user of array) {
+        rows.rows?.push({
+          iconVariant: IconVariant.ARROW_FORWARD,
+          avatarProps: {
+            url: user.avatarId
+              ? `${this.usersApiEndpoint}/${user.id}/avatar`
+              : this.wildcardAvatar,
+            status: 'offline',
+          },
+          onClick: buttonAction,
+          title: user.username,
+          subtitle: 'level x',
+          key: user.id,
+        });
       }
-    } catch (error) {
-      console.error(error);
     }
     return rows;
   }
@@ -81,7 +76,7 @@ export default class Users extends React.Component<
       );
       this.setState({ ...lRows });
     };
-    fetchUsersList();
+    fetchUsersList().catch((e) => console.log(e));
   }
 
   render(): JSX.Element {
