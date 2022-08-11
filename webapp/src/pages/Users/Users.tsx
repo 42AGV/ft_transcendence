@@ -9,10 +9,7 @@ import {
   RowsListProps,
   SmallAvatar,
 } from '../../shared/components';
-import {
-  buttonAction,
-  rowsData,
-} from '../ComponentsBook/ComponentsExamples/RowsListExample';
+import { buttonAction } from '../ComponentsBook/ComponentsExamples/RowsListExample';
 import React from 'react';
 
 class User {
@@ -42,6 +39,7 @@ export default class Users extends React.Component<
   RowsListProps
 > {
   private wildcardAvatar = 'https://i.pravatar.cc/9000';
+  private usersApiEndpoint = 'http://localhost:3000/api/v1/users';
   private async getRows(url: string): Promise<RowsListProps> {
     let rows: RowsListProps = { rows: [] };
     try {
@@ -53,7 +51,7 @@ export default class Users extends React.Component<
             iconVariant: IconVariant.ARROW_FORWARD,
             avatarProps: {
               url: user.avatarId
-                ? `http://localhost:3000/api/v1/users/${user.id}/avatar`
+                ? `${this.usersApiEndpoint}/${user.id}/avatar`
                 : this.wildcardAvatar,
               status: 'offline',
             },
@@ -79,7 +77,7 @@ export default class Users extends React.Component<
   componentDidMount() {
     const fetchUsersList = async () => {
       const lRows: RowsListProps = await this.getRows(
-        'http://localhost:3000/api/v1/users',
+        `${this.usersApiEndpoint}`,
       );
       this.setState({ ...lRows });
     };
@@ -90,7 +88,7 @@ export default class Users extends React.Component<
     return (
       <div className="users">
         <div className="users-avatar">
-          <SmallAvatar url="http://localhost:3000/api/v1/users/avatar" />
+          <SmallAvatar url={`${this.usersApiEndpoint}/avatar`} />
         </div>
         <div className="users-search">
           <Input
