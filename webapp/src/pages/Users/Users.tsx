@@ -66,7 +66,7 @@ export default class Users extends React.Component<
 
   constructor(props?: RowsListProps) {
     super(props ?? { rows: [] });
-    this.state = { ...props };
+    this.state = { ...(props ?? { rows: [] }) };
   }
 
   componentDidMount() {
