@@ -10,6 +10,7 @@ import {
 } from '../../shared/components';
 import { buttonAction } from '../ComponentsBook/ComponentsExamples/RowsListExample';
 import React from 'react';
+import { USERS_EP_URL } from '../../shared/urls';
 
 class User {
   username: string;
@@ -38,7 +39,7 @@ export default class Users extends React.Component<
   RowsListProps
 > {
   private wildcardAvatar = 'https://i.pravatar.cc/9000';
-  private usersApiEndpoint = 'http://localhost:3000/api/v1/users';
+
   private async getRows(url: string): Promise<RowsListProps> {
     let rows: RowsListProps = { rows: [] };
     const response = await fetch(url);
@@ -49,7 +50,7 @@ export default class Users extends React.Component<
           iconVariant: IconVariant.ARROW_FORWARD,
           avatarProps: {
             url: user.avatarId
-              ? `${this.usersApiEndpoint}/${user.id}/avatar`
+              ? `${USERS_EP_URL}/${user.id}/avatar`
               : this.wildcardAvatar,
             status: 'offline',
           },
@@ -63,26 +64,25 @@ export default class Users extends React.Component<
     return rows;
   }
 
+  private async fetchUsersList() {
+    const lRows: RowsListProps = await this.getRows(`${USERS_EP_URL}`);
+    this.setState({ ...lRows });
+  }
+
   constructor(props?: RowsListProps) {
     super(props ?? { rows: [] });
     this.state = { ...(props ?? { rows: [] }) };
   }
 
   componentDidMount() {
-    const fetchUsersList = async () => {
-      const lRows: RowsListProps = await this.getRows(
-        `${this.usersApiEndpoint}`,
-      );
-      this.setState({ ...lRows });
-    };
-    fetchUsersList().catch((e) => console.error(e));
+    this.fetchUsersList().catch((e) => console.error(e));
   }
 
   render(): JSX.Element {
     return (
       <div className="users">
         <div className="users-avatar">
-          <SmallAvatar url={`${this.usersApiEndpoint}/avatar`} />
+          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
         </div>
         <div className="users-search">
           <Input
@@ -92,7 +92,7 @@ export default class Users extends React.Component<
           />
         </div>
         <div className="users-rows">
-          <RowsList rows={this.state.rows} />
+          {this.state.rows && <RowsList rows={this.state.rows} />}
         </div>
         <div className="users-navigation">
           <NavigationBar />
