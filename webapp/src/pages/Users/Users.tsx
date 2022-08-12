@@ -43,25 +43,23 @@ export default class Users extends React.Component<
   private async getRows(url: string): Promise<RowsListProps> {
     let rows: RowsListProps = { rows: [] };
     const response = await fetch(url);
-    const array: User[] = await response.json();
-    if (array) {
-      for (const user of array) {
-        rows.rows?.push({
-          iconVariant: IconVariant.ARROW_FORWARD,
-          avatarProps: {
-            url: user.avatarId
-              ? `${USERS_EP_URL}/${user.id}/avatar`
-              : this.wildcardAvatar,
-            status: 'offline',
-          },
-          onClick: () => {
-            window.location.href = `${USERS_URL}/${user.username}`;
-          },
-          title: user.username,
-          subtitle: 'level x',
-          key: user.id,
-        });
-      }
+    const users: User[] = (await response.json()) ?? [];
+    for (const user of users) {
+      rows.rows?.push({
+        iconVariant: IconVariant.ARROW_FORWARD,
+        avatarProps: {
+          url: user.avatarId
+            ? `${USERS_EP_URL}/${user.id}/avatar`
+            : this.wildcardAvatar,
+          status: 'offline',
+        },
+        onClick: () => {
+          window.location.href = `${USERS_URL}/${user.username}`;
+        },
+        title: user.username,
+        subtitle: 'level x',
+        key: user.id,
+      });
     }
     return rows;
   }
@@ -69,6 +67,7 @@ export default class Users extends React.Component<
   private async fetchUsersList() {
     const lRows: RowsListProps = await this.getRows(`${USERS_EP_URL}`);
     this.setState({ ...lRows });
+    return lRows;
   }
 
   constructor(props?: RowsListProps) {
@@ -80,7 +79,7 @@ export default class Users extends React.Component<
     this.fetchUsersList().catch((e) => console.error(e));
   }
 
-  render(): JSX.Element {
+  render() {
     return (
       <div className="users">
         <div className="users-avatar">
