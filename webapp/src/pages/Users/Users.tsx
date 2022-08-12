@@ -44,7 +44,7 @@ export default class Users extends React.Component<
     let rows: RowsListProps = { rows: [] };
     const response = await fetch(url);
     const users: User[] = (await response.json()) ?? [];
-    for (const user of users) {
+    users.forEach((user) => {
       rows.rows?.push({
         iconVariant: IconVariant.ARROW_FORWARD,
         avatarProps: {
@@ -60,7 +60,7 @@ export default class Users extends React.Component<
         subtitle: 'level x',
         key: user.id,
       });
-    }
+    });
     return rows;
   }
 

@@ -18,8 +18,8 @@
 
 .users-rows {
   overflow-y: auto;
-  height: calc(100vh - 18.8rem);
-} /* 18.8 == (50 + 51,6 + 40 + (32 × 5)) / 16     */
+  height: calc(100vh - 18.9rem);
+} /* 18.9 == (50 + 51,6 + 40 + (32 × 5)) / 16     */
 /* in pixels for phone:
  * 50 height of avatar
  * 51 height of input field
