@@ -9,7 +9,12 @@ import {
   SmallAvatar,
 } from '../../shared/components';
 import React, { useEffect, useState } from 'react';
-import { USER_URL, USERS_EP_URL, USERS_URL } from '../../shared/urls';
+import {
+  USER_URL,
+  USERS_EP_URL,
+  USERS_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
 import { Link } from 'react-router-dom';
 
 class User {
@@ -35,7 +40,7 @@ class User {
 }
 
 export default function Users() {
-  const wildcardAvatar = 'https://i.pravatar.cc/9000';
+  const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
 
   const getRows = async (url: string): Promise<RowsListProps> => {
     let rows: RowsListProps = { rows: [] };
@@ -47,7 +52,7 @@ export default function Users() {
         avatarProps: {
           url: user.avatarId
             ? `${USERS_EP_URL}/${user.id}/avatar`
-            : wildcardAvatar,
+            : WILDCARD_AVATAR_URL,
           status: 'offline',
         },
         onClick: () => {
@@ -61,12 +66,11 @@ export default function Users() {
     return rows;
   };
 
-  const [userList, setUserList] = useState<RowsListProps>({ rows: [] });
-
   useEffect(() => {
     const fetchUsersList = async () => {
-      const lRows = await getRows(`${USERS_EP_URL}`);
-      setUserList({ ...lRows });
+      const lUsersList = await getRows(`${USERS_EP_URL}`);
+      setUsersList({ ...lUsersList });
+      return lUsersList;
     };
     fetchUsersList().catch((e) => console.error(e));
   }, []);
@@ -86,7 +90,7 @@ export default function Users() {
         />
       </div>
       <div className="users-rows">
-        {userList.rows && <RowsList rows={userList.rows} />}
+        {usersList.rows && <RowsList rows={usersList.rows} />}
       </div>
       <div className="users-navigation">
         <NavigationBar />
