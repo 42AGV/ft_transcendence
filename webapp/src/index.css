@@ -40,13 +40,13 @@
 @media (min-width: 768px) {
   :root {
     --column-number: 12;
-    --padding-sides: 100px;
+    --padding-sides: 64px;
     --padding-top-bottom: 1.8rem;
     font-size: 18px;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   :root {
     --padding-sides: 200px;
   }

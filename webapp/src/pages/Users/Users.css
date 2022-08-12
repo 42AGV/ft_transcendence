@@ -61,7 +61,7 @@
   .users-navigation {
     margin-top: 0;
     align-self: center;
-    grid-column: 9 / var(--column-end);
+    grid-column: 8 / var(--column-end);
     grid-row: 1/2;
   }
 
@@ -76,4 +76,10 @@
    * 1.8rem padding top and bottom for 2 paddings
    * 2rem row gap
    */
+}
+
+@media all and (min-width: 1200px) {
+  .users-navigation {
+    grid-column: 9 / var(--column-end);
+  }
 }
