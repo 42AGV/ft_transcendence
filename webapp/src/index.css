@@ -31,6 +31,9 @@
   --column-number: 4;
   --column-end: calc(var(--column-number) + 1);
   --padding-sides: 1rem;
+  --padding-top-bottom: 2rem;
+  --column-gap: 1rem;
+  --row-gap: 2rem;
 }
 
 /* Styles for viewports wider than 768 pixels. */
@@ -38,6 +41,7 @@
   :root {
     --column-number: 12;
     --padding-sides: 100px;
+    --padding-top-bottom: 1.8rem;
     font-size: 18px;
   }
 }
@@ -160,4 +164,13 @@ body {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-light-variant);
+  border-radius: 2px;
 }

@@ -1,6 +1,6 @@
 .users {
   margin: 0;
-  padding: 1rem var(--padding-sides);
+  padding: var(--padding-top-bottom) var(--padding-sides);
   min-height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
@@ -12,22 +12,30 @@
 }
 
 .users-search {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin-top: var(--row-gap);
+  margin-bottom: var(--row-gap);
 }
 
 .users-rows {
   overflow-y: auto;
-  height: calc(100vh - 16rem);
-}
+  height: calc(100vh - 18.8rem);
+} /* 18.8 == (50 + 51,6 + 40 + (32 × 5)) / 16     */
+/* in pixels for phone:
+ * 50 height of avatar
+ * 51 height of input field
+ * 40 height of nav bar
+ * 32 == 2rem, times 5 for five gaps
+ * / 16 (pixels in one rem)
+ */
 
 .users-navigation {
-  margin-top: 1rem;
+  margin-top: var(--row-gap);
 }
 
 @media all and (min-width: 768px) {
   .users {
-    gap: 1rem;
+    column-gap: var(--column-gap);
+    row-gap: var(--row-gap);
     display: grid;
     grid-template-columns: repeat(var(--column-number), 1fr);
     grid-template-rows: auto 1fr;
@@ -61,15 +69,11 @@
     grid-column: 1 / var(--column-end);
     grid-row: 2/3;
     overflow-y: auto;
-    height: calc(100vh - 10rem);
-  }
-}
-
-::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-light-variant);
-  border-radius: 2px;
+    height: calc(100vh - 9.2rem);
+  } /* 9.2rem == (57.8 / 16 + 1.8 * 2 + 2)
+   * 57.8px height of input field, max height out of avatar, navbar and input
+   * 16 px in one rem
+   * 1.8rem padding top and bottom for 2 paddings
+   * 2rem row gap
+   */
 }
