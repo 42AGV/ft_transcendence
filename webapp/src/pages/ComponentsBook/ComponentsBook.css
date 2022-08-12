@@ -13,7 +13,7 @@
 }
 
 .components-book__section {
-  width: 60%;
+  width: 80%;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -57,4 +57,3 @@
   width: 100%;
   margin: 0.25rem;
 }
-
