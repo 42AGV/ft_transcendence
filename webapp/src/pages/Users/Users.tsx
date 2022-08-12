@@ -8,7 +8,7 @@ import {
   RowsListProps,
   SmallAvatar,
 } from '../../shared/components';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { USER_URL, USERS_EP_URL, USERS_URL } from '../../shared/urls';
 import { Link } from 'react-router-dom';
 
@@ -34,13 +34,10 @@ class User {
   }
 }
 
-export default class Users extends React.Component<
-  RowsListProps,
-  RowsListProps
-> {
-  private wildcardAvatar = 'https://i.pravatar.cc/9000';
+export default function Users() {
+  const wildcardAvatar = 'https://i.pravatar.cc/9000';
 
-  private async getRows(url: string): Promise<RowsListProps> {
+  const getRows = async (url: string): Promise<RowsListProps> => {
     let rows: RowsListProps = { rows: [] };
     const response = await fetch(url);
     const users: User[] = (await response.json()) ?? [];
@@ -50,7 +47,7 @@ export default class Users extends React.Component<
         avatarProps: {
           url: user.avatarId
             ? `${USERS_EP_URL}/${user.id}/avatar`
-            : this.wildcardAvatar,
+            : wildcardAvatar,
           status: 'offline',
         },
         onClick: () => {
@@ -62,45 +59,38 @@ export default class Users extends React.Component<
       });
     });
     return rows;
-  }
+  };
 
-  private async fetchUsersList() {
-    const lRows: RowsListProps = await this.getRows(`${USERS_EP_URL}`);
-    this.setState({ ...lRows });
-    return lRows;
-  }
+  const [userList, setUserList] = useState<RowsListProps>({ rows: [] });
 
-  constructor(props?: RowsListProps) {
-    super(props ?? { rows: [] });
-    this.state = { ...(props ?? { rows: [] }) };
-  }
+  useEffect(() => {
+    const fetchUsersList = async () => {
+      const lRows = await getRows(`${USERS_EP_URL}`);
+      setUserList({ ...lRows });
+    };
+    fetchUsersList().catch((e) => console.error(e));
+  }, []);
 
-  componentDidMount() {
-    this.fetchUsersList().catch((e) => console.error(e));
-  }
-
-  render() {
-    return (
-      <div className="users">
-        <div className="users-avatar">
-          <Link to={USER_URL}>
-            <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
-          </Link>
-        </div>
-        <div className="users-search">
-          <Input
-            iconVariant={IconVariant.SEARCH}
-            variant={InputVariant.DARK}
-            placeholder="search"
-          />
-        </div>
-        <div className="users-rows">
-          {this.state.rows && <RowsList rows={this.state.rows} />}
-        </div>
-        <div className="users-navigation">
-          <NavigationBar />
-        </div>
+  return (
+    <div className="users">
+      <div className="users-avatar">
+        <Link to={USER_URL}>
+          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
+        </Link>
       </div>
-    );
-  }
+      <div className="users-search">
+        <Input
+          iconVariant={IconVariant.SEARCH}
+          variant={InputVariant.DARK}
+          placeholder="search"
+        />
+      </div>
+      <div className="users-rows">
+        {userList.rows && <RowsList rows={userList.rows} />}
+      </div>
+      <div className="users-navigation">
+        <NavigationBar />
+      </div>
+    </div>
+  );
 }
