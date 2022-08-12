@@ -4,8 +4,6 @@ import {
   Icon,
   IconSize,
   IconVariant,
-  Input,
-  InputVariant,
   Status,
   Text,
   TextVariant,
@@ -15,6 +13,7 @@ import {
   NavigationBar,
   TextColor,
   Row,
+  EditUserForm,
 } from '../../shared/components';
 import { Color } from '../../shared/types';
 import './Landing.css';
@@ -77,17 +76,7 @@ export default function Landing() {
         title="John Doe"
         subtitle="level 3"
       />
-      <Input
-        variant={InputVariant.DARK}
-        label="Dark Input"
-        iconVariant={IconVariant.SEARCH}
-        placeholder="Search"
-      />
-      <Input
-        variant={InputVariant.LIGHT}
-        label="Light Input"
-        placeholder="Your email"
-      />
+      <EditUserForm />
     </section>
   );
 }
