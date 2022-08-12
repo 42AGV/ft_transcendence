@@ -1,10 +1,13 @@
 .users {
   margin: 0;
   padding: var(--padding-top-bottom) var(--padding-sides);
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
+  display: grid;
+  grid-template-columns: 1fr;
   grid-template-rows: auto auto 1fr auto;
+  gap: var(--row-gap) var(--column-gap);
 }
 
 .users-avatar {
@@ -17,26 +20,15 @@
 
 .users-search {
   grid-row: 2/3;
-  margin-top: var(--row-gap);
-  margin-bottom: var(--row-gap);
 }
 
 .users-rows {
   grid-row: 3/4;
   overflow-y: auto;
-  height: calc(100vh - 18.9rem);
-} /* 18.9 == (50 + 51,6 + 40 + (32 × 5)) / 16     */
-/* in pixels for phone:
- * 50 height of avatar
- * 51 height of input field
- * 40 height of nav bar
- * 32 == 2rem, times 5 for five gaps
- * / 16 (pixels in one rem)
- */
+}
 
 .users-navigation {
   grid-row: 4/5;
-  margin-top: var(--row-gap);
 }
 
 @media all and (min-width: 768px) {
@@ -76,13 +68,7 @@
     grid-column: 1 / var(--column-end);
     grid-row: 2/3;
     overflow-y: auto;
-    height: calc(100vh - 8.8rem);
-  } /* 8.8rem == (57.8 / 18 + 1.8 * 2 + 2)
-   * 57.8px height of input field, max height out of avatar, navbar and input
-   * 18 px in one rem
-   * 1.8rem padding top and bottom for 2 paddings
-   * 2rem row gap
-   */
+  }
 }
 
 @media all and (min-width: 1200px) {
