@@ -27,12 +27,8 @@ interface User {
 
 export default function Users() {
   const GetRows = (url: string): RowsListProps => {
-    const users = useData(url);
-    if (!users) {
-      return { rows: [] };
-    }
+    const users = useData(url) ?? [];
     return {
-      // @ts-ignore
       rows: users.map((user: User) => {
         return {
           iconVariant: IconVariant.ARROW_FORWARD,
