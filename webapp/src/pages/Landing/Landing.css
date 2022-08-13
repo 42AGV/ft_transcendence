@@ -2,8 +2,72 @@
   margin: 0;
   padding: 2rem 1rem;
   height: 100vh;
+  min-height: 50rem;
   background-color: var(--color-background);
   color: var(--color-light);
+  display: grid;
+  gap: 4rem 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto 1fr auto auto;
+  grid-template-areas:
+    'title title title title'
+    '... animation animation ...'
+    'subtitle subtitle subtitle subtitle'
+    'login login login login';
+}
+
+.landing-title > *,
+.landing-subtitle > * {
+  margin: 0;
+}
+
+.landing-title {
+  grid-area: title;
+}
+
+.landing-subtitle {
+  grid-area: subtitle;
+}
+
+.landing-login-button {
+  grid-area: login;
+  text-decoration: none;
+  justify-self: center;
+}
+
+.landing-login-button,
+.landing-login-button > button {
+  width: 100%;
+  min-width: 15rem;
+  max-width: 25rem;
+}
+
+/* Styles for viewports wider than 768 pixels. */
+@media (min-width: 768px) {
+  .landing {
+    min-height: 20rem;
+    gap: 6rem 1rem;
+    padding: 4rem 4rem 8rem 4rem;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas:
+      'title title title title title title ... ... ... ... ... ...'
+      'subtitle subtitle subtitle subtitle subtitle ... ... ... animation animation animation animation'
+      'login login login login ... ... ... ... animation animation animation animation';
+  }
+
+  .landing-login-button {
+    align-self: center;
+    justify-self: start;
+  }
+}
+
+/* Styles for viewports wider than 1200 pixels. */
+@media (min-width: 1200px) {
+  .landing {
+    padding: 4rem 12rem 8rem 12rem;
+  }
+}
 
 .landing-animation {
   width: 100%;
