@@ -5,14 +5,24 @@ import { default as Text } from '../Text/Text';
 import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
 import { Link } from 'react-router-dom';
 
-export type RowProps = {
+type RowPropsCommon = {
   iconVariant?: IconVariant;
-  onClick?: () => void;
-  url?: string;
   avatarProps?: AvatarProps;
   title?: string;
   subtitle?: string;
 };
+
+type ButtonRowProps = RowPropsCommon & {
+  onClick: () => void;
+  url?: never;
+};
+
+type LinkRowProps = RowPropsCommon & {
+  onClick?: never;
+  url: string;
+};
+
+export type RowProps = ButtonRowProps | LinkRowProps;
 
 export default function Row({
   iconVariant,
@@ -22,40 +32,42 @@ export default function Row({
   title,
   subtitle,
 }: RowProps) {
-  const RowChildren: JSX.Element[] = [
-    (avatarProps && <SmallAvatar {...avatarProps} />) || <div />,
-    <div className={`row_text_wrapper`}>
-      {title && (
-        <Text
-          variant={TextVariant.SUBHEADING}
-          color={TextColor.LIGHT}
-          weight={TextWeight.BOLD}
-        >
-          {title}
-        </Text>
-      )}
-      {subtitle && (
-        <Text
-          variant={TextVariant.PARAGRAPH}
-          color={TextColor.LIGHT}
-          weight={TextWeight.REGULAR}
-        >
-          {subtitle}
-        </Text>
-      )}
-    </div>,
-    (iconVariant && (
-      <div className="row-icon">
-        {<Icon variant={iconVariant} size={IconSize.SMALL} />}
+  const RowChildren: JSX.Element = (
+    <>
+      {avatarProps && <SmallAvatar {...avatarProps} />}
+      <div className={`row_text_wrapper`}>
+        {title && (
+          <Text
+            variant={TextVariant.SUBHEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.BOLD}
+          >
+            {title}
+          </Text>
+        )}
+        {subtitle && (
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.REGULAR}
+          >
+            {subtitle}
+          </Text>
+        )}
       </div>
-    )) || <div />,
-  ];
+      {iconVariant && (
+        <div className="row-icon">
+          <Icon variant={iconVariant} size={IconSize.SMALL} />
+        </div>
+      )}
+    </>
+  );
   return onClick ? (
     <button className={`row paragraph-regular`} onClick={onClick}>
       {RowChildren}
     </button>
   ) : (
-    <Link className={`row paragraph-regular`} to={url ?? '/'}>
+    <Link className={`row paragraph-regular`} to={url}>
       {RowChildren}
     </Link>
   );
