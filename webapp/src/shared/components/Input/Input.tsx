@@ -40,6 +40,9 @@ export default function Input({
         <input
           className={`input-form input-form-${variant} paragraph-regular `}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          name={name}
         />
       </div>
     </div>

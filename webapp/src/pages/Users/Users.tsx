@@ -1,73 +1,85 @@
+import './Users.css';
 import {
-  Header,
   IconVariant,
+  Input,
+  InputVariant,
   NavigationBar,
   RowsList,
+  RowsListProps,
+  SmallAvatar,
 } from '../../shared/components';
-import './Users.css';
+import React, { useEffect, useState } from 'react';
+import {
+  USER_URL,
+  USERS_EP_URL,
+  USERS_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
+import { Link } from 'react-router-dom';
+
+interface User {
+  username: string;
+  email: string;
+  avatarId: string | null;
+  id: string;
+  createdAt: Date;
+}
 
 export default function Users() {
-  const buttonAction = (): void => alert('This is an alert');
-  const buttonLink = (): void => {
-    window.location.href = 'https://google.com';
+  const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
+
+  const getRows = async (url: string): Promise<RowsListProps> => {
+    let rows: RowsListProps = { rows: [] };
+    const response = await fetch(url);
+    const users: User[] = (await response.json()) ?? [];
+    users.forEach((user) => {
+      rows.rows?.push({
+        iconVariant: IconVariant.ARROW_FORWARD,
+        avatarProps: {
+          url: user.avatarId
+            ? `${USERS_EP_URL}/${user.id}/avatar`
+            : WILDCARD_AVATAR_URL,
+          status: 'offline',
+        },
+        onClick: () => {
+          window.location.href = `${USERS_URL}/${user.username}`;
+        },
+        title: user.username,
+        subtitle: 'level x',
+        key: user.id,
+      });
+    });
+    return rows;
   };
-  const randomAvatar = 'https://i.pravatar.cc/1000';
-  const randomAvatar2 = 'https://i.pravatar.cc/2000';
-  const randomAvatar3 = 'https://i.pravatar.cc/3000';
+
+  useEffect(() => {
+    const fetchUsersList = async () => {
+      const lUsersList = await getRows(`${USERS_EP_URL}`);
+      setUsersList({ ...lUsersList });
+      return lUsersList;
+    };
+    fetchUsersList().catch((e) => console.error(e));
+  }, []);
+
   return (
     <div className="users">
-      <div className="users-wrapper">
-        <Header
-          navigationFigure={IconVariant.ARROW_BACK}
-          navigationUrl="/"
-          statusVariant="online"
-        >
-          edit profile
-        </Header>
-        <Header
-          navigationFigure="https://i.pravatar.cc/1000"
-          navigationUrl="/"
-          statusVariant="playing"
-        >
-          Lorem ipsum dolor sit amet.
-        </Header>
-        <Header navigationFigure={IconVariant.ARROW_BACK} navigationUrl="/">
-          edit profile
-        </Header>
-        <Header navigationFigure="https://i.pravatar.cc/1000" navigationUrl="/">
-          edit profile
-        </Header>
-        <RowsList
-          rows={[
-            {
-              iconVariant: IconVariant.ARROW_FORWARD,
-              avatarProps: { url: randomAvatar, status: 'online' },
-              onClick: buttonAction,
-              title: 'John Doe',
-              subtitle: 'level 3',
-              key: '75442486-0878-440c-9db1-a7006c25a39f',
-            },
-            {
-              iconVariant: IconVariant.ARROW_FORWARD,
-              avatarProps: { url: randomAvatar2, status: 'offline' },
-              onClick: buttonLink,
-              title: 'Jane Doe',
-              subtitle: 'level 99',
-              key: '99a46451-975e-4d08-a697-9fa9c15f47a6',
-            },
-            {
-              iconVariant: IconVariant.ARROW_FORWARD,
-              avatarProps: { url: randomAvatar3, status: 'playing' },
-              onClick: buttonAction,
-              title: 'Joe Shmoe',
-              subtitle: 'level 0',
-              key: '5c2013ba-45a0-45b9-b65e-750757df21a0',
-            },
-          ]}
+      <div className="users-avatar">
+        <Link to={USER_URL}>
+          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
+        </Link>
+      </div>
+      <div className="users-search">
+        <Input
+          iconVariant={IconVariant.SEARCH}
+          variant={InputVariant.DARK}
+          placeholder="search"
         />
-        <div className="users-nav-container">
-          <NavigationBar />
-        </div>
+      </div>
+      <div className="users-rows">
+        {usersList.rows && <RowsList rows={usersList.rows} />}
+      </div>
+      <div className="users-navigation">
+        <NavigationBar />
       </div>
     </div>
   );

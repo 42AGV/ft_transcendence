@@ -9,6 +9,7 @@
   --color-light: #ffffff;
   --color-background: #191b1f;
   --color-dark: #262934;
+  --color-light-variant: #6a6a6a;
 
   --title-font-size: 2.5rem;
   --subtitle-font-size: 2rem;
@@ -27,12 +28,27 @@
   --primary-font: 'DM Sans', sans-serif;
 
   font-size: 16px;
+  --column-number: 4;
+  --column-end: calc(var(--column-number) + 1);
+  --padding-sides: 1rem;
+  --padding-top-bottom: 2rem;
+  --column-gap: 1rem;
+  --row-gap: 2rem;
 }
 
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
   :root {
+    --column-number: 12;
+    --padding-sides: 64px;
+    --padding-top-bottom: 1.8rem;
     font-size: 18px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --padding-sides: 200px;
   }
 }
 
@@ -61,7 +77,6 @@ body {
   font-size: var(--title-font-size);
   font-family: var(--primary-font);
   font-weight: 700;
-  line-height: 60px;
   line-height: 3rem;
 }
 
@@ -149,4 +164,13 @@ body {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-light-variant);
+  border-radius: 2px;
 }

@@ -9,7 +9,7 @@ export enum ButtonVariant {
 type ButtonProps = {
   variant: ButtonVariant;
   iconVariant?: IconVariant;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   children: string;
 };
