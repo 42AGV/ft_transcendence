@@ -18,11 +18,11 @@ import {
 import { Link } from 'react-router-dom';
 
 interface User {
-  username: string;
-  email: string;
-  avatarId: string | null;
-  id: string;
-  createdAt: Date;
+  readonly username: string;
+  readonly email: string;
+  readonly avatarId: string | null;
+  readonly id: string;
+  readonly createdAt: Date;
 }
 
 export default function Users() {
