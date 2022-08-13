@@ -66,25 +66,18 @@ export default function Users() {
 
   useEffect(() => {
     const fetchUsersList = async () => {
-      const lUsersList = await getRows(`${USERS_EP_URL}`);
+      const lUsersList = await getRows(`${USERS_EP_URL}?search=${search}`);
       setUsersList({ ...lUsersList });
       return lUsersList;
     };
     fetchUsersList().catch((e) => console.error(e));
-  }, []);
+  }, [usersList, search]);
 
   let usersRows: RowItem[] | undefined = usersList.rows;
 
   if (usersRows) {
     usersRows = filterUsers(usersRows, search);
   }
-  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const rows = await getRows(`${USERS_EP_URL}?search=${search}`);
-    setUsersList({ ...rows });
-    usersRows = usersList.rows;
-    setSearch('');
-  };
 
   return (
     <div className="users">
@@ -93,7 +86,7 @@ export default function Users() {
           <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
         </Link>
       </div>
-      <form className="users-search" onSubmit={handleOnSubmit}>
+      <div className="users-search">
         <Input
           variant={InputVariant.DARK}
           iconVariant={IconVariant.SEARCH}
@@ -104,7 +97,7 @@ export default function Users() {
             setSearch(e.target.value);
           }}
         />
-      </form>
+      </div>
       <div className="users-rows">
         {usersRows && <RowsList rows={usersRows} />}
       </div>
