@@ -41,9 +41,7 @@ export default function Users() {
             : WILDCARD_AVATAR_URL,
           status: 'offline',
         },
-        onClick: () => {
-          window.location.href = `${USERS_URL}/${user.username}`;
-        },
+        url: `${USERS_URL}/${user.username}`,
         title: user.username,
         subtitle: 'level x',
         key: user.id,
