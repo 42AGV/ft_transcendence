@@ -2,13 +2,14 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Chat, Landing, Play, Users, ComponentsBook } from './pages';
+import { Chat, Landing, Play, Users, User, ComponentsBook } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   CHAT_URL,
   PLAY_URL,
   USERS_URL,
   COMPONENTS_BOOK_URL,
+  USER_URL,
 } from './shared/urls';
 
 const container = document.getElementById('root');
@@ -23,6 +24,7 @@ root.render(
         <Route path={USERS_URL} element={<Users />} />
         <Route path={PLAY_URL} element={<Play />} />
         <Route path={CHAT_URL} element={<Chat />} />
+        <Route path={USER_URL} element={<User />} />
         {developmentMode && (
           <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
         )}
