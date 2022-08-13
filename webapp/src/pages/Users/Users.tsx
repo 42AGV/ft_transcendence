@@ -29,25 +29,24 @@ export default function Users() {
   const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
 
   const getRows = async (url: string): Promise<RowsListProps> => {
-    let rows: RowsListProps = { rows: [] };
-    const response = await fetch(url);
-    const users: User[] = (await response.json()) ?? [];
-    users.forEach((user) => {
-      rows.rows?.push({
-        iconVariant: IconVariant.ARROW_FORWARD,
-        avatarProps: {
-          url: user.avatarId
-            ? `${USERS_EP_URL}/${user.id}/avatar`
-            : WILDCARD_AVATAR_URL,
-          status: 'offline',
-        },
-        url: `${USERS_URL}/${user.username}`,
-        title: user.username,
-        subtitle: 'level x',
-        key: user.id,
-      });
-    });
-    return rows;
+    const users = (await fetch(url).then((response) => response.json())) ?? [];
+    return {
+      rows: users.map((user: User) => {
+        return {
+          iconVariant: IconVariant.ARROW_FORWARD,
+          avatarProps: {
+            url: user.avatarId
+              ? `${USERS_EP_URL}/${user.id}/avatar`
+              : WILDCARD_AVATAR_URL,
+            status: 'offline',
+          },
+          url: `${USERS_URL}/${user.username}`,
+          title: user.username,
+          subtitle: 'level x',
+          key: user.id,
+        };
+      }),
+    };
   };
 
   useEffect(() => {
