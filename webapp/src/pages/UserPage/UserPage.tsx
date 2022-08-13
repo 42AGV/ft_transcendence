@@ -1,4 +1,4 @@
-import './User.css';
+import './UserPage.css';
 import {
   IconVariant,
   Input,
@@ -25,7 +25,7 @@ interface UserDto {
   readonly createdAt: Date;
 }
 
-export default function User() {
+export default function UserPage() {
   const [userList, setUserList] = useState<RowsListProps>({ rows: [] });
 
   const getRows = async (url: string): Promise<RowsListProps> => {
@@ -59,23 +59,23 @@ export default function User() {
   }, []);
 
   return (
-    <div className="user">
-      <div className="user-avatar">
+    <div className="user-page">
+      <div className="user-page-avatar">
         <Link to={USER_URL}>
           <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
         </Link>
       </div>
-      <div className="user-search">
+      <div className="user-page-search">
         <Input
           iconVariant={IconVariant.SEARCH}
           variant={InputVariant.DARK}
           placeholder="search"
         />
       </div>
-      <div className="user-rows">
+      <div className="user-page-rows">
         {userList.rows && <RowsList rows={userList.rows} />}
       </div>
-      <div className="user-navigation">
+      <div className="user-page-navigation">
         <NavigationBar />
       </div>
     </div>

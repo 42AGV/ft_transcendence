@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Chat, Landing, Play, Users, User, ComponentsBook } from './pages';
+import { Chat, Landing, Play, Users, UserPage, ComponentsBook } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   CHAT_URL,
@@ -24,7 +24,7 @@ root.render(
         <Route path={USERS_URL} element={<Users />} />
         <Route path={PLAY_URL} element={<Play />} />
         <Route path={CHAT_URL} element={<Chat />} />
-        <Route path={USER_URL} element={<User />} />
+        <Route path={USER_URL} element={<UserPage />} />
         {developmentMode && (
           <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
         )}
