@@ -1,21 +1,18 @@
 import './UserPage.css';
 import {
+  Button,
+  ButtonVariant,
+  Header,
   IconVariant,
-  Input,
-  InputVariant,
-  NavigationBar,
-  RowsList,
-  RowsListProps,
-  SmallAvatar,
+  LargeAvatar,
+  Row,
+  Text,
+  TextColor,
+  TextVariant,
+  TextWeight,
 } from '../../shared/components';
-import React, { useEffect, useState } from 'react';
-import {
-  USER_URL,
-  USERS_EP_URL,
-  USERS_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
-import { Link } from 'react-router-dom';
+import { API_LOGOUT_EP, USER_URL, USERS_EP_URL } from '../../shared/urls';
+import { useData } from '../../shared/hooks/UseData';
 
 interface UserDto {
   readonly username: string;
@@ -26,58 +23,71 @@ interface UserDto {
 }
 
 export default function UserPage() {
-  const [userList, setUserList] = useState<RowsListProps>({ rows: [] });
+  const me =
+    useData(USERS_EP_URL + '/me') ??
+    ({
+      username: '',
+      email: '',
+      avatarId: null,
+      id: '',
+      createdAt: new Date(),
+    } as UserDto);
 
-  const getRows = async (url: string): Promise<RowsListProps> => {
-    const user = (await fetch(url).then((response) => response.json())) ?? [];
-    return {
-      rows: user.map((user: UserDto) => {
-        return {
-          iconVariant: IconVariant.ARROW_FORWARD,
-          avatarProps: {
-            url: user.avatarId
-              ? `${USERS_EP_URL}/${user.id}/avatar`
-              : WILDCARD_AVATAR_URL,
-            status: 'offline',
-          },
-          url: `${USERS_URL}/${user.username}`,
-          title: user.username,
-          subtitle: 'level x',
-          key: user.id,
-        };
-      }),
-    };
+  const logout = () => {
+    fetch(API_LOGOUT_EP, {
+      method: 'DELETE',
+    })
+      .then(() => {
+        window.location.href = 'http://localhost:3000/';
+      })
+      .catch((e) => console.error(e));
   };
-
-  useEffect(() => {
-    const fetchUserList = async () => {
-      const lUserList = await getRows(`${USERS_EP_URL}`);
-      setUserList({ ...lUserList });
-      return lUserList;
-    };
-    fetchUserList().catch((e) => console.error(e));
-  }, []);
 
   return (
     <div className="user-page">
+      <Header
+        navigationFigure={IconVariant.ARROW_BACK}
+        navigationUrl="/"
+        statusVariant="online"
+      >
+        {me.username}
+      </Header>
       <div className="user-page-avatar">
-        <Link to={USER_URL}>
-          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
-        </Link>
+        {me.id && me.id !== '' ? (
+          <LargeAvatar
+            url={`${USERS_EP_URL}/${me.id}/avatar`}
+            caption="level 4"
+          />
+        ) : (
+          <div />
+        )}
       </div>
-      <div className="user-page-search">
-        <Input
-          iconVariant={IconVariant.SEARCH}
-          variant={InputVariant.DARK}
-          placeholder="search"
-        />
-      </div>
-      <div className="user-page-rows">
-        {userList.rows && <RowsList rows={userList.rows} />}
-      </div>
-      <div className="user-page-navigation">
-        <NavigationBar />
-      </div>
+      <Text
+        variant={TextVariant.PARAGRAPH}
+        color={TextColor.LIGHT}
+        weight={TextWeight.MEDIUM}
+      >
+        {me.username}
+      </Text>
+      <Text
+        variant={TextVariant.PARAGRAPH}
+        color={TextColor.LIGHT}
+        weight={TextWeight.MEDIUM}
+      >
+        wcroix@fuckingawesome.com
+      </Text>
+      <Row
+        iconVariant={IconVariant.EDIT}
+        url={USER_URL + '/edit'}
+        title="Edit profile"
+      />
+      <Button
+        variant={ButtonVariant.WARNING}
+        iconVariant={IconVariant.LOGOUT}
+        onClick={logout}
+      >
+        Logout
+      </Button>
     </div>
   );
 }

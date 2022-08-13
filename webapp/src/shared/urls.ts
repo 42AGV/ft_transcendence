@@ -1,4 +1,6 @@
 const API_ENDPOINT_URL = '/api/v1';
+const API_AUTH_EP = `${API_ENDPOINT_URL}/auth`;
+export const API_LOGOUT_EP = `${API_AUTH_EP}/logout`;
 export const USER_URL = '/user';
 export const USERS_URL = '/users';
 export const USERS_EP_URL = `${API_ENDPOINT_URL}${USERS_URL}`;
