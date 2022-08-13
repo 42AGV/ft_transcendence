@@ -16,6 +16,7 @@ import {
 } from '../../shared/urls';
 import { Link } from 'react-router-dom';
 import { useData } from '../../shared/hooks/UseData';
+import React, { useEffect, useState } from 'react';
 
 interface User {
   readonly username: string;
@@ -46,6 +47,26 @@ export default function Users() {
       }),
     };
   };
+  const rowProps = GetRows(USERS_EP_URL);
+  const [filteredUsersList, setFilteredUsersList] = useState<RowsListProps>({});
+  const [searchInput, setSearchInput] = useState<string>('');
+
+  const searchInputChanges = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    setSearchInput(event.target.value);
+  };
+
+  useEffect(() => {
+    const filterUsersList = () => {
+      const userRows = (rowProps.rows ?? []).filter(
+        (user = { title: '', key: '' }) => {
+          return user.title?.includes(searchInput) ?? true;
+        },
+      );
+      setFilteredUsersList({ rows: userRows });
+    };
+    filterUsersList();
+  }, [searchInput, rowProps]);
 
   return (
     <div className="users">
@@ -59,10 +80,11 @@ export default function Users() {
           iconVariant={IconVariant.SEARCH}
           variant={InputVariant.DARK}
           placeholder="search"
+          onChange={searchInputChanges}
         />
       </div>
       <div className="users-rows">
-        <RowsList rows={GetRows(USERS_EP_URL).rows} />
+        {filteredUsersList.rows && <RowsList rows={filteredUsersList.rows} />}
       </div>
       <div className="users-navigation">
         <NavigationBar />
