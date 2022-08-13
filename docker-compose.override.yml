@@ -23,10 +23,10 @@ services:
       - ./transcendence-app:/transcendence-app
       - /transcendence-app/node_modules
     environment:
-      - TRANSCENDENCE_APP_NAME=transcendence-app-dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   db:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=ft_transcendence

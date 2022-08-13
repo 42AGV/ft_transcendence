@@ -1,4 +1,9 @@
-import { Text, TextColor, TextVariant, TextWeight } from '../../shared/components';
+import {
+  Text,
+  TextColor,
+  TextVariant,
+  TextWeight,
+} from '../../shared/components';
 import './ComponentsBook.css';
 import {
   NavigationExample,
@@ -10,7 +15,7 @@ import {
   RowExample,
   RowsListExample,
   InputExample,
-  HeaderExample
+  HeaderExample,
 } from './ComponentsExamples';
 
 export default function ComponentsBook() {

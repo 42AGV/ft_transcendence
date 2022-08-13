@@ -1,54 +1,115 @@
+import './Users.css';
 import {
   IconVariant,
+  Input,
+  InputVariant,
   NavigationBar,
   RowItem,
-  SearchUserForm,
+  RowsList,
+  RowsListProps,
+  SmallAvatar,
 } from '../../shared/components';
-import './Users.css';
+import React, { useEffect, useState } from 'react';
+import {
+  USER_URL,
+  USERS_EP_URL,
+  USERS_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
+import { Link } from 'react-router-dom';
+
+interface User {
+  username: string;
+  email: string;
+  avatarId: string | null;
+  id: string;
+  createdAt: Date;
+}
 
 export default function Users() {
-  const buttonAction = (): void => alert('This is an alert');
-  const buttonLink = (): void => {
-    window.location.href = 'https://google.com';
-  };
-  const randomAvatar = 'https://i.pravatar.cc/1000';
-  const randomAvatar2 = 'https://i.pravatar.cc/2000';
-  const randomAvatar3 = 'https://i.pravatar.cc/3000';
+  const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
+  const [search, setSearch] = useState('');
 
-  const users: RowItem[] = [
-    {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: { url: randomAvatar, status: 'online' },
-      onClick: buttonAction,
-      title: 'John Doe',
-      subtitle: 'level 3',
-      key: '75442486-0878-440c-9db1-a7006c25a39f',
-    },
-    {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: { url: randomAvatar2, status: 'offline' },
-      onClick: buttonLink,
-      title: 'Jane Doe',
-      subtitle: 'level 99',
-      key: '99a46451-975e-4d08-a697-9fa9c15f47a6',
-    },
-    {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: { url: randomAvatar3, status: 'playing' },
-      onClick: buttonAction,
-      title: 'Joe Shmoe',
-      subtitle: 'level 0',
-      key: '5c2013ba-45a0-45b9-b65e-750757df21a0',
-    },
-  ];
+  const filterUsers = (users: RowItem[], query: string) => {
+    if (!query) {
+      return users;
+    }
+    return users.filter((user) => {
+      const username = user.title!.toLowerCase();
+      return username.includes(query);
+    });
+  };
+
+  const getRows = async (url: string): Promise<RowsListProps> => {
+    let rows: RowsListProps = { rows: [] };
+    const response = await fetch(url);
+    const users: User[] = (await response.json()) ?? [];
+    users.forEach((user) => {
+      rows.rows?.push({
+        iconVariant: IconVariant.ARROW_FORWARD,
+        avatarProps: {
+          url: user.avatarId
+            ? `${USERS_EP_URL}/${user.id}/avatar`
+            : WILDCARD_AVATAR_URL,
+          status: 'offline',
+        },
+        onClick: () => {
+          window.location.href = `${USERS_URL}/${user.username}`;
+        },
+        title: user.username,
+        subtitle: 'level x',
+        key: user.id,
+      });
+    });
+    return rows;
+  };
+
+  useEffect(() => {
+    const fetchUsersList = async () => {
+      const lUsersList = await getRows(`${USERS_EP_URL}`);
+      setUsersList({ ...lUsersList });
+      return lUsersList;
+    };
+    fetchUsersList().catch((e) => console.error(e));
+  }, []);
+
+  let filteredUsers;
+
+  if (usersList.rows) {
+    filteredUsers = filterUsers(usersList.rows, search);
+  }
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const rows = await getRows(`${USERS_EP_URL}?search=${search}`);
+    setUsersList({ ...rows });
+    filteredUsers = usersList.rows;
+    setSearch('');
+  };
 
   return (
     <div className="users">
-      <div className="users-wrapper">
-        <div className="users-nav-container">
-          <NavigationBar />
-        </div>
-        <SearchUserForm users={users} />
+      <div className="users-avatar">
+        <Link to={USER_URL}>
+          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
+        </Link>
+      </div>
+      <form className="users-search" onSubmit={handleOnSubmit}>
+        <Input
+          variant={InputVariant.DARK}
+          iconVariant={IconVariant.SEARCH}
+          placeholder="Search"
+          value={search}
+          name="search"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setSearch(e.target.value);
+          }}
+        />
+      </form>
+      <div className="users-rows">
+        {filteredUsers && <RowsList rows={filteredUsers} />}
+      </div>
+      <div className="users-navigation">
+        <NavigationBar />
       </div>
     </div>
   );

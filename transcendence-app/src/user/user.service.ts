@@ -1,6 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, StreamableFile } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
-import { UserEntity } from './user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import {
   MAX_USER_ENTRIES_PER_PAGE,
@@ -8,62 +7,148 @@ import {
 } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
+import { User } from './user.domain';
+import { LocalFileDto } from '../shared/local-file/local-file.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { LocalFileService } from '../shared/local-file/local-file.service';
+import { AVATAR_MIMETYPE_WHITELIST } from './constants';
+import { createReadStream } from 'fs';
+import { loadEsmModule } from '../shared/utils';
 
 @Injectable()
 export class UserService {
-  private logger = new Logger(UserService.name);
+  constructor(
+    private userRepository: IUserRepository,
+    private localFileService: LocalFileService,
+  ) {}
 
-  constructor(private repository: IUserRepository) {}
-
-  retrieveUserWithId(id: string) {
-    return this.users.find((user) => user.id === id) || null;
+  retrieveUserWithId(id: string): Promise<User | null> {
+    return this.userRepository.getById(id);
   }
 
-  retrieveUsers(queryDto: UsersPaginationQueryDto) {
-    const limit = queryDto.limit ?? MAX_USER_ENTRIES_PER_PAGE;
-    const offset = queryDto.offset ?? 0;
-    const usersCopy = [...this.users];
-
-    if (queryDto.sort === BooleanString.True) {
-      usersCopy.sort((a, b) =>
-        a.username > b.username ? 1 : a.username === b.username ? 0 : -1,
-      );
-    }
-
-    return usersCopy.slice(offset, offset + limit);
+  retrieveUsers({
+    limit = MAX_USER_ENTRIES_PER_PAGE,
+    offset = 0,
+    sort = BooleanString.False,
+    search = '',
+  }: UsersPaginationQueryDto): Promise<User[] | null> {
+    return this.userRepository.getPaginatedUsers({
+      limit,
+      offset,
+      sort,
+      search,
+    });
   }
 
-  findOneOrCreate(user: UserDto) {
-    let found = this.findOne(user.username);
-    if (!found) {
-      found = this.create(user);
-    }
-    return found;
+  retrieveUserWithUserName(username: string): Promise<User | null> {
+    return this.userRepository.getByUsername(username);
   }
 
-  async retrieveUserWithUserName(username: string) {
-    try {
-      const data = await this.repository.getByUsername(username);
-      return data;
-    } catch (e) {
-      // TODO logging task
-      this.logger.warn(e);
-    }
-  }
-
-  private readonly users: UserEntity[] = [];
-
-  private findOne(username: string) {
-    return this.users.find((user) => user.username === username) || null;
-  }
-
-  private create(user: UserDto) {
-    const userEntity: UserEntity = {
+  addUser(user: UserDto): Promise<User | null> {
+    return this.userRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       ...user,
-    };
-    this.users.push(userEntity);
-    return userEntity;
+    });
+  }
+
+  addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
+    return this.userRepository.addAvatarAndAddUser(
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...userDto },
+    );
+  }
+
+  updateUser(userId: string, updateUserDto: UpdateUserDto) {
+    return this.userRepository.updateById(userId, updateUserDto);
+  }
+
+  async getAvatar(userId: string): Promise<StreamableFile | null> {
+    const user = await this.userRepository.getById(userId);
+
+    if (!user || !user.avatarId) {
+      return null;
+    }
+
+    const file = await this.localFileService.getFileById(user.avatarId);
+
+    if (!file) {
+      return null;
+    }
+    return this.streamAvatarData(file);
+  }
+
+  private async addAvatarAndUpdateUser(
+    user: User,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
+      { id: uuidv4(), createdAt: new Date(Date.now()), ...newAvatarFileDto },
+      user,
+    );
+    if (!updatedUser) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+    return this.streamAvatarData(newAvatarFileDto);
+  }
+
+  private async updateAvatar(
+    avatarId: string,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    const avatarFile = await this.localFileService.getFileById(avatarId);
+    if (!avatarFile) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+
+    const updatedAvatarFile = await this.localFileService.updateFileById(
+      avatarFile.id,
+      newAvatarFileDto,
+    );
+    if (!updatedAvatarFile) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+    this.localFileService.deleteFileData(avatarFile.path);
+    return this.streamAvatarData(updatedAvatarFile);
+  }
+
+  async addAvatar(
+    user: User,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<StreamableFile | null> {
+    if (user.avatarId === null) {
+      return this.addAvatarAndUpdateUser(user, newAvatarFileDto);
+    }
+
+    return this.updateAvatar(user.avatarId, newAvatarFileDto);
+  }
+
+  private streamAvatarData(fileDto: LocalFileDto): StreamableFile {
+    const stream = createReadStream(fileDto.path);
+
+    return new StreamableFile(stream, {
+      type: fileDto.mimetype,
+      disposition: `inline; filename="${fileDto.filename}"`,
+      length: fileDto.size,
+    });
+  }
+
+  async validateAvatarType(path: string): Promise<boolean | undefined> {
+    /**
+     * Import 'file-type' ES-Module in CommonJS Node.js module
+     */
+    const { fileTypeFromFile } = await loadEsmModule<
+      typeof import('file-type')
+    >('file-type');
+    const fileTypeResult = await fileTypeFromFile(path);
+    const isValid =
+      fileTypeResult && AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
+    if (!isValid) {
+      this.localFileService.deleteFileData(path);
+    }
+    return isValid;
   }
 }

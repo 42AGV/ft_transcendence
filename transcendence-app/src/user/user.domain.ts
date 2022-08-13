@@ -1,9 +1,21 @@
 export class User {
+  username: string;
+  email: string;
+  avatarId: string | null;
+  id: string;
+  createdAt: Date;
+
   constructor(
-    public username: string,
-    public email: string,
-    public avatar: string | null,
-    public id: string,
-    public created_at: number,
-  ) {}
+    username: string,
+    email: string,
+    avatarId: string | null,
+    id: string,
+    createdAt: Date,
+  ) {
+    this.username = username;
+    this.email = email;
+    this.avatarId = avatarId;
+    this.id = id;
+    this.createdAt = createdAt;
+  }
 }

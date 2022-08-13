@@ -25,6 +25,15 @@ export class Api42Service {
     return data;
   }
 
+  downloadUserAvatar(accessToken: string, url: string) {
+    return lastValueFrom(
+      this.httpService.get(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        responseType: 'stream',
+      }),
+    );
+  }
+
   private static async validate42ApiResponse(user: UserDto): Promise<UserDto> {
     const validatedUser = plainToClass(UserDto, user);
     const errors = await validate(validatedUser, {
@@ -39,14 +48,17 @@ export class Api42Service {
     return validatedUser;
   }
 
-  async get42UserData(accessToken: string): Promise<UserDto> {
+  async get42UserData(
+    accessToken: string,
+  ): Promise<{ userDto: UserDto; avatarUrl: string }> {
     const data = await this.fetch42UserData(accessToken);
-    const user: UserDto = {
-      avatar: data.image_url,
+    const userDto: UserDto = {
+      avatarId: null,
       username: data.login,
       email: data.email,
     };
 
-    return Api42Service.validate42ApiResponse(user);
+    await Api42Service.validate42ApiResponse(userDto);
+    return { userDto, avatarUrl: data.image_url };
   }
 }
