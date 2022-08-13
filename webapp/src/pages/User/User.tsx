@@ -17,7 +17,7 @@ import {
 } from '../../shared/urls';
 import { Link } from 'react-router-dom';
 
-interface User {
+interface UserDto {
   readonly username: string;
   readonly email: string;
   readonly avatarId: string | null;
@@ -31,7 +31,7 @@ export default function User() {
   const getRows = async (url: string): Promise<RowsListProps> => {
     const user = (await fetch(url).then((response) => response.json())) ?? [];
     return {
-      rows: user.map((user: User) => {
+      rows: user.map((user: UserDto) => {
         return {
           iconVariant: IconVariant.ARROW_FORWARD,
           avatarProps: {
