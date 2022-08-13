@@ -22,5 +22,14 @@ export const RowExample = () => (
         title="Edit profile"
       />
     </BookSubsection>
+    <BookSubsection title="All props, as a link">
+      <Row
+        iconVariant={IconVariant.ARROW_FORWARD}
+        avatarProps={{ url: randomAvatar, status: 'playing' }}
+        url="/"
+        title="John Doe"
+        subtitle="level 3"
+      />
+    </BookSubsection>
   </BookSection>
 );
