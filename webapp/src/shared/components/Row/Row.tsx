@@ -22,46 +22,44 @@ export default function Row({
   title,
   subtitle,
 }: RowProps) {
-  const RowChildren = (): JSX.Element[] => {
-    return [
-      (avatarProps && <SmallAvatar {...avatarProps} />) || <div />,
-      <div className={`row_text_wrapper`}>
-        {title && (
-          <Text
-            variant={TextVariant.SUBHEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
-          >
-            {title}
-          </Text>
-        )}
-        {subtitle && (
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={TextColor.LIGHT}
-            weight={TextWeight.REGULAR}
-          >
-            {subtitle}
-          </Text>
-        )}
-      </div>,
-      (iconVariant && (
-        <div className="row-icon">
-          {<Icon variant={iconVariant} size={IconSize.SMALL} />}
-        </div>
-      )) || <div />,
-    ];
-  };
+  const RowChildren: JSX.Element[] = [
+    (avatarProps && <SmallAvatar {...avatarProps} />) || <div />,
+    <div className={`row_text_wrapper`}>
+      {title && (
+        <Text
+          variant={TextVariant.SUBHEADING}
+          color={TextColor.LIGHT}
+          weight={TextWeight.BOLD}
+        >
+          {title}
+        </Text>
+      )}
+      {subtitle && (
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.REGULAR}
+        >
+          {subtitle}
+        </Text>
+      )}
+    </div>,
+    (iconVariant && (
+      <div className="row-icon">
+        {<Icon variant={iconVariant} size={IconSize.SMALL} />}
+      </div>
+    )) || <div />,
+  ];
   if (onClick) {
     return (
       <button className={`row paragraph-regular`} onClick={onClick}>
-        {RowChildren()}
+        {RowChildren}
       </button>
     );
   }
   return (
     <Link className={`row paragraph-regular`} to={url ?? '/'}>
-      {RowChildren()}
+      {RowChildren}
     </Link>
   );
 }
