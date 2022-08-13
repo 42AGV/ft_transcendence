@@ -8,7 +8,6 @@ import {
   RowsListProps,
   SmallAvatar,
 } from '../../shared/components';
-import React, { useEffect, useState } from 'react';
 import {
   USER_URL,
   USERS_EP_URL,
@@ -16,6 +15,7 @@ import {
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { Link } from 'react-router-dom';
+import { useData } from '../../shared/hooks/UseData';
 
 interface User {
   readonly username: string;
@@ -26,11 +26,13 @@ interface User {
 }
 
 export default function Users() {
-  const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
-
-  const getRows = async (url: string): Promise<RowsListProps> => {
-    const users = (await fetch(url).then((response) => response.json())) ?? [];
+  const GetRows = (url: string): RowsListProps => {
+    const users = useData(url);
+    if (!users) {
+      return { rows: [] };
+    }
     return {
+      // @ts-ignore
       rows: users.map((user: User) => {
         return {
           iconVariant: IconVariant.ARROW_FORWARD,
@@ -49,15 +51,6 @@ export default function Users() {
     };
   };
 
-  useEffect(() => {
-    const fetchUsersList = async () => {
-      const lUsersList = await getRows(`${USERS_EP_URL}`);
-      setUsersList({ ...lUsersList });
-      return lUsersList;
-    };
-    fetchUsersList().catch((e) => console.error(e));
-  }, []);
-
   return (
     <div className="users">
       <div className="users-avatar">
@@ -73,7 +66,7 @@ export default function Users() {
         />
       </div>
       <div className="users-rows">
-        {usersList.rows && <RowsList rows={usersList.rows} />}
+        <RowsList rows={GetRows(`${USERS_EP_URL}`).rows} />
       </div>
       <div className="users-navigation">
         <NavigationBar />
