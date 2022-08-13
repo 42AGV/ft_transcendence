@@ -73,16 +73,16 @@ export default function Users() {
     fetchUsersList().catch((e) => console.error(e));
   }, []);
 
-  let filteredUsers;
+  let usersRows: RowItem[] | undefined = usersList.rows;
 
-  if (usersList.rows) {
-    filteredUsers = filterUsers(usersList.rows, search);
+  if (usersRows) {
+    usersRows = filterUsers(usersRows, search);
   }
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const rows = await getRows(`${USERS_EP_URL}?search=${search}`);
     setUsersList({ ...rows });
-    filteredUsers = usersList.rows;
+    usersRows = usersList.rows;
     setSearch('');
   };
 
@@ -106,7 +106,7 @@ export default function Users() {
         />
       </form>
       <div className="users-rows">
-        {filteredUsers && <RowsList rows={filteredUsers} />}
+        {usersRows && <RowsList rows={usersRows} />}
       </div>
       <div className="users-navigation">
         <NavigationBar />
