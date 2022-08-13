@@ -10,7 +10,6 @@
   background-color: var(--color-dark);
   border: 0;
   align-items: center;
-  cursor: pointer;
   flex-direction: row;
 }
 

@@ -22,7 +22,12 @@ type LinkRowProps = RowPropsCommon & {
   url: string;
 };
 
-export type RowProps = ButtonRowProps | LinkRowProps;
+type NoActionRowProps = RowPropsCommon & {
+  onClick?: never;
+  url?: never;
+};
+
+export type RowProps = ButtonRowProps | LinkRowProps | NoActionRowProps;
 
 export default function Row({
   iconVariant,
@@ -32,6 +37,9 @@ export default function Row({
   title,
   subtitle,
 }: RowProps) {
+  const cursorStyle = {
+    cursor: 'pointer',
+  };
   const RowChildren: JSX.Element = (
     <>
       {avatarProps && <SmallAvatar {...avatarProps} />}
@@ -62,13 +70,19 @@ export default function Row({
       )}
     </>
   );
-  return onClick ? (
-    <button className={`row paragraph-regular`} onClick={onClick}>
-      {RowChildren}
-    </button>
-  ) : (
-    <Link className={`row paragraph-regular`} to={url}>
+  return url ? (
+    <Link className={`row paragraph-regular`} to={url} style={cursorStyle}>
       {RowChildren}
     </Link>
+  ) : (
+    (onClick && (
+      <button
+        className={`row paragraph-regular`}
+        onClick={onClick}
+        style={cursorStyle}
+      >
+        {RowChildren}
+      </button>
+    )) || <div className={`row paragraph-regular`}>{RowChildren}</div>
   );
 }
