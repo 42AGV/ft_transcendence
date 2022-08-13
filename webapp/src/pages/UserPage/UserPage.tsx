@@ -14,7 +14,7 @@ import {
 import { API_LOGOUT_EP, USER_URL, USERS_EP_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 
-interface UserDto {
+interface User {
   readonly username: string;
   readonly email: string;
   readonly avatarId: string | null;
@@ -31,23 +31,27 @@ export default function UserPage() {
       avatarId: null,
       id: '',
       createdAt: new Date(),
-    } as UserDto);
+    } as User);
 
   const logout = () => {
     fetch(API_LOGOUT_EP, {
       method: 'DELETE',
     })
-      .then(() => {
+      .catch((e) => console.error(e))
+      .finally(() => {
         window.location.href = 'http://localhost:3000/';
-      })
-      .catch((e) => console.error(e));
+      });
+  };
+
+  const goBack = () => {
+    window.history.back();
   };
 
   return (
     <div className="user-page">
       <Header
         navigationFigure={IconVariant.ARROW_BACK}
-        navigationUrl="/"
+        onClick={goBack}
         statusVariant="online"
       >
         {me.username}
@@ -59,7 +63,7 @@ export default function UserPage() {
             caption="level 4"
           />
         ) : (
-          <div />
+          <></>
         )}
       </div>
       <Text

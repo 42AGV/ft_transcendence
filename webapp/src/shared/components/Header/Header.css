@@ -6,10 +6,18 @@
 
 .header-navigation,
 .header-navigation a,
+.header-navigation button,
 .header-text,
 .header-status {
   display: flex;
   align-items: center;
+}
+
+.header-navigation button {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
 }
 
 .header-text {
