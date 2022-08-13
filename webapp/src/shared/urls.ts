@@ -1,5 +1,6 @@
 const API_ENDPOINT_URL = '/api/v1';
 const API_AUTH_EP = `${API_ENDPOINT_URL}/auth`;
+export const HOST_URL = `http://${window.location.host}`;
 export const API_LOGOUT_EP = `${API_AUTH_EP}/logout`;
 export const USER_URL = '/user';
 export const USERS_URL = '/users';

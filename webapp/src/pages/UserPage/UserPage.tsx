@@ -11,7 +11,12 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { API_LOGOUT_EP, USER_URL, USERS_EP_URL } from '../../shared/urls';
+import {
+  API_LOGOUT_EP,
+  HOST_URL,
+  USER_URL,
+  USERS_EP_URL,
+} from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 
 interface User {
@@ -39,7 +44,7 @@ export default function UserPage() {
     })
       .catch((e) => console.error(e))
       .finally(() => {
-        window.location.href = 'http://localhost:3000/';
+        window.location.href = HOST_URL;
       });
   };
 
