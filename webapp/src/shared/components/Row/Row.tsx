@@ -3,10 +3,12 @@ import './Row.css';
 import { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';
 import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
+import { Link } from 'react-router-dom';
 
 export type RowProps = {
   iconVariant?: IconVariant;
   onClick?: () => void;
+  url?: string;
   avatarProps?: AvatarProps;
   title?: string;
   subtitle?: string;
@@ -15,13 +17,14 @@ export type RowProps = {
 export default function Row({
   iconVariant,
   onClick,
+  url,
   avatarProps,
   title,
   subtitle,
 }: RowProps) {
-  return (
-    <button className={`row paragraph-regular`} onClick={onClick}>
-      {avatarProps && <SmallAvatar {...avatarProps} />}
+  const RowChildren = (): JSX.Element[] => {
+    return [
+      (avatarProps && <SmallAvatar {...avatarProps} />) || <div />,
       <div className={`row_text_wrapper`}>
         {title && (
           <Text
@@ -41,12 +44,24 @@ export default function Row({
             {subtitle}
           </Text>
         )}
-      </div>
-      {iconVariant && (
+      </div>,
+      (iconVariant && (
         <div className="row-icon">
           {<Icon variant={iconVariant} size={IconSize.SMALL} />}
         </div>
-      )}
-    </button>
+      )) || <div />,
+    ];
+  };
+  if (onClick) {
+    return (
+      <button className={`row paragraph-regular`} onClick={onClick}>
+        {RowChildren()}
+      </button>
+    );
+  }
+  return (
+    <Link className={`row paragraph-regular`} to={url ?? '/'}>
+      {RowChildren()}
+    </Link>
   );
 }
