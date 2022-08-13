@@ -62,7 +62,7 @@ export default function Users() {
         />
       </div>
       <div className="users-rows">
-        <RowsList rows={GetRows(`${USERS_EP_URL}`).rows} />
+        <RowsList rows={GetRows(USERS_EP_URL).rows} />
       </div>
       <div className="users-navigation">
         <NavigationBar />
