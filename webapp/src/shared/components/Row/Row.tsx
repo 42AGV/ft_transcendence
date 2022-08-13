@@ -50,14 +50,11 @@ export default function Row({
       </div>
     )) || <div />,
   ];
-  if (onClick) {
-    return (
-      <button className={`row paragraph-regular`} onClick={onClick}>
-        {RowChildren}
-      </button>
-    );
-  }
-  return (
+  return onClick ? (
+    <button className={`row paragraph-regular`} onClick={onClick}>
+      {RowChildren}
+    </button>
+  ) : (
     <Link className={`row paragraph-regular`} to={url ?? '/'}>
       {RowChildren}
     </Link>
