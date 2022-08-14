@@ -38,7 +38,7 @@ export default function UserPage() {
       >
         {me.username}
       </Header>
-      <div className="user-page-avatar">
+      <div className="user-wrapper">
         {me.id ? (
           <LargeAvatar
             url={
@@ -51,26 +51,28 @@ export default function UserPage() {
         ) : (
           <></>
         )}
+        <div className="user-text">
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.MEDIUM}
+          >
+            {me.username}
+          </Text>
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.MEDIUM}
+          >
+            wcroix@fuckingawesome.com
+          </Text>
+        </div>
+        <Row
+          iconVariant={IconVariant.EDIT}
+          url={USER_URL + '/edit'}
+          title="Edit profile"
+        />
       </div>
-      <Text
-        variant={TextVariant.PARAGRAPH}
-        color={TextColor.LIGHT}
-        weight={TextWeight.MEDIUM}
-      >
-        {me.username}
-      </Text>
-      <Text
-        variant={TextVariant.PARAGRAPH}
-        color={TextColor.LIGHT}
-        weight={TextWeight.MEDIUM}
-      >
-        wcroix@fuckingawesome.com
-      </Text>
-      <Row
-        iconVariant={IconVariant.EDIT}
-        url={USER_URL + '/edit'}
-        title="Edit profile"
-      />
       <Button
         variant={ButtonVariant.WARNING}
         iconVariant={IconVariant.LOGOUT}

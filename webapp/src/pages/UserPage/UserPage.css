@@ -5,6 +5,40 @@
   background-color: var(--color-background);
   color: var(--color-light);
   gap: var(--row-gap) var(--column-gap);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-row-gap: 4rem;
+}
+
+.user-wrapper {
+  height: 24.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.user-wrapper .avatar-large {
+  margin: 0;
+}
+
+.user-wrapper .user-text {
+  height: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.user-wrapper .user-text > * {
+  margin: 0;
+}
+
+.user-wrapper .row {
+  height: auto;
+}
+
+.user-page .button {
+  justify-self: center;
 }
 
 @media all and (min-width: 768px) {
