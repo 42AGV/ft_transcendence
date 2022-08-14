@@ -52,10 +52,11 @@
     grid-template-columns: repeat(9, 1fr);
     grid-template-rows: 1fr 1fr;
     grid-column-gap: var(--column-gap);
+    grid-row-gap: 2.2rem;
   }
 
   .user-wrapper .avatar-large {
-    grid-column: 1 / 3;
+    grid-column: 1 / 4;
     grid-row: 1/3;
   }
 
@@ -65,6 +66,11 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+  }
+
+  .user-wrapper .row {
+    grid-column: 5 / 9;
+    grid-row: 2 / 3;
   }
 
   .user-page .button {
