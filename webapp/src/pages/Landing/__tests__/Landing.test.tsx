@@ -8,6 +8,6 @@ test('renders landing', () => {
       <Landing />
     </StaticRouter>,
   );
-  const element = screen.getByText(/landing/i);
+  const element = screen.getByText(/Play online pong with your friends/i);
   expect(element).toBeInTheDocument();
 });

@@ -1,82 +1,48 @@
 import {
   Button,
   ButtonVariant,
-  Icon,
-  IconSize,
-  IconVariant,
-  Status,
   Text,
+  TextColor,
   TextVariant,
   TextWeight,
-  SmallAvatar,
-  LargeAvatar,
-  NavigationBar,
-  TextColor,
-  Row,
-  EditUserForm,
 } from '../../shared/components';
-import { Color } from '../../shared/types';
+import { LOGIN_EP_URL } from '../../shared/urls';
 import './Landing.css';
 
 export default function Landing() {
-  const buttonAction = (): void => alert('This is an alert');
-  const buttonLink = (): void => {
-    window.location.href = 'http://google.com';
-  };
-
-  const randomAvatar = 'https://i.pravatar.cc/1000';
   return (
-    <section className="landing">
-      <NavigationBar />
-      <Text
-        variant={TextVariant.TITLE}
-        color={TextColor.LIGHT}
-        weight={TextWeight.BOLD}
-      >
-        Landing 🚀
-      </Text>
-      <Button variant={ButtonVariant.WARNING} onClick={buttonAction}>
-        Alert
-      </Button>
-      <Button
-        variant={ButtonVariant.WARNING}
-        iconVariant={IconVariant.LOGOUT}
-        disabled
-      >
-        Logout
-      </Button>
-      <Button
-        variant={ButtonVariant.SUBMIT}
-        iconVariant={IconVariant.ARROW_FORWARD}
-        onClick={buttonLink}
-      >
-        To Google
-      </Button>
-      <Icon
-        variant={IconVariant.PLAY}
-        color={Color.ONLINE}
-        size={IconSize.LARGE}
-      />
-      <Status variant="playing" />
-      <SmallAvatar url={randomAvatar} />
-      <LargeAvatar url={randomAvatar} />
-      <SmallAvatar url={randomAvatar} status="offline" />
-      <LargeAvatar url={randomAvatar} edit status="online" caption="level 21" />
-      <SmallAvatar url={randomAvatar} status="playing" />
-      <LargeAvatar
-        url={randomAvatar}
-        edit
-        status="playing"
-        caption="level 21"
-      />
-      <Row
-        iconVariant={IconVariant.ARROW_FORWARD}
-        avatarProps={{ url: randomAvatar, status: 'playing' }}
-        onClick={buttonAction}
-        title="John Doe"
-        subtitle="level 3"
-      />
-      <EditUserForm />
-    </section>
+    <div className="landing">
+      <div className="landing-title">
+        <Text
+          variant={TextVariant.HEADING}
+          color={TextColor.GAME}
+          weight={TextWeight.BOLD}
+        >
+          PONG
+        </Text>
+      </div>
+      <div className="landing-animation">
+        <div className="landing-animation-ping"></div>
+        <div className="landing-animation-pong"></div>
+        <div className="landing-animation-ball"></div>
+      </div>
+      <div className="landing-subtitle">
+        <Text
+          variant={TextVariant.TITLE}
+          color={TextColor.LIGHT}
+          weight={TextWeight.BOLD}
+        >
+          Play online pong with your friends
+        </Text>
+      </div>
+      <div className="landing-login-button">
+        <Button
+          variant={ButtonVariant.SUBMIT}
+          onClick={() => (window.location.href = LOGIN_EP_URL)}
+        >
+          Login
+        </Button>
+      </div>
+    </div>
   );
 }
