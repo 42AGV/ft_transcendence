@@ -11,46 +11,23 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import {
-  API_LOGOUT_EP,
-  HOST_URL,
-  USER_URL,
-  USERS_EP_URL,
-} from '../../shared/urls';
+import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { instanceOfUser, User } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
-
-interface User {
-  readonly username: string;
-  readonly email: string;
-  readonly avatarId: string | null;
-  readonly id: string;
-  readonly createdAt: Date;
-}
+import { goBack, logout } from '../../shared/callbacks';
 
 export default function UserPage() {
-  const me =
-    useData(USERS_EP_URL + '/me') ??
-    ({
-      username: '',
+  const me = useData<User>(
+    USERS_EP_URL + '/me',
+    {
+      username: 'placeholder-name',
       email: '',
       avatarId: null,
       id: '',
-      createdAt: new Date(),
-    } as User);
-
-  const logout = () => {
-    fetch(API_LOGOUT_EP, {
-      method: 'DELETE',
-    })
-      .catch((e) => console.error(e))
-      .finally(() => {
-        window.location.href = HOST_URL;
-      });
-  };
-
-  const goBack = () => {
-    window.history.back();
-  };
+      createdAt: new Date(Date.now()),
+    },
+    instanceOfUser,
+  );
 
   return (
     <div className="user-page">
@@ -62,9 +39,13 @@ export default function UserPage() {
         {me.username}
       </Header>
       <div className="user-page-avatar">
-        {me.id && me.id !== '' ? (
+        {me.id ? (
           <LargeAvatar
-            url={`${USERS_EP_URL}/${me.id}/avatar`}
+            url={
+              me.id !== ''
+                ? `${USERS_EP_URL}/${me.id}/avatar`
+                : WILDCARD_AVATAR_URL
+            }
             caption="level 4"
           />
         ) : (

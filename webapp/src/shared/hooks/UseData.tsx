@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 
-export function useData(url: string) {
-  const [data, setData] = useState(null);
+export function useData<T>(
+  url: string,
+  initialState: T,
+  typeChecker: (instance: any) => boolean,
+) {
+  const [data, setData] = useState<T>(initialState);
 
   useEffect(() => {
     let ignore = false;
@@ -9,9 +13,13 @@ export function useData(url: string) {
       .then((response) => response.json())
       .then((json) => {
         if (!ignore) {
+          if (!typeChecker(json)) {
+            throw 'Unexpected response format';
+          }
           setData(json);
         }
-      });
+      })
+      .catch((e) => console.error(e));
     return () => {
       ignore = true;
     };
