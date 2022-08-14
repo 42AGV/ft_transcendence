@@ -1,14 +1,13 @@
 import './Users.css';
 import {
   IconVariant,
-  Input,
-  InputVariant,
   NavigationBar,
   RowsList,
   RowsListProps,
+  SearchUserForm,
   SmallAvatar,
 } from '../../shared/components';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   USER_URL,
   USERS_EP_URL,
@@ -67,16 +66,7 @@ export default function Users() {
         </Link>
       </div>
       <div className="users-search">
-        <Input
-          variant={InputVariant.DARK}
-          iconVariant={IconVariant.SEARCH}
-          placeholder="Search"
-          value={search}
-          name="search"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearch(e.target.value);
-          }}
-        />
+        <SearchUserForm search={search} setSearch={setSearch} />
       </div>
       <div className="users-rows">
         {usersList.rows && <RowsList rows={usersList.rows} />}
