@@ -14,7 +14,7 @@ export function useData<T>(
       .then((json) => {
         if (!ignore) {
           if (!typeChecker(json)) {
-            throw 'Unexpected response format';
+            throw new Error('Unexpected response format');
           }
           setData(json);
         }
@@ -23,7 +23,7 @@ export function useData<T>(
     return () => {
       ignore = true;
     };
-  }, [url]);
+  }, [url, typeChecker]);
 
   return data;
 }
