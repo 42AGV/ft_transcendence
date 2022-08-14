@@ -30,16 +30,6 @@ export default function Users() {
   const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
   const [search, setSearch] = useState('');
 
-  const filterUsers = (users: RowItem[], query: string) => {
-    if (!query) {
-      return users;
-    }
-    return users.filter((user) => {
-      const username = user.title!.toLowerCase();
-      return username.includes(query);
-    });
-  };
-
   const getRows = async (url: string): Promise<RowsListProps> => {
     let rows: RowsListProps = { rows: [] };
     const response = await fetch(url);
@@ -71,13 +61,7 @@ export default function Users() {
       return lUsersList;
     };
     fetchUsersList().catch((e) => console.error(e));
-  }, [usersList, search]);
-
-  let usersRows: RowItem[] | undefined = usersList.rows;
-
-  if (usersRows) {
-    usersRows = filterUsers(usersRows, search);
-  }
+  }, [search]);
 
   return (
     <div className="users">
@@ -99,7 +83,7 @@ export default function Users() {
         />
       </div>
       <div className="users-rows">
-        {usersRows && <RowsList rows={usersRows} />}
+        {usersList.rows && <RowsList rows={usersList.rows} />}
       </div>
       <div className="users-navigation">
         <NavigationBar />
