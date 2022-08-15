@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input, InputVariant, RowsListProps } from '..';
 import { IconVariant } from '../Icon/Icon';
 import { getRows } from '../../../pages/Users/Users';
@@ -11,11 +11,13 @@ type SearchProps = {
 
 export default function SearchUserForm({ url, setChange }: SearchProps) {
   const [search, setSearch] = useState('');
-  const fetchUsersList = async () => {
-    const lUsersList = await getRows(`${url}?search=${search}`);
-    setChange({ ...lUsersList });
-  };
-  fetchUsersList().catch((e) => console.error(e));
+  useEffect(() => {
+    const fetchUsersList = async () => {
+      const lUsersList = await getRows(`${url}?search=${search}`);
+      setChange({ ...lUsersList });
+    };
+    fetchUsersList().catch((e) => console.error(e));
+  }, [search, setChange, url]);
 
   return (
     <div className="search-form">
