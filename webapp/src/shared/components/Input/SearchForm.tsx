@@ -24,7 +24,7 @@ export default function SearchUserForm({ url, setChange }: SearchProps) {
       <Input
         variant={InputVariant.DARK}
         iconVariant={IconVariant.SEARCH}
-        placeholder="Search"
+        placeholder="search"
         value={search}
         name="search"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
