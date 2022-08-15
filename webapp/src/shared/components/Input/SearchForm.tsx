@@ -9,14 +9,14 @@ type SearchProps = {
   setChange: React.Dispatch<React.SetStateAction<RowsListProps>>;
 };
 
-export default function SearchUserForm({ url, setChange }: SearchProps) {
+export default function SearchForm({ url, setChange }: SearchProps) {
   const [search, setSearch] = useState('');
   useEffect(() => {
-    const fetchUsersList = async () => {
-      const lUsersList = await getRows(`${url}?search=${search}`);
-      setChange({ ...lUsersList });
+    const fetchRowsList = async () => {
+      const lRowsList = await getRows(`${url}?search=${search}`);
+      setChange({ ...lRowsList });
     };
-    fetchUsersList().catch((e) => console.error(e));
+    fetchRowsList().catch((e) => console.error(e));
   }, [search, setChange, url]);
 
   return (

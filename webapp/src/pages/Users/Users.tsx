@@ -4,7 +4,7 @@ import {
   NavigationBar,
   RowsList,
   RowsListProps,
-  SearchUserForm,
+  SearchForm,
   SmallAvatar,
 } from '../../shared/components';
 import { useEffect, useState } from 'react';
@@ -58,7 +58,7 @@ export function Users() {
         </Link>
       </div>
       <div className="users-search">
-        <SearchUserForm url={`${USERS_EP_URL}`} setChange={setUsersList} />
+        <SearchForm url={`${USERS_EP_URL}`} setChange={setUsersList} />
       </div>
       <div className="users-rows">
         {usersList.rows && <RowsList rows={usersList.rows} />}
