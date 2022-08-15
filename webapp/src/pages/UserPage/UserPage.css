@@ -9,6 +9,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
   grid-row-gap: 4rem;
+  overflow: scroll;
 }
 
 .user-wrapper {
@@ -75,10 +76,5 @@
 
   .user-page .button {
     grid-column: 1 / var(--column-end);
-  }
-}
-
-@media all and (min-width: 1200px) {
-  .user-page-navigation {
   }
 }

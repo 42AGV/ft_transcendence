@@ -16,16 +16,12 @@ import { instanceOfUser, User } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack, logout } from '../../shared/callbacks';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserPage() {
-  const [me, setMe] = useState<User>({
-    username: '',
-    email: '',
-    avatarId: null,
-    id: '',
-    createdAt: new Date(Date.now()),
-  });
+  const [me, setMe] = useState<User | null>(null);
   const result: User | null = useData<User>(USERS_EP_URL + '/me');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (result && instanceOfUser(result)) {
@@ -33,11 +29,17 @@ export default function UserPage() {
     }
   }, [result]);
 
-  return (
+  return me === null ? (
+    <div className="user-page">
+      <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
+        Loading...
+      </Text>
+    </div>
+  ) : (
     <div className="user-page">
       <Header
         navigationFigure={IconVariant.ARROW_BACK}
-        onClick={goBack}
+        onClick={goBack(navigate)}
         statusVariant="online"
       >
         {me.username}
@@ -45,7 +47,7 @@ export default function UserPage() {
       <div className="user-wrapper">
         <LargeAvatar
           url={
-            me && me.id !== ''
+            me.avatarId
               ? `${USERS_EP_URL}/${me.id}/avatar`
               : WILDCARD_AVATAR_URL
           }
@@ -76,7 +78,7 @@ export default function UserPage() {
       <Button
         variant={ButtonVariant.WARNING}
         iconVariant={IconVariant.LOGOUT}
-        onClick={logout}
+        onClick={logout(navigate)}
       >
         Logout
       </Button>
