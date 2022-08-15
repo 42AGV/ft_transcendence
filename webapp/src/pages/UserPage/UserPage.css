@@ -65,7 +65,7 @@
     height: 4.8rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 
   .user-wrapper .row {
