@@ -24,7 +24,8 @@ root.render(
         <Route path={USERS_URL} element={<Users />} />
         <Route path={PLAY_URL} element={<Play />} />
         <Route path={CHAT_URL} element={<Chat />} />
-        <Route path={USER_URL} element={<UserPage />} />
+        <Route path={USER_URL} element={<UserPage isMe={true} />} />
+        <Route path={`${USERS_URL}/:id`} element={<UserPage isMe={false} />} />
         {developmentMode && (
           <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
         )}
