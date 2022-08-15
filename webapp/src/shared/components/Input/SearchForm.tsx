@@ -1,4 +1,3 @@
-import { HookCallbacks } from 'async_hooks';
 import { useEffect, useState } from 'react';
 import { Input, InputVariant, RowsListProps } from '..';
 import { IconVariant } from '../Icon/Icon';
@@ -18,7 +17,7 @@ export default function SearchForm({ url, setChange, getValues }: SearchProps) {
       setChange({ ...lList });
     };
     fetchList().catch((e) => console.error(e));
-  }, [search, setChange, url]);
+  }, [search, setChange, url, getValues]);
 
   return (
     <div className="search-form">
