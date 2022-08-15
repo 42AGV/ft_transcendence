@@ -24,30 +24,29 @@ interface User {
   readonly createdAt: Date;
 }
 
-export const getRows = async (url: string): Promise<RowsListProps> => {
-  const users = (await fetch(url).then((response) => response.json())) ?? [];
-  return {
-    rows: users.map((user: User) => {
-      return {
-        iconVariant: IconVariant.ARROW_FORWARD,
-        avatarProps: {
-          url: user.avatarId
-            ? `${USERS_EP_URL}/${user.id}/avatar`
-            : WILDCARD_AVATAR_URL,
-          status: 'offline',
-        },
-        url: `${USERS_URL}/${user.username}`,
-        title: user.username,
-        subtitle: 'level x',
-        key: user.id,
-      };
-    }),
-  };
-};
-
-export function Users() {
+export default function Users() {
   const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
 
+  const getRows = async (url: string): Promise<RowsListProps> => {
+    const users = (await fetch(url).then((response) => response.json())) ?? [];
+    return {
+      rows: users.map((user: User) => {
+        return {
+          iconVariant: IconVariant.ARROW_FORWARD,
+          avatarProps: {
+            url: user.avatarId
+              ? `${USERS_EP_URL}/${user.id}/avatar`
+              : WILDCARD_AVATAR_URL,
+            status: 'offline',
+          },
+          url: `${USERS_URL}/${user.username}`,
+          title: user.username,
+          subtitle: 'level x',
+          key: user.id,
+        };
+      }),
+    };
+  };
   useEffect(() => {}, [usersList]);
 
   return (
@@ -58,7 +57,11 @@ export function Users() {
         </Link>
       </div>
       <div className="users-search">
-        <SearchForm url={`${USERS_EP_URL}`} setChange={setUsersList} />
+        <SearchForm
+          url={`${USERS_EP_URL}`}
+          setChange={setUsersList}
+          getValues={getRows}
+        />
       </div>
       <div className="users-rows">
         {usersList.rows && <RowsList rows={usersList.rows} />}

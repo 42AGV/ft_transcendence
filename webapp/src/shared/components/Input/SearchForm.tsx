@@ -1,22 +1,23 @@
+import { HookCallbacks } from 'async_hooks';
 import { useEffect, useState } from 'react';
 import { Input, InputVariant, RowsListProps } from '..';
 import { IconVariant } from '../Icon/Icon';
-import { getRows } from '../../../pages/Users/Users';
 import './SearchForm.css';
 
 type SearchProps = {
   url: string;
   setChange: React.Dispatch<React.SetStateAction<RowsListProps>>;
+  getValues: Function;
 };
 
-export default function SearchForm({ url, setChange }: SearchProps) {
+export default function SearchForm({ url, setChange, getValues }: SearchProps) {
   const [search, setSearch] = useState('');
   useEffect(() => {
-    const fetchRowsList = async () => {
-      const lRowsList = await getRows(`${url}?search=${search}`);
-      setChange({ ...lRowsList });
+    const fetchList = async () => {
+      const lList = await getValues(`${url}?search=${search}`);
+      setChange({ ...lList });
     };
-    fetchRowsList().catch((e) => console.error(e));
+    fetchList().catch((e) => console.error(e));
   }, [search, setChange, url]);
 
   return (
