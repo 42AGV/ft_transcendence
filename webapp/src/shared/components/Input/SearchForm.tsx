@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input, InputVariant } from '..';
 import { IconVariant } from '../Icon/Icon';
 import './SearchForm.css';
@@ -28,9 +28,11 @@ function useData<T>(url: string): T | null {
 export default function SearchForm<T>({ url, setChange }: SearchProps<T>) {
   const [search, setSearch] = useState('');
   const results: T | null = useData(`${url}${search}`);
-  if (results) {
-    setChange(results);
-  }
+  useEffect(() => {
+    if (results) {
+      setChange(results);
+    }
+  }, [results, setChange]);
 
   return (
     <div className="search-form">
