@@ -16,20 +16,27 @@ import { instanceOfUser, User } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack, logout } from '../../shared/callbacks';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export default function UserPage() {
-  const [me, setMe] = useState<User | null>(null);
-  const result: User | null = useData<User>(USERS_EP_URL + '/me');
+type UserPageProps = {
+  isMe: boolean;
+};
+
+export default function UserPage({ isMe = false }: UserPageProps) {
+  const param = useParams();
+  const [user, setUser] = useState<User | null>(null);
+  const result: User | null = useData<User>(
+    isMe ? `${USERS_EP_URL}/me` : `${USERS_EP_URL}/${param.id}`,
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
     if (result && instanceOfUser(result)) {
-      setMe(result);
+      setUser(result);
     }
   }, [result]);
 
-  return me === null ? (
+  return user === null ? (
     <div className="user-page">
       <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
         Loading...
@@ -42,13 +49,13 @@ export default function UserPage() {
         onClick={goBack(navigate)}
         statusVariant="online"
       >
-        {me.username}
+        {user.username}
       </Header>
       <div className="user-wrapper">
         <LargeAvatar
           url={
-            me.avatarId
-              ? `${USERS_EP_URL}/${me.id}/avatar`
+            user.avatarId
+              ? `${USERS_EP_URL}/${user.id}/avatar`
               : WILDCARD_AVATAR_URL
           }
           caption="level 4"
@@ -59,29 +66,33 @@ export default function UserPage() {
             color={TextColor.LIGHT} // at least for desktop
             weight={TextWeight.MEDIUM}
           >
-            {me.username}
+            {user.username}
           </Text>
           <Text
             variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
             color={TextColor.LIGHT} // at least for desktop
             weight={TextWeight.MEDIUM}
           >
-            {me.email}
+            {user.email}
           </Text>
         </div>
-        <Row
-          iconVariant={IconVariant.EDIT}
-          url={USER_URL + '/edit'}
-          title="Edit profile"
-        />
+        {isMe && (
+          <Row
+            iconVariant={IconVariant.EDIT}
+            url={USER_URL + '/edit'}
+            title="Edit profile"
+          />
+        )}
       </div>
-      <Button
-        variant={ButtonVariant.WARNING}
-        iconVariant={IconVariant.LOGOUT}
-        onClick={logout(navigate)}
-      >
-        Logout
-      </Button>
+      {isMe && (
+        <Button
+          variant={ButtonVariant.WARNING}
+          iconVariant={IconVariant.LOGOUT}
+          onClick={logout(navigate)}
+        >
+          Logout
+        </Button>
+      )}
     </div>
   );
 }
