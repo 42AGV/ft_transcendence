@@ -31,7 +31,7 @@ export default function UserPage() {
     if (result && instanceOfUser(result)) {
       setMe(result);
     }
-  });
+  }, [result]);
 
   return (
     <div className="user-page">
