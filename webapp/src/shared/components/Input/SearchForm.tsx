@@ -1,23 +1,36 @@
 import { useEffect, useState } from 'react';
-import { Input, InputVariant, RowsListProps } from '..';
+import { Input, InputVariant } from '..';
 import { IconVariant } from '../Icon/Icon';
 import './SearchForm.css';
 
-type SearchProps = {
+type SearchProps<T> = {
   url: string;
-  setChange: React.Dispatch<React.SetStateAction<RowsListProps>>;
-  getValues: Function;
+  setChange: React.Dispatch<React.SetStateAction<T>>;
 };
 
-export default function SearchForm({ url, setChange, getValues }: SearchProps) {
-  const [search, setSearch] = useState('');
+function useData<T>(url: string): T | null {
+  const [data, setData] = useState<T | null>(null);
   useEffect(() => {
-    const fetchList = async () => {
-      const lList = await getValues(`${url}?search=${search}`);
-      setChange({ ...lList });
+    let ignore = false;
+    fetch(url)
+      .then((response) => response.json())
+      .then((json) => {
+        if (!ignore) {
+          setData(json);
+        }
+      });
+    return () => {
+      ignore = true;
     };
-    fetchList().catch((e) => console.error(e));
-  }, [search, setChange, url, getValues]);
+  }, [url]);
+  return data;
+}
+export default function SearchForm<T>({ url, setChange }: SearchProps<T>) {
+  const [search, setSearch] = useState('');
+  const results: T | null = useData(`${url}${search}`);
+  if (results) {
+    setChange(results);
+  }
 
   return (
     <div className="search-form">
