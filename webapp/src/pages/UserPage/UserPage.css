@@ -1,0 +1,80 @@
+.user-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  grid-column-gap: var(--column-gap);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-row-gap: 4rem;
+  overflow: scroll;
+}
+
+.user-wrapper {
+  height: 24.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.user-wrapper .user-text {
+  height: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.user-wrapper .user-text > * {
+  margin: 0;
+}
+
+.user-page .button {
+  justify-self: center;
+}
+
+@media all and (min-width: 768px) {
+  .user-page {
+    display: grid;
+    grid-template-columns: repeat(var(--column-number), 1fr);
+    grid-template-rows: auto 1fr auto;
+    grid-row-gap: 8rem; /* this size doesn't look like in figma */
+  }
+  .user-page .header {
+    grid-column: 1 / var(--column-end);
+  }
+
+  .user-wrapper {
+    height: 10.2rem;
+    grid-column: 3 / calc(var(--column-end) - 1);
+    grid-row: 2/3;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: var(--column-gap);
+    grid-row-gap: 2.2rem;
+  }
+
+  .user-wrapper .avatar-large {
+    grid-column: 1 / 4;
+    grid-row: 1/3;
+  }
+
+  .user-wrapper .user-text {
+    grid-column: 5 / 10;
+    height: 4.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  .user-wrapper .row {
+    grid-column: 5 / 9;
+    grid-row: 2 / 3;
+  }
+
+  .user-page .button {
+    grid-column: 1 / var(--column-end);
+  }
+}

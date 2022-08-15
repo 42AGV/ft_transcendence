@@ -15,6 +15,7 @@
 }
 
 .avatar-large {
+  margin: 0;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -31,14 +32,14 @@
 }
 
 .avatar-large__image {
-  width: 200px;
-  height: 200px;
+  width: 10rem;
+  height: 10rem;
   padding: 0.35rem;
 }
 
 .avatar-small__image {
-  width: 50px;
-  height: 50px;
+  width: 3.15rem;
+  height: 3.15rem;
   padding: 0.15rem;
 }
 

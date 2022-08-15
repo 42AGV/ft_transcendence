@@ -15,13 +15,10 @@ import {
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { Link } from 'react-router-dom';
+import { instanceOfArrayTyped, instanceOfUser, User } from '../../shared/types';
 
-interface User {
-  readonly username: string;
-  readonly email: string;
-  readonly avatarId: string | null;
-  readonly id: string;
-  readonly createdAt: Date;
+function instanceOfUserArray(value: object): boolean {
+  return instanceOfArrayTyped(value, instanceOfUser);
 }
 
 const mapUsersToRows = (users: User[]): RowItem[] => {
@@ -56,7 +53,9 @@ export default function Users() {
         <SearchForm url={`${USERS_EP_URL}?search=`} setChange={setUsers} />
       </div>
       <div className="users-rows">
-        <RowsList rows={mapUsersToRows(users)} />
+        {instanceOfUserArray(users) && (
+          <RowsList rows={mapUsersToRows(users)} />
+        )}
       </div>
       <div className="users-navigation">
         <NavigationBar />
