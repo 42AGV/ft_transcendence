@@ -9,13 +9,11 @@ export enum Color {
 }
 
 export function instanceOfArrayTyped(
-  value: object,
+  array: object,
   elementChecker: (object: any) => boolean,
 ): boolean {
-  if (!Array.isArray(value)) {
+  if (!Array.isArray(array)) {
     return false;
   }
-  return value.every((user) => {
-    return elementChecker(user);
-  });
+  return array.every((element) => elementChecker(element));
 } /* maybe this one shouldn't be here */
