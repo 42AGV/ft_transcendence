@@ -43,18 +43,14 @@ export default function UserPage() {
         {me.username}
       </Header>
       <div className="user-wrapper">
-        {me.id ? (
-          <LargeAvatar
-            url={
-              me.id !== ''
-                ? `${USERS_EP_URL}/${me.id}/avatar`
-                : WILDCARD_AVATAR_URL
-            }
-            caption="level 4"
-          />
-        ) : (
-          <></>
-        )}
+        <LargeAvatar
+          url={
+            me && me.id !== ''
+              ? `${USERS_EP_URL}/${me.id}/avatar`
+              : WILDCARD_AVATAR_URL
+          }
+          caption="level 4"
+        />
         <div className="user-text">
           <Text
             variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
