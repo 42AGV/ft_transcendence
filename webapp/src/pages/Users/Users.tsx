@@ -53,7 +53,9 @@ export default function Users() {
         <SearchForm url={`${USERS_EP_URL}?search=`} setChange={setUsers} />
       </div>
       <div className="users-rows">
-        <RowsList rows={mapUsersToRows(users)} />
+        {instanceOfUserArray(users) && (
+          <RowsList rows={mapUsersToRows(users)} />
+        )}
       </div>
       <div className="users-navigation">
         <NavigationBar />

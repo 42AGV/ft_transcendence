@@ -15,19 +15,23 @@ import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { instanceOfUser, User } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack, logout } from '../../shared/callbacks';
+import { useEffect, useState } from 'react';
 
 export default function UserPage() {
-  const me = useData<User>(
-    USERS_EP_URL + '/me',
-    {
-      username: 'placeholder-name',
-      email: '',
-      avatarId: null,
-      id: '',
-      createdAt: new Date(Date.now()),
-    },
-    instanceOfUser,
-  );
+  const [me, setMe] = useState<User>({
+    username: '',
+    email: '',
+    avatarId: null,
+    id: '',
+    createdAt: new Date(Date.now()),
+  });
+  const result: User | null = useData<User>(USERS_EP_URL + '/me');
+
+  useEffect(() => {
+    if (result && instanceOfUser(result)) {
+      setMe(result);
+    }
+  });
 
   return (
     <div className="user-page">
@@ -64,7 +68,7 @@ export default function UserPage() {
             color={TextColor.LIGHT} // at least for desktop
             weight={TextWeight.MEDIUM}
           >
-            wcroix@fuckingawesome.com
+            {me.email}
           </Text>
         </div>
         <Row
