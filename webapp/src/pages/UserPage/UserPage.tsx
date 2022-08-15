@@ -12,11 +12,11 @@ import {
   TextWeight,
 } from '../../shared/components';
 import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
-import { instanceOfUser, User } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack, logout } from '../../shared/callbacks';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { instanceOfUser, User } from '../../shared/generated';
 
 type UserPageProps = {
   isMe: boolean;

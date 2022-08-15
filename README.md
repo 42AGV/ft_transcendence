@@ -138,6 +138,10 @@ After a config file change, please run the following command to recreate the ima
 docker compose up --build -d -V
 ```
 
+We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated`. Please don't modify them manually.
+
+After updating the OpenAPI specification of the transcendence-app, you can execute the `generate-openapi.sh` script.
+
 ## 🔧 Running the tests <a name = "tests"></a>
 
 Change the working directory to `webapp` or `transcendence-app`

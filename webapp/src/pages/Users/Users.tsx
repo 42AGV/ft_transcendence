@@ -15,7 +15,8 @@ import {
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { Link } from 'react-router-dom';
-import { instanceOfArrayTyped, instanceOfUser, User } from '../../shared/types';
+import { instanceOfArrayTyped } from '../../shared/types';
+import { instanceOfUser, User } from '../../shared/generated';
 
 function instanceOfUserArray(value: object): boolean {
   return instanceOfArrayTyped(value, instanceOfUser);
