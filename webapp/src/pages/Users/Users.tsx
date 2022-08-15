@@ -24,39 +24,31 @@ interface User {
   readonly createdAt: Date;
 }
 
-export default function Users() {
-  const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
-  const [search, setSearch] = useState('');
-
-  const getRows = async (url: string): Promise<RowsListProps> => {
-    const users = (await fetch(url).then((response) => response.json())) ?? [];
-    return {
-      rows: users.map((user: User) => {
-        return {
-          iconVariant: IconVariant.ARROW_FORWARD,
-          avatarProps: {
-            url: user.avatarId
-              ? `${USERS_EP_URL}/${user.id}/avatar`
-              : WILDCARD_AVATAR_URL,
-            status: 'offline',
-          },
-          url: `${USERS_URL}/${user.username}`,
-          title: user.username,
-          subtitle: 'level x',
-          key: user.id,
-        };
-      }),
-    };
+export const getRows = async (url: string): Promise<RowsListProps> => {
+  const users = (await fetch(url).then((response) => response.json())) ?? [];
+  return {
+    rows: users.map((user: User) => {
+      return {
+        iconVariant: IconVariant.ARROW_FORWARD,
+        avatarProps: {
+          url: user.avatarId
+            ? `${USERS_EP_URL}/${user.id}/avatar`
+            : WILDCARD_AVATAR_URL,
+          status: 'offline',
+        },
+        url: `${USERS_URL}/${user.username}`,
+        title: user.username,
+        subtitle: 'level x',
+        key: user.id,
+      };
+    }),
   };
+};
 
-  useEffect(() => {
-    const fetchUsersList = async () => {
-      const lUsersList = await getRows(`${USERS_EP_URL}?search=${search}`);
-      setUsersList({ ...lUsersList });
-      return lUsersList;
-    };
-    fetchUsersList().catch((e) => console.error(e));
-  }, [search]);
+export function Users() {
+  const [usersList, setUsersList] = useState<RowsListProps>({ rows: [] });
+
+  useEffect(() => {}, [usersList]);
 
   return (
     <div className="users">
@@ -66,7 +58,7 @@ export default function Users() {
         </Link>
       </div>
       <div className="users-search">
-        <SearchUserForm search={search} setSearch={setSearch} />
+        <SearchUserForm url={`${USERS_EP_URL}`} setChange={setUsersList} />
       </div>
       <div className="users-rows">
         {usersList.rows && <RowsList rows={usersList.rows} />}
