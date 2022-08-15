@@ -31,7 +31,7 @@ const mapUsersToRows = (users: User[]): RowItem[] => {
           : WILDCARD_AVATAR_URL,
         status: 'offline',
       },
-      url: `${USERS_URL}/${user.username}`,
+      url: `${USERS_URL}/${user.id}`,
       title: user.username,
       subtitle: 'level x',
       key: user.id,
