@@ -66,7 +66,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
             color={TextColor.LIGHT} // at least for desktop
             weight={TextWeight.MEDIUM}
           >
-            {user.username}
+            {user.fullName}
           </Text>
           <Text
             variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
