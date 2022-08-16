@@ -78,7 +78,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
         </div>
         {isMe && (
           <Row
-            iconVariant={IconVariant.EDIT}
+            iconVariant={IconVariant.USERS}
             url={USER_URL + '/edit'}
             title="Edit profile"
           />
