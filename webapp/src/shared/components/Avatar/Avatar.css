@@ -25,7 +25,7 @@
 
 .avatar-small__image-wrapper,
 .avatar-large__image-wrapper {
-  border-radius: 50%;
+  z-index: 1;
   display: flex;
   justify-content: center;
   margin: 0.25rem;
@@ -42,10 +42,25 @@
   height: 3.15rem;
   padding: 0.15rem;
 }
-
-.avatar-large__image,
+.avatar-large__image {
+  --radius: 6vh;
+}
 .avatar-small__image {
-  border-radius: 50%;
+  --radius: 2.5vh;
+}
+.avatar-large__image,
+.avatar-small__image {.avatar-large__image {
+  --radius: 6vh;
+}
+  object-fit: cover;
+  object-position: 3px 10px;
+  -webkit-mask-image: radial-gradient(
+    circle var(--radius) at center,
+    #000 0,
+    #000 99%,
+    transparent 100%
+  );
+  -webkit-transform: scale(2);
 }
 
 .avatar-large__edit {
