@@ -36,6 +36,12 @@ export interface UserDto {
      * @type {string}
      * @memberof UserDto
      */
+    fullName: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
     avatarId: string | null;
 }
 
@@ -46,6 +52,7 @@ export function instanceOfUserDto(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "username" in value;
     isInstance = isInstance && "email" in value;
+    isInstance = isInstance && "fullName" in value;
     isInstance = isInstance && "avatarId" in value;
 
     return isInstance;
@@ -63,6 +70,7 @@ export function UserDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): U
         
         'username': json['username'],
         'email': json['email'],
+        'fullName': json['fullName'],
         'avatarId': json['avatarId'],
     };
 }
@@ -78,6 +86,7 @@ export function UserDtoToJSON(value?: UserDto | null): any {
         
         'username': value.username,
         'email': value.email,
+        'fullName': value.fullName,
         'avatarId': value.avatarId,
     };
 }
