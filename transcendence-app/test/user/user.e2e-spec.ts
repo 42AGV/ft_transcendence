@@ -12,6 +12,7 @@ import { UserDto } from '../../src/user/dto/user.dto';
 const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
+  fullName: 'user',
   avatarId: null,
 };
 const testUserId = uuidv4();
@@ -73,6 +74,7 @@ describe('[Feature] User - /users', () => {
         .send({
           username: 'user' + i,
           email: i + 'afgv@github.com',
+          fullName: 'user' + i,
           avatarId: null,
         });
     }
