@@ -53,9 +53,10 @@ export class Api42Service {
   ): Promise<{ userDto: UserDto; avatarUrl: string }> {
     const data = await this.fetch42UserData(accessToken);
     const userDto: UserDto = {
-      avatarId: null,
       username: data.login,
       email: data.email,
+      fullName: data.usual_full_name,
+      avatarId: null,
     };
 
     await Api42Service.validate42ApiResponse(userDto);
