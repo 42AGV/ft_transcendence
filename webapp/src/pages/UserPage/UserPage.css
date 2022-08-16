@@ -39,14 +39,14 @@
     display: grid;
     grid-template-columns: repeat(var(--column-number), 1fr);
     grid-template-rows: auto 1fr auto;
-    grid-row-gap: 8rem; /* this size doesn't look like in figma */
+    grid-row-gap: 20%; /* this size doesn't look like in figma */
   }
   .user-page .header {
     grid-column: 1 / var(--column-end);
   }
 
   .user-wrapper {
-    height: 10.2rem;
+    height: calc(100vh * 0.254);
     grid-column: 3 / calc(var(--column-end) - 1);
     grid-row: 2/3;
     display: grid;
@@ -57,6 +57,8 @@
   }
 
   .user-wrapper .avatar-large {
+    justify-self: left;
+    align-self: flex-start;
     grid-column: 1 / 4;
     grid-row: 1/3;
   }
