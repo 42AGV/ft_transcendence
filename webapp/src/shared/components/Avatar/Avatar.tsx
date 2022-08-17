@@ -7,6 +7,8 @@ import { Color } from '../../types';
 export type AvatarProps = {
   url: string;
   status?: StatusVariant;
+  XCoordinate?: number;
+  YCoordinate?: number;
 };
 
 type LargeAvatarProps = AvatarProps & {
@@ -14,13 +16,31 @@ type LargeAvatarProps = AvatarProps & {
   caption?: string;
 };
 
-export function SmallAvatar({ url, status }: AvatarProps) {
+export function SmallAvatar({
+  url,
+  status,
+  XCoordinate,
+  YCoordinate,
+}: AvatarProps) {
+  const position =
+    XCoordinate && YCoordinate
+      ? {
+          objectPosition: `${XCoordinate}px ${YCoordinate}px`,
+        }
+      : {
+          objectPosition: '0 0',
+        };
   return (
     <div className="avatar-small">
       <figure
         className={`avatar-small__image-wrapper  avatar-status--${status}`}
       >
-        <img src={url} alt={url} className="avatar-small__image" />
+        <img
+          src={url}
+          alt={url}
+          className="avatar-small__image"
+          style={position}
+        />
       </figure>
     </div>
   );
@@ -31,9 +51,19 @@ export function LargeAvatar({
   status,
   edit = false,
   caption,
+  XCoordinate,
+  YCoordinate,
 }: LargeAvatarProps) {
   const statusClass = status ? `avatar-status--${status}` : '';
 
+  const position =
+    XCoordinate && YCoordinate
+      ? {
+          objectPosition: `${XCoordinate}px ${YCoordinate}px`,
+        }
+      : {
+          objectPosition: '0 0',
+        };
   return (
     <figure className="avatar-large">
       {edit && (
@@ -46,7 +76,12 @@ export function LargeAvatar({
         </div>
       )}
       <div className={`avatar-large__image-wrapper  ${statusClass}`}>
-        <img src={url} alt={url} className="avatar-large__image" />
+        <img
+          src={url}
+          alt={url}
+          className="avatar-large__image"
+          style={position}
+        />
       </div>
       {caption && (
         <figcaption className="avatar-large__caption caption-regular">

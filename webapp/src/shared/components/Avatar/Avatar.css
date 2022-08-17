@@ -36,13 +36,11 @@
 .avatar-large__image {
   width: 10rem;
   height: 10rem;
-  padding: 0.35rem;
 }
 
 .avatar-small__image {
   width: 3.22rem;
   height: 3.22rem;
-  padding: 0.15rem;
 }
 
 :root {
@@ -65,11 +63,10 @@
 .avatar-large__image,
 .avatar-small__image {
   object-fit: cover;
-  object-position: var(--x) var(--y);
   -webkit-mask-image: radial-gradient(
     circle calc(var(--radius) * 0.3) at center,
     #000 0,
-    #000 99%,
+    #000 97%,
     transparent 100%
   );
 }
