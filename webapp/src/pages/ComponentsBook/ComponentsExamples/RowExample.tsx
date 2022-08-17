@@ -12,7 +12,7 @@ export const RowExample = () => (
         avatarProps={{ url: randomAvatar, status: 'playing' }}
         onClick={buttonAction}
         title="John Doe"
-        subtitle="level 3"
+        subtitle="Ejlg 3"
       />
     </BookSubsection>
     <BookSubsection title="Only title and icon configured">

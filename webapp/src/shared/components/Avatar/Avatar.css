@@ -25,6 +25,8 @@
 
 .avatar-small__image-wrapper,
 .avatar-large__image-wrapper {
+  border-radius: 50%;
+  -webkit-transform: scale(0.86);
   z-index: 1;
   display: flex;
   justify-content: center;
@@ -52,13 +54,13 @@
   --x: var(--root-avatar-x);
   --y: var(--root-avatar-y);
   --radius: 10rem;
-  -webkit-transform: scale(1);
+  -webkit-transform: scale(1.55);
 }
 .avatar-small__image {
   --x: calc(var(--root-avatar-x) * 0.333333);
   --y: calc(var(--root-avatar-y) * 0.25);
   --radius: 3.15rem;
-  -webkit-transform: scale(1);
+  -webkit-transform: scale(1.55);
 }
 .avatar-large__image,
 .avatar-small__image {
