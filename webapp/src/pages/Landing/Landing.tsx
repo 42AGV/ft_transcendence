@@ -38,7 +38,7 @@ export default function Landing() {
       <div className="landing-login-button">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => (window.location.href = LOGIN_EP_URL)}
+          onClick={() => (window.location.replace(LOGIN_EP_URL))}
         >
           Login
         </Button>
