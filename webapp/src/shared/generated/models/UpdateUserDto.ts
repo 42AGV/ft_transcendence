@@ -24,6 +24,12 @@ export interface UpdateUserDto {
      * @type {string}
      * @memberof UpdateUserDto
      */
+    fullName?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserDto
+     */
     email?: string;
 }
 
@@ -46,6 +52,7 @@ export function UpdateUserDtoFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
+        'fullName': !exists(json, 'fullName') ? undefined : json['fullName'],
         'email': !exists(json, 'email') ? undefined : json['email'],
     };
 }
@@ -59,6 +66,7 @@ export function UpdateUserDtoToJSON(value?: UpdateUserDto | null): any {
     }
     return {
         
+        'fullName': value.fullName,
         'email': value.email,
     };
 }
