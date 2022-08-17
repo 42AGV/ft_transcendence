@@ -1,66 +1,98 @@
-import './Users.css';
+import './UserPage.css';
 import {
+  Button,
+  ButtonVariant,
+  Header,
   IconVariant,
-  NavigationBar,
-  RowItem,
-  RowsList,
-  SearchForm,
-  SmallAvatar,
+  LargeAvatar,
+  Row,
+  Text,
+  TextColor,
+  TextVariant,
+  TextWeight,
 } from '../../shared/components';
-import { useState } from 'react';
-import {
-  USER_URL,
-  USERS_EP_URL,
-  USERS_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
-import { Link } from 'react-router-dom';
-import { instanceOfArrayTyped } from '../../shared/types';
+import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { useData } from '../../shared/hooks/UseData';
+import { goBack, logout } from '../../shared/callbacks';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { instanceOfUser, User } from '../../shared/generated';
 
-function instanceOfUserArray(value: object): boolean {
-  return instanceOfArrayTyped(value, instanceOfUser);
-}
-
-const mapUsersToRows = (users: User[]): RowItem[] => {
-  return users.map((user) => {
-    return {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: {
-        url: user.avatarId
-          ? `${USERS_EP_URL}/${user.id}/avatar`
-          : WILDCARD_AVATAR_URL,
-        status: 'offline',
-      },
-      url: `${USERS_URL}/${user.id}`,
-      title: user.username,
-      subtitle: 'level x',
-      key: user.id,
-    };
-  });
+type UserPageProps = {
+  isMe: boolean;
 };
 
-export default function Users() {
-  const [users, setUsers] = useState<User[]>([]);
+export default function UserPage({ isMe = false }: UserPageProps) {
+  const param = useParams();
+  const [user, setUser] = useState<User | null>(null);
+  const result: User | null = useData<User>(
+    isMe ? `${USERS_EP_URL}/me` : `${USERS_EP_URL}/${param.id}`,
+  );
+  const navigate = useNavigate();
 
-  return (
-    <div className="users">
-      <div className="users-avatar">
-        <Link to={USER_URL}>
-          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
-        </Link>
-      </div>
-      <div className="users-search">
-        <SearchForm url={`${USERS_EP_URL}?search=`} setChange={setUsers} />
-      </div>
-      <div className="users-rows">
-        {instanceOfUserArray(users) && (
-          <RowsList rows={mapUsersToRows(users)} />
+  useEffect(() => {
+    if (result && instanceOfUser(result)) {
+      setUser(result);
+    }
+  }, [result]);
+
+  return user === null ? (
+    <div className="user-page">
+      <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
+        Loading...
+      </Text>
+    </div>
+  ) : (
+    <div className="user-page">
+      <Header
+        navigationFigure={IconVariant.ARROW_BACK}
+        onClick={goBack(navigate)}
+        statusVariant="online"
+      >
+        {user.username}
+      </Header>
+      <div className="user-wrapper">
+        <LargeAvatar
+          url={
+            user.avatarId
+              ? `${USERS_EP_URL}/${user.id}/avatar`
+              : WILDCARD_AVATAR_URL
+          }
+          caption="level 4"
+        />
+        <div className="user-text">
+          <Text
+            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
+            color={TextColor.LIGHT} // at least for desktop
+            weight={TextWeight.MEDIUM}
+          >
+            {user.fullName}
+          </Text>
+          <Text
+            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
+            color={TextColor.LIGHT} // at least for desktop
+            weight={TextWeight.MEDIUM}
+          >
+            {user.email}
+          </Text>
+        </div>
+        {isMe && (
+          <Row
+            iconVariant={IconVariant.USERS}
+            url={USER_URL + '/edit'}
+            title="Edit profile"
+          />
         )}
       </div>
-      <div className="users-navigation">
-        <NavigationBar />
-      </div>
+      {isMe && (
+        <Button
+          variant={ButtonVariant.WARNING}
+          iconVariant={IconVariant.LOGOUT}
+          onClick={logout(navigate)}
+        >
+          Logout
+        </Button>
+      )}
     </div>
   );
 }

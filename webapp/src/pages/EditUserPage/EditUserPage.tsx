@@ -1,44 +1,31 @@
 import './EditUserPage.css';
 import {
-  Button,
-  ButtonVariant,
   EditUserForm,
   Header,
   IconVariant,
   LargeAvatar,
-  Row,
   Text,
-  TextColor,
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import { goBack, logout } from '../../shared/callbacks';
+import { goBack } from '../../shared/callbacks';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { instanceOfUser, User } from '../../shared/generated';
 
 export default function EditUserPage() {
-  // const param = useParams();
-  // const [user, setUser] = useState<User | null>(null);
-  // const result: User | null = useData<User>(
-  //   isMe ? `${USERS_EP_URL}/me` : `${USERS_EP_URL}/${param.id}`,
-  // );
+  const [user, setUser] = useState<User | null>(null);
+  const result: User | null = useData<User>(`${USERS_EP_URL}/me`);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (result && instanceOfUser(result)) {
-  //     setUser(result);
-  //   }
-  // }, [result]);
-  const user = {
-    id: 'cdb63720-9628-5ef6-bbca-2e5ce6094f3c',
-    createdAt: new Date(Date.now()),
-    avatarId: null,
-    username: 'aollero',
-    email: 'aollero@student.42madrid.com',
-  };
+  useEffect(() => {
+    if (result && instanceOfUser(result)) {
+      setUser(result);
+    }
+  }, [result]);
+
   return user === null ? (
     <div className="edit-user-page">
       <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>

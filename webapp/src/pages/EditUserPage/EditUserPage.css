@@ -21,6 +21,20 @@
   justify-content: space-between;
 }
 
+.form-container .edit-user-form {
+  width: 23rem;
+  height: 100vh;
+  color: var(--color-light);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-container .edit-user-form .inputs-container {
+  width: 100%;
+}
+
 @media all and (min-width: 768px) {
   .edit-user-page {
     display: grid;
@@ -36,14 +50,13 @@
   .avatar-large {
     grid-column: 3/6;
     grid-row: 2/3;
+    align-self: start;
   }
-
   .form-container {
-    grid-column: 5/10;
-    height: 4.8rem;
+    grid-column: 7/12;
   }
   .form-container .edit-user-form .button {
-    grid-column: 3/7;
-    grid-row: 2;
+    display: flex;
+    align-self: flex-start;
   }
 }
