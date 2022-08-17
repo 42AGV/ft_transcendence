@@ -26,11 +26,8 @@
 .avatar-small__image-wrapper,
 .avatar-large__image-wrapper {
   border-radius: 50%;
-  -webkit-transform: scale(0.86);
-  z-index: 1;
   display: flex;
   justify-content: center;
-  margin: 0.25rem;
 }
 
 .avatar-large__image {
