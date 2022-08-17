@@ -1,105 +1,66 @@
-import './UserPage.css';
+import './Users.css';
 import {
-  Button,
-  ButtonVariant,
-  Header,
   IconVariant,
-  LargeAvatar,
-  Row,
-  Text,
-  TextColor,
-  TextVariant,
-  TextWeight,
+  NavigationBar,
+  RowItem,
+  RowsList,
+  SearchForm,
+  SmallAvatar,
 } from '../../shared/components';
-import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
-import { useData } from '../../shared/hooks/UseData';
-import { goBack, logout } from '../../shared/callbacks';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import {
+  USER_URL,
+  USERS_EP_URL,
+  USERS_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
+import { Link } from 'react-router-dom';
+import { instanceOfArrayTyped } from '../../shared/types';
 import { instanceOfUser, User } from '../../shared/generated';
 
-type UserPageProps = {
-  isMe: boolean;
+function instanceOfUserArray(value: object): boolean {
+  return instanceOfArrayTyped(value, instanceOfUser);
+}
+
+const mapUsersToRows = (users: User[]): RowItem[] => {
+  return users.map((user) => {
+    return {
+      iconVariant: IconVariant.ARROW_FORWARD,
+      avatarProps: {
+        url: user.avatarId
+          ? `${USERS_EP_URL}/${user.id}/avatar`
+          : WILDCARD_AVATAR_URL,
+        status: 'offline',
+      },
+      url: `${USERS_URL}/${user.id}`,
+      title: user.username,
+      subtitle: 'level x',
+      key: user.id,
+    };
+  });
 };
 
-export default function UserPage({ isMe = false }: UserPageProps) {
-  // const param = useParams();
-  // const [user, setUser] = useState<User | null>(null);
-  // const result: User | null = useData<User>(
-  //   isMe ? `${USERS_EP_URL}/me` : `${USERS_EP_URL}/${param.id}`,
-  // );
-  const navigate = useNavigate();
+export default function Users() {
+  const [users, setUsers] = useState<User[]>([]);
 
-  // useEffect(() => {
-  //   if (result && instanceOfUser(result)) {
-  //     setUser(result);
-  //   }
-  // }, [result]);
-  isMe = true;
-  const user = {
-    id: 'cdb63720-9628-5ef6-bbca-2e5ce6094f3c',
-    createdAt: new Date(Date.now()),
-    avatarId: null,
-    username: 'aollero',
-    email: 'aollero@student.42madrid.com',
-  };
-  return user === null ? (
-    <div className="user-page">
-      <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
-        Loading...
-      </Text>
-    </div>
-  ) : (
-    <div className="user-page">
-      <Header
-        navigationFigure={IconVariant.ARROW_BACK}
-        onClick={goBack(navigate)}
-        statusVariant="online"
-      >
-        {user.username}
-      </Header>
-      <div className="user-wrapper">
-        <LargeAvatar
-          url={
-            user.avatarId
-              ? `${USERS_EP_URL}/${user.id}/avatar`
-              : WILDCARD_AVATAR_URL
-          }
-          caption="level 4"
-        />
-        <div className="user-text">
-          <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
-            weight={TextWeight.MEDIUM}
-          >
-            {user.fullName}
-          </Text>
-          <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
-            weight={TextWeight.MEDIUM}
-          >
-            {user.email}
-          </Text>
-        </div>
-        {isMe && (
-          <Row
-            iconVariant={IconVariant.USERS}
-            url={USER_URL + '/edit'}
-            title="Edit profile"
-          />
+  return (
+    <div className="users">
+      <div className="users-avatar">
+        <Link to={USER_URL}>
+          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
+        </Link>
+      </div>
+      <div className="users-search">
+        <SearchForm url={`${USERS_EP_URL}?search=`} setChange={setUsers} />
+      </div>
+      <div className="users-rows">
+        {instanceOfUserArray(users) && (
+          <RowsList rows={mapUsersToRows(users)} />
         )}
       </div>
-      {isMe && (
-        <Button
-          variant={ButtonVariant.WARNING}
-          iconVariant={IconVariant.LOGOUT}
-          onClick={logout(navigate)}
-        >
-          Logout
-        </Button>
-      )}
+      <div className="users-navigation">
+        <NavigationBar />
+      </div>
     </div>
   );
 }
