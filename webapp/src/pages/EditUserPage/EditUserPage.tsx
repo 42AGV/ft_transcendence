@@ -1,7 +1,8 @@
-import './UserPage.css';
+import './EditUserPage.css';
 import {
   Button,
   ButtonVariant,
+  EditUserForm,
   Header,
   IconVariant,
   LargeAvatar,
@@ -18,11 +19,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { instanceOfUser, User } from '../../shared/generated';
 
-type UserPageProps = {
-  isMe: boolean;
-};
-
-export default function UserPage({ isMe = false }: UserPageProps) {
+export default function EditUserPage() {
   // const param = useParams();
   // const [user, setUser] = useState<User | null>(null);
   // const result: User | null = useData<User>(
@@ -35,7 +32,6 @@ export default function UserPage({ isMe = false }: UserPageProps) {
   //     setUser(result);
   //   }
   // }, [result]);
-  isMe = true;
   const user = {
     id: 'cdb63720-9628-5ef6-bbca-2e5ce6094f3c',
     createdAt: new Date(Date.now()),
@@ -44,62 +40,32 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     email: 'aollero@student.42madrid.com',
   };
   return user === null ? (
-    <div className="user-page">
+    <div className="edit-user-page">
       <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
         Loading...
       </Text>
     </div>
   ) : (
-    <div className="user-page">
+    <div className="edit-user-page">
       <Header
         navigationFigure={IconVariant.ARROW_BACK}
         onClick={goBack(navigate)}
-        statusVariant="online"
       >
-        {user.username}
+        edit profile
       </Header>
-      <div className="user-wrapper">
+      <div className="avatar-large">
         <LargeAvatar
           url={
             user.avatarId
               ? `${USERS_EP_URL}/${user.id}/avatar`
               : WILDCARD_AVATAR_URL
           }
-          caption="level 4"
+          edit={true}
         />
-        <div className="user-text">
-          <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
-            weight={TextWeight.MEDIUM}
-          >
-            {user.fullName}
-          </Text>
-          <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
-            weight={TextWeight.MEDIUM}
-          >
-            {user.email}
-          </Text>
-        </div>
-        {isMe && (
-          <Row
-            iconVariant={IconVariant.USERS}
-            url={USER_URL + '/edit'}
-            title="Edit profile"
-          />
-        )}
       </div>
-      {isMe && (
-        <Button
-          variant={ButtonVariant.WARNING}
-          iconVariant={IconVariant.LOGOUT}
-          onClick={logout(navigate)}
-        >
-          Logout
-        </Button>
-      )}
+      <div className="form-container">
+        <EditUserForm />
+      </div>
     </div>
   );
 }

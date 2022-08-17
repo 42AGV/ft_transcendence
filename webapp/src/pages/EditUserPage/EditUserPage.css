@@ -1,0 +1,49 @@
+.edit-user-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  grid-column-gap: var(--column-gap);
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-row-gap: 4rem;
+  overflow: scroll;
+}
+.edit-user-container {
+  height: 100%;
+}
+.form-container {
+  height: 24.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media all and (min-width: 768px) {
+  .edit-user-page {
+    display: grid;
+    grid-template-columns: repeat(var(--column-number), 1fr);
+    grid-template-rows: auto 1fr auto;
+    grid-row-gap: 8rem;
+  }
+  .edit-user-page .header {
+    grid-row: 1;
+    grid-column: 1 / var(--column-end);
+  }
+
+  .avatar-large {
+    grid-column: 3/6;
+    grid-row: 2/3;
+  }
+
+  .form-container {
+    grid-column: 5/10;
+    height: 4.8rem;
+  }
+  .form-container .edit-user-form .button {
+    grid-column: 3/7;
+    grid-row: 2;
+  }
+}

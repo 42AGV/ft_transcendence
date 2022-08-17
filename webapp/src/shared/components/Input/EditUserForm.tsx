@@ -14,26 +14,28 @@ export default function EditUserForm() {
   };
   return (
     <form className="edit-user-form" onSubmit={handleOnSubmit}>
-      <Input
-        variant={InputVariant.LIGHT}
-        label="Full Name"
-        placeholder="Full Name"
-        value={fullName}
-        name="fullName"
-        onChange={(e) => {
-          setFullName(e.target.value);
-        }}
-      />
-      <Input
-        variant={InputVariant.LIGHT}
-        label="Email"
-        placeholder="Email"
-        value={email}
-        name="email"
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
-      />
+      <div className="inputs-container">
+        <Input
+          variant={InputVariant.LIGHT}
+          label="Full Name"
+          placeholder="Full Name"
+          value={fullName}
+          name="fullName"
+          onChange={(e) => {
+            setFullName(e.target.value);
+          }}
+        />
+        <Input
+          variant={InputVariant.LIGHT}
+          label="Email"
+          placeholder="Email"
+          value={email}
+          name="email"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+        />
+      </div>
       <Button children="Save" variant={ButtonVariant.SUBMIT}></Button>
     </form>
   );

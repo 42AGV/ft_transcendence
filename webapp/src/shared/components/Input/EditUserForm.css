@@ -1,9 +1,15 @@
 .edit-user-form {
-  width: 19.5rem;
+  width: 23rem;
+  height: 100vh;
   color: var(--color-light);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
-
-.edit-user-form > .input {
-  display: inline-block;
+.inputs-container {
+  width: 100%;
+}
+.inputs-container > .input {
   margin-bottom: 0.875rem;
 }
