@@ -40,13 +40,13 @@ export default function EditUserPage() {
     email: 'aollero@student.42madrid.com',
   };
   return user === null ? (
-    <div className="user-page">
+    <div className="edit-user-page">
       <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
         Loading...
       </Text>
     </div>
   ) : (
-    <div className="user-page">
+    <div className="edit-user-page">
       <Header
         navigationFigure={IconVariant.ARROW_BACK}
         onClick={goBack(navigate)}
@@ -63,7 +63,7 @@ export default function EditUserPage() {
           edit={true}
         />
       </div>
-      <div className="edit-user">
+      <div className="form-container">
         <EditUserForm />
       </div>
     </div>
