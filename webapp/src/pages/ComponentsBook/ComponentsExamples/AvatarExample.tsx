@@ -1,7 +1,7 @@
 import { SmallAvatar, LargeAvatar } from '../../../shared/components';
 import { BookSection } from '../BookSection';
 
-const randomAvatar = 'https://i.pravatar.cc/1000';
+const randomAvatar = 'http://www.localhost/icons/grid.jpg';
 
 export const AvatarExample = () => (
   <BookSection title="Avatar component">

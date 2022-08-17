@@ -38,27 +38,38 @@
 }
 
 .avatar-small__image {
-  width: 3.15rem;
-  height: 3.15rem;
+  width: 3.22rem;
+  height: 3.22rem;
   padding: 0.15rem;
 }
+
+:root {
+  --root-avatar-x: 10px;
+  --root-avatar-y: 1px;
+}
+
 .avatar-large__image {
-  --radius: 6vh;
+  --x: var(--root-avatar-x);
+  --y: var(--root-avatar-y);
+  --radius: 10rem;
+  -webkit-transform: scale(1);
 }
 .avatar-small__image {
-  --radius: 2.5vh;
+  --x: calc(var(--root-avatar-x) * 0.333333);
+  --y: calc(var(--root-avatar-y) * 0.25);
+  --radius: 3.15rem;
+  -webkit-transform: scale(1);
 }
 .avatar-large__image,
 .avatar-small__image {
   object-fit: cover;
-  object-position: 3px 10px;
+  object-position: var(--x) var(--y);
   -webkit-mask-image: radial-gradient(
-    circle var(--radius) at center,
+    circle calc(var(--radius) * 0.3) at center,
     #000 0,
     #000 99%,
     transparent 100%
   );
-  -webkit-transform: scale(2);
 }
 
 .avatar-large__edit {
