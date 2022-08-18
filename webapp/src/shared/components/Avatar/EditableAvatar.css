@@ -11,14 +11,13 @@
 
 .editable-avatar__image {
   margin: 0;
-  width: 20rem;
-  height: 20rem;
-  --radius: 25rem;
+  width: 18rem;
+  height: 18rem;
   object-fit: cover;
   -webkit-mask-image: radial-gradient(
-    circle calc(var(--radius) * 0.3) at center,
-    #000 0,
-    #000 97%,
+    circle 5.5rem at center,
+    rgb(0, 0, 0, 1) 0,
+    rgb(0, 0, 0, 1) 97%,
     rgb(0, 0, 0, 0.5) 98%
   );
 }

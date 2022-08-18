@@ -12,6 +12,7 @@
 
 .avatar-small {
   display: flex;
+  position: relative;
   align-items: center;
   justify-content: center;
 }
@@ -37,17 +38,16 @@
   width: 10rem;
   height: 10rem;
   --radius: 10rem;
-  -webkit-transform: scale(1.55);
 }
 
 .avatar-small__image {
   width: 3.22rem;
   height: 3.22rem;
   --radius: 3.15rem;
-  -webkit-transform: scale(1.55);
 }
 .avatar-large__image,
 .avatar-small__image {
+  -webkit-transform: scale(1.55);
   object-fit: cover;
   -webkit-mask-image: radial-gradient(
     circle calc(var(--radius) * 0.3) at center,

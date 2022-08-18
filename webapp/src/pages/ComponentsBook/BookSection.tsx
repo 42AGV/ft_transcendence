@@ -20,8 +20,8 @@ type bookSubsectionProps = {
 
 const wrapExample = (elements: singleOrMultipleChildren) =>
   Array.isArray(elements) ? (
-    elements.map((el) => (
-      <div className="components-book__section__example-wrapper">{el}</div>
+    elements.map((el, index) => (
+      <div className="components-book__section__example-wrapper" key={index}>{el}</div>
     ))
   ) : (
     <div className="components-book__section__example-wrapper">{elements}</div>

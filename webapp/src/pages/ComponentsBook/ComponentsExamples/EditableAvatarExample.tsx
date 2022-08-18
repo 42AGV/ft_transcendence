@@ -8,8 +8,8 @@ const randomAvatar2 = WILDCARD_AVATAR_URL;
 const randomAvatar = 'http://localhost/icons/grid.jpg';
 
 export const EditableAvatarExample = () => {
-  const xCoord = 10;
-  const yCoord = 15;
+  const xCoord = 0;
+  const yCoord = 0;
   return (
     <BookSection title="Editable Avatar component">
       <EditableAvatar

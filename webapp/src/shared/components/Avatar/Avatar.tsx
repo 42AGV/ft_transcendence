@@ -25,7 +25,7 @@ export function SmallAvatar({
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${XCoordinate}px ${YCoordinate}px`,
+          objectPosition: `${XCoordinate * 0.25}px ${YCoordinate * 0.33}px`,
         }
       : {
           objectPosition: '0 0',
