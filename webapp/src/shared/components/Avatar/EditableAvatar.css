@@ -4,10 +4,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #63676d;
+  background-color: var(--color-light);
   justify-content: center;
   width: fit-content;
-  clip-path: inset(10px 10px 10px 10px);
+  clip-path: inset(0.55rem 0.55rem 0.55rem 0.55rem round 0.55rem);
 }
 
 .editable-avatar__image {
