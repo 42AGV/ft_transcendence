@@ -4,20 +4,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #63676d;
   justify-content: center;
-}
-
-.editable-avatar__image-wrapper {
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
+  width: fit-content;
 }
 
 .editable-avatar__image {
-  width: 10rem;
-  height: 10rem;
-  --radius: 10rem;
-  -webkit-transform: scale(2);
+  margin: 0;
+  width: 20rem;
+  height: 20rem;
+  --radius: 25rem;
   object-fit: cover;
   -webkit-mask-image: radial-gradient(
     circle calc(var(--radius) * 0.3) at center,

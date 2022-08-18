@@ -13,14 +13,12 @@ export function EditableAvatar({ url, XCoordinate, YCoordinate }: AvatarProps) {
         };
   return (
     <figure className="editable-avatar">
-      <div className="editable-avatar__image-wrapper">
-        <img
-          src={url}
-          alt={url}
-          className="editable-avatar__image"
-          style={position}
-        />
-      </div>
+      <img
+        src={url}
+        alt={url}
+        className="editable-avatar__image"
+        style={position}
+      />
     </figure>
   );
 }
