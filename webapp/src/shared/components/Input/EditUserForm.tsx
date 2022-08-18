@@ -14,22 +14,35 @@ export default function EditUserForm({
   const [fullName, setFullName] = useState(origFullName);
   const [email, setEmail] = useState(origEmail);
 
+  async function updateData() {
+    const requestOptions = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fullName,
+        email,
+      }),
+    };
+    await fetch('http://localhost:3000/api/v1/users', requestOptions);
+  }
+
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     let txt;
     if (
-      confirm(
+      window.confirm(
         `Your name: "${fullName}" and your email: "${email}".\n
         Is this correct?`,
       )
     ) {
-      txt = 'You pressed OK!';
+      txt = 'Your data has been saved';
+      updateData();
     } else {
-      txt = 'You pressed CANCEL!';
+      txt = 'Canceled!';
     }
     alert(txt);
-    setFullName('');
-    setEmail('');
   };
   return (
     <>
