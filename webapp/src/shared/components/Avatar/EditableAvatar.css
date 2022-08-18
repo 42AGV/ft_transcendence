@@ -7,6 +7,7 @@
   background-color: #63676d;
   justify-content: center;
   width: fit-content;
+  clip-path: inset(10px 10px 10px 10px);
 }
 
 .editable-avatar__image {
@@ -14,8 +15,10 @@
   width: 18rem;
   height: 18rem;
   object-fit: cover;
+  -webkit-transform: scale(1.45);
+  --radius: 5.5rem;
   -webkit-mask-image: radial-gradient(
-    circle 5.5rem at center,
+    circle calc(var(--radius)) at center,
     rgb(0, 0, 0, 1) 0,
     rgb(0, 0, 0, 1) 97%,
     rgb(0, 0, 0, 0.5) 98%
