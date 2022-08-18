@@ -1,0 +1,28 @@
+.editable-avatar {
+  margin: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.editable-avatar__image-wrapper {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+}
+
+.editable-avatar__image {
+  width: 10rem;
+  height: 10rem;
+  --radius: 10rem;
+  -webkit-transform: scale(2);
+  object-fit: cover;
+  -webkit-mask-image: radial-gradient(
+    circle calc(var(--radius) * 0.3) at center,
+    #000 0,
+    #000 97%,
+    rgb(0, 0, 0, 0.5) 98%
+  );
+}

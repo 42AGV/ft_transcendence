@@ -1,17 +1,8 @@
-import './Avatar.css';
+import './EditableAvatar.css';
 
 import { AvatarProps } from './Avatar';
 
-type EditableAvatar = AvatarProps;
-
-export function EditableAvatar({
-  url,
-  status,
-  XCoordinate,
-  YCoordinate,
-}: EditableAvatar) {
-  const statusClass = status ? `avatar-status--${status}` : '';
-
+export function EditableAvatar({ url, XCoordinate, YCoordinate }: AvatarProps) {
   const position =
     XCoordinate && YCoordinate
       ? {
@@ -21,12 +12,12 @@ export function EditableAvatar({
           objectPosition: '0 0',
         };
   return (
-    <figure className="avatar-large">
-      <div className={`avatar-large__image-wrapper  ${statusClass}`}>
+    <figure className="editable-avatar">
+      <div className="editable-avatar__image-wrapper">
         <img
           src={url}
           alt={url}
-          className="avatar-large__image"
+          className="editable-avatar__image"
           style={position}
         />
       </div>

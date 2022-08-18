@@ -34,18 +34,13 @@
 .avatar-large__image {
   width: 10rem;
   height: 10rem;
+  --radius: 10rem;
+  -webkit-transform: scale(1.55);
 }
 
 .avatar-small__image {
   width: 3.22rem;
   height: 3.22rem;
-}
-
-.avatar-large__image {
-  --radius: 10rem;
-  -webkit-transform: scale(1.55);
-}
-.avatar-small__image {
   --radius: 3.15rem;
   -webkit-transform: scale(1.55);
 }
