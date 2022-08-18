@@ -22,7 +22,6 @@
   align-self: end;
 }
 
-
 @media all and (min-width: 768px) {
   .edit-user-page {
     display: grid;
