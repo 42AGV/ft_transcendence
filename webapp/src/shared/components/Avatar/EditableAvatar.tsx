@@ -17,8 +17,8 @@ export function EditableAvatar({
   handleMouseMove,
   handleMouseUp,
 }: EditableAvatarProps) {
-  // console.log(XCoordinate);
-  // console.log(YCoordinate);
+  console.log(XCoordinate);
+  console.log(YCoordinate);
   const position =
     XCoordinate && YCoordinate
       ? {

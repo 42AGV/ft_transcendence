@@ -21,6 +21,7 @@ export const EditableAvatarExample = () => {
 
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag(startingPosition);
+  const factor = 0.3;
 
   return (
     <BookSection title="Editable Avatar component">
@@ -29,8 +30,8 @@ export const EditableAvatarExample = () => {
         handleMouseMove={handleMouseMove}
         handleMouseUp={handleMouseUp}
         url={randomAvatar}
-        XCoordinate={picturePosition.x / 10}
-        YCoordinate={picturePosition.y / 10}
+        XCoordinate={picturePosition.x * factor - 80}
+        YCoordinate={picturePosition.y * factor - 80}
       />
       <LargeAvatar
         url={randomAvatar}

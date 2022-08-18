@@ -12,6 +12,8 @@
 }
 
 .editable-avatar__image {
+  -webkit-user-drag: none;
+  user-drag: none;
   margin: 0;
   width: 18rem;
   height: 18rem;
