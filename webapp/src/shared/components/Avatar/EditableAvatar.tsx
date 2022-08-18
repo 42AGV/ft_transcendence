@@ -6,7 +6,7 @@ export function EditableAvatar({ url, XCoordinate, YCoordinate }: AvatarProps) {
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${XCoordinate}px ${YCoordinate}px`,
+          objectPosition: `${XCoordinate * 1.8}px ${YCoordinate * 1.8}px`,
         }
       : {
           objectPosition: '0 0',

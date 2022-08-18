@@ -8,6 +8,7 @@
   justify-content: center;
   width: fit-content;
   clip-path: inset(0.55rem 0.55rem 0.55rem 0.55rem round 0.55rem);
+  border: none;
 }
 
 .editable-avatar__image {
