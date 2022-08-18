@@ -13,30 +13,42 @@ export default function EditUserForm() {
     setEmail('');
   };
   return (
-    <form className="edit-user-form" onSubmit={handleOnSubmit}>
-      <div className="inputs-container">
-        <Input
-          variant={InputVariant.LIGHT}
-          label="Full Name"
-          placeholder="Full Name"
-          value={fullName}
-          name="fullName"
-          onChange={(e) => {
-            setFullName(e.target.value);
-          }}
-        />
-        <Input
-          variant={InputVariant.LIGHT}
-          label="Email"
-          placeholder="Email"
-          value={email}
-          name="email"
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        />
+    <>
+      <form
+        id="edit-user-form"
+        className="edit-user-form"
+        onSubmit={handleOnSubmit}
+      >
+        <div className="inputs-container">
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Full Name"
+            placeholder="Full Name"
+            value={fullName}
+            name="fullName"
+            onChange={(e) => {
+              setFullName(e.target.value);
+            }}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Email"
+            placeholder="Email"
+            value={email}
+            name="email"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+          />
+        </div>
+      </form>
+      <div className="edit-user-form-button">
+        <Button
+          form="edit-user-form"
+          children="Save"
+          variant={ButtonVariant.SUBMIT}
+        ></Button>
       </div>
-      <Button children="Save" variant={ButtonVariant.SUBMIT}></Button>
-    </form>
+    </>
   );
 }

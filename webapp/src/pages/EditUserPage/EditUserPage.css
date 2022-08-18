@@ -5,35 +5,23 @@
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  grid-column-gap: var(--column-gap);
+  gap: 4rem var(--column-gap);
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
-  grid-row-gap: 4rem;
+  grid-template-rows: auto auto 1fr auto;
   overflow: scroll;
 }
-.edit-user-container {
-  height: 100%;
-}
-.form-container {
-  height: 24.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+
+.edit-user-form {
+  min-width: 15rem;
+  max-width: 20rem;
+  justify-self: center;
 }
 
-.form-container .edit-user-form {
-  width: 23rem;
-  height: 100vh;
-  color: var(--color-light);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+.edit-user-form-button {
+  justify-self: center;
+  align-self: end;
 }
 
-.form-container .edit-user-form .inputs-container {
-  width: 100%;
-}
 
 @media all and (min-width: 768px) {
   .edit-user-page {
@@ -48,15 +36,24 @@
   }
 
   .avatar-large {
-    grid-column: 3/6;
+    grid-column: 2/6;
     grid-row: 2/3;
     align-self: start;
   }
-  .form-container {
+  .edit-user-form {
     grid-column: 7/12;
   }
-  .form-container .edit-user-form .button {
-    display: flex;
-    align-self: flex-start;
+  .edit-user-form-button {
+    grid-column: 5/9;
+  }
+}
+
+@media (min-width: 1024px) {
+  .avatar-large {
+    grid-column: 3/6;
+  }
+
+  .edit-user-form {
+    grid-column: 7/11;
   }
 }

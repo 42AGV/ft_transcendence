@@ -50,9 +50,7 @@ export default function EditUserPage() {
           edit={true}
         />
       </div>
-      <div className="form-container">
-        <EditUserForm />
-      </div>
+      <EditUserForm />
     </div>
   );
 }
