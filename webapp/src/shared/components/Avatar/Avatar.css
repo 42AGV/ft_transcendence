@@ -12,6 +12,8 @@
 
 .avatar-small {
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .avatar-large {
