@@ -2,13 +2,32 @@ import { useState } from 'react';
 import { Button, ButtonVariant, Input, InputVariant } from '../';
 import './EditUserForm.css';
 
-export default function EditUserForm() {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
+type EditUserProps = {
+  origFullName: string;
+  origEmail: string;
+};
+
+export default function EditUserForm({
+  origFullName,
+  origEmail,
+}: EditUserProps) {
+  const [fullName, setFullName] = useState(origFullName);
+  const [email, setEmail] = useState(origEmail);
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    alert(`Your name: "${fullName}" and your email: "${email}" were saved.`);
+    let txt;
+    if (
+      confirm(
+        `Your name: "${fullName}" and your email: "${email}".\n
+        Is this correct?`,
+      )
+    ) {
+      txt = 'You pressed OK!';
+    } else {
+      txt = 'You pressed CANCEL!';
+    }
+    alert(txt);
     setFullName('');
     setEmail('');
   };

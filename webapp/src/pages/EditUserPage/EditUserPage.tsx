@@ -50,7 +50,7 @@ export default function EditUserPage() {
           edit={true}
         />
       </div>
-      <EditUserForm />
+      <EditUserForm origFullName={user.fullName} origEmail={user.email} />
     </div>
   );
 }
