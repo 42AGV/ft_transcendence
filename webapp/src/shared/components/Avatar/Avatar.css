@@ -28,6 +28,7 @@
   border-radius: 50%;
   display: flex;
   justify-content: center;
+  margin: 0;
 }
 
 .avatar-large__image {
