@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Position } from '../components/Avatar/EditableAvatar';
+import { Position } from '../types';
 
 type DragInfo = {
   isDragging: boolean;

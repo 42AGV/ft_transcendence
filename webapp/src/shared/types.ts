@@ -8,6 +8,11 @@ export enum Color {
   DARK = 'text-color-dark',
 }
 
+export type Position = {
+  x: number;
+  y: number;
+};
+
 export function instanceOfArrayTyped(
   array: object,
   elementChecker: (object: any) => boolean,
