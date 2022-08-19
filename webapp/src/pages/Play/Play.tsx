@@ -1,7 +1,7 @@
 import { DispatchPage } from '../../shared/components/index';
 
 /* TODO: implement this
-const mapGameToRow = (chat: Chat): RowItem => {
+const mapGameToRow = (game: Game): RowItem => {
   return {
   };
 }; */
