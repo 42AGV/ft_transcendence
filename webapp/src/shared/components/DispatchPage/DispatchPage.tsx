@@ -9,7 +9,7 @@ import NavigationBar from '../NavigationBar/NavigationBar';
 
 type DispatchPageProps<T> = {
   genericEndpointUrl: string;
-  dataValidator: (data: T[]) => boolean;
+  dataValidator: (data: T) => boolean;
   dataMapper: (data: T) => RowItem;
 };
 
@@ -27,6 +27,16 @@ export default function DispatchPage<T>({
     return data.map((item) => callBack(item));
   };
 
+  const instanceOfArrayTyped = (
+    array: object,
+    elementChecker: (object: any) => boolean,
+  ): boolean => {
+    if (!Array.isArray(array)) {
+      return false;
+    }
+    return array.every((element) => elementChecker(element));
+  };
+
   return (
     <div className="dispatch-page">
       <div className="dispatch-page-avatar">
@@ -38,7 +48,7 @@ export default function DispatchPage<T>({
         <SearchForm url={`${genericEndpointUrl}?search=`} setChange={setData} />
       </div>
       <div className="dispatch-page-rows">
-        {dataValidator(data) && (
+        {instanceOfArrayTyped(data, dataValidator) && (
           <RowsList rows={mapDataToRows(dataMapper, data)} />
         )}
       </div>

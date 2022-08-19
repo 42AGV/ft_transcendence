@@ -1,18 +1,12 @@
 import './Users.css';
 import { IconVariant, RowItem } from '../../shared/components';
 import {
-  USER_URL,
   USERS_EP_URL,
   USERS_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { instanceOfArrayTyped } from '../../shared/types';
 import { instanceOfUser, User } from '../../shared/generated';
 import DispatchPage from '../../shared/components/DispatchPage/DispatchPage';
-
-function instanceOfUserArray(value: object): boolean {
-  return instanceOfArrayTyped(value, instanceOfUser);
-}
 
 const mapUserToRow = (user: User): RowItem => {
   return {
@@ -33,7 +27,7 @@ const mapUserToRow = (user: User): RowItem => {
 export default function Users() {
   return (
     <DispatchPage
-      dataValidator={instanceOfUserArray}
+      dataValidator={instanceOfUser}
       genericEndpointUrl={USERS_EP_URL}
       dataMapper={mapUserToRow}
     />
