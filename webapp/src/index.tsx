@@ -11,6 +11,8 @@ import {
   COMPONENTS_BOOK_URL,
   USER_URL,
 } from './shared/urls';
+import { AuthProvider } from './context/auth-context';
+import RequireAuth from './shared/components/RequireAuth/RequireAuth';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -19,17 +21,54 @@ const developmentMode = process.env.NODE_ENV === 'development';
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path={USERS_URL} element={<Users />} />
-        <Route path={PLAY_URL} element={<Play />} />
-        <Route path={CHAT_URL} element={<Chat />} />
-        <Route path={USER_URL} element={<UserPage isMe={true} />} />
-        <Route path={`${USERS_URL}/:id`} element={<UserPage isMe={false} />} />
-        {developmentMode && (
-          <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
-        )}
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route
+            path={USERS_URL}
+            element={
+              <RequireAuth>
+                <Users />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={PLAY_URL}
+            element={
+              <RequireAuth>
+                <Play />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={CHAT_URL}
+            element={
+              <RequireAuth>
+                <Chat />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={USER_URL}
+            element={
+              <RequireAuth>
+                <UserPage isMe={true} />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={`${USERS_URL}/:id`}
+            element={
+              <RequireAuth>
+                <UserPage isMe={false} />
+              </RequireAuth>
+            }
+          />
+          {developmentMode && (
+            <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
+          )}
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
