@@ -25,7 +25,7 @@ export function SmallAvatar({
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${XCoordinate * 0.25}px ${YCoordinate * 0.33}px`,
+          objectPosition: `${XCoordinate * 0.139}px ${YCoordinate * 0.139}px`,
         }
       : {
           objectPosition: '0 0',
@@ -59,7 +59,7 @@ export function LargeAvatar({
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${XCoordinate}px ${YCoordinate}px`,
+          objectPosition: `${XCoordinate * 0.55}px ${YCoordinate * 0.55}px`,
         }
       : {
           objectPosition: '0 0',

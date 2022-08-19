@@ -15,24 +15,12 @@ export type Position = {
 };
 
 export const EditableAvatarExample = () => {
-  const startingPosition = { x: 0, y: 0 };
-  const xCoord = 0;
-  const yCoord = 0;
-
-  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag(startingPosition);
-  const factor = 0.3;
+  const xCoord = 20.14;
+  const yCoord = 16.3;
 
   return (
     <BookSection title="Editable Avatar component">
-      <EditableAvatar
-        handleMouseDown={handleMouseDown}
-        handleMouseMove={handleMouseMove}
-        handleMouseUp={handleMouseUp}
-        url={randomAvatar}
-        XCoordinate={picturePosition.x * factor - 80}
-        YCoordinate={picturePosition.y * factor - 80}
-      />
+      <EditableAvatar url={randomAvatar} />
       <LargeAvatar
         url={randomAvatar}
         XCoordinate={xCoord}
