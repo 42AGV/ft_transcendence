@@ -9,11 +9,6 @@ const randomAvatar = WILDCARD_AVATAR_URL;
 //const randomAvatar = 'http://localhost/icons/9000.jpeg';
 //const randomAvatar = 'http://localhost/icons/grid.jpg';
 
-export type Position = {
-  x: number;
-  y: number;
-};
-
 export const EditableAvatarExample = () => {
   const xCoord = 20.14;
   const yCoord = 16.3;

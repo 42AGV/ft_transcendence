@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
-import { Position } from '../../pages/ComponentsBook/ComponentsExamples/EditableAvatarExample';
+import { Position } from '../components/Avatar/EditableAvatar';
+
+type DragInfo = {
+  isDragging: boolean;
+  origin: Position;
+  translation: Position;
+  lastTranslation: Position;
+};
 
 const useDrag = (startingPosition: Position) => {
-  const [dragInfo, setDragInfo] = useState({
+  const [dragInfo, setDragInfo] = useState<DragInfo>({
     isDragging: false,
     origin: { x: 0, y: 0 },
     translation: startingPosition,
@@ -15,7 +22,7 @@ const useDrag = (startingPosition: Position) => {
       setDragInfo({
         ...dragInfo,
         isDragging: true,
-        origin: { x: clientX ?? 0, y: clientY ?? 0 },
+        origin: { x: clientX, y: clientY },
       });
   };
 
@@ -25,8 +32,8 @@ const useDrag = (startingPosition: Position) => {
       setDragInfo({
         ...dragInfo,
         translation: {
-          x: Math.abs(clientX ?? 0 - (origin.x + lastTranslation.x)),
-          y: Math.abs(clientY ?? 0 - (origin.y + lastTranslation.y)),
+          x: -(clientX - (origin.x + lastTranslation.x)),
+          y: -(clientY - (origin.y + lastTranslation.y)),
         },
       });
     }
