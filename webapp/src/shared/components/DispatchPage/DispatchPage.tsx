@@ -20,7 +20,7 @@ export default function DispatchPage<T>({
 }: DispatchPageProps<T>) {
   const [data, setData] = useState<T[]>([]);
 
-  const mapDataToRows = <T,>(
+  const mapDataToRows = (
     callBack: (data: T) => RowItem,
     data: T[],
   ): RowItem[] => {
