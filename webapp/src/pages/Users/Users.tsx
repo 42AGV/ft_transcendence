@@ -1,4 +1,3 @@
-import './Users.css';
 import { IconVariant, RowItem } from '../../shared/components';
 import {
   USERS_EP_URL,
