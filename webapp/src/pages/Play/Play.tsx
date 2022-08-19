@@ -1,12 +1,11 @@
-import { NavigationBar } from '../../shared/components';
-import './Play.css';
+import { DispatchPage } from '../../shared/components/index';
+
+/* TODO: implement this
+const mapGameToRow = (chat: Chat): RowItem => {
+  return {
+  };
+}; */
 
 export default function Play() {
-  return (
-    <div className="play">
-      <div className="play-nav-container">
-        <NavigationBar />
-      </div>
-    </div>
-  );
+  return <DispatchPage />;
 }
