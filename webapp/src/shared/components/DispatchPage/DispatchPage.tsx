@@ -8,15 +8,17 @@ import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
 
 type DispatchPageProps<T> = {
-  genericEndpointUrl: string;
-  dataValidator: (data: T) => boolean;
-  dataMapper: (data: T) => RowItem;
+  genericEndpointUrl?: string;
+  dataValidator?: (data: T) => boolean;
+  dataMapper?: (data: T) => RowItem;
+  button?: JSX.Element; // TODO: this is provisional, until we have a better idiom
 };
 
 export default function DispatchPage<T>({
   genericEndpointUrl,
   dataValidator,
   dataMapper,
+  button,
 }: DispatchPageProps<T>) {
   const [data, setData] = useState<T[]>([]);
 
@@ -48,10 +50,11 @@ export default function DispatchPage<T>({
         <SearchForm url={`${genericEndpointUrl}?search=`} setChange={setData} />
       </div>
       <div className="dispatch-page-rows">
-        {instanceOfArrayTyped(data, dataValidator) && (
-          <RowsList rows={mapDataToRows(dataMapper, data)} />
-        )}
+        {dataValidator &&
+          instanceOfArrayTyped(data, dataValidator) &&
+          dataMapper && <RowsList rows={mapDataToRows(dataMapper, data)} />}
       </div>
+      {button && <div className="dispatch-page-button">{button}</div>}
       <div className="dispatch-page-navigation">
         <NavigationBar />
       </div>

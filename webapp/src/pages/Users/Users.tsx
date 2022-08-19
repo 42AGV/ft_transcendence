@@ -5,7 +5,7 @@ import {
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { instanceOfUser, User } from '../../shared/generated';
-import DispatchPage from '../../shared/components/DispatchPage/DispatchPage';
+import { DispatchPage } from '../../shared/components/index';
 
 const mapUserToRow = (user: User): RowItem => {
   return {
