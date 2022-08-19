@@ -11,6 +11,7 @@ type ButtonProps = {
   iconVariant?: IconVariant;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
+  form?: string;
   children: string;
 };
 
@@ -19,6 +20,7 @@ export default function Button({
   iconVariant,
   onClick,
   disabled = false,
+  form,
   children,
 }: ButtonProps) {
   return (
@@ -26,6 +28,7 @@ export default function Button({
       className={`button subheading-bold button-${variant}`}
       disabled={disabled}
       onClick={onClick}
+      form={form}
     >
       {iconVariant && (
         <div className="button-icon">

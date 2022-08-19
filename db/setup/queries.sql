@@ -4,7 +4,7 @@ VALUES
   (
     'gbudau-admin',
     'gbudau-admin@transcendence.com',
-    'gbudau admin'
+    'George Adrian Budau'
   );
 
 INSERT INTO
@@ -13,7 +13,7 @@ VALUES
   (
     'vdedios-admin',
     'vdedios-admin@transcendence.com',
-    'vdedios-admin'
+    'Victor De Dios Mejia'
   );
 
 INSERT INTO
@@ -22,7 +22,7 @@ VALUES
   (
     'aollero-admin',
     'aollero-admin@transcendence.com',
-    'aollero-admin'
+    'Álvaro Ollero Serrano'
   );
 
 INSERT INTO
@@ -31,5 +31,5 @@ VALUES
   (
     'fportela-admin',
     'fportela-admin@transcendence.com',
-    'fportela-admin'
+    'Fiz Portela Savariz'
   );
