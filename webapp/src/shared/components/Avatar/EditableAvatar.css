@@ -3,9 +3,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+}
+
+.editable-avatar-wrapper {
+  margin: -0.5rem;
   background-color: var(--color-light);
-  justify-content: center;
   width: fit-content;
   clip-path: inset(0.55rem 0.55rem 0.55rem 0.55rem round 0.55rem);
   border: none;
@@ -24,6 +27,6 @@
     circle calc(var(--radius)) at center,
     rgb(0, 0, 0, 1) 0,
     rgb(0, 0, 0, 1) 97%,
-    rgb(0, 0, 0, 0.5) 98%
+    rgb(0, 0, 0, 0.4) 98%
   );
 }
