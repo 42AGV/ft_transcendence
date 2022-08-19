@@ -4,6 +4,7 @@ import {
   TextWeight,
   TextColor,
 } from '../../shared/components';
+import React from 'react';
 
 type singleOrMultipleChildren = React.ReactElement | React.ReactElement[];
 
@@ -21,7 +22,9 @@ type bookSubsectionProps = {
 const wrapExample = (elements: singleOrMultipleChildren) =>
   Array.isArray(elements) ? (
     elements.map((el, index) => (
-      <div className="components-book__section__example-wrapper" key={index}>{el}</div>
+      <div className="components-book__section__example-wrapper" key={index}>
+        {el}
+      </div>
     ))
   ) : (
     <div className="components-book__section__example-wrapper">{elements}</div>
