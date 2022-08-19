@@ -2,7 +2,15 @@ import { createRoot } from 'react-dom/client';
 import React from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Chat, Landing, Play, Users, UserPage, ComponentsBook } from './pages';
+import {
+  Chat,
+  Landing,
+  Play,
+  Users,
+  UserPage,
+  ComponentsBook,
+  EditUserPage,
+} from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   CHAT_URL,
@@ -10,6 +18,7 @@ import {
   USERS_URL,
   COMPONENTS_BOOK_URL,
   USER_URL,
+  EDIT_USER_URL,
 } from './shared/urls';
 import { AuthProvider } from './context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -61,6 +70,14 @@ root.render(
             element={
               <RequireAuth>
                 <UserPage isMe={false} />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={EDIT_USER_URL}
+            element={
+              <RequireAuth>
+                <EditUserPage />
               </RequireAuth>
             }
           />
