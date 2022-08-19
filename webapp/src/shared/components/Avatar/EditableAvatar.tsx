@@ -7,13 +7,13 @@ export function EditableAvatar({ url }: AvatarProps) {
     useDrag({ x: 0, y: 0 });
   const factor = 0.7;
   const FormatNumber = (value: number) =>
-    Math.round(-value * factor * 100) / 100;
+    Math.round(value * factor * 100) / 100;
   const position = {
     objectPosition: `${FormatNumber(picturePosition.x)}px ${FormatNumber(
       picturePosition.y,
     )}px`,
   };
-  /* TODO: implement this: upload position to DB
+  /* TODO: implement this: upload position, preferentially with decimals, to DB
   // useEffect(()=> {
      fetch(/api/v1/users/${uuid}/ ... , {
       method: 'PUT',

@@ -32,8 +32,8 @@ const useDrag = (startingPosition: Position) => {
       setDragInfo({
         ...dragInfo,
         translation: {
-          x: -(clientX - (origin.x + lastTranslation.x)),
-          y: -(clientY - (origin.y + lastTranslation.y)),
+          x: clientX - (origin.x + lastTranslation.x),
+          y: clientY - (origin.y + lastTranslation.y),
         },
       });
     }
