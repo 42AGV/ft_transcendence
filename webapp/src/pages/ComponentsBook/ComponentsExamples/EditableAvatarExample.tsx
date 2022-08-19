@@ -2,8 +2,6 @@ import { BookSection } from '../BookSection';
 import { WILDCARD_AVATAR_URL } from '../../../shared/urls';
 import { EditableAvatar } from '../../../shared/components/Avatar/EditableAvatar';
 import { LargeAvatar, SmallAvatar } from '../../../shared/components';
-import { useState } from 'react';
-import useDrag from '../../../shared/hooks/UseDrag';
 
 const randomAvatar = WILDCARD_AVATAR_URL;
 //const randomAvatar = 'http://localhost/icons/9000.jpeg';

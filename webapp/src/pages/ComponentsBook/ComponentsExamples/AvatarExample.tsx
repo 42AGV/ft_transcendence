@@ -2,8 +2,8 @@ import { SmallAvatar, LargeAvatar } from '../../../shared/components';
 import { BookSection } from '../BookSection';
 import { WILDCARD_AVATAR_URL } from '../../../shared/urls';
 
-// const randomAvatar = WILDCARD_AVATAR_URL;
-const randomAvatar = 'http://localhost/icons/grid.jpg';
+const randomAvatar = WILDCARD_AVATAR_URL;
+// const randomAvatar = 'http://localhost/icons/grid.jpg';
 
 export const AvatarExample = () => (
   <BookSection title="Avatar component">
