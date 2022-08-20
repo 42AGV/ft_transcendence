@@ -12,13 +12,3 @@ export type Position = {
   x: number;
   y: number;
 };
-
-export function instanceOfArrayTyped(
-  array: object,
-  elementChecker: (object: any) => boolean,
-): boolean {
-  if (!Array.isArray(array)) {
-    return false;
-  }
-  return array.every((element) => elementChecker(element));
-} /* maybe this one shouldn't be here */
