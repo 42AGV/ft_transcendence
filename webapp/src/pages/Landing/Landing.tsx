@@ -10,14 +10,14 @@ import {
 import { DEFAULT_LOGIN_REDIRECT, LOGIN_EP_URL } from '../../shared/urls';
 import './Landing.css';
 
-type LocationProps = {
+type LocationState = {
   state: {
     from: Location;
   };
 };
 
 export default function Landing() {
-  const location = useLocation() as LocationProps;
+  const location = useLocation() as LocationState;
   const from = location.state?.from?.pathname || DEFAULT_LOGIN_REDIRECT;
 
   return (
