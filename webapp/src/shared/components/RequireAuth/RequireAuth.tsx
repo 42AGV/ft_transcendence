@@ -7,7 +7,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
   const auth = useAuth();
   const location = useLocation();
 
-  if (auth.loading) {
+  if (auth.isLoading) {
     // TODO: Replace with Loading component
     return (
       <div className="require-auth">

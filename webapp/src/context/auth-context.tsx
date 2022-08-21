@@ -4,7 +4,7 @@ import { authApi, usersApi } from '../shared/services/ApiService';
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
+  isLoading: boolean;
   logout: (callback: VoidFunction) => void;
 }
 
@@ -12,15 +12,15 @@ export const AuthContext = createContext<AuthContextType>(null!);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
+    setIsLoading(true);
     usersApi
       .userControllerGetCurrentUser()
       .then((currentUser) => setUser(currentUser))
       .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+      .finally(() => setIsLoading(false));
   }, []);
 
   const logout = async (callback: VoidFunction) => {
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const value = { loading, user, logout };
+  const value = { isLoading, user, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
