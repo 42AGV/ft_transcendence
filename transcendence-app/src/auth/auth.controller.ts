@@ -28,10 +28,11 @@ export class AuthController {
   @ApiFoundResponse({ description: 'Redirect to 42 OAuth server' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseGuards(OAuth42Guard)
-  oauth42Login(@Req() req: Request, @Res() res: Response) {
+  oauth42Login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const { state } = req.query;
-    const redirectTo = typeof state === 'string' ? state : '/';
-    res.redirect(redirectTo);
+    if (typeof state === 'string') {
+      res.redirect(state);
+    }
   }
 
   @Delete('logout')
