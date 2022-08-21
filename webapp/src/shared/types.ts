@@ -7,13 +7,3 @@ export enum Color {
   BACKGROUND = 'text-color-background',
   DARK = 'text-color-dark',
 }
-
-export function instanceOfArrayTyped(
-  array: object,
-  elementChecker: (object: any) => boolean,
-): boolean {
-  if (!Array.isArray(array)) {
-    return false;
-  }
-  return array.every((element) => elementChecker(element));
-} /* maybe this one shouldn't be here */

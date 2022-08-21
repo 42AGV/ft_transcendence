@@ -16,6 +16,11 @@
   max-width: 20rem;
   justify-self: center;
 }
+.edit-user-avatar,
+.edit-user-avatar .avatar-large {
+  width: fit-content;
+  justify-self: center;
+}
 
 .edit-user-form-button {
   justify-self: center;
@@ -26,33 +31,37 @@
   .edit-user-page {
     display: grid;
     grid-template-columns: repeat(var(--column-number), 1fr);
-    grid-template-rows: auto 1fr auto;
-    grid-row-gap: 8rem;
+    grid-template-rows: auto 20% auto 1fr auto;
+    row-gap: 0;
   }
   .edit-user-page .header {
     grid-row: 1;
     grid-column: 1 / var(--column-end);
   }
 
-  .avatar-large {
+  .edit-user-avatar {
     grid-column: 2/6;
-    grid-row: 2/3;
+    grid-row: 3/4;
     align-self: start;
+    justify-self: flex-end;
   }
+
   .edit-user-form {
+    grid-row: 3/4;
     grid-column: 7/12;
   }
   .edit-user-form-button {
-    grid-column: 5/9;
+    grid-row: 5/6;
+    grid-column: 1 / var(--column-end);
   }
 }
 
-@media (min-width: 1024px) {
-  .avatar-large {
-    grid-column: 3/6;
+@media (min-width: 1200px) {
+  .edit-user-avatar {
+    grid-column: 3/5;
   }
 
   .edit-user-form {
-    grid-column: 7/11;
+    grid-column: 7/12;
   }
 }

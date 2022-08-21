@@ -1,12 +1,11 @@
-import { NavigationBar } from '../../shared/components';
-import './Chat.css';
+import { DispatchPage } from '../../shared/components/index';
+
+/* TODO: implement this
+const mapChatToRow = (chat: Chat): RowItem => {
+  return {
+  };
+}; */
 
 export default function Chat() {
-  return (
-    <div className="chat">
-      <div className="chat-nav-container">
-        <NavigationBar />
-      </div>
-    </div>
-  );
+  return <DispatchPage />;
 }

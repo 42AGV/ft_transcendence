@@ -40,7 +40,7 @@ export default function EditUserPage() {
       >
         edit profile
       </Header>
-      <div className="avatar-large">
+      <div className="edit-user-avatar">
         <LargeAvatar
           url={
             user.avatarId
