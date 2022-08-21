@@ -13,10 +13,11 @@ import {
 } from '../../shared/components';
 import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import { goBack, logout } from '../../shared/callbacks';
+import { goBack } from '../../shared/callbacks';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { instanceOfUser, User } from '../../shared/generated';
+import { useAuth } from '../../shared/hooks/UseAuth';
 
 type UserPageProps = {
   isMe: boolean;
@@ -29,6 +30,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     isMe ? `${USERS_EP_URL}/me` : `${USERS_EP_URL}/${param.id}`,
   );
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     if (result && instanceOfUser(result)) {
@@ -88,7 +90,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
         <Button
           variant={ButtonVariant.WARNING}
           iconVariant={IconVariant.LOGOUT}
-          onClick={logout(navigate)}
+          onClick={() => logout(() => navigate('/'))}
         >
           Logout
         </Button>

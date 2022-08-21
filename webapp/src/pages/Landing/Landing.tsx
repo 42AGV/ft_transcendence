@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -7,8 +7,7 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { useAuth } from '../../shared/hooks/UseAuth';
-import { LOGIN_EP_URL } from '../../shared/urls';
+import { DEFAULT_LOGIN_REDIRECT, LOGIN_EP_URL } from '../../shared/urls';
 import './Landing.css';
 
 type LocationProps = {
@@ -19,12 +18,7 @@ type LocationProps = {
 
 export default function Landing() {
   const location = useLocation() as LocationProps;
-  const auth = useAuth();
-  const from = location.state?.from?.pathname || '/users';
-
-  if (auth.user) {
-    return <Navigate to={from} replace />;
-  }
+  const from = location.state?.from?.pathname || DEFAULT_LOGIN_REDIRECT;
 
   return (
     <div className="landing">
@@ -54,7 +48,9 @@ export default function Landing() {
       <div className="landing-login-button">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => window.location.replace(LOGIN_EP_URL)}
+          onClick={() =>
+            window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
+          }
         >
           Login
         </Button>
