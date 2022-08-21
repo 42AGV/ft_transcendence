@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     usersApi
       .userControllerGetCurrentUser()
       .then((currentUser) => setUser(currentUser))
@@ -22,11 +23,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  // TODO: Improve function prototype
   const logout = async (callback: VoidFunction) => {
     try {
       await authApi.authControllerLogout();
-    } catch {
+    } catch (err) {
+      console.error(err);
     } finally {
       setUser(null);
       callback();

@@ -1,3 +1,4 @@
+import { Navigate, useLocation } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -6,10 +7,25 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
+import { useAuth } from '../../shared/hooks/UseAuth';
 import { LOGIN_EP_URL } from '../../shared/urls';
 import './Landing.css';
 
+type LocationProps = {
+  state: {
+    from: Location;
+  };
+};
+
 export default function Landing() {
+  const location = useLocation() as LocationProps;
+  const auth = useAuth();
+  const from = location.state?.from?.pathname || '/users';
+
+  if (auth.user) {
+    return <Navigate to={from} replace />;
+  }
+
   return (
     <div className="landing">
       <div className="landing-title">

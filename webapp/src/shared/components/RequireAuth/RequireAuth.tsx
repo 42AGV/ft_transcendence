@@ -11,14 +11,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
   }
 
   if (!auth.user) {
-    // TODO: Test if we can use the 'from' value after the 42 sign-in redirects the user back
-    //       Try to redirect from the backend to '/' then, if there is a 'from' value, redirect the user there
-    //       And if there is none, redirect to the default page, '/users' or '/play'
-    //       In Landing.tsx:
-    //         const { state } = useLocation();
-    //         const from = state?.from || '/users';
-    //
-    return <Navigate to="/" state={{ from: location.pathname }} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return children;

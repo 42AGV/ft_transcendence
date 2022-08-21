@@ -27,7 +27,7 @@ export class AuthController {
   @ApiFoundResponse({ description: 'Redirect to 42 OAuth server' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseGuards(OAuth42Guard)
-  @Redirect('/users', 302)
+  @Redirect('/', 302)
   oauth42Login() {
     // Guard implementation
   }
