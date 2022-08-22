@@ -7,12 +7,15 @@ export function EditableAvatar({ url }: AvatarProps) {
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag({ x: 0, y: 0 });
   const factor = 0.7;
-  const FormatNumber = (value: number) =>
-    Math.round(value * factor * 100) / 100;
+  const FormatNumber = (value: number) => Math.round(value * factor);
   const position = {
     objectPosition: `${FormatNumber(picturePosition.x)}px ${FormatNumber(
       picturePosition.y,
     )}px`,
+  };
+  /* TODO: This disables dragging for all elements. Contextualize */
+  window.ondragstart = function () {
+    return false;
   };
   /* TODO: implement this: upload position, preferentially with decimals, to DB
   // useEffect(()=> {
@@ -34,6 +37,7 @@ export function EditableAvatar({ url }: AvatarProps) {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseMove}
+        onMouseOut={handleMouseUp}
         onMouseUp={handleMouseUp}
       >
         <img
