@@ -20,7 +20,7 @@ import {
   USER_URL,
   EDIT_USER_URL,
 } from './shared/urls';
-import { AuthProvider } from './context/auth-context';
+import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
 
 const container = document.getElementById('root');

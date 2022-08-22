@@ -7,10 +7,10 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../shared/generated';
-import { useData } from '../shared/hooks/UseData';
-import { authApi, usersApi } from '../shared/services/ApiService';
-import { HOST_URL } from '../shared/urls';
+import { User } from '../generated';
+import { useData } from '../hooks/UseData';
+import { authApi, usersApi } from '../services/ApiService';
+import { HOST_URL } from '../urls';
 
 interface AuthContextType {
   user: User | null;
@@ -26,17 +26,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const getCurrentUser = useCallback(() => {
     return usersApi.userControllerGetCurrentUser();
   }, []);
-  const { data, isLoading: loading } = useData<User>(getCurrentUser);
+  const { data, isLoading: isDataLoading } = useData<User>(getCurrentUser);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading) {
-      setIsLoading(false);
-    }
-    if (data) {
-      setUser(data);
-    }
-  }, [data, loading]);
+    setIsLoading(isDataLoading);
+    setUser(data);
+  }, [data, isDataLoading]);
 
   const logout = useCallback(async () => {
     try {

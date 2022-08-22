@@ -14,9 +14,8 @@ import {
 import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { instanceOfUser, User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 
@@ -26,7 +25,6 @@ type UserPageProps = {
 
 export default function UserPage({ isMe = false }: UserPageProps) {
   const param = useParams();
-  const [user, setUser] = useState<User | null>(null);
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
     [],
@@ -35,15 +33,9 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     () => usersApi.userControllerGetUserById({ uuid: param.id! }),
     [param.id],
   );
-  const { data } = useData(isMe ? getCurrentUser : getUserById);
+  const { data: user } = useData(isMe ? getCurrentUser : getUserById);
   const navigate = useNavigate();
   const { logout } = useAuth();
-
-  useEffect(() => {
-    if (data && instanceOfUser(data)) {
-      setUser(data);
-    }
-  }, [data]);
 
   return user === null ? (
     <div className="user-page">
