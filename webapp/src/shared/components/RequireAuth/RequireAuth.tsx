@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/UseAuth';
 import { Text, TextVariant, TextWeight } from '../';
 import './RequireAuth.css';
+import { HOST_URL } from '../../urls';
 
 export default function RequireAuth({ children }: { children: JSX.Element }) {
   const auth = useAuth();
@@ -19,7 +20,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
   }
 
   if (!auth.user) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to={HOST_URL} state={{ from: location }} replace />;
   }
 
   return children;

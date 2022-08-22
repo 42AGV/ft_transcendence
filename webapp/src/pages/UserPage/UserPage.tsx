@@ -14,10 +14,11 @@ import {
 import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { instanceOfUser, User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import { usersApi } from '../../shared/services/ApiService';
 
 type UserPageProps = {
   isMe: boolean;
@@ -26,17 +27,23 @@ type UserPageProps = {
 export default function UserPage({ isMe = false }: UserPageProps) {
   const param = useParams();
   const [user, setUser] = useState<User | null>(null);
-  const result: User | null = useData<User>(
-    isMe ? `${USERS_EP_URL}/me` : `${USERS_EP_URL}/${param.id}`,
+  const getCurrentUser = useCallback(
+    () => usersApi.userControllerGetCurrentUser(),
+    [],
   );
+  const getUserById = useCallback(
+    () => usersApi.userControllerGetUserById({ uuid: param.id! }),
+    [param.id],
+  );
+  const { data } = useData(isMe ? getCurrentUser : getUserById);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
   useEffect(() => {
-    if (result && instanceOfUser(result)) {
-      setUser(result);
+    if (data && instanceOfUser(data)) {
+      setUser(data);
     }
-  }, [result]);
+  }, [data]);
 
   return user === null ? (
     <div className="user-page">
@@ -90,7 +97,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
         <Button
           variant={ButtonVariant.WARNING}
           iconVariant={IconVariant.LOGOUT}
-          onClick={() => logout(() => navigate('/'))}
+          onClick={logout}
         >
           Logout
         </Button>

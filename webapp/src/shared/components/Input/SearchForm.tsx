@@ -1,22 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Input, InputVariant } from '..';
 import { IconVariant } from '../Icon/Icon';
 import './SearchForm.css';
 import { useData } from '../../hooks/UseData';
 
 type SearchProps<T> = {
-  url: string;
+  fetchFn: (...args: any[]) => Promise<T>;
   setChange: React.Dispatch<React.SetStateAction<T>>;
 };
 
-export default function SearchForm<T>({ url, setChange }: SearchProps<T>) {
+export default function SearchForm<T>({ fetchFn, setChange }: SearchProps<T>) {
   const [search, setSearch] = useState('');
-  const results: T | null = useData(`${url}${search}`);
+  const memoizedFetchFn = useCallback(
+    () => fetchFn({ search }),
+    [fetchFn, search],
+  );
+  const { data } = useData<T>(memoizedFetchFn);
+
   useEffect(() => {
-    if (results) {
-      setChange(results);
+    if (data) {
+      setChange(data);
     }
-  }, [results, setChange]);
+  }, [data, setChange]);
 
   return (
     <div className="search-form">

@@ -1,11 +1,21 @@
-import { createContext, ReactNode, useEffect, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User } from '../shared/generated';
+import { useData } from '../shared/hooks/UseData';
 import { authApi, usersApi } from '../shared/services/ApiService';
+import { HOST_URL } from '../shared/urls';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  logout: (callback: VoidFunction) => void;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>(null!);
@@ -13,28 +23,42 @@ export const AuthContext = createContext<AuthContextType>(null!);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const getCurrentUser = useCallback(() => {
+    return usersApi.userControllerGetCurrentUser();
+  }, []);
+  const { data, isLoading: loading } = useData<User>(getCurrentUser);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoading(true);
-    usersApi
-      .userControllerGetCurrentUser()
-      .then((currentUser) => setUser(currentUser))
-      .catch(() => setUser(null))
-      .finally(() => setIsLoading(false));
-  }, []);
+    if (!loading) {
+      setIsLoading(false);
+    }
+    if (data) {
+      setUser(data);
+    }
+  }, [data, loading]);
 
-  const logout = async (callback: VoidFunction) => {
+  const logout = useCallback(async () => {
     try {
       await authApi.authControllerLogout();
     } catch (err) {
       console.error(err);
     } finally {
       setUser(null);
-      callback();
+      navigate(HOST_URL);
     }
-  };
+  }, [navigate]);
 
-  const value = { isLoading, user, logout };
+  const contextValue = useMemo(
+    () => ({
+      isLoading,
+      user,
+      logout,
+    }),
+    [isLoading, user, logout],
+  );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 };
