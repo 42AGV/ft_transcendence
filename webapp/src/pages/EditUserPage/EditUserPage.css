@@ -58,10 +58,11 @@
 
 @media (min-width: 1200px) {
   .edit-user-avatar {
-    grid-column: 3/5;
+    grid-column: 3/6;
+    justify-self: flex-start;
   }
 
   .edit-user-form {
-    grid-column: 7/12;
+    grid-column: 7/11;
   }
 }
