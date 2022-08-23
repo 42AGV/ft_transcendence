@@ -50,7 +50,7 @@ const useDrag = (startingPosition: Position) => {
     }
   };
 
-  const picturePosition = {
+  const picturePosition: Position = {
     x: -dragInfo.translation.x,
     y: -dragInfo.translation.y,
   };
