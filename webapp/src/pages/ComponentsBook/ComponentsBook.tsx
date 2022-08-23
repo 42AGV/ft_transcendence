@@ -17,6 +17,7 @@ import {
   InputExample,
   HeaderExample,
 } from './ComponentsExamples';
+import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
 
 export default function ComponentsBook() {
   return (
@@ -35,6 +36,7 @@ export default function ComponentsBook() {
       <NavigationExample />
       <HeaderExample />
       <AvatarExample />
+      <EditableAvatarExample />
       <RowExample />
       <RowsListExample />
       <InputExample />

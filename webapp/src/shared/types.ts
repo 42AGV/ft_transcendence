@@ -7,3 +7,8 @@ export enum Color {
   BACKGROUND = 'text-color-background',
   DARK = 'text-color-dark',
 }
+
+export type Position = {
+  x: number;
+  y: number;
+};

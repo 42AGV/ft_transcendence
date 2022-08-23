@@ -1,0 +1,32 @@
+.editable-avatar {
+  margin: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.editable-avatar-wrapper {
+  margin: -0.5rem;
+  background-color: var(--color-light);
+  width: fit-content;
+  clip-path: inset(0.55rem 0.55rem 0.55rem 0.55rem round 0.55rem);
+  border: none;
+}
+
+.editable-avatar__image {
+  user-drag: none;
+  -webkit-user-drag: none;
+  margin: 0;
+  width: 18rem;
+  height: 18rem;
+  object-fit: cover;
+  -webkit-transform: scale(1.45);
+  --radius: 5.5rem;
+  -webkit-mask-image: radial-gradient(
+    circle calc(var(--radius)) at center,
+    rgb(0, 0, 0, 1) 0,
+    rgb(0, 0, 0, 1) 97%,
+    rgb(0, 0, 0, 0.4) 98%
+  );
+}
