@@ -8,7 +8,11 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import {
+  EDIT_AVATAR_URL,
+  USERS_EP_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
 import { useEffect, useState } from 'react';
@@ -48,6 +52,7 @@ export default function EditUserPage() {
               : WILDCARD_AVATAR_URL
           }
           edit={true}
+          editUrl={EDIT_AVATAR_URL}
         />
       </div>
       <EditUserForm origFullName={user.fullName} origEmail={user.email} />

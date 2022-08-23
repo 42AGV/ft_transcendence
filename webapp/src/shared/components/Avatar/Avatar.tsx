@@ -3,6 +3,7 @@ import './Avatar.css';
 import { Icon, IconVariant, IconSize } from '../index';
 import { StatusVariant } from '../Status/Status';
 import { Color } from '../../types';
+import { Link } from 'react-router-dom';
 
 export type AvatarProps = {
   url: string;
@@ -14,6 +15,7 @@ export type AvatarProps = {
 type LargeAvatarProps = AvatarProps & {
   edit?: boolean;
   caption?: string;
+  editUrl?: string;
 };
 
 export function SmallAvatar({
@@ -53,6 +55,7 @@ export function LargeAvatar({
   caption,
   XCoordinate,
   YCoordinate,
+  editUrl,
 }: LargeAvatarProps) {
   const statusClass = status ? `avatar-status--${status}` : '';
 
@@ -68,11 +71,21 @@ export function LargeAvatar({
     <figure className="avatar-large">
       {edit && (
         <div className="avatar-large__edit">
-          <Icon
-            variant={IconVariant.EDIT}
-            color={Color.LIGHT}
-            size={IconSize.SMALL}
-          />
+          {(editUrl && (
+            <Link to={editUrl}>
+              <Icon
+                variant={IconVariant.EDIT}
+                color={Color.LIGHT}
+                size={IconSize.SMALL}
+              />
+            </Link>
+          )) || (
+            <Icon
+              variant={IconVariant.EDIT}
+              color={Color.LIGHT}
+              size={IconSize.SMALL}
+            />
+          )}
         </div>
       )}
       <div className={`avatar-large__image-wrapper  ${statusClass}`}>
