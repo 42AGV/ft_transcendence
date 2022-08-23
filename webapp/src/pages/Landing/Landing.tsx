@@ -7,7 +7,7 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { DEFAULT_LOGIN_REDIRECT, LOGIN_EP_URL } from '../../shared/urls';
+import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
 import './Landing.css';
 
 type LocationState = {
@@ -18,7 +18,7 @@ type LocationState = {
 
 export default function Landing() {
   const location = useLocation() as LocationState;
-  const from = location.state?.from?.pathname || DEFAULT_LOGIN_REDIRECT;
+  const from = location.state?.from?.pathname || DEFAULT_LOGIN_REDIRECT_URL;
 
   return (
     <div className="landing">
