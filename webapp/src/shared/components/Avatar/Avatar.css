@@ -12,6 +12,9 @@
 
 .avatar-small {
   display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
 }
 
 .avatar-large {
@@ -28,24 +31,30 @@
   border-radius: 50%;
   display: flex;
   justify-content: center;
-  margin: 0.25rem;
+  margin: 0;
 }
 
 .avatar-large__image {
   width: 10rem;
   height: 10rem;
-  padding: 0.35rem;
+  --radius: 10rem;
 }
 
 .avatar-small__image {
-  width: 3.15rem;
-  height: 3.15rem;
-  padding: 0.15rem;
+  width: 3.22rem;
+  height: 3.22rem;
+  --radius: 3.15rem;
 }
-
 .avatar-large__image,
 .avatar-small__image {
-  border-radius: 50%;
+  -webkit-transform: scale(1.55);
+  object-fit: cover;
+  -webkit-mask-image: radial-gradient(
+    circle calc(var(--radius) * 0.3) at center,
+    #000 0,
+    #000 97%,
+    transparent 100%
+  );
 }
 
 .avatar-large__edit {
