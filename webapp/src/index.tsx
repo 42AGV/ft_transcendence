@@ -10,6 +10,7 @@ import {
   UserPage,
   ComponentsBook,
   EditUserPage,
+  EditAvatarPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -19,6 +20,7 @@ import {
   COMPONENTS_BOOK_URL,
   USER_URL,
   EDIT_USER_URL,
+  EDIT_AVATAR_URL,
 } from './shared/urls';
 
 const container = document.getElementById('root');
@@ -36,6 +38,7 @@ root.render(
         <Route path={USER_URL} element={<UserPage isMe={true} />} />
         <Route path={`${USERS_URL}/:id`} element={<UserPage isMe={false} />} />
         <Route path={EDIT_USER_URL} element={<EditUserPage />} />
+        <Route path={EDIT_AVATAR_URL} element={<EditAvatarPage />} />
         {developmentMode && (
           <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
         )}
