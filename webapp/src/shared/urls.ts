@@ -10,3 +10,4 @@ export const WILDCARD_AVATAR_URL = 'https://i.pravatar.cc/9000';
 export const LOGIN_EP_URL = `${API_ENDPOINT_URL}/auth/login`;
 export const LOGOUT_EP_URL = `${API_ENDPOINT_URL}/auth/logout`;
 export const HOST_URL = `/`;
+export const DEFAULT_LOGIN_REDIRECT_URL = '/users';

@@ -4,8 +4,14 @@ import {
   USERS_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { instanceOfUser, User } from '../../shared/generated';
+import {
+  instanceOfUser,
+  User,
+  UserControllerGetUsersRequest,
+} from '../../shared/generated';
 import { DispatchPage } from '../../shared/components/index';
+import { useCallback } from 'react';
+import { usersApi } from '../../shared/services/ApiService';
 
 const mapUserToRow = (user: User): RowItem => {
   return {
@@ -24,10 +30,15 @@ const mapUserToRow = (user: User): RowItem => {
 };
 
 export default function Users() {
+  const getUsers = useCallback(
+    (requestParameters: UserControllerGetUsersRequest) =>
+      usersApi.userControllerGetUsers(requestParameters),
+    [],
+  );
   return (
     <DispatchPage
       dataValidator={instanceOfUser}
-      genericEndpointUrl={USERS_EP_URL}
+      fetchFn={getUsers}
       dataMapper={mapUserToRow}
     />
   );

@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -6,10 +7,19 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { LOGIN_EP_URL } from '../../shared/urls';
+import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
 import './Landing.css';
 
+type LocationState = {
+  state: {
+    from: Location;
+  };
+};
+
 export default function Landing() {
+  const location = useLocation() as LocationState;
+  const from = location.state?.from?.pathname || DEFAULT_LOGIN_REDIRECT_URL;
+
   return (
     <div className="landing">
       <div className="landing-title">
@@ -38,7 +48,9 @@ export default function Landing() {
       <div className="landing-login-button">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => (window.location.href = LOGIN_EP_URL)}
+          onClick={() =>
+            window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
+          }
         >
           Login
         </Button>
