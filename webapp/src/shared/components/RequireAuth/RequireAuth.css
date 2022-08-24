@@ -1,0 +1,10 @@
+.require-auth {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+}
+
+.require-auth,
+.require-auth > * {
+  margin: 0;
+}

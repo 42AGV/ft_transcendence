@@ -8,14 +8,14 @@ import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
 
 type DispatchPageProps<T> = {
-  genericEndpointUrl?: string;
-  dataValidator?: (data: T) => boolean;
-  dataMapper?: (data: T) => RowItem;
+  fetchFn: (...args: any[]) => Promise<T[]>;
+  dataValidator: (data: T) => boolean;
+  dataMapper: (data: T) => RowItem;
   button?: JSX.Element; // TODO: this is provisional, until we have a better idiom
 };
 
 export default function DispatchPage<T>({
-  genericEndpointUrl,
+  fetchFn,
   dataValidator,
   dataMapper,
   button,
@@ -47,7 +47,7 @@ export default function DispatchPage<T>({
         </Link>
       </div>
       <div className="dispatch-page-search">
-        <SearchForm url={`${genericEndpointUrl}?search=`} setChange={setData} />
+        <SearchForm fetchFn={fetchFn} setChange={setData} />
       </div>
       <div className="dispatch-page-rows">
         {dataValidator &&

@@ -3,8 +3,9 @@ import {
   Delete,
   Get,
   NotFoundException,
-  Redirect,
+  Req,
   Request as GetRequest,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -15,7 +16,7 @@ import {
   ApiServiceUnavailableResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { OAuth42Guard } from './oauth42.guard';
 
@@ -27,9 +28,11 @@ export class AuthController {
   @ApiFoundResponse({ description: 'Redirect to 42 OAuth server' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseGuards(OAuth42Guard)
-  @Redirect('/users', 302)
-  oauth42Login() {
-    // Guard implementation
+  oauth42Login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const { state } = req.query;
+    if (typeof state === 'string') {
+      res.redirect(state);
+    }
   }
 
   @Delete('logout')

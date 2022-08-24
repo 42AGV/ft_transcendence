@@ -8,27 +8,15 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import {
-  EDIT_AVATAR_URL,
-  USERS_EP_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
-import { useData } from '../../shared/hooks/UseData';
+import {   EDIT_AVATAR_URL,
+  USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { instanceOfUser, User } from '../../shared/generated';
+import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function EditUserPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const result: User | null = useData<User>(`${USERS_EP_URL}/me`);
+  const { user } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (result && instanceOfUser(result)) {
-      setUser(result);
-    }
-  }, [result]);
 
   return user === null ? (
     <div className="edit-user-page">
