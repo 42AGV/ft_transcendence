@@ -9,11 +9,7 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import {
-  EDIT_AVATAR_URL,
-  USERS_EP_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
 import { useCallback, useEffect, useState } from 'react';
