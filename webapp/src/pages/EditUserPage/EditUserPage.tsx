@@ -44,6 +44,8 @@ export default function EditUserPage() {
           }
           edit={true}
           editUrl={EDIT_AVATAR_URL}
+          XCoordinate={user.avatarX}
+          YCoordinate={user.avatarY}
         />
       </div>
       <EditUserForm origFullName={user.fullName} origEmail={user.email} />

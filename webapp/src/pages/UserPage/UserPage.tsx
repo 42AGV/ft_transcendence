@@ -60,6 +60,8 @@ export default function UserPage({ isMe = false }: UserPageProps) {
               : WILDCARD_AVATAR_URL
           }
           caption="level 4"
+          XCoordinate={user.avatarX}
+          YCoordinate={user.avatarY}
         />
         <div className="user-text">
           <Text

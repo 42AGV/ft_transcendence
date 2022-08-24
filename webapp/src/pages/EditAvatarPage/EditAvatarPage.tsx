@@ -12,28 +12,42 @@ import {
 import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { instanceOfUser, User } from '../../shared/generated';
+import { User } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { EditableAvatar } from '../../shared/components/Avatar/EditableAvatar';
+import { Position } from '../../shared/types';
 
 export default function EditAvatarPage() {
+  async function updateData() {
+    const requestOptions = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        XCoordinate: picturePosition.x,
+        YCoordinate: picturePosition.y,
+      }),
+    };
+    console.log(requestOptions);
+    await fetch(USERS_EP_URL, requestOptions);
+  }
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
     [],
   );
-  const submitChanges = useCallback(() => true, []);
-  const [user, setUser] = useState<User | null>(null);
-  const { data } = useData<User>(getCurrentUser);
+
+  const { data: user } = useData<User>(getCurrentUser);
+  const [picturePosition, setPicturePosition] = useState<Position>({
+    x: 0,
+    y: 0,
+  });
+  const submitChanges = useCallback(() => {
+    updateData().catch((e) => console.error(e));
+  }, [picturePosition]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (data && instanceOfUser(data)) {
-      setUser(data);
-    }
-  }, [data]);
-
   return user === null ? (
     <div className="edit-avatar-page">
       <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
@@ -59,11 +73,14 @@ export default function EditAvatarPage() {
             ? `${USERS_EP_URL}/${user.id}/avatar`
             : WILDCARD_AVATAR_URL
         }
+        XCoordinate={user.avatarX}
+        YCoordinate={user.avatarY}
+        setPicturePosition={setPicturePosition}
       />
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}
-        onClick={submitChanges}
+        onClick={getCurrentUser}
       >
         Upload
       </Button>

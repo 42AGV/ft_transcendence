@@ -2,25 +2,36 @@ import './EditableAvatar.css';
 import { AvatarProps } from './Avatar';
 import useDrag from '../../hooks/UseDrag';
 import { Text, TextColor, TextVariant, TextWeight } from '../index';
-import { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { Position } from '../../types';
 
-export function EditableAvatar({ url }: AvatarProps) {
+type EditableAvatarProps = AvatarProps & {
+  setPicturePosition?: React.Dispatch<React.SetStateAction<Position>>;
+};
+
+export function EditableAvatar({
+  url,
+  XCoordinate,
+  YCoordinate,
+  setPicturePosition,
+}: EditableAvatarProps) {
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag({ x: 0, y: 0 });
+    useDrag({ x: XCoordinate ?? 0, y: YCoordinate ?? 0 });
   const ref = useRef<HTMLImageElement>(null);
   const factor = 0.6896;
   const FormatNumber = (value: number) => Math.round(value * factor);
   const position = {
-    objectPosition: `${FormatNumber(picturePosition.x)}px ${FormatNumber(
+    objectPosition: `${FormatNumber(picturePosition?.x)}px ${FormatNumber(
       picturePosition.y,
     )}px`,
   };
-  /* TODO: implement this: upload position, preferentially with decimals, on submit, to DB
-  // useEffect(()=> {
-     fetch(/api/v1/users/${uuid}/ ... , {
-      method: 'PUT',
-    })
-  // }, [position]); */
+  useEffect(() => {
+    setPicturePosition &&
+      setPicturePosition({
+        x: picturePosition.x,
+        y: picturePosition.y,
+      });
+  }, [picturePosition]);
   ref?.current?.addEventListener('dragstart', (e) => e.preventDefault());
   return (
     <div className="editable-avatar">

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Color } from '../../types';
-import { SmallAvatar } from '../Avatar/Avatar';
+import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
 import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import Status, { StatusVariant } from '../Status/Status';
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
@@ -41,7 +41,7 @@ export default function Header({
           color={Color.LIGHT}
         />
       ) : (
-        <SmallAvatar url={navigationFigure} />
+        <SmallAvatar {...(JSON.parse(navigationFigure) as AvatarProps)} />
       )}
     </>
   );

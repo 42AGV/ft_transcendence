@@ -2,6 +2,7 @@ import { Header, IconVariant } from '../../../shared/components';
 import { BookSection } from '../BookSection';
 
 const randomAvatar = 'https://i.pravatar.cc/1000';
+const avProps = { url: randomAvatar };
 const placeholderTitle = 'Header title';
 
 export const HeaderExample = () => (
@@ -14,7 +15,7 @@ export const HeaderExample = () => (
       {placeholderTitle}
     </Header>
     <Header
-      navigationFigure={randomAvatar}
+      navigationFigure={JSON.stringify(avProps)}
       navigationUrl="/"
       statusVariant="playing"
     >
@@ -23,7 +24,7 @@ export const HeaderExample = () => (
     <Header navigationFigure={IconVariant.ARROW_BACK} navigationUrl="/">
       {placeholderTitle}
     </Header>
-    <Header navigationFigure={randomAvatar} navigationUrl="/">
+    <Header navigationFigure={JSON.stringify(avProps)} navigationUrl="/">
       {placeholderTitle}
     </Header>
   </BookSection>
