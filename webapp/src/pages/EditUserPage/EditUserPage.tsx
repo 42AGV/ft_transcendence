@@ -8,8 +8,11 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import {   EDIT_AVATAR_URL,
-  USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import {
+  EDIT_AVATAR_URL,
+  USERS_EP_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
