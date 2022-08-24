@@ -46,7 +46,7 @@ export default function EditAvatarPage() {
         navigationFigure={IconVariant.ARROW_BACK}
         onClick={goBack(navigate)}
       >
-        edit profile
+        edit avatar
       </Header>
       <Row
         iconVariant={IconVariant.FILE}

@@ -1,9 +1,13 @@
 .editable-avatar {
-  margin: -2.5rem 0 0 0;
+  margin: 0;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.editable-avatar .text-color-light {
+  margin: 0 0 1rem 0;
 }
 
 .editable-avatar-wrapper {
