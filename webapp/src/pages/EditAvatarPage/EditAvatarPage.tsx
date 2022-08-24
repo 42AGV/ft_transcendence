@@ -15,20 +15,25 @@ import {
 } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { instanceOfUser, User } from '../../shared/generated';
+import { usersApi } from '../../shared/services/ApiService';
 
 export default function EditAvatarPage() {
+  const getCurrentUser = useCallback(
+    () => usersApi.userControllerGetCurrentUser(),
+    [],
+  );
   const [user, setUser] = useState<User | null>(null);
-  const result: User | null = useData<User>(`${USERS_EP_URL}/me`);
+  const { data } = useData<User>(getCurrentUser);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (result && instanceOfUser(result)) {
-      setUser(result);
+    if (data && instanceOfUser(data)) {
+      setUser(data);
     }
-  }, [result]);
+  }, [data]);
 
   return user === null ? (
     <div className="edit-avatar-page">
