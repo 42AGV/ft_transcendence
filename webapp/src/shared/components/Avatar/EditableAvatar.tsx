@@ -1,22 +1,33 @@
 import './EditableAvatar.css';
 import { AvatarProps } from './Avatar';
-import useDrag from '../../hooks/UseDrag';
 import { Text, TextColor, TextVariant, TextWeight } from '../index';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Position } from '../../types';
 
 type EditableAvatarProps = AvatarProps & {
+  picturePosition: Position;
   setPicturePosition?: React.Dispatch<React.SetStateAction<Position>>;
+  handleMouseDown?: ({
+    clientX,
+    clientY,
+  }: React.MouseEvent<Element, MouseEvent>) => void;
+  handleMouseMove?: ({
+    clientX,
+    clientY,
+  }: React.MouseEvent<Element, MouseEvent>) => void;
+  handleMouseUp?: ({
+    clientX,
+    clientY,
+  }: React.MouseEvent<Element, MouseEvent>) => void;
 };
 
 export function EditableAvatar({
   url,
-  XCoordinate,
-  YCoordinate,
-  setPicturePosition,
+  picturePosition,
+  handleMouseDown,
+  handleMouseUp,
+  handleMouseMove,
 }: EditableAvatarProps) {
-  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag({ x: XCoordinate ?? 0, y: YCoordinate ?? 0 });
   const ref = useRef<HTMLImageElement>(null);
   const factor = 0.6896;
   const FormatNumber = (value: number) => Math.round(value * factor);
@@ -25,13 +36,6 @@ export function EditableAvatar({
       picturePosition.y,
     )}px`,
   };
-  useEffect(() => {
-    setPicturePosition &&
-      setPicturePosition({
-        x: picturePosition.x,
-        y: picturePosition.y,
-      });
-  }, [picturePosition]);
   ref?.current?.addEventListener('dragstart', (e) => e.preventDefault());
   return (
     <div className="editable-avatar">

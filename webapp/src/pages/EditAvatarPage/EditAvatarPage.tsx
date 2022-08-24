@@ -12,39 +12,37 @@ import {
 import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { EditableAvatar } from '../../shared/components/Avatar/EditableAvatar';
-import { Position } from '../../shared/types';
+import useDrag from '../../shared/hooks/UseDrag';
 
 export default function EditAvatarPage() {
-  async function updateData() {
-    const requestOptions = {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        XCoordinate: picturePosition.x,
-        YCoordinate: picturePosition.y,
-      }),
-    };
-    console.log(requestOptions);
-    await fetch(USERS_EP_URL, requestOptions);
-  }
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
     [],
   );
 
   const { data: user } = useData<User>(getCurrentUser);
-  const [picturePosition, setPicturePosition] = useState<Position>({
-    x: 0,
-    y: 0,
-  });
+  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
+    useDrag({ x: user?.avatarX ?? 0, y: user?.avatarY ?? 0 });
   const submitChanges = useCallback(() => {
+    const updateData = async () => {
+      const requestOptions = {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          avatarX: picturePosition.x,
+          avatarY: picturePosition.y,
+        }),
+      };
+      console.log(requestOptions);
+      await fetch(USERS_EP_URL, requestOptions);
+    };
     updateData().catch((e) => console.error(e));
   }, [picturePosition]);
   const navigate = useNavigate();
@@ -73,14 +71,15 @@ export default function EditAvatarPage() {
             ? `${USERS_EP_URL}/${user.id}/avatar`
             : WILDCARD_AVATAR_URL
         }
-        XCoordinate={user.avatarX}
-        YCoordinate={user.avatarY}
-        setPicturePosition={setPicturePosition}
+        picturePosition={picturePosition}
+        handleMouseDown={handleMouseDown}
+        handleMouseUp={handleMouseUp}
+        handleMouseMove={handleMouseMove}
       />
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}
-        onClick={getCurrentUser}
+        onClick={submitChanges}
       >
         Upload
       </Button>
