@@ -25,6 +25,8 @@ describe('UserController', () => {
         return Promise.resolve({
           id: testUserId,
           createdAt: new Date(Date.now()),
+          avatarX: 0,
+          avatarY: 0,
           ...testUserDto,
           username,
         });
@@ -33,6 +35,8 @@ describe('UserController', () => {
         return Promise.resolve({
           id,
           createdAt: new Date(Date.now()),
+          avatarX: 0,
+          avatarY: 0,
           ...testUserDto,
         });
       },
@@ -40,6 +44,8 @@ describe('UserController', () => {
         return Promise.resolve({
           id: testUserId,
           createdAt: new Date(Date.now()),
+          avatarX: 0,
+          avatarY: 0,
           ...userDto,
         });
       },
