@@ -83,12 +83,18 @@ root.render(
               </RequireAuth>
             }
           />
+          <Route
+            path={EDIT_AVATAR_URL}
+            element={
+              <RequireAuth>
+                <EditAvatarPage />
+              </RequireAuth>
+            }
+          />
           {developmentMode && (
             <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
           )}
         </Routes>
-        /*        <Route path={EDIT_USER_URL} element={<EditUserPage />} />
-         */
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
