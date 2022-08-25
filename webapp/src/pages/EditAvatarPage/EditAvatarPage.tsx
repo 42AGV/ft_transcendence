@@ -33,21 +33,14 @@ export default function EditAvatarPage() {
     useDrag({ x: user?.avatarX ?? 0, y: user?.avatarY ?? 0 });
 
   const submitChanges = useCallback(() => {
-    const updateData = async () => {
-      const requestOptions = {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    usersApi
+      .userControllerUpdateCurrentUserRaw({
+        updateUserDto: {
           avatarX: Math.round(picturePosition.x * EDITABLE_AVATAR_SCALE),
           avatarY: Math.round(picturePosition.y * EDITABLE_AVATAR_SCALE),
-        }),
-      };
-      console.log(requestOptions);
-      await fetch(USERS_EP_URL, requestOptions);
-    };
-    updateData().catch((e) => console.error(e));
+        },
+      })
+      .catch((e) => console.error(e));
   }, [picturePosition]);
 
   const navigate = useNavigate();
