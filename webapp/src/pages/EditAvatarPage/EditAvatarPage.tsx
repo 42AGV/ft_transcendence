@@ -19,6 +19,8 @@ import { usersApi } from '../../shared/services/ApiService';
 import { EditableAvatar } from '../../shared/components/Avatar/EditableAvatar';
 import useDrag from '../../shared/hooks/UseDrag';
 
+export const EDITABLE_AVATAR_SCALE = 0.6896;
+
 export default function EditAvatarPage() {
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
@@ -26,8 +28,10 @@ export default function EditAvatarPage() {
   );
 
   const { data: user } = useData<User>(getCurrentUser);
+
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag({ x: user?.avatarX ?? 0, y: user?.avatarY ?? 0 });
+
   const submitChanges = useCallback(() => {
     const updateData = async () => {
       const requestOptions = {
@@ -36,8 +40,8 @@ export default function EditAvatarPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          avatarX: picturePosition.x,
-          avatarY: picturePosition.y,
+          avatarX: Math.round(picturePosition.x * EDITABLE_AVATAR_SCALE),
+          avatarY: Math.round(picturePosition.y * EDITABLE_AVATAR_SCALE),
         }),
       };
       console.log(requestOptions);
@@ -45,6 +49,7 @@ export default function EditAvatarPage() {
     };
     updateData().catch((e) => console.error(e));
   }, [picturePosition]);
+
   const navigate = useNavigate();
   return user === null ? (
     <div className="edit-avatar-page">
