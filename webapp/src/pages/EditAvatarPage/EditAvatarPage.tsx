@@ -33,15 +33,16 @@ export default function EditAvatarPage() {
     useDrag({ x: user?.avatarX ?? 0, y: user?.avatarY ?? 0 });
 
   const navigate = useNavigate();
-  const [selectedFile, setSelectedFile] = useState<File>();
-  const [isFilePicked, setIsFilePicked] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const submitChanges = useCallback(async () => {
-    if (isFilePicked) {
+    if (selectedFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: selectedFile })
         .catch((e) => console.error(e))
-        .finally(() => setIsFilePicked(false));
+        .finally(() => {
+          setSelectedFile(null);
+        });
     }
     usersApi
       .userControllerUpdateCurrentUserRaw({
@@ -51,15 +52,15 @@ export default function EditAvatarPage() {
         },
       })
       .catch((e) => console.error(e));
-  }, [picturePosition, isFilePicked, selectedFile]);
+  }, [picturePosition, user, selectedFile]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event &&
       event?.target &&
       event?.target?.files?.[0] &&
       setSelectedFile(event?.target?.files[0]);
-    setIsFilePicked(true);
   };
+
   return user === null ? (
     <div className="edit-avatar-page">
       <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
@@ -77,6 +78,7 @@ export default function EditAvatarPage() {
       <Row
         iconVariant={IconVariant.FILE}
         title="Select file"
+        subtitle={selectedFile?.name ?? undefined}
         onChange={changeHandler}
       />
       <EditableAvatar
