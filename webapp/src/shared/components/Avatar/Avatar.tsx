@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 export type AvatarProps = {
   url: string;
+  imgHash?: number;
   status?: StatusVariant;
   XCoordinate?: number;
   YCoordinate?: number;

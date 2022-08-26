@@ -23,6 +23,7 @@ type EditableAvatarProps = AvatarProps & {
 };
 
 export function EditableAvatar({
+  imgHash,
   url,
   picturePosition,
   handleMouseDown,
@@ -55,13 +56,23 @@ export function EditableAvatar({
         onMouseOut={handleMouseUp}
         onMouseUp={handleMouseUp}
       >
-        <img
-          ref={ref}
-          src={url}
-          alt={url}
-          className="editable-avatar__image"
-          style={position}
-        />
+        {imgHash ? (
+          <img
+            ref={ref}
+            src={`${url}?${imgHash}`}
+            alt={url}
+            className="editable-avatar__image"
+            style={position}
+          />
+        ) : (
+          <img
+            ref={ref}
+            src={url}
+            alt={url}
+            className="editable-avatar__image"
+            style={position}
+          />
+        )}
       </figure>
     </div>
   );

@@ -52,7 +52,7 @@ export default function EditAvatarPage() {
         },
       })
       .catch((e) => console.error(e));
-  }, [picturePosition, user, selectedFile]);
+  }, [picturePosition, selectedFile]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event &&
@@ -87,6 +87,7 @@ export default function EditAvatarPage() {
             ? `${USERS_EP_URL}/${user.id}/avatar`
             : WILDCARD_AVATAR_URL
         }
+        imgHash={Date.now()}
         picturePosition={picturePosition}
         handleMouseDown={handleMouseDown}
         handleMouseUp={handleMouseUp}
