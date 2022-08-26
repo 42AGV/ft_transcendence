@@ -12,7 +12,7 @@ import {
 import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
-import { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
@@ -32,7 +32,17 @@ export default function EditAvatarPage() {
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag({ x: user?.avatarX ?? 0, y: user?.avatarY ?? 0 });
 
-  const submitChanges = useCallback(() => {
+  const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState<File>();
+  const [isFilePicked, setIsFilePicked] = useState(false);
+
+  const submitChanges = useCallback(async () => {
+    if (isFilePicked) {
+      usersApi
+        .userControllerUploadAvatar({ file: selectedFile })
+        .catch((e) => console.error(e))
+        .finally(() => setIsFilePicked(false));
+    }
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
@@ -41,9 +51,15 @@ export default function EditAvatarPage() {
         },
       })
       .catch((e) => console.error(e));
-  }, [picturePosition]);
+  }, [picturePosition, isFilePicked, selectedFile]);
 
-  const navigate = useNavigate();
+  const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event &&
+      event?.target &&
+      event?.target?.files?.[0] &&
+      setSelectedFile(event?.target?.files[0]);
+    setIsFilePicked(true);
+  };
   return user === null ? (
     <div className="edit-avatar-page">
       <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
@@ -60,8 +76,8 @@ export default function EditAvatarPage() {
       </Header>
       <Row
         iconVariant={IconVariant.FILE}
-        onClick={submitChanges}
         title="Select file"
+        onChange={changeHandler}
       />
       <EditableAvatar
         url={
