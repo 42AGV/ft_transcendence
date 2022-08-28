@@ -91,14 +91,12 @@ export default function DispatchPage<T>({
         <SearchForm search={search} onSearchChange={handleSearch} />
       </div>
       <div className="dispatch-page-rows">
-        {dataValidator &&
-          instanceOfArrayTyped(data, dataValidator) &&
-          dataMapper && (
-            <RowsList
-              rows={mapDataToRows(dataMapper, data)}
-              lastRowRef={lastRowElementRef}
-            />
-          )}
+        {instanceOfArrayTyped(data, dataValidator) && (
+          <RowsList
+            rows={mapDataToRows(dataMapper, data)}
+            lastRowRef={lastRowElementRef}
+          />
+        )}
       </div>
       {button && <div className="dispatch-page-button">{button}</div>}
       <div className="dispatch-page-navigation">
