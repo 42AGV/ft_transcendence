@@ -1,15 +1,24 @@
 import './DispatchPage.css';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { USER_URL, USERS_EP_URL } from '../../urls';
 import { SmallAvatar } from '../Avatar/Avatar';
 import SearchForm from '../Input/SearchForm';
 import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
-import { useData } from '../../hooks/UseData';
+import UseSearch from '../../hooks/UseSearch';
+
+type SearchFetchFnParams = {
+  search: string;
+  offset: number;
+};
+
+type SearchFetchFn<T> = (
+  requestParameters: SearchFetchFnParams,
+) => Promise<T[]>;
 
 type DispatchPageProps<T> = {
-  fetchFn: (...args: any[]) => Promise<T[]>;
+  fetchFn: SearchFetchFn<T>;
   dataValidator: (data: T) => boolean;
   dataMapper: (data: T) => RowItem;
   button?: JSX.Element; // TODO: this is provisional, until we have a better idiom
@@ -21,59 +30,32 @@ export default function DispatchPage<T>({
   dataMapper,
   button,
 }: DispatchPageProps<T>) {
-  const [data, setData] = useState<T[]>([]);
   const [search, setSearch] = useState('');
-  const [hasMoreData, setHasMoreData] = useState(false);
+  const [offset, setOffset] = useState(0);
   const getData = useCallback(() => {
-    return fetchFn({ search });
-  }, [fetchFn, search]);
-  const results = useData(getData);
+    return fetchFn({ search, offset });
+  }, [fetchFn, search, offset]);
+  const { data, isLoading, hasMore } = UseSearch(search, getData);
   const observer = useRef<IntersectionObserver | null>(null);
-
-  useEffect(() => {
-    setData([]);
-  }, [search]);
-
-  useEffect(() => {
-    if (results.data) {
-      setData(results.data);
-      setHasMoreData(results.data.length > 0);
-    }
-  }, [results.data]);
-
-  const fetchMoreData = useCallback(async () => {
-    try {
-      const newData = await fetchFn({
-        offset: data.length,
-        search,
-      });
-      setData((prevData) => [...prevData, ...newData]);
-      setHasMoreData(newData.length > 0);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    }
-  }, [data.length, fetchFn, search]);
 
   const lastRowElementRef = useCallback(
     (row: HTMLLIElement) => {
-      if (results.isLoading) {
+      if (isLoading) {
         return;
       }
       if (observer.current) {
         observer.current.disconnect();
       }
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMoreData) {
-          fetchMoreData();
+        if (entries[0].isIntersecting && hasMore) {
+          setOffset(data.length);
         }
       });
       if (row) {
         observer.current.observe(row);
       }
     },
-    [results.isLoading, hasMoreData, fetchMoreData],
+    [isLoading, hasMore, data.length],
   );
 
   const mapDataToRows = (
@@ -95,6 +77,7 @@ export default function DispatchPage<T>({
 
   const handleSearch = (value: string) => {
     setSearch(value);
+    setOffset(0);
   };
 
   return (
