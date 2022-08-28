@@ -1,27 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { Input, InputVariant } from '..';
 import { IconVariant } from '../Icon/Icon';
 import './SearchForm.css';
-import { useData } from '../../hooks/UseData';
 
-type SearchProps<T> = {
-  fetchFn: (...args: any[]) => Promise<T>;
-  setChange: React.Dispatch<React.SetStateAction<T>>;
+type SearchProps = {
+  search: string;
+  onSearchChange: (value: string) => void;
 };
 
-export default function SearchForm<T>({ fetchFn, setChange }: SearchProps<T>) {
-  const [search, setSearch] = useState('');
-  const memoizedFetchFn = useCallback(
-    () => fetchFn({ search }),
-    [fetchFn, search],
-  );
-  const { data } = useData<T>(memoizedFetchFn);
-
-  useEffect(() => {
-    if (data) {
-      setChange(data);
-    }
-  }, [data, setChange]);
+export default function SearchForm({ search, onSearchChange }: SearchProps) {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onSearchChange(event.target.value);
+  };
 
   return (
     <div className="search-form">
@@ -31,9 +21,7 @@ export default function SearchForm<T>({ fetchFn, setChange }: SearchProps<T>) {
         placeholder="search"
         value={search}
         name="search"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          setSearch(e.target.value);
-        }}
+        onChange={handleSearch}
       />
     </div>
   );
