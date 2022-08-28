@@ -3,7 +3,7 @@ import { Position } from '../types';
 import { EDITABLE_AVATAR_SCALE } from '../../pages/EditAvatarPage/EditAvatarPage';
 
 type DragInfo = {
-  isInitializing: boolean;
+  isLoading: boolean;
   isDragging: boolean;
   origin: Position;
   translation: Position | null;
@@ -12,31 +12,31 @@ type DragInfo = {
 
 export const useDrag = (startingPosition: Position | null) => {
   const [dragInfo, setDragInfo] = useState<DragInfo>({
-    isInitializing: true,
+    isLoading: true,
     isDragging: false,
     origin: { x: 0, y: 0 },
     translation: startingPosition,
     lastTranslation: startingPosition,
   });
 
-  const { isInitializing, isDragging } = dragInfo;
+  const { isLoading, isDragging } = dragInfo;
   useEffect(() => {
-    if (startingPosition && isInitializing) {
+    if (startingPosition && isLoading) {
       const scaledStartingPosition = {
         x: -startingPosition.x * EDITABLE_AVATAR_SCALE,
         y: -startingPosition.y * EDITABLE_AVATAR_SCALE,
       };
       setDragInfo({
         ...dragInfo,
-        isInitializing: false,
+        isLoading: false,
         translation: scaledStartingPosition,
         lastTranslation: scaledStartingPosition,
       });
     }
-  }, [startingPosition, isInitializing]);
+  }, [startingPosition, dragInfo, isLoading]);
 
   const handleMouseDown = ({ clientX, clientY }: React.MouseEvent) => {
-    if (!isDragging && !isInitializing)
+    if (!isDragging && !isLoading)
       setDragInfo({
         ...dragInfo,
         isDragging: true,
@@ -45,7 +45,7 @@ export const useDrag = (startingPosition: Position | null) => {
   };
 
   const handleMouseMove = ({ clientX, clientY }: React.MouseEvent) => {
-    if (isDragging && !isInitializing) {
+    if (isDragging && !isLoading) {
       const { origin, lastTranslation } = dragInfo;
       setDragInfo({
         ...dragInfo,
@@ -58,7 +58,7 @@ export const useDrag = (startingPosition: Position | null) => {
   };
 
   const handleMouseUp = () => {
-    if (isDragging && !isInitializing) {
+    if (isDragging && !isLoading) {
       const { translation } = dragInfo;
       setDragInfo({
         ...dragInfo,
@@ -69,8 +69,8 @@ export const useDrag = (startingPosition: Position | null) => {
   };
 
   const picturePosition: Position = {
-    x: !isInitializing ? -dragInfo.translation!.x : 0,
-    y: !isInitializing ? -dragInfo.translation!.y : 0,
+    x: !isLoading ? -dragInfo.translation!.x : 0,
+    y: !isLoading ? -dragInfo.translation!.y : 0,
   };
 
   return {
