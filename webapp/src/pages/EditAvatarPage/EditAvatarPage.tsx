@@ -19,7 +19,8 @@ import { usersApi } from '../../shared/services/ApiService';
 import { EditableAvatar } from '../../shared/components/Avatar/EditableAvatar';
 import useDrag from '../../shared/hooks/UseDrag';
 
-export const EDITABLE_AVATAR_SCALE = 0.6896;
+export const EDITABLE_AVATAR_SCALE = 1.45;
+export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
 
 export default function EditAvatarPage() {
   const getCurrentUser = useCallback(
@@ -31,7 +32,7 @@ export default function EditAvatarPage() {
   const { data: user } = useData<User>(getCurrentUser);
 
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag({ x: user?.avatarX ?? 0, y: user?.avatarY ?? 0 });
+    useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);
 
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -40,8 +41,12 @@ export default function EditAvatarPage() {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
-          avatarX: Math.round(picturePosition.x * EDITABLE_AVATAR_SCALE),
-          avatarY: Math.round(picturePosition.y * EDITABLE_AVATAR_SCALE),
+          avatarX: Math.round(
+            picturePosition.x * EDITABLE_AVATAR_SCALE_REVERSE,
+          ),
+          avatarY: Math.round(
+            picturePosition.y * EDITABLE_AVATAR_SCALE_REVERSE,
+          ),
         },
       })
       .catch((e) => console.error(e));

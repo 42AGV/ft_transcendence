@@ -2,7 +2,7 @@ import './EditableAvatar.css';
 import { AvatarProps } from './Avatar';
 import { Text, TextColor, TextVariant, TextWeight } from '../index';
 import React, { useRef } from 'react';
-import { EDITABLE_AVATAR_SCALE } from '../../../pages/EditAvatarPage/EditAvatarPage';
+import { EDITABLE_AVATAR_SCALE_REVERSE } from '../../../pages/EditAvatarPage/EditAvatarPage';
 import { Position } from '../../types';
 
 type EditableAvatarProps = AvatarProps & {
@@ -32,7 +32,7 @@ export function EditableAvatar({
 }: EditableAvatarProps) {
   const ref = useRef<HTMLImageElement>(null);
   const FormatNumber = (value: number) =>
-    Math.round(value * EDITABLE_AVATAR_SCALE);
+    Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
   const position = {
     objectPosition: `${FormatNumber(picturePosition?.x)}px ${FormatNumber(
       picturePosition.y,

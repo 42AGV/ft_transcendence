@@ -26,7 +26,7 @@
   width: 18rem;
   height: 18rem;
   object-fit: cover;
-  -webkit-transform: scale(1.45);
+  -webkit-transform: scale(1.45); /* EDITABLE_AVATAR_SCALE */
   --radius: 5.5rem;
   -webkit-mask-image: radial-gradient(
     circle calc(var(--radius)) at center,
