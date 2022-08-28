@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { User } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { EditableAvatar } from '../../shared/components/Avatar/EditableAvatar';
-import useDrag from '../../shared/hooks/UseDrag';
+import { useDrag } from '../../shared/hooks/UseDrag';
 
 export const EDITABLE_AVATAR_SCALE = 1.45;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;

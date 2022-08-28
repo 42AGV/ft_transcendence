@@ -3,21 +3,23 @@ import { Position } from '../types';
 import { EDITABLE_AVATAR_SCALE } from '../../pages/EditAvatarPage/EditAvatarPage';
 
 type DragInfo = {
+  isInitializing: boolean;
   isDragging: boolean;
   origin: Position;
   translation: Position | null;
   lastTranslation: Position | null;
 };
 
-const useDrag = (startingPosition: Position | null) => {
-  const [isInitializing, setIsInitializing] = useState<boolean>(true);
+export const useDrag = (startingPosition: Position | null) => {
   const [dragInfo, setDragInfo] = useState<DragInfo>({
+    isInitializing: true,
     isDragging: false,
     origin: { x: 0, y: 0 },
     translation: startingPosition,
     lastTranslation: startingPosition,
   });
 
+  const { isInitializing, isDragging } = dragInfo;
   useEffect(() => {
     if (startingPosition && isInitializing) {
       const scaledStartingPosition = {
@@ -26,14 +28,13 @@ const useDrag = (startingPosition: Position | null) => {
       };
       setDragInfo({
         ...dragInfo,
+        isInitializing: false,
         translation: scaledStartingPosition,
         lastTranslation: scaledStartingPosition,
       });
-      setIsInitializing(false);
     }
   }, [startingPosition, isInitializing]);
 
-  const { isDragging } = dragInfo;
   const handleMouseDown = ({ clientX, clientY }: React.MouseEvent) => {
     if (!isDragging && !isInitializing)
       setDragInfo({
@@ -79,5 +80,3 @@ const useDrag = (startingPosition: Position | null) => {
     handleMouseUp,
   };
 };
-
-export default useDrag;
