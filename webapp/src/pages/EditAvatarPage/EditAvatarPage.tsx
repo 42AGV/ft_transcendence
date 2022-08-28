@@ -26,6 +26,7 @@ export default function EditAvatarPage() {
     () => usersApi.userControllerGetCurrentUser(),
     [],
   );
+  const [imgHash, setImgHash] = useState<number>(Date.now());
 
   const { data: user } = useData<User>(getCurrentUser);
 
@@ -35,15 +36,7 @@ export default function EditAvatarPage() {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const submitChanges = useCallback(async () => {
-    if (selectedFile !== null) {
-      usersApi
-        .userControllerUploadAvatar({ file: selectedFile })
-        .catch((e) => console.error(e))
-        .finally(() => {
-          setSelectedFile(null);
-        });
-    }
+  const submitPlacement = useCallback(async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
@@ -52,7 +45,19 @@ export default function EditAvatarPage() {
         },
       })
       .catch((e) => console.error(e));
-  }, [picturePosition, selectedFile]);
+  }, [picturePosition]);
+
+  const uploadAvatar = useCallback(async () => {
+    if (selectedFile !== null) {
+      usersApi
+        .userControllerUploadAvatar({ file: selectedFile })
+        .catch((e) => console.error(e))
+        .finally(() => {
+          setImgHash(Date.now());
+          setSelectedFile(null);
+        });
+    }
+  }, [selectedFile]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event &&
@@ -87,7 +92,7 @@ export default function EditAvatarPage() {
             ? `${USERS_EP_URL}/${user.id}/avatar`
             : WILDCARD_AVATAR_URL
         }
-        imgHash={Date.now()}
+        imgHash={imgHash}
         picturePosition={picturePosition}
         handleMouseDown={handleMouseDown}
         handleMouseUp={handleMouseUp}
@@ -96,9 +101,9 @@ export default function EditAvatarPage() {
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}
-        onClick={submitChanges}
+        onClick={selectedFile !== null ? uploadAvatar : submitPlacement}
       >
-        Upload
+        {selectedFile !== null ? 'Upload' : 'Save changes'}
       </Button>
     </div>
   );
