@@ -11,7 +11,6 @@ import {
   TextWeight,
 } from '../../shared/components';
 import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
-import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -29,14 +28,10 @@ type ImgData = {
 };
 
 export default function EditAvatarPage() {
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    [],
-  );
-  const { data: user } = useData<User>(getCurrentUser);
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);
-  const navigate = useNavigate();
   const [imgData, setImgData] = useState<ImgData>({
     imgHash: Date.now(),
     imgFile: null,
