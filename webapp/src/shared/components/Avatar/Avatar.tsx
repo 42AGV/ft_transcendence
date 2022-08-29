@@ -19,17 +19,22 @@ type LargeAvatarProps = AvatarProps & {
   editUrl?: string;
 };
 
+const SMALL_AVATAR_DOWNSCALE = 0.139;
+const LARGE_AVATAR_DOWNSCALE = 0.55;
+
 export function SmallAvatar({
   url,
   status,
   XCoordinate,
   YCoordinate,
 }: AvatarProps) {
+  const FormatNumber = (value: number) =>
+    Math.round(value * SMALL_AVATAR_DOWNSCALE);
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${Math.round(XCoordinate * 0.139)}px ${Math.round(
-            YCoordinate * 0.139,
+          objectPosition: `${FormatNumber(XCoordinate)}px ${FormatNumber(
+            YCoordinate,
           )}px`,
         }
       : {
@@ -60,13 +65,15 @@ export function LargeAvatar({
   YCoordinate,
   editUrl,
 }: LargeAvatarProps) {
+  const FormatNumber = (value: number) =>
+    Math.round(value * LARGE_AVATAR_DOWNSCALE);
   const statusClass = status ? `avatar-status--${status}` : '';
 
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${Math.round(XCoordinate * 0.55)}px ${Math.round(
-            YCoordinate * 0.55,
+          objectPosition: `${FormatNumber(XCoordinate)}px ${FormatNumber(
+            YCoordinate,
           )}px`,
         }
       : {
