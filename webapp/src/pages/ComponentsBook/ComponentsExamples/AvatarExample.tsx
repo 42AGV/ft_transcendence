@@ -11,6 +11,11 @@ export const AvatarExample = () => (
     <SmallAvatar url={randomAvatar} XCoordinate={10} YCoordinate={5} />
     <LargeAvatar url={randomAvatar} XCoordinate={10} YCoordinate={5} />
     <SmallAvatar url={randomAvatar} status="playing" />
-    <LargeAvatar url={randomAvatar} edit status="playing" caption="level 21" />
+    <LargeAvatar
+      url={randomAvatar}
+      editUrl={'/'}
+      status="playing"
+      caption="level 21"
+    />
   </BookSection>
 );

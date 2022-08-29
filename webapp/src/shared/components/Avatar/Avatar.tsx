@@ -13,7 +13,6 @@ export type AvatarProps = {
 };
 
 type LargeAvatarProps = AvatarProps & {
-  edit?: boolean;
   caption?: string;
   editUrl?: string;
 };
@@ -51,7 +50,6 @@ export function SmallAvatar({
 export function LargeAvatar({
   url,
   status,
-  edit = false,
   caption,
   XCoordinate,
   YCoordinate,
@@ -69,23 +67,15 @@ export function LargeAvatar({
         };
   return (
     <figure className="avatar-large">
-      {edit && (
+      {editUrl && (
         <div className="avatar-large__edit">
-          {(editUrl && (
-            <Link to={editUrl}>
-              <Icon
-                variant={IconVariant.EDIT}
-                color={Color.LIGHT}
-                size={IconSize.SMALL}
-              />
-            </Link>
-          )) || (
+          <Link to={editUrl}>
             <Icon
               variant={IconVariant.EDIT}
               color={Color.LIGHT}
               size={IconSize.SMALL}
             />
-          )}
+          </Link>
         </div>
       )}
       <div className={`avatar-large__image-wrapper  ${statusClass}`}>
