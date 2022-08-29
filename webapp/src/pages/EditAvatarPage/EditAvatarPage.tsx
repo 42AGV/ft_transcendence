@@ -15,9 +15,9 @@ import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
+import { useAuth } from '../../shared/hooks/UseAuth';
 
 export const EDITABLE_AVATAR_SCALE = 1.29;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
