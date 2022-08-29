@@ -71,7 +71,7 @@ export default function EditAvatarPage() {
           });
         });
     }
-  }, [imgData, imgFile]);
+  }, [imgFile]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event &&
@@ -111,7 +111,8 @@ export default function EditAvatarPage() {
             : WILDCARD_AVATAR_URL
         }
         imgHash={imgHash}
-        picturePosition={picturePosition}
+        XCoordinate={picturePosition.x}
+        YCoordinate={picturePosition.y}
         handleMouseDown={handleMouseDown}
         handleMouseUp={handleMouseUp}
         handleMouseMove={handleMouseMove}

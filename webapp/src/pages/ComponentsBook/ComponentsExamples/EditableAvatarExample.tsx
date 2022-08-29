@@ -14,7 +14,11 @@ export const EditableAvatarExample = () => {
 
   return (
     <BookSection title="Editable Avatar component">
-      <EditableAvatar picturePosition={{ x: 0, y: 0 }} url={randomAvatar} />
+      <EditableAvatar
+        XCoordinate={xCoord}
+        YCoordinate={yCoord}
+        url={randomAvatar}
+      />
       <LargeAvatar
         url={randomAvatar}
         XCoordinate={xCoord}
