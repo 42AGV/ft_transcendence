@@ -42,7 +42,6 @@ export default function EditUserPage() {
               ? `${USERS_EP_URL}/${user.id}/avatar`
               : WILDCARD_AVATAR_URL
           }
-          edit={true}
           editUrl={EDIT_AVATAR_URL}
           XCoordinate={user.avatarX}
           YCoordinate={user.avatarY}
