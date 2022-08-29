@@ -1,13 +1,12 @@
 import './DispatchPage.css';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { USER_URL, USERS_EP_URL } from '../../urls';
 import { SmallAvatar } from '../Avatar/Avatar';
 import SearchForm from '../Input/SearchForm';
 import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
-import { usersApi } from '../../services/ApiService';
-import { useData } from '../../hooks/UseData';
+import { useAuth } from '../../hooks/UseAuth';
 
 type DispatchPageProps<T> = {
   fetchFn: (...args: any[]) => Promise<T[]>;
@@ -23,10 +22,6 @@ export default function DispatchPage<T>({
   button,
 }: DispatchPageProps<T>) {
   const [data, setData] = useState<T[]>([]);
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    [],
-  );
 
   const mapDataToRows = (
     callBack: (data: T) => RowItem,
@@ -45,7 +40,7 @@ export default function DispatchPage<T>({
     return array.every((element) => elementChecker(element));
   };
 
-  const { data: user } = useData(getCurrentUser);
+  const { user } = useAuth();
   return (
     <div className="dispatch-page">
       <div className="dispatch-page-avatar">
