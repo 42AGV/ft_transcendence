@@ -30,11 +30,14 @@ export default function DispatchPage<T>({
   dataMapper,
   button,
 }: DispatchPageProps<T>) {
-  const [search, setSearch] = useState('');
-  const [offset, setOffset] = useState(0);
+  const [searchParams, setSearchParams] = useState<SearchFetchFnParams>({
+    search: '',
+    offset: 0,
+  });
+  const { search } = searchParams;
   const getData = useCallback(() => {
-    return fetchFn({ search, offset });
-  }, [fetchFn, search, offset]);
+    return fetchFn(searchParams);
+  }, [fetchFn, searchParams]);
   const { data, isLoading, hasMore } = UseSearch(search, getData);
   const observer = useRef<IntersectionObserver | null>(null);
 
@@ -48,7 +51,10 @@ export default function DispatchPage<T>({
       }
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setOffset(data.length);
+          setSearchParams((prevSearchParams) => ({
+            ...prevSearchParams,
+            offset: data.length,
+          }));
         }
       });
       if (row) {
@@ -76,8 +82,7 @@ export default function DispatchPage<T>({
   };
 
   const handleSearch = (value: string) => {
-    setSearch(value);
-    setOffset(0);
+    setSearchParams({ search: value, offset: 0 });
   };
 
   return (
