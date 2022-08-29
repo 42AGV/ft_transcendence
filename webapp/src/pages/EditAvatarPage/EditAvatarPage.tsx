@@ -22,21 +22,27 @@ import { useDrag } from '../../shared/hooks/UseDrag';
 export const EDITABLE_AVATAR_SCALE = 1.45;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
 
+type ImgData = {
+  imgHash: number;
+  imgName?: string;
+  imgFile: File | null;
+};
+
 export default function EditAvatarPage() {
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
     [],
   );
-  const [imgHash, setImgHash] = useState<number>(Date.now());
-
   const { data: user } = useData<User>(getCurrentUser);
-
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);
-
   const navigate = useNavigate();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imgData, setImgData] = useState<ImgData>({
+    imgHash: Date.now(),
+    imgFile: null,
+  });
 
+  const { imgName, imgHash, imgFile } = imgData;
   const submitPlacement = useCallback(async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
@@ -53,22 +59,29 @@ export default function EditAvatarPage() {
   }, [picturePosition]);
 
   const uploadAvatar = useCallback(async () => {
-    if (selectedFile !== null) {
+    if (imgFile !== null) {
       usersApi
-        .userControllerUploadAvatar({ file: selectedFile })
+        .userControllerUploadAvatar({ file: imgFile })
         .catch((e) => console.error(e))
         .finally(() => {
-          setImgHash(Date.now());
-          setSelectedFile(null);
+          setImgData({
+            imgName: undefined,
+            imgHash: Date.now(),
+            imgFile: null,
+          });
         });
     }
-  }, [selectedFile]);
+  }, [imgData, imgFile]);
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event &&
       event?.target &&
       event?.target?.files?.[0] &&
-      setSelectedFile(event?.target?.files[0]);
+      setImgData({
+        imgFile: event?.target?.files[0],
+        imgName: event?.target?.files[0]?.name ?? null,
+        imgHash: Date.now(),
+      });
   };
 
   return user === null ? (
@@ -88,7 +101,7 @@ export default function EditAvatarPage() {
       <Row
         iconVariant={IconVariant.FILE}
         title="Select file"
-        subtitle={selectedFile?.name ?? undefined}
+        subtitle={imgName}
         onChange={changeHandler}
       />
       <EditableAvatar
@@ -106,9 +119,9 @@ export default function EditAvatarPage() {
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}
-        onClick={selectedFile !== null ? uploadAvatar : submitPlacement}
+        onClick={imgFile !== null ? uploadAvatar : submitPlacement}
       >
-        {selectedFile !== null ? 'Upload' : 'Save changes'}
+        {imgFile !== null ? 'Upload' : 'Save changes'}
       </Button>
     </div>
   );
