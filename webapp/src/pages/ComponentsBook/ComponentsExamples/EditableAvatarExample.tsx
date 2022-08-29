@@ -1,7 +1,10 @@
 import { BookSection } from '../BookSection';
 import { WILDCARD_AVATAR_URL } from '../../../shared/urls';
-import { EditableAvatar } from '../../../shared/components/Avatar/EditableAvatar';
-import { LargeAvatar, SmallAvatar } from '../../../shared/components';
+import {
+  LargeAvatar,
+  SmallAvatar,
+  EditableAvatar,
+} from '../../../shared/components';
 
 const randomAvatar = WILDCARD_AVATAR_URL;
 
