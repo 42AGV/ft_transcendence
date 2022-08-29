@@ -45,10 +45,13 @@
   height: 3.22rem;
   --radius: 0.945rem;
 }
+
 .avatar-large__image,
 .avatar-small__image {
   object-fit: cover;
-  -webkit-transform: scale(1.55); /* maybe we would like to save this into another parameter */
+  -webkit-transform: scale(
+    1.55
+  ); /* TODO: maybe we would like to save this into another parameter */
   -webkit-mask-image: radial-gradient(
     circle var(--radius) at center,
     #000 0,
