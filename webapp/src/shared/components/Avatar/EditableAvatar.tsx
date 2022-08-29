@@ -22,7 +22,7 @@ type EditableAvatarProps = AvatarProps & {
   }: React.MouseEvent<Element, MouseEvent>) => void;
 };
 
-export function EditableAvatar({
+export default function EditableAvatar({
   imgHash,
   url,
   picturePosition,
