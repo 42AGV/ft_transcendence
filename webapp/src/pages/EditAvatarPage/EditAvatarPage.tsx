@@ -46,6 +46,7 @@ export default function EditAvatarPage() {
             ? `${USERS_EP_URL}/${user.id}/avatar`
             : WILDCARD_AVATAR_URL
         }
+        picturePosition={{ x: 0, y: 0 }}
       />
       <Button
         variant={ButtonVariant.SUBMIT}
