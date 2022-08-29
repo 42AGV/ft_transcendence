@@ -5,14 +5,25 @@
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  gap: 3rem var(--column-gap);
+  gap: 4.75rem var(--column-gap);
   grid-template-columns: 1fr;
   grid-template-rows: auto auto 1fr auto;
   justify-content: center;
   align-items: center;
   justify-items: center;
+  overflow: scroll;
+}
+
+.edit-avatar-page .editable-avatar {
+  align-self: flex-start;
 }
 
 .edit-avatar-page .row {
   width: 15rem;
+}
+
+@media (min-width: 768px) {
+  .edit-avatar-page {
+    gap: 3rem var(--column-gap);
+  }
 }
