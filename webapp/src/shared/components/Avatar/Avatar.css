@@ -37,20 +37,20 @@
 .avatar-large__image {
   width: 10rem;
   height: 10rem;
-  --radius: 10rem;
+  --radius: 3rem;
 }
 
 .avatar-small__image {
   width: 3.22rem;
   height: 3.22rem;
-  --radius: 3.15rem;
+  --radius: 0.945rem;
 }
 .avatar-large__image,
 .avatar-small__image {
-  -webkit-transform: scale(1.55);
   object-fit: cover;
+  -webkit-transform: scale(1.55); /* maybe we would like to save this into another parameter */
   -webkit-mask-image: radial-gradient(
-    circle calc(var(--radius) * 0.3) at center,
+    circle var(--radius) at center,
     #000 0,
     #000 97%,
     transparent 100%
