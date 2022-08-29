@@ -19,7 +19,7 @@ import { User } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
 
-export const EDITABLE_AVATAR_SCALE = 1.45;
+export const EDITABLE_AVATAR_SCALE = 1.29;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
 
 type ImgData = {
