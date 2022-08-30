@@ -4,16 +4,20 @@
   height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
+  overflow: scroll;
 }
+
+/* This following section is the section made different in the following media */
+/* query. There are some repeated attributes, and this one is not merged */
+/* with the previous block, to improve human readability. */
 
 .edit-avatar-page {
   display: flex;
   flex-direction: column;
   gap: 0.5rem 0.5rem;
+  justify-content: space-between;
   align-items: center;
   justify-items: center;
-  justify-content: space-between;
-  overflow: scroll;
 }
 
 .edit-avatar-page .editable-avatar {
@@ -33,8 +37,8 @@
     justify-content: center;
     align-items: center;
     justify-items: center;
-    overflow: scroll;
   }
+
   .edit-avatar-page .editable-avatar {
     align-self: flex-start;
   }
