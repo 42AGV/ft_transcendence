@@ -13,7 +13,7 @@ type HeaderCommon = {
 };
 
 type IconHeaderProps = HeaderCommon & {
-  icon?: IconVariant;
+  icon: IconVariant;
   avatar?: never;
   navigationUrl?: never;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
@@ -21,12 +21,19 @@ type IconHeaderProps = HeaderCommon & {
 
 type AvatarHeader = HeaderCommon & {
   icon?: never;
-  avatar?: AvatarProps;
+  avatar: AvatarProps;
   navigationUrl: string;
   onClick?: never;
 };
 
-type HeaderProps = IconHeaderProps | AvatarHeader;
+type NoFigureHeader = HeaderCommon & {
+  icon?: never;
+  avatar?: never;
+  navigationUrl?: never;
+  onClick?: never;
+};
+
+type HeaderProps = IconHeaderProps | AvatarHeader | NoFigureHeader;
 
 export default function Header({
   icon,
