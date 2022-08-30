@@ -21,6 +21,8 @@ const mapUserToRow = (user: User): RowItem => {
         ? `${USERS_EP_URL}/${user.id}/avatar`
         : WILDCARD_AVATAR_URL,
       status: 'offline',
+      XCoordinate: user.avatarX,
+      YCoordinate: user.avatarY,
     },
     url: `${USERS_URL}/${user.id}`,
     title: user.username,

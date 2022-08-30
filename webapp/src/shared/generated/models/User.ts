@@ -45,6 +45,18 @@ export interface User {
     avatarId: string | null;
     /**
      * 
+     * @type {number}
+     * @memberof User
+     */
+    avatarX: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof User
+     */
+    avatarY: number;
+    /**
+     * 
      * @type {string}
      * @memberof User
      */
@@ -66,6 +78,8 @@ export function instanceOfUser(value: object): boolean {
     isInstance = isInstance && "email" in value;
     isInstance = isInstance && "fullName" in value;
     isInstance = isInstance && "avatarId" in value;
+    isInstance = isInstance && "avatarX" in value;
+    isInstance = isInstance && "avatarY" in value;
     isInstance = isInstance && "id" in value;
     isInstance = isInstance && "createdAt" in value;
 
@@ -86,6 +100,8 @@ export function UserFromJSONTyped(json: any, ignoreDiscriminator: boolean): User
         'email': json['email'],
         'fullName': json['fullName'],
         'avatarId': json['avatarId'],
+        'avatarX': json['avatarX'],
+        'avatarY': json['avatarY'],
         'id': json['id'],
         'createdAt': (new Date(json['createdAt'])),
     };
@@ -104,6 +120,8 @@ export function UserToJSON(value?: User | null): any {
         'email': value.email,
         'fullName': value.fullName,
         'avatarId': value.avatarId,
+        'avatarX': value.avatarX,
+        'avatarY': value.avatarY,
         'id': value.id,
         'createdAt': (value.createdAt.toISOString()),
     };

@@ -6,6 +6,7 @@ import { SmallAvatar } from '../Avatar/Avatar';
 import SearchForm from '../Input/SearchForm';
 import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
+import { useAuth } from '../../hooks/UseAuth';
 
 type DispatchPageProps<T> = {
   fetchFn: (...args: any[]) => Promise<T[]>;
@@ -39,11 +40,16 @@ export default function DispatchPage<T>({
     return array.every((element) => elementChecker(element));
   };
 
+  const { user } = useAuth();
   return (
     <div className="dispatch-page">
       <div className="dispatch-page-avatar">
         <Link to={USER_URL}>
-          <SmallAvatar url={`${USERS_EP_URL}/avatar`} />
+          <SmallAvatar
+            url={`${USERS_EP_URL}/avatar`}
+            XCoordinate={user?.avatarX ?? 0}
+            YCoordinate={user?.avatarY ?? 0}
+          />
         </Link>
       </div>
       <div className="dispatch-page-search">

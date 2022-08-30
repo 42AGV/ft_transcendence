@@ -31,6 +31,18 @@ export interface UpdateUserDto {
      * @memberof UpdateUserDto
      */
     email?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateUserDto
+     */
+    avatarX?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateUserDto
+     */
+    avatarY?: number;
 }
 
 /**
@@ -54,6 +66,8 @@ export function UpdateUserDtoFromJSONTyped(json: any, ignoreDiscriminator: boole
         
         'fullName': !exists(json, 'fullName') ? undefined : json['fullName'],
         'email': !exists(json, 'email') ? undefined : json['email'],
+        'avatarX': !exists(json, 'avatarX') ? undefined : json['avatarX'],
+        'avatarY': !exists(json, 'avatarY') ? undefined : json['avatarY'],
     };
 }
 
@@ -68,6 +82,8 @@ export function UpdateUserDtoToJSON(value?: UpdateUserDto | null): any {
         
         'fullName': value.fullName,
         'email': value.email,
+        'avatarX': value.avatarX,
+        'avatarY': value.avatarY,
     };
 }
 
