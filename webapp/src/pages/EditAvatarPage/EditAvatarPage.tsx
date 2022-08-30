@@ -12,7 +12,7 @@ import {
 } from '../../shared/components';
 import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
@@ -22,8 +22,8 @@ export const EDITABLE_AVATAR_SCALE = 1.29;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
 
 type ImgData = {
-  imgHash: number;
-  imgName?: string;
+  imgHash: string;
+  imgName: string | null;
   imgFile: File | null;
 };
 
@@ -33,12 +33,13 @@ export default function EditAvatarPage() {
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);
   const [imgData, setImgData] = useState<ImgData>({
-    imgHash: Date.now(),
+    imgHash: Date.now().toString(),
+    imgName: null,
     imgFile: null,
   });
 
   const { imgName, imgHash, imgFile } = imgData;
-  const submitPlacement = useCallback(async () => {
+  const submitPlacement = async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
@@ -51,32 +52,32 @@ export default function EditAvatarPage() {
         },
       })
       .catch((e) => console.error(e));
-  }, [picturePosition]);
+  };
 
-  const uploadAvatar = useCallback(async () => {
+  const uploadAvatar = async () => {
     if (imgFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
         .catch((e) => console.error(e))
         .finally(() => {
           setImgData({
-            imgName: undefined,
-            imgHash: Date.now(),
+            imgName: null,
+            imgHash: Date.now().toString(),
             imgFile: null,
           });
         });
     }
-  }, [imgFile]);
+  };
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event &&
-      event?.target &&
-      event?.target?.files?.[0] &&
-      setImgData({
-        imgFile: event?.target?.files[0],
-        imgName: event?.target?.files[0]?.name ?? null,
-        imgHash: Date.now(),
-      });
+    if (event.target.files === null) {
+      return;
+    }
+    setImgData({
+      imgFile: event.target.files[0],
+      imgName: event.target.files[0].name,
+      imgHash: Date.now().toString(),
+    });
   };
 
   return user === null ? (
@@ -93,7 +94,7 @@ export default function EditAvatarPage() {
       <Row
         iconVariant={IconVariant.FILE}
         title="Select file"
-        subtitle={imgName}
+        subtitle={imgName ?? undefined}
         onChange={changeHandler}
       />
       <EditableAvatar

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 export type AvatarProps = {
   url: string;
-  imgHash?: number /* TODO: fix auto reloads when avatar is updated, possibly with this */;
+  imgHash?: string /* TODO: fix auto reloads when avatar is updated, possibly with this */;
   status?: StatusVariant;
   XCoordinate?: number;
   YCoordinate?: number;
