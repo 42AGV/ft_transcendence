@@ -29,10 +29,7 @@ export default function EditAvatarPage() {
     </div>
   ) : (
     <div className="edit-avatar-page">
-      <Header
-        navigationFigure={IconVariant.ARROW_BACK}
-        onClick={goBack(navigate)}
-      >
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
         edit avatar
       </Header>
       <Row

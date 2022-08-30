@@ -46,7 +46,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
   ) : (
     <div className="user-page">
       <Header
-        navigationFigure={IconVariant.ARROW_BACK}
+        icon={IconVariant.ARROW_BACK}
         onClick={goBack(navigate)}
         statusVariant="online"
       >

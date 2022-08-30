@@ -29,10 +29,7 @@ export default function EditUserPage() {
     </div>
   ) : (
     <div className="edit-user-page">
-      <Header
-        navigationFigure={IconVariant.ARROW_BACK}
-        onClick={goBack(navigate)}
-      >
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
         edit profile
       </Header>
       <div className="edit-user-avatar">

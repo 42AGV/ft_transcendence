@@ -8,25 +8,29 @@ import './Header.css';
 import React from 'react';
 
 type HeaderCommon = {
-  navigationFigure: IconVariant | string;
   statusVariant?: StatusVariant;
   children: string;
 };
 
-type HeaderLinkProps = HeaderCommon & {
-  navigationUrl: string;
-  onClick?: never;
-};
-
-type HeaderButtonProps = HeaderCommon & {
+type IconHeaderProps = HeaderCommon & {
+  icon?: IconVariant;
+  avatar?: never;
   navigationUrl?: never;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-type HeaderProps = HeaderLinkProps | HeaderButtonProps;
+type AvatarHeader = HeaderCommon & {
+  icon?: never;
+  avatar?: AvatarProps;
+  navigationUrl: string;
+  onClick?: never;
+};
+
+type HeaderProps = IconHeaderProps | AvatarHeader;
 
 export default function Header({
-  navigationFigure,
+  icon,
+  avatar,
   navigationUrl,
   onClick,
   statusVariant,
@@ -34,14 +38,10 @@ export default function Header({
 }: HeaderProps) {
   const lNavFigure = (
     <>
-      {navigationFigure in IconVariant ? (
-        <Icon
-          variant={navigationFigure as IconVariant}
-          size={IconSize.SMALL}
-          color={Color.LIGHT}
-        />
+      {icon ? (
+        <Icon variant={icon} size={IconSize.SMALL} color={Color.LIGHT} />
       ) : (
-        <SmallAvatar {...(JSON.parse(navigationFigure) as AvatarProps)} />
+        avatar && <SmallAvatar {...avatar} />
       )}
     </>
   );
