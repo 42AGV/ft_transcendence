@@ -8,3 +8,4 @@ export { RowExample } from './RowExample';
 export { RowsListExample } from './RowsListExample';
 export { InputExample } from './InputExample';
 export { HeaderExample } from './HeaderExample';
+export { LoadingExample } from './LoadingExample';

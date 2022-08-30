@@ -4,9 +4,7 @@ import {
   Header,
   IconVariant,
   LargeAvatar,
-  Text,
-  TextVariant,
-  TextWeight,
+  Loading,
 } from '../../shared/components';
 import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
@@ -19,9 +17,9 @@ export default function EditUserPage() {
 
   return user === null ? (
     <div className="edit-user-page">
-      <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
-        Loading...
-      </Text>
+      <div className="edit-user-loading">
+        <Loading />
+      </div>
     </div>
   ) : (
     <div className="edit-user-page">
