@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 export type AvatarProps = {
   url: string;
-  imgHash?: string /* TODO: fix auto reloads when avatar is updated, possibly with this */;
+  imgHash: string /* TODO: fix auto reloads when avatar is updated, possibly with this */;
   status?: StatusVariant;
   XCoordinate?: number;
   YCoordinate?: number;
@@ -23,6 +23,7 @@ const LARGE_AVATAR_DOWNSCALE = 0.55;
 
 export function SmallAvatar({
   url,
+  imgHash = '',
   status,
   XCoordinate,
   YCoordinate,
@@ -45,7 +46,7 @@ export function SmallAvatar({
         className={`avatar-small__image-wrapper  avatar-status--${status}`}
       >
         <img
-          src={url}
+          src={`${url}?${imgHash}`}
           alt={url}
           className="avatar-small__image"
           style={position}
@@ -57,6 +58,7 @@ export function SmallAvatar({
 
 export function LargeAvatar({
   url,
+  imgHash = '',
   status,
   caption,
   XCoordinate,
@@ -92,7 +94,7 @@ export function LargeAvatar({
       )}
       <div className={`avatar-large__image-wrapper  ${statusClass}`}>
         <img
-          src={url}
+          src={`${url}?${imgHash}`}
           alt={url}
           className="avatar-large__image"
           style={position}
