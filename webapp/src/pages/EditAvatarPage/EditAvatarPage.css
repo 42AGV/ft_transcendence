@@ -14,9 +14,25 @@
   overflow: scroll;
 }
 
-.edit-avatar-page .row {
-  width: 18rem;
+.edit-avatar-page .editable-avatar {
+  align-self: flex-start;
 }
 
-@media (min-width: 1200px) {
+.edit-avatar-page .row {
+  width: 15rem;
+}
+
+@media (min-width: 768px) {
+  .edit-avatar-page {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem 0.5rem;
+    align-items: center;
+    justify-items: center;
+    justify-content: space-between;
+    overflow: scroll;
+  }
+  .edit-avatar-page .editable-avatar {
+    align-self: center;
+  }
 }

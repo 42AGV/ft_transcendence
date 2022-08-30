@@ -1,24 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Position } from '../types';
+import { EDITABLE_AVATAR_SCALE } from '../../pages/EditAvatarPage/EditAvatarPage';
 
 type DragInfo = {
+  isLoading: boolean;
   isDragging: boolean;
   origin: Position;
-  translation: Position;
-  lastTranslation: Position;
+  translation: Position | null;
+  lastTranslation: Position | null;
 };
 
-const useDrag = (startingPosition: Position) => {
+export const useDrag = (startingPosition: Position | null) => {
   const [dragInfo, setDragInfo] = useState<DragInfo>({
+    isLoading: true,
     isDragging: false,
     origin: { x: 0, y: 0 },
     translation: startingPosition,
     lastTranslation: startingPosition,
   });
 
-  const { isDragging } = dragInfo;
+  const { isLoading, isDragging } = dragInfo;
+  useEffect(() => {
+    if (startingPosition && isLoading) {
+      const scaledStartingPosition = {
+        x: -startingPosition.x * EDITABLE_AVATAR_SCALE,
+        y: -startingPosition.y * EDITABLE_AVATAR_SCALE,
+      };
+      setDragInfo({
+        ...dragInfo,
+        isLoading: false,
+        translation: scaledStartingPosition,
+        lastTranslation: scaledStartingPosition,
+      });
+    }
+  }, [startingPosition, dragInfo, isLoading]);
+
   const handleMouseDown = ({ clientX, clientY }: React.MouseEvent) => {
-    if (!isDragging)
+    if (!isDragging && !isLoading)
       setDragInfo({
         ...dragInfo,
         isDragging: true,
@@ -27,32 +45,32 @@ const useDrag = (startingPosition: Position) => {
   };
 
   const handleMouseMove = ({ clientX, clientY }: React.MouseEvent) => {
-    if (isDragging) {
+    if (isDragging && !isLoading) {
       const { origin, lastTranslation } = dragInfo;
       setDragInfo({
         ...dragInfo,
         translation: {
-          x: origin.x + lastTranslation.x - clientX,
-          y: origin.y + lastTranslation.y - clientY,
+          x: origin.x + lastTranslation!.x - clientX,
+          y: origin.y + lastTranslation!.y - clientY,
         },
       });
     }
   };
 
   const handleMouseUp = () => {
-    if (isDragging) {
+    if (isDragging && !isLoading) {
       const { translation } = dragInfo;
       setDragInfo({
         ...dragInfo,
         isDragging: false,
-        lastTranslation: { x: translation.x, y: translation.y },
+        lastTranslation: { x: translation!.x, y: translation!.y },
       });
     }
   };
 
   const picturePosition: Position = {
-    x: -dragInfo.translation.x,
-    y: -dragInfo.translation.y,
+    x: !isLoading ? -dragInfo.translation!.x : 0,
+    y: !isLoading ? -dragInfo.translation!.y : 0,
   };
 
   return {
@@ -62,5 +80,3 @@ const useDrag = (startingPosition: Position) => {
     handleMouseUp,
   };
 };
-
-export default useDrag;

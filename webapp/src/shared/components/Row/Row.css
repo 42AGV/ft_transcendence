@@ -13,6 +13,10 @@
   flex-direction: row;
 }
 
+.invisible-input {
+  display: none;
+}
+
 .row_text_wrapper,
 .row_text_wrapper > * {
   margin: 0;

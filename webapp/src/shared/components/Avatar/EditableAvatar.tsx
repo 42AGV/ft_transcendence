@@ -1,12 +1,10 @@
 import './EditableAvatar.css';
 import { AvatarProps } from './Avatar';
 import { Text, TextColor, TextVariant, TextWeight } from '../index';
-import React, { useRef } from 'react';
-import { Position } from '../../types';
+import React from 'react';
+import { EDITABLE_AVATAR_SCALE_REVERSE } from '../../../pages/EditAvatarPage/EditAvatarPage';
 
 type EditableAvatarProps = AvatarProps & {
-  picturePosition: Position;
-  setPicturePosition?: React.Dispatch<React.SetStateAction<Position>>;
   handleMouseDown?: ({
     clientX,
     clientY,
@@ -21,22 +19,22 @@ type EditableAvatarProps = AvatarProps & {
   }: React.MouseEvent<Element, MouseEvent>) => void;
 };
 
-export function EditableAvatar({
+export default function EditableAvatar({
+  imgHash = '',
   url,
-  picturePosition,
+  XCoordinate,
+  YCoordinate,
   handleMouseDown,
   handleMouseUp,
   handleMouseMove,
 }: EditableAvatarProps) {
-  const ref = useRef<HTMLImageElement>(null);
-  const factor = 0.6896;
-  const FormatNumber = (value: number) => Math.round(value * factor);
+  const FormatNumber = (value: number) =>
+    Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
   const position = {
-    objectPosition: `${FormatNumber(picturePosition?.x)}px ${FormatNumber(
-      picturePosition.y,
+    objectPosition: `${FormatNumber(XCoordinate ?? 0)}px ${FormatNumber(
+      YCoordinate ?? 0,
     )}px`,
   };
-  ref?.current?.addEventListener('dragstart', (e) => e.preventDefault());
   return (
     <div className="editable-avatar">
       <Text
@@ -55,8 +53,8 @@ export function EditableAvatar({
         onMouseUp={handleMouseUp}
       >
         <img
-          ref={ref}
-          src={url}
+          onDragStart={(e) => e.preventDefault()}
+          src={`${url}?${imgHash}`}
           alt={url}
           className="editable-avatar__image"
           style={position}

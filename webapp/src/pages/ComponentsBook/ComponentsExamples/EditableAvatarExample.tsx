@@ -1,7 +1,10 @@
 import { BookSection } from '../BookSection';
 import { WILDCARD_AVATAR_URL } from '../../../shared/urls';
-import { EditableAvatar } from '../../../shared/components/Avatar/EditableAvatar';
-import { LargeAvatar, SmallAvatar } from '../../../shared/components';
+import {
+  LargeAvatar,
+  SmallAvatar,
+  EditableAvatar,
+} from '../../../shared/components';
 
 const randomAvatar = WILDCARD_AVATAR_URL;
 
@@ -11,7 +14,11 @@ export const EditableAvatarExample = () => {
 
   return (
     <BookSection title="Editable Avatar component">
-      <EditableAvatar picturePosition={{ x: 0, y: 0 }} url={randomAvatar} />
+      <EditableAvatar
+        XCoordinate={xCoord}
+        YCoordinate={yCoord}
+        url={randomAvatar}
+      />
       <LargeAvatar
         url={randomAvatar}
         XCoordinate={xCoord}
