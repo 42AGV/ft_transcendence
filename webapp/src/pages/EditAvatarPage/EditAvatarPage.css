@@ -4,35 +4,38 @@
   height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
-  display: grid;
-  gap: 4.75rem var(--column-gap);
-  grid-template-columns: 1fr;
-  grid-template-rows: auto auto 1fr auto;
-  justify-content: center;
+}
+
+.edit-avatar-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem 0.5rem;
   align-items: center;
   justify-items: center;
+  justify-content: space-between;
   overflow: scroll;
 }
 
 .edit-avatar-page .editable-avatar {
-  align-self: flex-start;
+  align-self: center;
 }
 
 .edit-avatar-page .row {
   width: 15rem;
 }
 
-@media (min-width: 768px) {
+@media (min-height: 800px) {
   .edit-avatar-page {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem 0.5rem;
+    display: grid;
+    gap: 4.75rem var(--column-gap);
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto;
+    justify-content: center;
     align-items: center;
     justify-items: center;
-    justify-content: space-between;
     overflow: scroll;
   }
   .edit-avatar-page .editable-avatar {
-    align-self: center;
+    align-self: flex-start;
   }
 }
