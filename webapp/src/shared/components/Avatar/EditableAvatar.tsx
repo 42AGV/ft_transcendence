@@ -20,7 +20,7 @@ type EditableAvatarProps = AvatarProps & {
 };
 
 export default function EditableAvatar({
-  imgHash,
+  imgHash = '',
   url,
   XCoordinate,
   YCoordinate,
