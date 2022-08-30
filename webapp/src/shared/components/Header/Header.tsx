@@ -12,7 +12,7 @@ type HeaderCommon = {
   children: string;
 };
 
-type IconHeaderProps = HeaderCommon & {
+type IconHeader = HeaderCommon & {
   icon: IconVariant;
   avatar?: never;
   navigationUrl?: never;
@@ -33,7 +33,7 @@ type NoFigureHeader = HeaderCommon & {
   onClick?: never;
 };
 
-type HeaderProps = IconHeaderProps | AvatarHeader | NoFigureHeader;
+type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
 
 export default function Header({
   icon,
