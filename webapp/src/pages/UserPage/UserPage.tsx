@@ -5,6 +5,7 @@ import {
   Header,
   IconVariant,
   LargeAvatar,
+  Loading,
   Row,
   Text,
   TextColor,
@@ -39,9 +40,9 @@ export default function UserPage({ isMe = false }: UserPageProps) {
 
   return user === null ? (
     <div className="user-page">
-      <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
-        Loading...
-      </Text>
+      <div className="user-page-loading">
+        <Loading />
+      </div>
     </div>
   ) : (
     <div className="user-page">

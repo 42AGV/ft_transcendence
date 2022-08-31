@@ -16,6 +16,7 @@ import {
   RowsListExample,
   InputExample,
   HeaderExample,
+  LoadingExample,
 } from './ComponentsExamples';
 import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
 
@@ -40,6 +41,7 @@ export default function ComponentsBook() {
       <RowExample />
       <RowsListExample />
       <InputExample />
+      <LoadingExample />
     </div>
   );
 }

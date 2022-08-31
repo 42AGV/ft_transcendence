@@ -12,6 +12,13 @@
   overflow: scroll;
 }
 
+.user-page-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
 .user-wrapper {
   height: 24.5rem;
   display: flex;

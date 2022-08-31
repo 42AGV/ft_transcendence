@@ -30,3 +30,4 @@ export { default as EditUserForm } from './Input/EditUserForm';
 export { default as SearchForm } from './Input/SearchForm';
 export { default as DispatchPage } from './DispatchPage/DispatchPage';
 export { default as EditableAvatar } from './Avatar/EditableAvatar';
+export { default as Loading } from './Loading/Loading';

@@ -39,6 +39,11 @@
     justify-items: center;
   }
 
+  .edit-avatar-loading {
+    grid-column: 1/-1;
+    grid-row: 1/-1;
+  }
+
   .edit-avatar-page .editable-avatar {
     align-self: flex-start;
   }
