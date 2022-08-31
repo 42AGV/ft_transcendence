@@ -25,6 +25,7 @@
 }
 
 .edit-avatar-page .row {
+  cursor: pointer;
   width: 15rem;
 }
 
