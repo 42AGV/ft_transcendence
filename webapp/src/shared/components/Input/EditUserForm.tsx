@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button, ButtonVariant, Input, InputVariant } from '../';
 import './EditUserForm.css';
+import { USERS_EP_URL } from '../../urls';
 
 type EditUserProps = {
   origFullName: string;
@@ -25,7 +26,7 @@ export default function EditUserForm({
         email,
       }),
     };
-    await fetch('http://localhost:3000/api/v1/users', requestOptions);
+    await fetch(USERS_EP_URL, requestOptions);
   }
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
@@ -38,7 +39,7 @@ export default function EditUserForm({
       )
     ) {
       txt = 'Your data has been saved';
-      updateData();
+      updateData().catch((e) => console.error(e));
     } else {
       txt = 'Canceled!';
     }
@@ -79,7 +80,7 @@ export default function EditUserForm({
           form="edit-user-form"
           children="Save"
           variant={ButtonVariant.SUBMIT}
-        ></Button>
+        />
       </div>
     </>
   );

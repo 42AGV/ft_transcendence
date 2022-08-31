@@ -6,23 +6,28 @@
   align-items: flex-start;
 }
 
+.editable-avatar .text-color-light {
+  margin: 0 0 1rem 0;
+}
+
 .editable-avatar-wrapper {
   margin: -0.5rem;
   background-color: var(--color-light);
   width: fit-content;
   clip-path: inset(0.55rem 0.55rem 0.55rem 0.55rem round 0.55rem);
   border: none;
+  overflow: clip;
 }
 
 .editable-avatar__image {
   user-drag: none;
   -webkit-user-drag: none;
   margin: 0;
-  width: 18rem;
-  height: 18rem;
+  width: 16rem;
+  height: 16rem;
   object-fit: cover;
-  -webkit-transform: scale(1.45);
-  --radius: 5.5rem;
+  -webkit-transform: scale(1.29); /* EDITABLE_AVATAR_SCALE */
+  --radius: 4.89rem;
   -webkit-mask-image: radial-gradient(
     circle calc(var(--radius)) at center,
     rgb(0, 0, 0, 1) 0,

@@ -46,7 +46,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
   ) : (
     <div className="user-page">
       <Header
-        navigationFigure={IconVariant.ARROW_BACK}
+        icon={IconVariant.ARROW_BACK}
         onClick={goBack(navigate)}
         statusVariant="online"
       >
@@ -60,6 +60,8 @@ export default function UserPage({ isMe = false }: UserPageProps) {
               : WILDCARD_AVATAR_URL
           }
           caption="level 4"
+          XCoordinate={user.avatarX}
+          YCoordinate={user.avatarY}
         />
         <div className="user-text">
           <Text

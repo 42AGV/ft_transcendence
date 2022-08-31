@@ -8,7 +8,11 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import {
+  EDIT_AVATAR_URL,
+  USERS_EP_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
@@ -25,10 +29,7 @@ export default function EditUserPage() {
     </div>
   ) : (
     <div className="edit-user-page">
-      <Header
-        navigationFigure={IconVariant.ARROW_BACK}
-        onClick={goBack(navigate)}
-      >
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
         edit profile
       </Header>
       <div className="edit-user-avatar">
@@ -38,7 +39,9 @@ export default function EditUserPage() {
               ? `${USERS_EP_URL}/${user.id}/avatar`
               : WILDCARD_AVATAR_URL
           }
-          edit={true}
+          editUrl={EDIT_AVATAR_URL}
+          XCoordinate={user.avatarX}
+          YCoordinate={user.avatarY}
         />
       </div>
       <EditUserForm origFullName={user.fullName} origEmail={user.email} />
