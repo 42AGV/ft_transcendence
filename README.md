@@ -148,6 +148,22 @@ Please don't modify these files manually.
 
 After updating the OpenAPI specification of the transcendence-app, you can execute the `generate-openapi.sh` script to generate code for the webapp.
 
+### Seed the database
+
+We use a knex script to seed the database, more info [here](https://knexjs.org/guide/migrations.html#seed-files).
+
+To create a seed file, run the following command from the transcendence-app directory (replace `seed_name` with the name you want)
+
+```
+npx knex seed:make seed_name
+```
+
+To run seed files, execute:
+
+```
+docker compose exec -it transcendence-app npx knex seed:run
+```
+
 ## 🔧 Running the tests <a name = "tests"></a>
 
 Change the working directory to `webapp` or `transcendence-app`
