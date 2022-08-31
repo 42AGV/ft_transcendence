@@ -5,10 +5,8 @@ import {
   EditableAvatar,
   Header,
   IconVariant,
+  Loading,
   Row,
-  Text,
-  TextVariant,
-  TextWeight,
 } from '../../shared/components';
 import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
@@ -82,9 +80,9 @@ export default function EditAvatarPage() {
 
   return user === null ? (
     <div className="edit-avatar-page">
-      <Text variant={TextVariant.SUBHEADING} weight={TextWeight.MEDIUM}>
-        Loading...
-      </Text>
+      <div className="edit-avatar-loading">
+        <Loading />
+      </div>
     </div>
   ) : (
     <div className="edit-avatar-page">
