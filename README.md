@@ -150,7 +150,7 @@ After updating the OpenAPI specification of the transcendence-app, you can execu
 
 ### Seed the database
 
-We use a knex script to seed the database, more info [here](https://knexjs.org/guide/migrations.html#seed-files).
+We use knex to seed the database, more info [here](https://knexjs.org/guide/migrations.html#seed-files).
 
 To create a seed file, run the following command from the transcendence-app directory (replace `seed_name` with the name you want)
 
