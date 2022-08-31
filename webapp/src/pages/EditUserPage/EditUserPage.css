@@ -71,5 +71,6 @@
 
   .edit-user-form {
     grid-column: 7/11;
+    justify-self: flex-start;
   }
 }

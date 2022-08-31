@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Color } from '../../types';
-import { SmallAvatar } from '../Avatar/Avatar';
+import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
 import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import Status, { StatusVariant } from '../Status/Status';
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
@@ -8,25 +8,36 @@ import './Header.css';
 import React from 'react';
 
 type HeaderCommon = {
-  navigationFigure: IconVariant | string;
   statusVariant?: StatusVariant;
   children: string;
 };
 
-type HeaderLinkProps = HeaderCommon & {
-  navigationUrl: string;
-  onClick?: never;
-};
-
-type HeaderButtonProps = HeaderCommon & {
+type IconHeader = HeaderCommon & {
+  icon: IconVariant;
+  avatar?: never;
   navigationUrl?: never;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-type HeaderProps = HeaderLinkProps | HeaderButtonProps;
+type AvatarHeader = HeaderCommon & {
+  icon?: never;
+  avatar: AvatarProps;
+  navigationUrl: string;
+  onClick?: never;
+};
+
+type NoFigureHeader = HeaderCommon & {
+  icon?: never;
+  avatar?: never;
+  navigationUrl?: never;
+  onClick?: never;
+};
+
+type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
 
 export default function Header({
-  navigationFigure,
+  icon,
+  avatar,
   navigationUrl,
   onClick,
   statusVariant,
@@ -34,14 +45,10 @@ export default function Header({
 }: HeaderProps) {
   const lNavFigure = (
     <>
-      {navigationFigure in IconVariant ? (
-        <Icon
-          variant={navigationFigure as IconVariant}
-          size={IconSize.SMALL}
-          color={Color.LIGHT}
-        />
+      {icon ? (
+        <Icon variant={icon} size={IconSize.SMALL} color={Color.LIGHT} />
       ) : (
-        <SmallAvatar url={navigationFigure} />
+        avatar && <SmallAvatar {...avatar} />
       )}
     </>
   );

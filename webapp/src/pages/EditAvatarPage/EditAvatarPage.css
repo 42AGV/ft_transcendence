@@ -1,0 +1,45 @@
+.edit-avatar-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  overflow: scroll;
+}
+
+/* This following section is the section made different in the following media */
+/* query. There are some repeated attributes, and this one is not merged */
+/* with the previous block, to improve human readability. */
+
+.edit-avatar-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  justify-items: center;
+}
+
+.edit-avatar-page .editable-avatar {
+  align-self: center;
+}
+
+.edit-avatar-page .row {
+  width: 15rem;
+}
+
+@media (min-height: 800px) {
+  .edit-avatar-page {
+    display: grid;
+    gap: 4.75rem var(--column-gap);
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr auto;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .edit-avatar-page .editable-avatar {
+    align-self: flex-start;
+  }
+}

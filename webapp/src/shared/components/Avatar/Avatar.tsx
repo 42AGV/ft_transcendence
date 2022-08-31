@@ -3,29 +3,39 @@ import './Avatar.css';
 import { Icon, IconVariant, IconSize } from '../index';
 import { StatusVariant } from '../Status/Status';
 import { Color } from '../../types';
+import { Link } from 'react-router-dom';
 
 export type AvatarProps = {
   url: string;
+  imgHash?: string /* TODO: fix auto reloads when avatar is updated, possibly with this */;
   status?: StatusVariant;
   XCoordinate?: number;
   YCoordinate?: number;
 };
 
 type LargeAvatarProps = AvatarProps & {
-  edit?: boolean;
   caption?: string;
+  editUrl?: string;
 };
+
+const SMALL_AVATAR_DOWNSCALE = 0.139;
+const LARGE_AVATAR_DOWNSCALE = 0.55;
 
 export function SmallAvatar({
   url,
+  imgHash = '',
   status,
   XCoordinate,
   YCoordinate,
 }: AvatarProps) {
+  const FormatNumber = (value: number) =>
+    Math.round(value * SMALL_AVATAR_DOWNSCALE);
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${XCoordinate * 0.139}px ${YCoordinate * 0.139}px`,
+          objectPosition: `${FormatNumber(XCoordinate)}px ${FormatNumber(
+            YCoordinate,
+          )}px`,
         }
       : {
           objectPosition: '0 0',
@@ -36,7 +46,7 @@ export function SmallAvatar({
         className={`avatar-small__image-wrapper  avatar-status--${status}`}
       >
         <img
-          src={url}
+          src={`${url}?${imgHash}`}
           alt={url}
           className="avatar-small__image"
           style={position}
@@ -48,36 +58,43 @@ export function SmallAvatar({
 
 export function LargeAvatar({
   url,
+  imgHash = '',
   status,
-  edit = false,
   caption,
   XCoordinate,
   YCoordinate,
+  editUrl,
 }: LargeAvatarProps) {
+  const FormatNumber = (value: number) =>
+    Math.round(value * LARGE_AVATAR_DOWNSCALE);
   const statusClass = status ? `avatar-status--${status}` : '';
 
   const position =
     XCoordinate && YCoordinate
       ? {
-          objectPosition: `${XCoordinate * 0.55}px ${YCoordinate * 0.55}px`,
+          objectPosition: `${FormatNumber(XCoordinate)}px ${FormatNumber(
+            YCoordinate,
+          )}px`,
         }
       : {
           objectPosition: '0 0',
         };
   return (
     <figure className="avatar-large">
-      {edit && (
+      {editUrl && (
         <div className="avatar-large__edit">
-          <Icon
-            variant={IconVariant.EDIT}
-            color={Color.LIGHT}
-            size={IconSize.SMALL}
-          />
+          <Link to={editUrl}>
+            <Icon
+              variant={IconVariant.EDIT}
+              color={Color.LIGHT}
+              size={IconSize.SMALL}
+            />
+          </Link>
         </div>
       )}
       <div className={`avatar-large__image-wrapper  ${statusClass}`}>
         <img
-          src={url}
+          src={`${url}?${imgHash}`}
           alt={url}
           className="avatar-large__image"
           style={position}

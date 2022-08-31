@@ -1,27 +1,40 @@
 import './EditableAvatar.css';
 import { AvatarProps } from './Avatar';
-import useDrag from '../../hooks/UseDrag';
 import { Text, TextColor, TextVariant, TextWeight } from '../index';
-import { useRef } from 'react';
+import React from 'react';
+import { EDITABLE_AVATAR_SCALE_REVERSE } from '../../../pages/EditAvatarPage/EditAvatarPage';
 
-export function EditableAvatar({ url }: AvatarProps) {
-  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag({ x: 0, y: 0 });
-  const ref = useRef<HTMLImageElement>(null);
-  const factor = 0.6896;
-  const FormatNumber = (value: number) => Math.round(value * factor);
+type EditableAvatarProps = AvatarProps & {
+  handleMouseDown?: ({
+    clientX,
+    clientY,
+  }: React.MouseEvent<Element, MouseEvent>) => void;
+  handleMouseMove?: ({
+    clientX,
+    clientY,
+  }: React.MouseEvent<Element, MouseEvent>) => void;
+  handleMouseUp?: ({
+    clientX,
+    clientY,
+  }: React.MouseEvent<Element, MouseEvent>) => void;
+};
+
+export default function EditableAvatar({
+  imgHash = '',
+  url,
+  XCoordinate,
+  YCoordinate,
+  handleMouseDown,
+  handleMouseUp,
+  handleMouseMove,
+}: EditableAvatarProps) {
+  const FormatNumber = (value: number) =>
+    Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
   const position = {
-    objectPosition: `${FormatNumber(picturePosition.x)}px ${FormatNumber(
-      picturePosition.y,
+    objectPosition: `${FormatNumber(XCoordinate ?? 0)}px ${FormatNumber(
+      YCoordinate ?? 0,
     )}px`,
   };
-  /* TODO: implement this: upload position, preferentially with decimals, on submit, to DB
-  // useEffect(()=> {
-     fetch(/api/v1/users/${uuid}/ ... , {
-      method: 'PUT',
-    })
-  // }, [position]); */
-  ref?.current?.addEventListener('dragstart', (e) => e.preventDefault());
   return (
     <div className="editable-avatar">
       <Text
@@ -40,8 +53,8 @@ export function EditableAvatar({ url }: AvatarProps) {
         onMouseUp={handleMouseUp}
       >
         <img
-          ref={ref}
-          src={url}
+          onDragStart={(e) => e.preventDefault()}
+          src={`${url}?${imgHash}`}
           alt={url}
           className="editable-avatar__image"
           style={position}

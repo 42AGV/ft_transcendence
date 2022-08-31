@@ -15,5 +15,7 @@ CREATE TABLE
     "email" VARCHAR(50) NOT NULL UNIQUE,
     "fullName" VARCHAR(255) NOT NULL,
     "avatarId" UUID REFERENCES LocalFile(id) UNIQUE,
+    "avatarX" SMALLINT,
+    "avatarY" SMALLINT,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );

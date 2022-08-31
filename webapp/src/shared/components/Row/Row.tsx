@@ -4,6 +4,7 @@ import { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';
 import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
 import { Link } from 'react-router-dom';
+import React from 'react';
 
 type RowPropsCommon = {
   iconVariant?: IconVariant;
@@ -15,19 +16,32 @@ type RowPropsCommon = {
 type ButtonRowProps = RowPropsCommon & {
   onClick: () => void;
   url?: never;
+  onChange?: never;
 };
 
 type LinkRowProps = RowPropsCommon & {
   onClick?: never;
   url: string;
+  onChange?: never;
 };
 
 type NoActionRowProps = RowPropsCommon & {
   onClick?: never;
   url?: never;
+  onChange?: never;
 };
 
-export type RowProps = ButtonRowProps | LinkRowProps | NoActionRowProps;
+type FileUploadRowProps = RowPropsCommon & {
+  onClick?: never;
+  url?: never;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+};
+
+export type RowProps =
+  | ButtonRowProps
+  | LinkRowProps
+  | NoActionRowProps
+  | FileUploadRowProps;
 
 export default function Row({
   iconVariant,
@@ -36,6 +50,7 @@ export default function Row({
   avatarProps,
   title,
   subtitle,
+  onChange,
 }: RowProps) {
   const cursorStyle = {
     cursor: 'pointer',
@@ -74,6 +89,18 @@ export default function Row({
     <Link className={`row paragraph-regular`} to={url} style={cursorStyle}>
       {RowChildren}
     </Link>
+  ) : onChange ? (
+    <>
+      <label htmlFor="file-upload" className="row paragraph-regular">
+        {RowChildren}
+      </label>
+      <input
+        className="invisible-input"
+        id="file-upload"
+        type="file"
+        onChange={onChange}
+      />
+    </>
   ) : (
     (onClick && (
       <button

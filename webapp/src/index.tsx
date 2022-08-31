@@ -10,6 +10,7 @@ import {
   UserPage,
   ComponentsBook,
   EditUserPage,
+  EditAvatarPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -19,6 +20,7 @@ import {
   COMPONENTS_BOOK_URL,
   USER_URL,
   EDIT_USER_URL,
+  EDIT_AVATAR_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -78,6 +80,14 @@ root.render(
             element={
               <RequireAuth>
                 <EditUserPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={EDIT_AVATAR_URL}
+            element={
+              <RequireAuth>
+                <EditAvatarPage />
               </RequireAuth>
             }
           />

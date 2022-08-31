@@ -48,6 +48,8 @@ export class UserService {
     return this.userRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
+      avatarX: 0,
+      avatarY: 0,
       ...user,
     });
   }
@@ -55,7 +57,13 @@ export class UserService {
   addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
     return this.userRepository.addAvatarAndAddUser(
       { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
-      { id: uuidv4(), createdAt: new Date(Date.now()), ...userDto },
+      {
+        id: uuidv4(),
+        createdAt: new Date(Date.now()),
+        avatarX: 0,
+        avatarY: 0,
+        ...userDto,
+      },
     );
   }
 
