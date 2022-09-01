@@ -18,8 +18,8 @@ type LargeAvatarProps = AvatarProps & {
   editUrl?: string;
 };
 
-const SMALL_AVATAR_DOWNSCALE = 0.139;
-const LARGE_AVATAR_DOWNSCALE = 0.55;
+const SMALL_AVATAR_DOWNSCALE = 0.2;
+const LARGE_AVATAR_DOWNSCALE = 0.62;
 
 export function SmallAvatar({
   url,

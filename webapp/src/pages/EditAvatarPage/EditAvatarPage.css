@@ -29,6 +29,14 @@
   width: 15rem;
 }
 
+.edit-avatar-page .button {
+  z-index: 1;
+}
+
+.edit-avatar-page .reload-avatars-hack {
+    display: none;
+}
+
 @media (min-height: 800px) {
   .edit-avatar-page {
     display: grid;

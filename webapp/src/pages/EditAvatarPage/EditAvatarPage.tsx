@@ -1,14 +1,21 @@
 import './EditAvatarPage.css';
 import {
+  AvatarProps,
   Button,
   ButtonVariant,
   EditableAvatar,
   Header,
   IconVariant,
+  LargeAvatar,
   Loading,
   Row,
+  SmallAvatar,
 } from '../../shared/components';
-import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import {
+  EDIT_AVATAR_URL,
+  USERS_EP_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -37,16 +44,14 @@ export default function EditAvatarPage() {
   });
 
   const { imgName, imgHash, imgFile } = imgData;
+  const avatarX = Math.round(picturePosition.x * EDITABLE_AVATAR_SCALE_REVERSE);
+  const avatarY = Math.round(picturePosition.y * EDITABLE_AVATAR_SCALE_REVERSE);
   const submitPlacement = async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
-          avatarX: Math.round(
-            picturePosition.x * EDITABLE_AVATAR_SCALE_REVERSE,
-          ),
-          avatarY: Math.round(
-            picturePosition.y * EDITABLE_AVATAR_SCALE_REVERSE,
-          ),
+          avatarX: avatarX,
+          avatarY: avatarY,
         },
       })
       .catch((e) => console.error(e));
@@ -77,6 +82,17 @@ export default function EditAvatarPage() {
       imgHash: Date.now().toString(),
     });
   };
+
+  const AvProps = {
+    url:
+      user && user.avatarId
+        ? `${USERS_EP_URL}/${user.id}/avatar`
+        : WILDCARD_AVATAR_URL,
+    status: 'offline',
+    imgHash: Date.now().toString(),
+    XCoordinate: avatarX,
+    YCoordinate: avatarY,
+  } as AvatarProps;
 
   return user === null ? (
     <div className="edit-avatar-page">
@@ -115,6 +131,10 @@ export default function EditAvatarPage() {
       >
         {imgFile !== null ? 'Upload' : 'Save changes'}
       </Button>
+      <div className="reload-avatars-hack">
+        <LargeAvatar {...AvProps} />
+        <SmallAvatar {...AvProps} />
+      </div>
     </div>
   );
 }
