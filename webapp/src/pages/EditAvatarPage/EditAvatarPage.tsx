@@ -11,17 +11,13 @@ import {
   Row,
   SmallAvatar,
 } from '../../shared/components';
-import {
-  EDIT_AVATAR_URL,
-  USERS_EP_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
-import { useAuth } from '../../shared/hooks/UseAuth';
+import { useData } from '../../shared/hooks/UseData';
 
 export const EDITABLE_AVATAR_SCALE = 1.29;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
@@ -33,7 +29,11 @@ type ImgData = {
 };
 
 export default function EditAvatarPage() {
-  const { user } = useAuth();
+  const getCurrentUser = useCallback(
+    () => usersApi.userControllerGetCurrentUser(),
+    [],
+  );
+  const { data: user } = useData(getCurrentUser);
   const navigate = useNavigate();
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);

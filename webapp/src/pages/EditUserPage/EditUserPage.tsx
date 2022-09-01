@@ -13,10 +13,16 @@ import {
 } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../shared/hooks/UseAuth';
+import { useCallback } from 'react';
+import { usersApi } from '../../shared/services/ApiService';
+import { useData } from '../../shared/hooks/UseData';
 
 export default function EditUserPage() {
-  const { user } = useAuth();
+  const getCurrentUser = useCallback(
+    () => usersApi.userControllerGetCurrentUser(),
+    [],
+  );
+  const { data: user } = useData(getCurrentUser);
   const navigate = useNavigate();
 
   return user === null ? (

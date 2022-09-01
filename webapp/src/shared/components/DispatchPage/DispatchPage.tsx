@@ -7,7 +7,8 @@ import SearchForm from '../Input/SearchForm';
 import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
 import UseSearch from '../../hooks/UseSearch';
-import { useAuth } from '../../hooks/UseAuth';
+import { useData } from '../../hooks/UseData';
+import { usersApi } from '../../services/ApiService';
 
 type SearchFetchFnParams = {
   search: string;
@@ -85,8 +86,12 @@ export default function DispatchPage<T>({
   const handleSearch = (value: string) => {
     setSearchParams({ search: value, offset: 0 });
   };
+  const getCurrentUser = useCallback(
+    () => usersApi.userControllerGetCurrentUser(),
+    [],
+  );
+  const { data: user } = useData(getCurrentUser);
 
-  const { user } = useAuth();
   return (
     <div className="dispatch-page">
       <div className="dispatch-page-avatar">
