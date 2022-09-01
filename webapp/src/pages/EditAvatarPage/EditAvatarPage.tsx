@@ -131,7 +131,7 @@ export default function EditAvatarPage() {
       >
         {imgFile !== null ? 'Upload' : 'Save changes'}
       </Button>
-      <div className="reload-avatars-hack">
+      <div className="avatars-position-dbg">
         <LargeAvatar {...AvProps} />
         <SmallAvatar {...AvProps} />
       </div>
