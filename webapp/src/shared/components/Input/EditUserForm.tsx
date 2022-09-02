@@ -4,14 +4,17 @@ import './EditUserForm.css';
 import { USERS_EP_URL } from '../../urls';
 
 type EditUserProps = {
+  origUsername: string;
   origFullName: string;
   origEmail: string;
 };
 
 export default function EditUserForm({
+  origUsername,
   origFullName,
   origEmail,
 }: EditUserProps) {
+  const [username, setUsername] = useState(origUsername);
   const [fullName, setFullName] = useState(origFullName);
   const [email, setEmail] = useState(origEmail);
 
@@ -22,6 +25,7 @@ export default function EditUserForm({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        username,
         fullName,
         email,
       }),
@@ -34,7 +38,7 @@ export default function EditUserForm({
     let txt;
     if (
       window.confirm(
-        `Your name: "${fullName}" and your email: "${email}".\n
+        `Your Username: "${username}", Full name: "${fullName}", and your email: "${email}".\n
         Is this correct?`,
       )
     ) {
@@ -53,6 +57,16 @@ export default function EditUserForm({
         onSubmit={handleOnSubmit}
       >
         <div className="inputs-container">
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Username"
+            placeholder="Username"
+            value={username}
+            name="username"
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
+          />
           <Input
             variant={InputVariant.LIGHT}
             label="Full Name"

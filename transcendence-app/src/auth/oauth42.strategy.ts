@@ -10,6 +10,10 @@ import { AVATARS_PATH } from '../user/constants';
 import { UserDto } from '../user/dto/user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
+import {
+  AuthProviderService,
+  AuthProviderType,
+} from './auth-provider/auth-provider.service';
 import { OAuth42Config } from './oauth42-config.interface';
 
 @Injectable()
@@ -18,6 +22,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     private api42Service: Api42Service,
     private userService: UserService,
     private localFileService: LocalFileService,
+    private authProviderService: AuthProviderService,
     protected configService: ConfigService<OAuth42Config>,
   ) {
     super({
@@ -62,17 +67,25 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   }
 
   async validate(accessToken: string): Promise<User | null> {
-    const { userDto, avatarUrl } = await this.api42Service.get42UserData(
-      accessToken,
+    const { userDto, avatarUrl, providerId } =
+      await this.api42Service.get42UserData(accessToken);
+    const authProvider = await this.authProviderService.retrieveProvider(
+      AuthProviderType.FortyTwo,
+      providerId,
     );
-    const dbUser = await this.userService.retrieveUserWithUserName(
-      userDto.username,
-    );
-    if (dbUser) {
-      return dbUser;
+    if (authProvider) {
+      return this.userService.retrieveUserWithId(authProvider.userId);
     }
 
     const avatarDto = await this.saveAvatar(accessToken, avatarUrl);
-    return this.createUser(avatarDto, userDto);
+    const user = await this.createUser(avatarDto, userDto);
+    if (user) {
+      await this.authProviderService.addProvider({
+        provider: AuthProviderType.FortyTwo,
+        providerId,
+        userId: user.id,
+      });
+    }
+    return user;
   }
 }

@@ -19,3 +19,13 @@ CREATE TABLE
     "avatarY" SMALLINT,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
+
+CREATE TYPE ProviderType AS ENUM ('42');
+
+CREATE TABLE
+  IF NOT EXISTS AuthProvider (
+    "providerId" TEXT NOT NULL,
+    "provider" ProviderType NOT NULL,
+    "userId" UUID REFERENCES Users(id),
+    PRIMARY KEY ("providerId", "provider")
+  )
