@@ -69,12 +69,12 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   async validate(accessToken: string): Promise<User | null> {
     const { userDto, avatarUrl, providerId } =
       await this.api42Service.get42UserData(accessToken);
-    const authProvider = await this.authProviderService.retrieveProvider(
+    const dbUser = await this.userService.retrieveUserWithAuthProvider(
       AuthProviderType.FortyTwo,
       providerId,
     );
-    if (authProvider) {
-      return this.userService.retrieveUserWithId(authProvider.userId);
+    if (dbUser) {
+      return dbUser;
     }
 
     const avatarDto = await this.saveAvatar(accessToken, avatarUrl);
