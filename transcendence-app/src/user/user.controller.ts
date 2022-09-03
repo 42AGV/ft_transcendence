@@ -27,6 +27,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiPayloadTooLargeResponse,
   ApiProduces,
   ApiServiceUnavailableResponse,
@@ -127,6 +128,7 @@ export class UserController {
   }
 
   @Get('avatar')
+  @ApiOperation({ deprecated: true })
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     schema: {
@@ -145,6 +147,7 @@ export class UserController {
   }
 
   @Get(':uuid/avatar')
+  @ApiOperation({ deprecated: true })
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     schema: {
@@ -158,6 +161,27 @@ export class UserController {
     @Param('uuid', ParseUUIDPipe) id: string,
   ): Promise<StreamableFile> {
     const streamableFile = await this.userService.getAvatar(id);
+
+    if (!streamableFile) {
+      throw new NotFoundException();
+    }
+    return streamableFile;
+  }
+
+  @Get('avatars/:uuid')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getAvatarByAvatarId(
+    @Param('uuid', ParseUUIDPipe) id: string,
+  ): Promise<StreamableFile> {
+    const streamableFile = await this.userService.getAvatarByAvatarId(id);
 
     if (!streamableFile) {
       throw new NotFoundException();
