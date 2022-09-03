@@ -6,3 +6,8 @@
 .edit-user-form .inputs-container > .input {
   margin-bottom: 0.875rem;
 }
+
+.edit-user-form .inputs-container > p:empty::before {
+  content: '';
+  display: inline-block;
+}

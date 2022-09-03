@@ -1,7 +1,26 @@
-import React, { useState } from 'react';
-import { Button, ButtonVariant, Input, InputVariant } from '../';
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  ButtonVariant,
+  Input,
+  InputVariant,
+  Text,
+  TextColor,
+  TextVariant,
+} from '../';
 import './EditUserForm.css';
-import { USERS_EP_URL } from '../../urls';
+import { usersApi } from '../../services/ApiService';
+import { ResponseError } from '../../generated';
+
+type EditUserFormSubmitStatus = {
+  type: 'success' | 'error' | 'pending';
+  message: string;
+};
+
+const initialSubmitFormStatus: EditUserFormSubmitStatus = {
+  type: 'pending',
+  message: '',
+};
 
 type EditUserProps = {
   origUsername: string;
@@ -17,38 +36,43 @@ export default function EditUserForm({
   const [username, setUsername] = useState(origUsername);
   const [fullName, setFullName] = useState(origFullName);
   const [email, setEmail] = useState(origEmail);
+  const [status, setStatus] = useState<EditUserFormSubmitStatus>(
+    initialSubmitFormStatus,
+  );
 
   async function updateData() {
-    const requestOptions = {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username,
-        fullName,
-        email,
-      }),
-    };
-    await fetch(USERS_EP_URL, requestOptions);
+    try {
+      await usersApi.userControllerUpdateCurrentUser({
+        updateUserDto: { username, fullName, email },
+      });
+      setStatus({ type: 'success', message: 'Update successfully' });
+    } catch (error) {
+      if (error instanceof ResponseError) {
+        if (error.response.status === 400) {
+          setStatus({ type: 'error', message: 'Invalid or missing fields' });
+        } else if (error.response.status === 422) {
+          setStatus({ type: 'error', message: 'Username already exists' });
+        } else {
+          setStatus({ type: 'error', message: `${error.response.statusText}` });
+        }
+      } else if (error instanceof Error) {
+        setStatus({ type: 'error', message: `${error.message}` });
+      }
+    }
   }
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    let txt;
-    if (
-      window.confirm(
-        `Your Username: "${username}", Full name: "${fullName}", and your email: "${email}".\n
-        Is this correct?`,
-      )
-    ) {
-      txt = 'Your data has been saved';
-      updateData().catch((e) => console.error(e));
-    } else {
-      txt = 'Canceled!';
-    }
-    alert(txt);
+    updateData();
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStatus(initialSubmitFormStatus);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [status]);
+
   return (
     <>
       <form
@@ -87,6 +111,14 @@ export default function EditUserForm({
               setEmail(e.target.value);
             }}
           />
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={
+              status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+            }
+          >
+            {status.message}
+          </Text>
         </div>
       </form>
       <div className="edit-user-form-button">
