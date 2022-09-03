@@ -55,10 +55,41 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     );
   }
 
+  private async generateRandomUsername(
+    username: string,
+  ): Promise<string | null> {
+    let maxTries = 10;
+    const maxUsernameLength = 20;
+
+    while (maxTries > 0) {
+      const randomToken = Math.random().toString(36).slice(2);
+      const randomUsername =
+        username.slice(0, maxUsernameLength - randomToken.length) + randomToken;
+      const user = await this.userService.retrieveUserWithUserName(
+        randomUsername,
+      );
+      if (user === null) {
+        return randomUsername;
+      }
+      maxTries--;
+    }
+
+    return null;
+  }
+
   private async createUser(
     fileDto: LocalFileDto,
     userDto: UserDto,
   ): Promise<User | null> {
+    const userWithUsernameExists =
+      await this.userService.retrieveUserWithUserName(userDto.username);
+    if (userWithUsernameExists) {
+      const username = await this.generateRandomUsername(userDto.username);
+      if (!username) {
+        return null;
+      }
+      userDto.username = username;
+    }
     const user = await this.userService.addAvatarAndUser(fileDto, userDto);
     if (!user) {
       this.localFileService.deleteFileData(fileDto.path);
