@@ -168,7 +168,7 @@ export class UserController {
     return streamableFile;
   }
 
-  @Get('avatars/:uuid')
+  @Get('avatars/:avatarId')
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     schema: {
@@ -179,7 +179,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getAvatarByAvatarId(
-    @Param('uuid', ParseUUIDPipe) id: string,
+    @Param('avatarId', ParseUUIDPipe) id: string,
   ): Promise<StreamableFile> {
     const streamableFile = await this.userService.getAvatarByAvatarId(id);
 
@@ -189,11 +189,13 @@ export class UserController {
     return streamableFile;
   }
 
-  @Get(':uuid')
+  @Get(':userId')
   @ApiOkResponse({ description: 'Get a user', type: User })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserById(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<User> {
+  async getUserById(
+    @Param('userId', ParseUUIDPipe) uuid: string,
+  ): Promise<User> {
     const user = await this.userService.retrieveUserWithId(uuid);
     if (user === null) {
       throw new NotFoundException();
