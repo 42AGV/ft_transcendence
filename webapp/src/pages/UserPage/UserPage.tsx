@@ -31,7 +31,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     [],
   );
   const getUserById = useCallback(
-    () => usersApi.userControllerGetUserById({ uuid: param.id! }),
+    () => usersApi.userControllerGetUserById({ userId: param.id! }),
     [param.id],
   );
   const { data: user } = useData(isMe ? getCurrentUser : getUserById);
