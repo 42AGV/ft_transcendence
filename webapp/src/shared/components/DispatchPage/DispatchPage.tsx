@@ -1,13 +1,14 @@
 import './DispatchPage.css';
 import { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { USER_URL, USERS_EP_URL } from '../../urls';
+import { USER_URL, AVATAR_EP_URL } from '../../urls';
 import { SmallAvatar } from '../Avatar/Avatar';
 import SearchForm from '../Input/SearchForm';
 import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
 import UseSearch from '../../hooks/UseSearch';
 import { useAuth } from '../../hooks/UseAuth';
+import Loading from '../Loading/Loading';
 
 type SearchFetchFnParams = {
   search: string;
@@ -87,14 +88,25 @@ export default function DispatchPage<T>({
   };
 
   const { user } = useAuth();
+
+  if (!user) {
+    return (
+      <div className="dispatch-page">
+        <div className="dispatch-page-loading">
+          <Loading />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="dispatch-page">
       <div className="dispatch-page-avatar">
         <Link to={USER_URL}>
           <SmallAvatar
-            url={`${USERS_EP_URL}/avatar`}
-            XCoordinate={user?.avatarX ?? 0}
-            YCoordinate={user?.avatarY ?? 0}
+            url={`${AVATAR_EP_URL}/${user.avatarId}`}
+            XCoordinate={user.avatarX ?? 0}
+            YCoordinate={user.avatarY ?? 0}
           />
         </Link>
       </div>
