@@ -79,7 +79,11 @@ export class UserService {
       return null;
     }
 
-    const file = await this.localFileService.getFileById(user.avatarId);
+    return this.getAvatarByAvatarId(user.avatarId);
+  }
+
+  async getAvatarByAvatarId(avatarId: string): Promise<StreamableFile | null> {
+    const file = await this.localFileService.getFileById(avatarId);
 
     if (!file) {
       return null;
@@ -102,37 +106,26 @@ export class UserService {
     return this.streamAvatarData(newAvatarFileDto);
   }
 
-  private async updateAvatar(
-    avatarId: string,
-    newAvatarFileDto: LocalFileDto,
-  ): Promise<StreamableFile | null> {
-    const avatarFile = await this.localFileService.getFileById(avatarId);
-    if (!avatarFile) {
-      this.localFileService.deleteFileData(newAvatarFileDto.path);
-      return null;
+  private async deleteAvatar(avatarId: string) {
+    const avatarFile = await this.localFileService.deleteFileById(avatarId);
+    if (avatarFile) {
+      this.localFileService.deleteFileData(avatarFile.path);
     }
-
-    const updatedAvatarFile = await this.localFileService.updateFileById(
-      avatarFile.id,
-      newAvatarFileDto,
-    );
-    if (!updatedAvatarFile) {
-      this.localFileService.deleteFileData(newAvatarFileDto.path);
-      return null;
-    }
-    this.localFileService.deleteFileData(avatarFile.path);
-    return this.streamAvatarData(updatedAvatarFile);
   }
 
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
   ): Promise<StreamableFile | null> {
-    if (user.avatarId === null) {
-      return this.addAvatarAndUpdateUser(user, newAvatarFileDto);
+    const previousAvatarId = user.avatarId;
+    const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
+    if (!avatar) {
+      return null;
     }
-
-    return this.updateAvatar(user.avatarId, newAvatarFileDto);
+    if (previousAvatarId) {
+      await this.deleteAvatar(previousAvatarId);
+    }
+    return avatar;
   }
 
   private streamAvatarData(fileDto: LocalFileDto): StreamableFile {

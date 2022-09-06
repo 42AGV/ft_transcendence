@@ -7,8 +7,8 @@ import {
   Loading,
 } from '../../shared/components';
 import {
+  AVATAR_EP_URL,
   EDIT_AVATAR_URL,
-  USERS_EP_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
@@ -34,7 +34,7 @@ export default function EditUserPage() {
         <LargeAvatar
           url={
             user.avatarId
-              ? `${USERS_EP_URL}/${user.id}/avatar`
+              ? `${AVATAR_EP_URL}/${user.avatarId}`
               : WILDCARD_AVATAR_URL
           }
           editUrl={EDIT_AVATAR_URL}
