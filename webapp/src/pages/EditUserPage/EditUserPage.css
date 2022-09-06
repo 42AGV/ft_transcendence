@@ -5,9 +5,10 @@
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  gap: 4rem var(--column-gap);
+  column-gap: var(--column-gap);
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto 1fr auto;
+  align-content: space-between;
+  grid-template-rows: repeat(1fr, 4);
   overflow: scroll;
 }
 

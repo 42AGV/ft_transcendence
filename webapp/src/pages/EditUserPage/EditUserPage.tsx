@@ -42,7 +42,11 @@ export default function EditUserPage() {
           YCoordinate={user.avatarY}
         />
       </div>
-      <EditUserForm origFullName={user.fullName} origEmail={user.email} />
+      <EditUserForm
+        origUsername={user.username}
+        origFullName={user.fullName}
+        origEmail={user.email}
+      />
     </div>
   );
 }

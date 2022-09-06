@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -89,6 +88,7 @@ export class UserController {
 
   @Patch()
   @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateCurrentUser(
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
@@ -98,7 +98,7 @@ export class UserController {
       updateUserDto,
     );
     if (!updatedUser) {
-      throw new BadRequestException();
+      throw new UnprocessableEntityException();
     }
     return updatedUser;
   }

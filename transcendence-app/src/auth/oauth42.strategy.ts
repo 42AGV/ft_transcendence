@@ -10,6 +10,10 @@ import { AVATARS_PATH } from '../user/constants';
 import { UserDto } from '../user/dto/user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
+import {
+  AuthProviderService,
+  AuthProviderType,
+} from './auth-provider/auth-provider.service';
 import { OAuth42Config } from './oauth42-config.interface';
 
 @Injectable()
@@ -18,6 +22,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     private api42Service: Api42Service,
     private userService: UserService,
     private localFileService: LocalFileService,
+    private authProviderService: AuthProviderService,
     protected configService: ConfigService<OAuth42Config>,
   ) {
     super({
@@ -50,10 +55,41 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     );
   }
 
+  private async generateRandomUsername(
+    username: string,
+  ): Promise<string | null> {
+    let maxTries = 10;
+    const maxUsernameLength = 20;
+
+    while (maxTries > 0) {
+      const randomToken = Math.random().toString(36).slice(2);
+      const randomUsername =
+        username.slice(0, maxUsernameLength - randomToken.length) + randomToken;
+      const user = await this.userService.retrieveUserWithUserName(
+        randomUsername,
+      );
+      if (user === null) {
+        return randomUsername;
+      }
+      maxTries--;
+    }
+
+    return null;
+  }
+
   private async createUser(
     fileDto: LocalFileDto,
     userDto: UserDto,
   ): Promise<User | null> {
+    const userWithUsernameExists =
+      await this.userService.retrieveUserWithUserName(userDto.username);
+    if (userWithUsernameExists) {
+      const username = await this.generateRandomUsername(userDto.username);
+      if (!username) {
+        return null;
+      }
+      userDto.username = username;
+    }
     const user = await this.userService.addAvatarAndUser(fileDto, userDto);
     if (!user) {
       this.localFileService.deleteFileData(fileDto.path);
@@ -62,17 +98,25 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   }
 
   async validate(accessToken: string): Promise<User | null> {
-    const { userDto, avatarUrl } = await this.api42Service.get42UserData(
-      accessToken,
-    );
-    const dbUser = await this.userService.retrieveUserWithUserName(
-      userDto.username,
+    const { userDto, avatarUrl, providerId } =
+      await this.api42Service.get42UserData(accessToken);
+    const dbUser = await this.userService.retrieveUserWithAuthProvider(
+      AuthProviderType.FortyTwo,
+      providerId,
     );
     if (dbUser) {
       return dbUser;
     }
 
     const avatarDto = await this.saveAvatar(accessToken, avatarUrl);
-    return this.createUser(avatarDto, userDto);
+    const user = await this.createUser(avatarDto, userDto);
+    if (user) {
+      await this.authProviderService.addProvider({
+        provider: AuthProviderType.FortyTwo,
+        providerId,
+        userId: user.id,
+      });
+    }
+    return user;
   }
 }

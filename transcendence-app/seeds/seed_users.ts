@@ -10,13 +10,9 @@ const createRandomUser = () => {
     firstName,
     lastName,
   ]);
-  const email = faker.helpers.unique(faker.internet.email, [
-    firstName,
-    lastName,
-  ]);
   return {
     username: username.slice(-20),
-    email: email.slice(-50),
+    email: faker.internet.email(firstName, lastName).slice(-50),
     fullName: faker.name.fullName({ firstName, lastName }),
   };
 };
