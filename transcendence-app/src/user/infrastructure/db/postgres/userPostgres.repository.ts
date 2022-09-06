@@ -13,6 +13,7 @@ import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFileEntity } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { PoolClient } from 'pg';
 import { UpdateUserDto } from '../../../dto/update-user.dto';
+import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.service';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
@@ -140,5 +141,20 @@ export class UserPostgresRepository
   async addUser(user: UserEntity): Promise<UserEntity | null> {
     const result = await this.add(user);
     return plainToInstance(UserEntity, result);
+  }
+
+  async getByAuthProvider(
+    provider: AuthProviderType,
+    providerId: string,
+  ): Promise<UserEntity | null> {
+    const users = await makeQuery<UserEntity>(this.pool, {
+      text: `SELECT u.*
+      FROM ${this.table} u
+      INNER JOIN ${table.AUTH_PROVIDER} ap
+      ON u."id" = ap."userId"
+      WHERE ap."provider" = $1 AND ap."providerId" = $2;`,
+      values: [provider, providerId],
+    });
+    return users && users.length ? plainToInstance(UserEntity, users[0]) : null;
   }
 }

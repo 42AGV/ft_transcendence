@@ -1,12 +1,7 @@
 export enum table {
   USERS = 'Users',
   LOCAL_FILE = 'LocalFile',
-}
-
-export type ID = string | number;
-
-export interface BaseEntity {
-  id?: string;
+  AUTH_PROVIDER = 'AuthProvider',
 }
 
 export interface Query {

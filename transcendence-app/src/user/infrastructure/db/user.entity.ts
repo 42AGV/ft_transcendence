@@ -1,5 +1,4 @@
 import { Exclude } from 'class-transformer';
-import { BaseEntity } from 'src/shared/db/models';
 
 export enum userKeys {
   ID = '"id"',
@@ -13,7 +12,7 @@ export enum userKeys {
   AVATAR_Y = '"avatarY"',
 }
 
-export class UserEntity implements BaseEntity {
+export class UserEntity {
   username!: string;
   email!: string;
   fullName!: string;

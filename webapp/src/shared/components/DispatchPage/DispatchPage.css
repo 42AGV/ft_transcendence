@@ -10,6 +10,13 @@
   gap: var(--row-gap) var(--column-gap);
 }
 
+.dispatch-page-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
 .dispatch-page-avatar {
   grid-row: 1/2;
 }

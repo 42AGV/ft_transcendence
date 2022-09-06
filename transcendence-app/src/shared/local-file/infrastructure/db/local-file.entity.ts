@@ -1,5 +1,3 @@
-import { BaseEntity } from '../../../db/models';
-
 export enum LocalFileKeys {
   ID = '"id"',
   FILENAME = '"filename"',
@@ -9,7 +7,7 @@ export enum LocalFileKeys {
   CREATED_AT = '"createdAt"',
 }
 
-export class LocalFileEntity implements BaseEntity {
+export class LocalFileEntity {
   constructor(
     public id: string,
     public filename: string,

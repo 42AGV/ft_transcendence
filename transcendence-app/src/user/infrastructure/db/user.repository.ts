@@ -1,3 +1,4 @@
+import { AuthProviderType } from '../../../auth/auth-provider/auth-provider.service';
 import { LocalFile } from '../../../shared/local-file/local-file.domain';
 import { UpdateUserDto } from '../../dto/update-user.dto';
 import { UsersPaginationQueryDto } from '../../dto/user.pagination.dto';
@@ -23,5 +24,9 @@ export abstract class IUserRepository {
   abstract addAvatarAndUpdateUser(
     avatar: LocalFile,
     user: User,
+  ): Promise<User | null>;
+  abstract getByAuthProvider(
+    provider: AuthProviderType,
+    providerId: string,
   ): Promise<User | null>;
 }

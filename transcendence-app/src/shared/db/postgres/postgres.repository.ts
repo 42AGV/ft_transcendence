@@ -1,12 +1,10 @@
 import { entityQueryMapper } from './utils';
-import { BaseEntity, table } from '../models';
+import { table } from '../models';
 import { IBaseRepository } from '../base.repository';
 import { makeQuery } from './utils';
 import { PostgresPool } from './postgresConnection.provider';
 
-export class BasePostgresRepository<T extends BaseEntity>
-  implements IBaseRepository<T>
-{
+export class BasePostgresRepository<T> implements IBaseRepository<T> {
   constructor(protected pool: PostgresPool, protected table: table) {}
 
   getByKey(key: string, value: any): Promise<T[] | null> {
