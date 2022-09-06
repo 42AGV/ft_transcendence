@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   NotFoundException,
@@ -70,6 +71,7 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 
 @Controller('users')
 @UseGuards(AuthenticatedGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {

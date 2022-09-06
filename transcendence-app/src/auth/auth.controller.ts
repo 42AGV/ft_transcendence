@@ -1,12 +1,16 @@
 import {
+  Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   NotFoundException,
+  Post,
   Req,
   Request as GetRequest,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiForbiddenResponse,
@@ -18,11 +22,18 @@ import {
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { LoginUserDto } from '../user/dto/login-user.dto';
+import { RegisterUserDto } from '../user/dto/register-user.dto';
+import { AuthService } from './auth.service';
+import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
 
-@ApiTags('auth')
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
+@ApiTags('auth')
 export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
   @Get('login')
   @ApiOkResponse({ description: 'Login successfully' })
   @ApiFoundResponse({ description: 'Redirect to 42 OAuth server' })
@@ -46,5 +57,17 @@ export class AuthController {
         throw new NotFoundException(err.message);
       }
     });
+  }
+
+  @Post('local/register')
+  registerLocalUser(@Body() user: RegisterUserDto) {
+    return this.authService.registerLocalUser(user);
+  }
+
+  @UseGuards(LocalGuard)
+  @Post('local/login')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto) {
+    return req.user;
   }
 }
