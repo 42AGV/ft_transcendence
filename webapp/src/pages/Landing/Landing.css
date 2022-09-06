@@ -12,7 +12,7 @@
   grid-template-rows: auto 1fr auto auto;
   grid-template-areas:
     'title title title title'
-    '... animation animation ...'
+    'animation animation animation animation'
     'subtitle subtitle subtitle subtitle'
     'login login login login';
 }
@@ -74,7 +74,7 @@
 .landing-animation-ping,
 .landing-animation-pong {
   width: 5rem;
-  height: 0.5rem;
+  height: 0.75rem;
   border-radius: 1rem;
   position: absolute;
   background: var(--color-light);
@@ -82,12 +82,12 @@
 
 .landing-animation-ping {
   top: 6%;
-  animation: ping 6s infinite linear;
+  animation: ping 4.5s infinite linear;
 }
 
 .landing-animation-pong {
   bottom: 6%;
-  animation: pong 6s infinite linear;
+  animation: pong 4.5s infinite linear;
 }
 
 .landing-animation-ball {
@@ -96,7 +96,7 @@
   border-radius: 100%;
   position: absolute;
   background: var(--color-light);
-  animation: ball 6s infinite linear;
+  animation: ball 4.5s infinite linear;
 }
 
 /* ----- keyframes ------ */
@@ -110,7 +110,7 @@
   8.3% {
     /* pong */
     left: 52%;
-    top: 90%;
+    top: 85%;
   }
   24.9% {
     /* ping */
@@ -124,7 +124,7 @@
   41.5% {
     /* pong */
     left: 70%;
-    top: 90%;
+    top: 85%;
   }
   58.1% {
     /* ping */
@@ -134,7 +134,7 @@
   74.7% {
     /* pong */
     left: 13%;
-    top: 90%;
+    top: 85%;
   }
   79% {
     left: 1%;
@@ -195,7 +195,7 @@
   /* bottom player */
   0%,
   100% {
-    left: 90%;
+    left: 85%;
   }
   8.3% {
     /* tap */
