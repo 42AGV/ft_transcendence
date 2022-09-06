@@ -45,7 +45,7 @@ export class UserService {
   }
 
   addUser(user: UserDto): Promise<User | null> {
-    return this.userRepository.add({
+    return this.userRepository.addUser({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,

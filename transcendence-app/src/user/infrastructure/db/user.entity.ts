@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { BaseEntity } from 'src/shared/db/models';
 
 export enum userKeys {
@@ -13,15 +14,14 @@ export enum userKeys {
 }
 
 export class UserEntity implements BaseEntity {
-  constructor(
-    public username: string,
-    public email: string,
-    public fullName: string,
-    public password: string | null,
-    public avatarId: string | null,
-    public avatarX: number,
-    public avatarY: number,
-    public id: string,
-    public createdAt: Date,
-  ) {}
+  username!: string;
+  email!: string;
+  fullName!: string;
+  @Exclude()
+  password!: string | null;
+  avatarId!: string | null;
+  avatarX!: number;
+  avatarY!: number;
+  id!: string;
+  createdAt!: Date;
 }

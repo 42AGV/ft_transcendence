@@ -13,6 +13,7 @@ import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFileEntity } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { PoolClient } from 'pg';
 import { UpdateUserDto } from '../../../dto/update-user.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserPostgresRepository
@@ -25,22 +26,22 @@ export class UserPostgresRepository
 
   async getById(id: string): Promise<UserEntity | null> {
     const users = await this.getByKey(userKeys.ID, id);
-    return users && users.length ? users[0] : null;
+    return users && users.length ? plainToInstance(UserEntity, users[0]) : null;
   }
 
   async getByUsername(username: string): Promise<UserEntity | null> {
     const users = await this.getByKey(userKeys.USERNAME, username);
-    return users && users.length ? users[0] : null;
+    return users && users.length ? plainToInstance(UserEntity, users[0]) : null;
   }
 
   async getByEmail(email: string): Promise<UserEntity | null> {
     const users = await this.getByKey(userKeys.EMAIL, email);
-    return users && users.length ? users[0] : null;
+    return users && users.length ? plainToInstance(UserEntity, users[0]) : null;
   }
 
   async deleteByUsername(username: string): Promise<UserEntity | null> {
     const users = await this.deleteByKey(userKeys.USERNAME, username);
-    return users && users.length ? users[0] : null;
+    return users && users.length ? plainToInstance(UserEntity, users[0]) : null;
   }
 
   async updateById(
@@ -48,16 +49,16 @@ export class UserPostgresRepository
     updateUserDto: UpdateUserDto,
   ): Promise<UserEntity | null> {
     const users = await this.updateByKey(userKeys.ID, id, updateUserDto);
-    return users && users.length ? users[0] : null;
+    return users && users.length ? plainToInstance(UserEntity, users[0]) : null;
   }
 
-  getPaginatedUsers(
+  async getPaginatedUsers(
     paginationDto: Required<UsersPaginationQueryDto>,
   ): Promise<UserEntity[] | null> {
     const { limit, offset, sort, search } = paginationDto;
     const orderBy =
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
-    return makeQuery<UserEntity>(this.pool, {
+    const result = await makeQuery<UserEntity>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
       WHERE ${userKeys.USERNAME} ILIKE $1
@@ -66,6 +67,10 @@ export class UserPostgresRepository
       OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
+
+    return result
+      ? result.map((entity) => plainToInstance(UserEntity, entity))
+      : null;
   }
 
   private insertWithClient(
@@ -95,7 +100,7 @@ export class UserPostgresRepository
     avatar: LocalFileEntity,
     user: UserEntity,
   ): Promise<UserEntity | null> {
-    return this.pool.transaction<UserEntity>(async (client) => {
+    const result = await this.pool.transaction<UserEntity>(async (client) => {
       const avatarRes = await this.insertWithClient(
         client,
         table.LOCAL_FILE,
@@ -108,13 +113,15 @@ export class UserPostgresRepository
       });
       return userRes.rows[0];
     });
+
+    return plainToInstance(UserEntity, result);
   }
 
   async addAvatarAndUpdateUser(
     avatar: LocalFileEntity,
     user: UserEntity,
   ): Promise<UserEntity | null> {
-    return this.pool.transaction<UserEntity>(async (client) => {
+    const result = await this.pool.transaction<UserEntity>(async (client) => {
       const avatarRes = await this.insertWithClient(
         client,
         table.LOCAL_FILE,
@@ -126,5 +133,12 @@ export class UserPostgresRepository
       });
       return userRes.rows[0];
     });
+
+    return plainToInstance(UserEntity, result);
+  }
+
+  async addUser(user: UserEntity): Promise<UserEntity | null> {
+    const result = await this.add(user);
+    return plainToInstance(UserEntity, result);
   }
 }
