@@ -14,12 +14,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiFoundResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiServiceUnavailableResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
@@ -63,6 +65,8 @@ export class AuthController {
   }
 
   @Post('local/register')
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async registerLocalUser(@Body() registerUserDto: RegisterUserDto) {
     const user = await this.authService.registerLocalUser(registerUserDto);
 
@@ -72,8 +76,9 @@ export class AuthController {
     return plainToInstance(User, user);
   }
 
-  @UseGuards(LocalGuard)
   @Post('local/login')
+  @UseGuards(LocalGuard)
+  @ApiForbiddenResponse({ description: 'Forbidden' })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto) {
     return plainToInstance(User, req.user);

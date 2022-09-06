@@ -52,7 +52,7 @@ export class UserPostgresRepository
     return users && users.length ? users[0] : null;
   }
 
-  async getPaginatedUsers(
+  getPaginatedUsers(
     paginationDto: Required<UsersPaginationQueryDto>,
   ): Promise<UserEntity[] | null> {
     const { limit, offset, sort, search } = paginationDto;
@@ -92,7 +92,7 @@ export class UserPostgresRepository
     return client.query(text, [id, ...values]);
   }
 
-  addAvatarAndAddUser(
+  async addAvatarAndAddUser(
     avatar: LocalFileEntity,
     user: UserEntity,
   ): Promise<UserEntity | null> {
@@ -111,7 +111,7 @@ export class UserPostgresRepository
     });
   }
 
-  addAvatarAndUpdateUser(
+  async addAvatarAndUpdateUser(
     avatar: LocalFileEntity,
     user: UserEntity,
   ): Promise<UserEntity | null> {

@@ -15,6 +15,9 @@ const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
+  readonly saltLength = 8;
+  readonly hashLength = 32;
+
   constructor(private readonly userService: UserService) {}
 
   async validateUser(user: LoginUserDto): Promise<User> {
@@ -30,7 +33,7 @@ export class AuthService {
     }
 
     const [salt, storedHash] = foundUser.password.split('.');
-    const hash = (await scrypt(user.password, salt, 32)) as Buffer;
+    const hash = (await scrypt(user.password, salt, this.hashLength)) as Buffer;
 
     if (storedHash !== hash.toString('hex')) {
       throw incorrectCredentialsException;
@@ -54,8 +57,8 @@ export class AuthService {
       );
     }
 
-    const salt = randomBytes(8).toString('hex');
-    const hash = (await scrypt(user.password, salt, 32)) as Buffer;
+    const salt = randomBytes(this.saltLength).toString('hex');
+    const hash = (await scrypt(user.password, salt, this.hashLength)) as Buffer;
     const result = salt + '.' + hash.toString('hex');
 
     const { confirmationPassword: _, ...newUser } = user;
