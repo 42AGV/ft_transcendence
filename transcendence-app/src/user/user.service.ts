@@ -14,6 +14,7 @@ import { LocalFileService } from '../shared/local-file/local-file.service';
 import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
+import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 
 @Injectable()
 export class UserService {
@@ -158,5 +159,9 @@ export class UserService {
       this.localFileService.deleteFileData(path);
     }
     return isValid;
+  }
+
+  retrieveUserWithAuthProvider(provider: AuthProviderType, providerId: string) {
+    return this.userRepository.getByAuthProvider(provider, providerId);
   }
 }

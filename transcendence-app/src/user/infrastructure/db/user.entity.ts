@@ -1,5 +1,3 @@
-import { BaseEntity } from 'src/shared/db/models';
-
 export enum userKeys {
   ID = '"id"',
   USERNAME = '"username"',
@@ -11,7 +9,7 @@ export enum userKeys {
   AVATAR_Y = '"avatarY"',
 }
 
-export class UserEntity implements BaseEntity {
+export class UserEntity {
   constructor(
     public username: string,
     public email: string,

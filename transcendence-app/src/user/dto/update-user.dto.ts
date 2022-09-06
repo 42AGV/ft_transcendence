@@ -12,6 +12,12 @@ export class UpdateUserDto {
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsOptional()
+  username?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @IsOptional()
   fullName?: string;
 
   @IsEmail()

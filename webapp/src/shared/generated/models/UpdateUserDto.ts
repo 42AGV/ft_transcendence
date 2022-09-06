@@ -24,6 +24,12 @@ export interface UpdateUserDto {
      * @type {string}
      * @memberof UpdateUserDto
      */
+    username?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserDto
+     */
     fullName?: string;
     /**
      * 
@@ -64,6 +70,7 @@ export function UpdateUserDtoFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
+        'username': !exists(json, 'username') ? undefined : json['username'],
         'fullName': !exists(json, 'fullName') ? undefined : json['fullName'],
         'email': !exists(json, 'email') ? undefined : json['email'],
         'avatarX': !exists(json, 'avatarX') ? undefined : json['avatarX'],
@@ -80,6 +87,7 @@ export function UpdateUserDtoToJSON(value?: UpdateUserDto | null): any {
     }
     return {
         
+        'username': value.username,
         'fullName': value.fullName,
         'email': value.email,
         'avatarX': value.avatarX,
