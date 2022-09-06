@@ -13,7 +13,7 @@ export abstract class IUserRepository {
     username: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | null>;
-  abstract addUser(user: User): Promise<User | null>;
+  abstract add(user: User): Promise<User | null>;
   abstract getPaginatedUsers(
     queryDto: Required<UsersPaginationQueryDto>,
   ): Promise<User[] | null>;

@@ -47,6 +47,7 @@ import {
 } from './constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
+import { plainToInstance } from 'class-transformer';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -85,7 +86,7 @@ export class UserController {
     if (!user) {
       throw new UnprocessableEntityException();
     }
-    return user;
+    return plainToInstance(User, user);
   }
 
   @Patch()
@@ -102,13 +103,13 @@ export class UserController {
     if (!updatedUser) {
       throw new UnprocessableEntityException();
     }
-    return updatedUser;
+    return plainToInstance(User, updatedUser);
   }
 
   @Get('me')
   @ApiOkResponse({ description: 'Get the authenticated user', type: User })
   getCurrentUser(@GetUser() user: User) {
-    return user;
+    return plainToInstance(User, user);
   }
 
   @Get()
@@ -125,7 +126,7 @@ export class UserController {
     if (!users) {
       throw new ServiceUnavailableException();
     }
-    return users;
+    return plainToInstance(User, users);
   }
 
   @Get('avatars/:avatarId')
@@ -160,7 +161,7 @@ export class UserController {
     if (user === null) {
       throw new NotFoundException();
     }
-    return user;
+    return plainToInstance(User, user);
   }
 
   @Put('avatar')

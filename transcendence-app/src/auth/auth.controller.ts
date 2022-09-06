@@ -9,6 +9,7 @@ import {
   Req,
   Request as GetRequest,
   Res,
+  UnprocessableEntityException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -20,10 +21,12 @@ import {
   ApiServiceUnavailableResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
+import { User } from '../user/user.domain';
 import { AuthService } from './auth.service';
 import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
@@ -60,14 +63,19 @@ export class AuthController {
   }
 
   @Post('local/register')
-  registerLocalUser(@Body() user: RegisterUserDto) {
-    return this.authService.registerLocalUser(user);
+  async registerLocalUser(@Body() registerUserDto: RegisterUserDto) {
+    const user = await this.authService.registerLocalUser(registerUserDto);
+
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
+    return plainToInstance(User, user);
   }
 
   @UseGuards(LocalGuard)
   @Post('local/login')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto) {
-    return req.user;
+    return plainToInstance(User, req.user);
   }
 }

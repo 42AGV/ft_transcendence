@@ -1,5 +1,3 @@
-import { Exclude } from 'class-transformer';
-
 export enum userKeys {
   ID = '"id"',
   USERNAME = '"username"',
@@ -13,14 +11,15 @@ export enum userKeys {
 }
 
 export class UserEntity {
-  username!: string;
-  email!: string;
-  fullName!: string;
-  @Exclude()
-  password!: string | null;
-  avatarId!: string | null;
-  avatarX!: number;
-  avatarY!: number;
-  id!: string;
-  createdAt!: Date;
+  constructor(
+    public username: string,
+    public email: string,
+    public fullName: string,
+    public password: string | null,
+    public avatarId: string | null,
+    public avatarX: number,
+    public avatarY: number,
+    public id: string,
+    public createdAt: Date,
+  ) {}
 }
