@@ -1,4 +1,4 @@
-import { Exclude, Transform, TransformFnParams } from 'class-transformer';
+import { Transform, TransformFnParams } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -23,9 +23,7 @@ export class UserDto {
 
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ValidateIf((object, value) => value !== null)
-  @Exclude()
   password!: string | null;
 
   @IsUUID()

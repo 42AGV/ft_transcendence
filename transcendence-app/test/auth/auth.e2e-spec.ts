@@ -11,6 +11,8 @@ import {
 import * as session from 'express-session';
 import * as ConnectMemcached from 'connect-memcached';
 import * as passport from 'passport';
+import { AuthService } from '../../src/auth/auth.service';
+import { UserModule } from '../../src/user/user.module';
 
 describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
@@ -26,7 +28,9 @@ describe('[Feature] Auth - /auth', () => {
           validate,
         }),
         AuthModule,
+        UserModule,
       ],
+      providers: [AuthService],
       controllers: [AuthController],
     }).compile();
 

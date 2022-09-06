@@ -13,6 +13,7 @@ const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
+  password: null,
   avatarId: null,
 };
 const testUserId = uuidv4();
@@ -75,6 +76,7 @@ describe('[Feature] User - /users', () => {
           username: 'user' + i,
           email: i + 'afgv@github.com',
           fullName: 'user' + i,
+          password: null,
           avatarId: null,
         });
     }
