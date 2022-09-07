@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   NotFoundException,
@@ -47,7 +46,6 @@ import {
 } from './constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
-import { plainToInstance } from 'class-transformer';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -71,7 +69,6 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 
 @Controller('users')
 @UseGuards(AuthenticatedGuard)
-@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {
@@ -86,7 +83,7 @@ export class UserController {
     if (!user) {
       throw new UnprocessableEntityException();
     }
-    return plainToInstance(User, user);
+    return user;
   }
 
   @Patch()
@@ -103,13 +100,13 @@ export class UserController {
     if (!updatedUser) {
       throw new UnprocessableEntityException();
     }
-    return plainToInstance(User, updatedUser);
+    return user;
   }
 
   @Get('me')
   @ApiOkResponse({ description: 'Get the authenticated user', type: User })
   getCurrentUser(@GetUser() user: User) {
-    return plainToInstance(User, user);
+    return user;
   }
 
   @Get()
@@ -126,7 +123,7 @@ export class UserController {
     if (!users) {
       throw new ServiceUnavailableException();
     }
-    return plainToInstance(User, users);
+    return users;
   }
 
   @Get('avatars/:avatarId')
@@ -161,7 +158,7 @@ export class UserController {
     if (user === null) {
       throw new NotFoundException();
     }
-    return plainToInstance(User, user);
+    return user;
   }
 
   @Put('avatar')

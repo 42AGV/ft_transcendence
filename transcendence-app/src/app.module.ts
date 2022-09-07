@@ -1,10 +1,15 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  MiddlewareConsumer,
+  Module,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { EnvironmentVariables, validate } from './config/env.validation';
 import * as session from 'express-session';
 import * as ConnectMemcached from 'connect-memcached';
 import * as passport from 'passport';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -15,6 +20,12 @@ import * as passport from 'passport';
       validate,
     }),
     AuthModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
   ],
 })
 export class AppModule {

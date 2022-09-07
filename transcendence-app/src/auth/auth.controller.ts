@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -11,7 +10,6 @@ import {
   Res,
   UnprocessableEntityException,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -23,18 +21,15 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { plainToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
-import { User } from '../user/user.domain';
 import { AuthService } from './auth.service';
 import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
 
 @Controller('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -73,14 +68,15 @@ export class AuthController {
     if (!user) {
       throw new UnprocessableEntityException();
     }
-    return plainToInstance(User, user);
+    return user;
   }
 
   @Post('local/login')
   @UseGuards(LocalGuard)
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto) {
-    return plainToInstance(User, req.user);
+    return req.user;
   }
 }

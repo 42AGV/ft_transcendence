@@ -23,40 +23,47 @@ export class UserService {
     private localFileService: LocalFileService,
   ) {}
 
-  retrieveUserWithId(id: string): Promise<User | null> {
-    return this.userRepository.getById(id);
+  async retrieveUserWithId(id: string): Promise<User | null> {
+    const user = await this.userRepository.getById(id);
+    return user ? new User(user) : null;
   }
 
-  retrieveUsers({
+  async retrieveUsers({
     limit = MAX_USER_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
   }: UsersPaginationQueryDto): Promise<User[] | null> {
-    return this.userRepository.getPaginatedUsers({
+    const users = await this.userRepository.getPaginatedUsers({
       limit,
       offset,
       sort,
       search,
     });
+    return users ? users.map((user) => new User(user)) : null;
   }
 
-  retrieveUserWithUserName(username: string): Promise<User | null> {
-    return this.userRepository.getByUsername(username);
+  async retrieveUserWithUserName(username: string): Promise<User | null> {
+    const user = await this.userRepository.getByUsername(username);
+    return user ? new User(user) : null;
   }
 
-  addUser(user: UserDto): Promise<User | null> {
-    return this.userRepository.add({
+  async addUser(userDto: UserDto): Promise<User | null> {
+    const user = await this.userRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
-      ...user,
+      ...userDto,
     });
+    return user ? new User(user) : null;
   }
 
-  addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
-    return this.userRepository.addAvatarAndAddUser(
+  async addAvatarAndUser(
+    fileDto: LocalFileDto,
+    userDto: UserDto,
+  ): Promise<User | null> {
+    const user = await this.userRepository.addAvatarAndAddUser(
       { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
       {
         id: uuidv4(),
@@ -66,10 +73,15 @@ export class UserService {
         ...userDto,
       },
     );
+    return user ? new User(user) : null;
   }
 
-  updateUser(userId: string, updateUserDto: UpdateUserDto) {
-    return this.userRepository.updateById(userId, updateUserDto);
+  async updateUser(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | null> {
+    const user = await this.userRepository.updateById(userId, updateUserDto);
+    return user ? new User(user) : null;
   }
 
   async getAvatar(userId: string): Promise<StreamableFile | null> {
@@ -154,7 +166,14 @@ export class UserService {
     return isValid;
   }
 
-  retrieveUserWithAuthProvider(provider: AuthProviderType, providerId: string) {
-    return this.userRepository.getByAuthProvider(provider, providerId);
+  async retrieveUserWithAuthProvider(
+    provider: AuthProviderType,
+    providerId: string,
+  ): Promise<User | null> {
+    const user = await this.userRepository.getByAuthProvider(
+      provider,
+      providerId,
+    );
+    return user ? new User(user) : null;
   }
 }
