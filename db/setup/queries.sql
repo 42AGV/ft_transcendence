@@ -69,3 +69,12 @@ VALUES
     'happy-user@transcendence.com',
     'Happy Pink'
   );
+
+INSERT INTO
+  Users ("username", "email", "fullName")
+VALUES
+  (
+    'vde-dios',
+    'vde-dios@transcendence.com',
+    'vde-dios'
+  );
