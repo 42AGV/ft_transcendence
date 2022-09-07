@@ -7,10 +7,10 @@ import {
   Landing,
   Play,
   Users,
-  UserPage,
+  User,
   ComponentsBook,
-  EditUserPage,
-  EditAvatarPage,
+  EditUser,
+  EditAvatar,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -63,7 +63,7 @@ root.render(
             path={USER_URL}
             element={
               <RequireAuth>
-                <UserPage isMe={true} />
+                <User isMe={true} />
               </RequireAuth>
             }
           />
@@ -71,7 +71,7 @@ root.render(
             path={`${USERS_URL}/:id`}
             element={
               <RequireAuth>
-                <UserPage isMe={false} />
+                <User isMe={false} />
               </RequireAuth>
             }
           />
@@ -79,7 +79,7 @@ root.render(
             path={EDIT_USER_URL}
             element={
               <RequireAuth>
-                <EditUserPage />
+                <EditUser />
               </RequireAuth>
             }
           />
@@ -87,7 +87,7 @@ root.render(
             path={EDIT_AVATAR_URL}
             element={
               <RequireAuth>
-                <EditAvatarPage />
+                <EditAvatar />
               </RequireAuth>
             }
           />

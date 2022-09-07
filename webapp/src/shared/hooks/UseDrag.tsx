@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Position } from '../types';
-import { EDITABLE_AVATAR_SCALE } from '../../pages/EditAvatarPage/EditAvatarPage';
+import { EDITABLE_AVATAR_SCALE } from '../../pages/EditAvatar/EditAvatar';
 
 type DragInfo = {
   isLoading: boolean;

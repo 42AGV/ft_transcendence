@@ -1,4 +1,4 @@
-import './EditUserPage.css';
+import './EditUser.css';
 import {
   EditUserForm,
   Header,
@@ -15,7 +15,7 @@ import { goBack } from '../../shared/callbacks';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 
-export default function EditUserPage() {
+export default function EditUser() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
