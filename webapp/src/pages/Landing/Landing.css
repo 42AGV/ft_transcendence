@@ -7,7 +7,7 @@
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  gap: 4rem var(--column-gap);
+  gap: 2rem var(--column-gap);
   grid-template-columns: repeat(var(--column-number), 1fr);
   grid-template-rows: auto 1fr auto auto;
   grid-template-areas:
@@ -33,8 +33,8 @@
 .landing-login-button {
   grid-area: login;
   justify-self: center;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1.4rem;
 }
 

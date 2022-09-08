@@ -7,7 +7,11 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
+import {
+  DEFAULT_LOGIN_REDIRECT_URL,
+  LOGIN_OPTIONS_URL,
+  REGISTER_URL,
+} from '../../shared/urls';
 import './Landing.css';
 
 type LocationState = {
@@ -46,26 +50,22 @@ export default function Landing() {
         </Text>
       </div>
       <div className="landing-login-button">
-        <div>
-          <Button
-            variant={ButtonVariant.SUBMIT}
-            onClick={() =>
-              window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
-            }
-          >
-            Create new account
-          </Button>
-        </div>
-        <div>
-          <Button
-            variant={ButtonVariant.ALTERNATIVE}
-            onClick={() =>
-              window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
-            }
-          >
-            Login
-          </Button>
-        </div>
+        <Button
+          variant={ButtonVariant.SUBMIT}
+          onClick={() =>
+            window.location.replace(`${REGISTER_URL}?state=${from}`)
+          }
+        >
+          Create new account
+        </Button>
+        <Button
+          variant={ButtonVariant.ALTERNATIVE}
+          onClick={() =>
+            window.location.replace(`${LOGIN_OPTIONS_URL}?state=${from}`)
+          }
+        >
+          Login
+        </Button>
       </div>
     </div>
   );

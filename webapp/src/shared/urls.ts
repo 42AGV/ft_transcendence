@@ -1,5 +1,7 @@
 // webapp
 export const HOST_URL = `/`;
+export const LOGIN_OPTIONS_URL = '/login';
+export const REGISTER_URL = '/register';
 export const USER_URL = '/user';
 export const USERS_URL = '/users';
 export const EDIT_USER_URL = `${USER_URL}/edit`;

@@ -6,3 +6,4 @@ export { default as Play } from './Play/Play';
 export { default as Chat } from './Chat/Chat';
 export { default as ComponentsBook } from './ComponentsBook/ComponentsBook';
 export { default as EditAvatarPage } from './EditAvatarPage/EditAvatarPage';
+export { default as Login } from './Login/Login';

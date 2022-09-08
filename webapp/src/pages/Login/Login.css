@@ -1,0 +1,19 @@
+.login {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+}
+
+.login-container {
+  padding-top: 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem var(--column-gap);
+  align-items: center;
+}
+
+.login-form .inputs-container > .input {
+  margin-bottom: 0.875rem;
+}

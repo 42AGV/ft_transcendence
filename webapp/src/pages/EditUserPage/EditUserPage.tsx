@@ -18,6 +18,9 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 export default function EditUserPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+  };
 
   return user === null ? (
     <div className="edit-user-page">

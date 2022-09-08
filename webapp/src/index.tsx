@@ -11,6 +11,7 @@ import {
   ComponentsBook,
   EditUserPage,
   EditAvatarPage,
+  Login,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -21,6 +22,7 @@ import {
   USER_URL,
   EDIT_USER_URL,
   EDIT_AVATAR_URL,
+  LOGIN_OPTIONS_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -35,6 +37,7 @@ root.render(
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path={LOGIN_OPTIONS_URL} element={<Login />} />
           <Route
             path={USERS_URL}
             element={
