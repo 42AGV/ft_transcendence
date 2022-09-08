@@ -5,9 +5,9 @@ import {
   Get,
   NotFoundException,
   Post,
+  Redirect,
   Req,
   Request as GetRequest,
-  Res,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
@@ -21,7 +21,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
@@ -39,11 +39,9 @@ export class AuthController {
   @ApiFoundResponse({ description: 'Redirect to 42 OAuth server' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseGuards(OAuth42Guard)
-  oauth42Login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const { state } = req.query;
-    if (typeof state === 'string') {
-      res.redirect(state);
-    }
+  @Redirect('/')
+  oauth42Login() {
+    // Guard implementation
   }
 
   @Delete('logout')

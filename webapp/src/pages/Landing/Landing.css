@@ -17,6 +17,13 @@
     'login login login login';
 }
 
+.landing-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
 .landing-title > *,
 .landing-subtitle > * {
   margin: 0;

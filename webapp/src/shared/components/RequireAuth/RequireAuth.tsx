@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/UseAuth';
 import { HOST_URL } from '../../urls';
 import Loading from '../Loading/Loading';
@@ -6,7 +6,6 @@ import './RequireAuth.css';
 
 export default function RequireAuth({ children }: { children: JSX.Element }) {
   const auth = useAuth();
-  const location = useLocation();
 
   if (auth.isLoading) {
     return (
@@ -17,7 +16,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
   }
 
   if (!auth.user) {
-    return <Navigate to={HOST_URL} state={{ from: location }} replace />;
+    return <Navigate to={HOST_URL} />;
   }
 
   return children;
