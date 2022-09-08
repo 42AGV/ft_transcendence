@@ -46,14 +46,26 @@ export default function Landing() {
         </Text>
       </div>
       <div className="landing-login-button">
-        <Button
-          variant={ButtonVariant.SUBMIT}
-          onClick={() =>
-            window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
-          }
-        >
-          Login
-        </Button>
+        <div>
+          <Button
+            variant={ButtonVariant.SUBMIT}
+            onClick={() =>
+              window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
+            }
+          >
+            Create new account
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant={ButtonVariant.ALTERNATIVE}
+            onClick={() =>
+              window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
+            }
+          >
+            Login
+          </Button>
+        </div>
       </div>
     </div>
   );

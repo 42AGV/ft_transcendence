@@ -33,6 +33,9 @@
 .landing-login-button {
   grid-area: login;
   justify-self: center;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1.4rem;
 }
 
 .landing-login-button,
