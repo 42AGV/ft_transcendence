@@ -56,6 +56,7 @@ export class Api42Service {
       username: data.login,
       email: data.email,
       fullName: data.usual_full_name,
+      password: null,
       avatarId: null,
     };
 

@@ -14,6 +14,7 @@ CREATE TABLE
     "username" VARCHAR(20) NOT NULL UNIQUE,
     "email" VARCHAR(50) NOT NULL,
     "fullName" VARCHAR(255) NOT NULL,
+    "password" TEXT,
     "avatarId" UUID REFERENCES LocalFile(id) UNIQUE,
     "avatarX" SMALLINT,
     "avatarY" SMALLINT,

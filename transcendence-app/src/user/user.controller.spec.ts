@@ -10,6 +10,7 @@ const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
+  password: null,
   avatarId: uuidv4(),
 };
 const testUserId = uuidv4();

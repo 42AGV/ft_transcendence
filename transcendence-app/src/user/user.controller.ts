@@ -100,7 +100,7 @@ export class UserController {
     if (!updatedUser) {
       throw new UnprocessableEntityException();
     }
-    return updatedUser;
+    return user;
   }
 
   @Get('me')
