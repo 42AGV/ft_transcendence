@@ -140,9 +140,9 @@ docker compose up --build -d -V
 
 ### OpenAPI
 
-We use Swagger to autogenerate the OpenAPI specification `transcendence-app/swagger-spec.json` file. This file is generated automatically by the transcendence-app at startup whenever the OpenAPI spec changes.
+We use Swagger to autogenerate the OpenAPI specification `transcendence-app/swagger-spec.yaml` file. This file is generated automatically by the transcendence-app at startup whenever the OpenAPI spec changes.
 
-We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the `swagger-spec.json`.
+We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the `swagger-spec.yaml`.
 
 Please don't modify these files manually.
 
