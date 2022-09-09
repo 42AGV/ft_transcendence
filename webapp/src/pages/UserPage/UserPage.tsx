@@ -1,4 +1,4 @@
-import './User.css';
+import './UserPage.css';
 import {
   Button,
   ButtonVariant,
@@ -24,11 +24,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 
-type UserProps = {
+type UserPageProps = {
   isMe: boolean;
 };
 
-export default function User({ isMe = false }: UserProps) {
+export default function UserPage({ isMe = false }: UserPageProps) {
   const param = useParams();
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),

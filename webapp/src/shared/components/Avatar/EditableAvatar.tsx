@@ -2,7 +2,7 @@ import './EditableAvatar.css';
 import { AvatarProps } from './Avatar';
 import { Text, TextColor, TextVariant, TextWeight } from '../index';
 import React from 'react';
-import { EDITABLE_AVATAR_SCALE_REVERSE } from '../../../pages/EditAvatar/EditAvatar';
+import { EDITABLE_AVATAR_SCALE_REVERSE } from '../../../pages/EditAvatarPage/EditAvatarPage';
 
 type EditableAvatarProps = AvatarProps & {
   handleMouseDown?: ({

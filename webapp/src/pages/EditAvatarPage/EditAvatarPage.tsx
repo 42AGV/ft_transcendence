@@ -1,4 +1,4 @@
-import './EditAvatar.css';
+import './EditAvatarPage.css';
 import {
   Button,
   ButtonVariant,
@@ -24,7 +24,7 @@ type ImgData = {
   imgFile: File | null;
 };
 
-export default function EditAvatar() {
+export default function EditAvatarPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
