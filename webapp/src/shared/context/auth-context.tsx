@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
   authBroadcastChannel.onmessage = (event) => {
-    if (user && event.data.user && event.data.user.id === user.id) {
+    if (user && event.data && user.id === event.data.id) {
       setUser(null);
       navigate(HOST_URL);
     }
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useCallback(async () => {
     try {
       await authApi.authControllerLogout();
-      authBroadcastChannel.postMessage({ user: user });
+      authBroadcastChannel.postMessage(user);
     } catch (err) {
       console.error(err);
     } finally {
