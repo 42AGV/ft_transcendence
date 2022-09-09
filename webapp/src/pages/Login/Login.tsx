@@ -121,12 +121,6 @@ export default function Login() {
             variant={TextVariant.SUBHEADING}
             color={TextColor.LIGHT}
             weight={TextWeight.BOLD}
-            children="Forgot password?"
-          />
-          <Text
-            variant={TextVariant.SUBHEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
             children="No account? Create one"
           />
         </div>
