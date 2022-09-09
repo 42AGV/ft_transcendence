@@ -37,7 +37,7 @@
   grid-area: subtitle;
 }
 
-.landing-login-button {
+.landing-buttons {
   grid-area: login;
   justify-self: center;
   display: flex;
@@ -45,9 +45,8 @@
   gap: 1.4rem;
 }
 
-.landing-login-button,
-.landing-login-button > button {
-  width: 100%;
+.landing-buttons,
+.landing-buttons > button {
   min-width: 15rem;
   max-width: 20rem;
 }
@@ -66,7 +65,7 @@
       'login login login login ... ... ... ... animation animation animation animation';
   }
 
-  .landing-login-button {
+  .landing-buttons {
     align-self: center;
     justify-self: start;
   }

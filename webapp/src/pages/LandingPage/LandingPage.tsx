@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -64,19 +64,13 @@ export default function Landing() {
           Play online pong with your friends
         </Text>
       </div>
-      <div className="landing-login-button">
-        <Button
-          variant={ButtonVariant.SUBMIT}
-          onClick={() => window.location.replace(`${REGISTER_URL}`)}
-        >
-          Create new account
-        </Button>
-        <Button
-          variant={ButtonVariant.ALTERNATIVE}
-          onClick={() => window.location.replace(`${LOGIN_OPTIONS_URL}`)}
-        >
-          Login
-        </Button>
+      <div className="landing-buttons">
+        <Link to={REGISTER_URL}>
+          <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
+        </Link>
+        <Link to={LOGIN_OPTIONS_URL}>
+          <Button variant={ButtonVariant.ALTERNATIVE}>Login</Button>
+        </Link>
       </div>
     </div>
   );
