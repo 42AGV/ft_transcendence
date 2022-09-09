@@ -8,7 +8,7 @@ import {
   TextWeight,
 } from '../../shared/components';
 import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
-import './Landing.css';
+import './LandingPage.css';
 
 type LocationState = {
   state: {
@@ -16,7 +16,7 @@ type LocationState = {
   };
 };
 
-export default function Landing() {
+export default function LandingPage() {
   const location = useLocation() as LocationState;
   const from = location.state?.from?.pathname || DEFAULT_LOGIN_REDIRECT_URL;
 
@@ -24,7 +24,7 @@ export default function Landing() {
     <div className="landing">
       <div className="landing-title">
         <Text
-          variant={TextVariant.HEADING}
+          variant={TextVariant.SUBTITLE}
           color={TextColor.GAME}
           weight={TextWeight.BOLD}
         >
