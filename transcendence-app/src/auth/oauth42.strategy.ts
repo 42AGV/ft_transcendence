@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Request } from 'express';
 import { Strategy } from 'passport-oauth2';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
@@ -33,11 +32,6 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       callbackURL: configService.get('FORTYTWO_APP_CALLBACK_URL'),
       scope: ['public'],
     });
-  }
-
-  authenticate(req: Request, options?: any) {
-    options.state = req.query.state;
-    super.authenticate(req, options);
   }
 
   private async saveAvatar(
