@@ -13,11 +13,6 @@ import { DispatchPage } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 
-/* TODO: implement this
-const mapChatToRow = (chat: Chat): RowItem => {
-  return {
-  };
-}; */
 const mapUserToRow = (user: User): RowItem => {
   return {
     iconVariant: IconVariant.ARROW_FORWARD,
@@ -26,6 +21,8 @@ const mapUserToRow = (user: User): RowItem => {
         ? `${AVATAR_EP_URL}/${user.avatarId}`
         : WILDCARD_AVATAR_URL,
       status: 'offline',
+      XCoordinate: user.avatarX,
+      YCoordinate: user.avatarY,
     },
     url: `${USERS_URL}/${user.id}`,
     title: user.username,
@@ -34,7 +31,7 @@ const mapUserToRow = (user: User): RowItem => {
   };
 };
 
-export default function Chat() {
+export default function UsersPage() {
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
       usersApi.userControllerGetUsers(requestParameters),

@@ -10,7 +10,7 @@ import {
 } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
-import './Landing.css';
+import './LandingPage.css';
 
 export default function Landing() {
   const { user, isLoading } = useAuth();
@@ -33,7 +33,7 @@ export default function Landing() {
     <div className="landing">
       <div className="landing-title">
         <Text
-          variant={TextVariant.HEADING}
+          variant={TextVariant.SUBTITLE}
           color={TextColor.GAME}
           weight={TextWeight.BOLD}
         >
