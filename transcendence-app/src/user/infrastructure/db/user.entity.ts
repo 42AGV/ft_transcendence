@@ -17,8 +17,8 @@ export class UserEntity {
     public fullName: string,
     public password: string | null,
     public avatarId: string | null,
-    public avatarX: number,
-    public avatarY: number,
+    public avatarX: number = 0,
+    public avatarY: number = 0,
     public id: string,
     public createdAt: Date,
   ) {}
