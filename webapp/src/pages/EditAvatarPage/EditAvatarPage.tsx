@@ -79,12 +79,11 @@ export default function EditAvatarPage() {
     });
   };
 
-  const AvProps = {
+  const DbgAvatarProps = {
     url:
       user && user.avatarId
         ? `${AVATAR_EP_URL}/${user.avatarId}`
-            : WILDCARD_AVATAR_URL
-        },
+        : WILDCARD_AVATAR_URL,
     status: 'offline',
     XCoordinate: avatarX,
     YCoordinate: avatarY,
@@ -127,8 +126,8 @@ export default function EditAvatarPage() {
         {imgFile !== null ? 'Upload' : 'Save changes'}
       </Button>
       <div className="avatars-position-dbg">
-        <LargeAvatar {...AvProps} />
-        <SmallAvatar {...AvProps} />
+        <LargeAvatar {...DbgAvatarProps} />
+        <SmallAvatar {...DbgAvatarProps} />
       </div>
     </div>
   );
