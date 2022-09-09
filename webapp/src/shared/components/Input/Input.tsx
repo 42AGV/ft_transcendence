@@ -15,6 +15,7 @@ type InputProps = {
   value?: string | number | readonly string[];
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   name?: string;
+  type?: string;
 };
 
 export default function Input({
@@ -25,6 +26,7 @@ export default function Input({
   value,
   onChange,
   name,
+  type,
 }: InputProps) {
   return (
     <div className="input">
@@ -43,6 +45,7 @@ export default function Input({
           value={value}
           onChange={onChange}
           name={name}
+          type={type}
         />
       </div>
     </div>

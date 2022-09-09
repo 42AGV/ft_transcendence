@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
+  IconVariant,
   Input,
   InputVariant,
   Text,
@@ -10,20 +10,13 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
+import { LOGIN_EP_URL } from '../../shared/urls';
 import './Login.css';
 
-type LocationState = {
-  state: {
-    from: Location;
-  };
-};
-
 export default function Login() {
-  const location = useLocation() as LocationState;
-  const from = location.state?.from?.pathname || DEFAULT_LOGIN_REDIRECT_URL;
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    alert(`username=${username}\npassword=${password}`);
   };
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -41,9 +34,7 @@ export default function Login() {
       <div className="login-container">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() =>
-            window.location.replace(`${LOGIN_EP_URL}?state=${from}`)
-          }
+          onClick={() => window.location.replace(`${LOGIN_EP_URL}`)}
         >
           Login with 42
         </Button>
@@ -70,6 +61,7 @@ export default function Login() {
               placeholder="Password"
               value={password}
               name="password"
+              type="password"
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
@@ -79,7 +71,8 @@ export default function Login() {
         <Button
           form="login-form"
           variant={ButtonVariant.SUBMIT}
-          children="Login with 42"
+          iconVariant={IconVariant.LOGIN}
+          children="Login"
         />
         <Text
           variant={TextVariant.SUBHEADING}

@@ -16,4 +16,5 @@
 
 .login-form .inputs-container > .input {
   margin-bottom: 0.875rem;
+  width: 15rem;
 }
