@@ -16,8 +16,8 @@ CREATE TABLE
     "fullName" VARCHAR(255) NOT NULL,
     "password" TEXT,
     "avatarId" UUID REFERENCES LocalFile(id) UNIQUE,
-    "avatarX" SMALLINT,
-    "avatarY" SMALLINT,
+    "avatarX" SMALLINT DEFAULT 0,
+    "avatarY" SMALLINT DEFAULT 0,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
 

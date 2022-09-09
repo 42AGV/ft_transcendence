@@ -4,7 +4,7 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import './ComponentsBook.css';
+import './ComponentsBookPage.css';
 import {
   NavigationExample,
   TextExample,
@@ -20,7 +20,7 @@ import {
 } from './ComponentsExamples';
 import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
 
-export default function ComponentsBook() {
+export default function ComponentsBookPage() {
   return (
     <div className="components-book">
       <Text

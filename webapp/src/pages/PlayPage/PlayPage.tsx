@@ -34,7 +34,7 @@ const mapUserToRow = (user: User): RowItem => {
   };
 };
 
-export default function Play() {
+export default function PlayPage() {
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
       usersApi.userControllerGetUsers(requestParameters),

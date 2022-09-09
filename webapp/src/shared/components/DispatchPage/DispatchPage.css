@@ -83,3 +83,9 @@
     grid-column: 9 / var(--column-end);
   }
 }
+
+@media all and (max-width: 1200px) {
+  .dispatch-page-avatar {
+    display: flex;
+  }
+}
