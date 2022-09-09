@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -89,6 +88,7 @@ export class UserController {
 
   @Patch()
   @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateCurrentUser(
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
@@ -98,9 +98,9 @@ export class UserController {
       updateUserDto,
     );
     if (!updatedUser) {
-      throw new BadRequestException();
+      throw new UnprocessableEntityException();
     }
-    return updatedUser;
+    return user;
   }
 
   @Get('me')
@@ -126,25 +126,7 @@ export class UserController {
     return users;
   }
 
-  @Get('avatar')
-  @ApiProduces('image/jpeg')
-  @ApiOkResponse({
-    schema: {
-      type: 'file',
-      format: 'binary',
-    },
-  })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  async getCurrentUserAvatar(@GetUser() user: User): Promise<StreamableFile> {
-    const streamableFile = await this.userService.getAvatar(user.id);
-
-    if (!streamableFile) {
-      throw new NotFoundException();
-    }
-    return streamableFile;
-  }
-
-  @Get(':uuid/avatar')
+  @Get('avatars/:avatarId')
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     schema: {
@@ -154,10 +136,10 @@ export class UserController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  async getAvatar(
-    @Param('uuid', ParseUUIDPipe) id: string,
+  async getAvatarByAvatarId(
+    @Param('avatarId', ParseUUIDPipe) id: string,
   ): Promise<StreamableFile> {
-    const streamableFile = await this.userService.getAvatar(id);
+    const streamableFile = await this.userService.getAvatarByAvatarId(id);
 
     if (!streamableFile) {
       throw new NotFoundException();
@@ -165,11 +147,13 @@ export class UserController {
     return streamableFile;
   }
 
-  @Get(':uuid')
+  @Get(':userId')
   @ApiOkResponse({ description: 'Get a user', type: User })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserById(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<User> {
+  async getUserById(
+    @Param('userId', ParseUUIDPipe) uuid: string,
+  ): Promise<User> {
     const user = await this.userService.retrieveUserWithId(uuid);
     if (user === null) {
       throw new NotFoundException();

@@ -32,12 +32,12 @@ export interface UserControllerAddUserRequest {
     userDto: UserDto;
 }
 
-export interface UserControllerGetAvatarRequest {
-    uuid: string;
+export interface UserControllerGetAvatarByAvatarIdRequest {
+    avatarId: string;
 }
 
 export interface UserControllerGetUserByIdRequest {
-    uuid: string;
+    userId: string;
 }
 
 export interface UserControllerGetUsersRequest {
@@ -93,9 +93,9 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async userControllerGetAvatarRaw(requestParameters: UserControllerGetAvatarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
-            throw new runtime.RequiredError('uuid','Required parameter requestParameters.uuid was null or undefined when calling userControllerGetAvatar.');
+    async userControllerGetAvatarByAvatarIdRaw(requestParameters: UserControllerGetAvatarByAvatarIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.avatarId === null || requestParameters.avatarId === undefined) {
+            throw new runtime.RequiredError('avatarId','Required parameter requestParameters.avatarId was null or undefined when calling userControllerGetAvatarByAvatarId.');
         }
 
         const queryParameters: any = {};
@@ -103,7 +103,7 @@ export class UsersApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/users/{uuid}/avatar`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters.uuid))),
+            path: `/api/v1/users/avatars/{avatarId}`.replace(`{${"avatarId"}}`, encodeURIComponent(String(requestParameters.avatarId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -114,8 +114,8 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async userControllerGetAvatar(requestParameters: UserControllerGetAvatarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.userControllerGetAvatarRaw(requestParameters, initOverrides);
+    async userControllerGetAvatarByAvatarId(requestParameters: UserControllerGetAvatarByAvatarIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.userControllerGetAvatarByAvatarIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -145,33 +145,9 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async userControllerGetCurrentUserAvatarRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/users/avatar`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.TextApiResponse(response) as any;
-    }
-
-    /**
-     */
-    async userControllerGetCurrentUserAvatar(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.userControllerGetCurrentUserAvatarRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
     async userControllerGetUserByIdRaw(requestParameters: UserControllerGetUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<User>> {
-        if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
-            throw new runtime.RequiredError('uuid','Required parameter requestParameters.uuid was null or undefined when calling userControllerGetUserById.');
+        if (requestParameters.userId === null || requestParameters.userId === undefined) {
+            throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling userControllerGetUserById.');
         }
 
         const queryParameters: any = {};
@@ -179,7 +155,7 @@ export class UsersApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/users/{uuid}`.replace(`{${"uuid"}}`, encodeURIComponent(String(requestParameters.uuid))),
+            path: `/api/v1/users/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters.userId))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,

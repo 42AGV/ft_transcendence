@@ -1,11 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { DatabaseError } from 'pg';
-import { BaseEntity, Query, MappedQuery } from '../models';
+import { Query, MappedQuery } from '../models';
 import { PostgresPool } from './postgresConnection.provider';
 
 const PostgresLogger = new Logger('Database');
 
-export const entityQueryMapper = (entity: Partial<BaseEntity>): MappedQuery => {
+export const entityQueryMapper = <T extends Record<string, any>>(
+  entity: T,
+): MappedQuery => {
   return Object.entries(entity).reduce<MappedQuery>(
     (mappedQuery, [key, value], index) => {
       if (value !== undefined) {

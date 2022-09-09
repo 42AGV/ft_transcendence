@@ -62,6 +62,10 @@ export class LocalFileService {
     });
   }
 
+  deleteFileById(id: string): Promise<LocalFile | null> {
+    return this.localFileRepository.deleteById(id);
+  }
+
   getFileById(id: string): Promise<LocalFile | null> {
     return this.localFileRepository.getById(id);
   }

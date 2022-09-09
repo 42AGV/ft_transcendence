@@ -11,7 +11,7 @@ import {
   Row,
   SmallAvatar,
 } from '../../shared/components';
-import { USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,6 @@ export const EDITABLE_AVATAR_SCALE = 1.29;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
 
 type ImgData = {
-  imgHash: string;
   imgName: string | null;
   imgFile: File | null;
 };
@@ -38,12 +37,11 @@ export default function EditAvatarPage() {
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
     useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);
   const [imgData, setImgData] = useState<ImgData>({
-    imgHash: Date.now().toString(),
     imgName: null,
     imgFile: null,
   });
 
-  const { imgName, imgHash, imgFile } = imgData;
+  const { imgName, imgFile } = imgData;
   const avatarX = Math.round(picturePosition.x * EDITABLE_AVATAR_SCALE_REVERSE);
   const avatarY = Math.round(picturePosition.y * EDITABLE_AVATAR_SCALE_REVERSE);
   const submitPlacement = async () => {
@@ -65,7 +63,6 @@ export default function EditAvatarPage() {
         .finally(() => {
           setImgData({
             imgName: null,
-            imgHash: Date.now().toString(),
             imgFile: null,
           });
         });
@@ -79,17 +76,16 @@ export default function EditAvatarPage() {
     setImgData({
       imgFile: event.target.files[0],
       imgName: event.target.files[0].name,
-      imgHash: Date.now().toString(),
     });
   };
 
   const AvProps = {
     url:
       user && user.avatarId
-        ? `${USERS_EP_URL}/${user.id}/avatar`
-        : WILDCARD_AVATAR_URL,
+        ? `${AVATAR_EP_URL}/${user.avatarId}`
+            : WILDCARD_AVATAR_URL
+        },
     status: 'offline',
-    imgHash: Date.now().toString(),
     XCoordinate: avatarX,
     YCoordinate: avatarY,
   } as AvatarProps;
@@ -114,10 +110,9 @@ export default function EditAvatarPage() {
       <EditableAvatar
         url={
           user.avatarId
-            ? `${USERS_EP_URL}/${user.id}/avatar`
+            ? `${AVATAR_EP_URL}/${user.avatarId}`
             : WILDCARD_AVATAR_URL
         }
-        imgHash={imgHash}
         XCoordinate={picturePosition.x}
         YCoordinate={picturePosition.y}
         handleMouseDown={handleMouseDown}

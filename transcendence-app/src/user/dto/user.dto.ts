@@ -21,6 +21,11 @@ export class UserDto {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   fullName!: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((object, value) => value !== null)
+  password!: string | null;
+
   @IsUUID()
   @ValidateIf((object, value) => value !== null)
   avatarId!: string | null;

@@ -10,6 +10,13 @@
   gap: var(--row-gap) var(--column-gap);
 }
 
+.dispatch-page-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
 .dispatch-page-avatar {
   grid-row: 1/2;
 }
@@ -74,5 +81,11 @@
 @media all and (min-width: 1200px) {
   .dispatch-page-navigation {
     grid-column: 9 / var(--column-end);
+  }
+}
+
+@media all and (max-width: 1200px) {
+  .dispatch-page-avatar {
+    display: flex;
   }
 }

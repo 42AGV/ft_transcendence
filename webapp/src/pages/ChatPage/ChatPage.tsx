@@ -1,6 +1,6 @@
 import { IconVariant, RowItem } from '../../shared/components';
 import {
-  USERS_EP_URL,
+  AVATAR_EP_URL,
   USERS_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
@@ -14,7 +14,7 @@ import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 
 /* TODO: implement this
-const mapGameToRow = (game: Game): RowItem => {
+const mapChatToRow = (chat: Chat): RowItem => {
   return {
   };
 }; */
@@ -23,7 +23,7 @@ const mapUserToRow = (user: User): RowItem => {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: {
       url: user.avatarId
-        ? `${USERS_EP_URL}/${user.id}/avatar`
+        ? `${AVATAR_EP_URL}/${user.avatarId}`
         : WILDCARD_AVATAR_URL,
       status: 'offline',
     },
@@ -34,7 +34,7 @@ const mapUserToRow = (user: User): RowItem => {
   };
 };
 
-export default function Play() {
+export default function ChatPage() {
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
       usersApi.userControllerGetUsers(requestParameters),

@@ -140,13 +140,29 @@ docker compose up --build -d -V
 
 ### OpenAPI
 
-We use Swagger to autogenerate the OpenAPI specification `transcendence-app/swagger-spec.json` file. This file is generated automatically by the transcendence-app at startup whenever the OpenAPI spec changes.
+We use Swagger to autogenerate the OpenAPI specification `transcendence-app/swagger-spec.yaml` file. This file is generated automatically by the transcendence-app at startup whenever the OpenAPI spec changes.
 
-We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the `swagger-spec.json`.
+We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the `swagger-spec.yaml`.
 
 Please don't modify these files manually.
 
 After updating the OpenAPI specification of the transcendence-app, you can execute the `generate-openapi.sh` script to generate code for the webapp.
+
+### Seed the database
+
+We use knex to seed the database, more info [here](https://knexjs.org/guide/migrations.html#seed-files).
+
+To create a seed file, run the following command from the transcendence-app directory (replace `seed_name` with the name you want)
+
+```
+npx knex seed:make seed_name
+```
+
+To run seed files, run the following command from the root directory:
+
+```
+docker compose exec -it transcendence-app npx knex seed:run
+```
 
 ## 🔧 Running the tests <a name = "tests"></a>
 

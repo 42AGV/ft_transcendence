@@ -14,6 +14,7 @@ import { LocalFileService } from '../shared/local-file/local-file.service';
 import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
+import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 
 @Injectable()
 export class UserService {
@@ -22,40 +23,47 @@ export class UserService {
     private localFileService: LocalFileService,
   ) {}
 
-  retrieveUserWithId(id: string): Promise<User | null> {
-    return this.userRepository.getById(id);
+  async retrieveUserWithId(id: string): Promise<User | null> {
+    const user = await this.userRepository.getById(id);
+    return user ? new User(user) : null;
   }
 
-  retrieveUsers({
+  async retrieveUsers({
     limit = MAX_USER_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
   }: UsersPaginationQueryDto): Promise<User[] | null> {
-    return this.userRepository.getPaginatedUsers({
+    const users = await this.userRepository.getPaginatedUsers({
       limit,
       offset,
       sort,
       search,
     });
+    return users ? users.map((user) => new User(user)) : null;
   }
 
-  retrieveUserWithUserName(username: string): Promise<User | null> {
-    return this.userRepository.getByUsername(username);
+  async retrieveUserWithUserName(username: string): Promise<User | null> {
+    const user = await this.userRepository.getByUsername(username);
+    return user ? new User(user) : null;
   }
 
-  addUser(user: UserDto): Promise<User | null> {
-    return this.userRepository.add({
+  async addUser(userDto: UserDto): Promise<User | null> {
+    const user = await this.userRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
-      ...user,
+      ...userDto,
     });
+    return user ? new User(user) : null;
   }
 
-  addAvatarAndUser(fileDto: LocalFileDto, userDto: UserDto) {
-    return this.userRepository.addAvatarAndAddUser(
+  async addAvatarAndUser(
+    fileDto: LocalFileDto,
+    userDto: UserDto,
+  ): Promise<User | null> {
+    const user = await this.userRepository.addAvatarAndAddUser(
       { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
       {
         id: uuidv4(),
@@ -65,10 +73,15 @@ export class UserService {
         ...userDto,
       },
     );
+    return user ? new User(user) : null;
   }
 
-  updateUser(userId: string, updateUserDto: UpdateUserDto) {
-    return this.userRepository.updateById(userId, updateUserDto);
+  async updateUser(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | null> {
+    const user = await this.userRepository.updateById(userId, updateUserDto);
+    return user ? new User(user) : null;
   }
 
   async getAvatar(userId: string): Promise<StreamableFile | null> {
@@ -78,7 +91,11 @@ export class UserService {
       return null;
     }
 
-    const file = await this.localFileService.getFileById(user.avatarId);
+    return this.getAvatarByAvatarId(user.avatarId);
+  }
+
+  async getAvatarByAvatarId(avatarId: string): Promise<StreamableFile | null> {
+    const file = await this.localFileService.getFileById(avatarId);
 
     if (!file) {
       return null;
@@ -101,37 +118,26 @@ export class UserService {
     return this.streamAvatarData(newAvatarFileDto);
   }
 
-  private async updateAvatar(
-    avatarId: string,
-    newAvatarFileDto: LocalFileDto,
-  ): Promise<StreamableFile | null> {
-    const avatarFile = await this.localFileService.getFileById(avatarId);
-    if (!avatarFile) {
-      this.localFileService.deleteFileData(newAvatarFileDto.path);
-      return null;
+  private async deleteAvatar(avatarId: string) {
+    const avatarFile = await this.localFileService.deleteFileById(avatarId);
+    if (avatarFile) {
+      this.localFileService.deleteFileData(avatarFile.path);
     }
-
-    const updatedAvatarFile = await this.localFileService.updateFileById(
-      avatarFile.id,
-      newAvatarFileDto,
-    );
-    if (!updatedAvatarFile) {
-      this.localFileService.deleteFileData(newAvatarFileDto.path);
-      return null;
-    }
-    this.localFileService.deleteFileData(avatarFile.path);
-    return this.streamAvatarData(updatedAvatarFile);
   }
 
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
   ): Promise<StreamableFile | null> {
-    if (user.avatarId === null) {
-      return this.addAvatarAndUpdateUser(user, newAvatarFileDto);
+    const previousAvatarId = user.avatarId;
+    const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
+    if (!avatar) {
+      return null;
     }
-
-    return this.updateAvatar(user.avatarId, newAvatarFileDto);
+    if (previousAvatarId) {
+      await this.deleteAvatar(previousAvatarId);
+    }
+    return avatar;
   }
 
   private streamAvatarData(fileDto: LocalFileDto): StreamableFile {
@@ -158,5 +164,16 @@ export class UserService {
       this.localFileService.deleteFileData(path);
     }
     return isValid;
+  }
+
+  async retrieveUserWithAuthProvider(
+    provider: AuthProviderType,
+    providerId: string,
+  ): Promise<User | null> {
+    const user = await this.userRepository.getByAuthProvider(
+      provider,
+      providerId,
+    );
+    return user ? new User(user) : null;
   }
 }

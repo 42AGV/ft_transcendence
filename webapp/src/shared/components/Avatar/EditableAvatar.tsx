@@ -20,7 +20,6 @@ type EditableAvatarProps = AvatarProps & {
 };
 
 export default function EditableAvatar({
-  imgHash = '',
   url,
   XCoordinate,
   YCoordinate,
@@ -54,7 +53,7 @@ export default function EditableAvatar({
       >
         <img
           onDragStart={(e) => e.preventDefault()}
-          src={`${url}?${imgHash}`}
+          src={url}
           alt={url}
           className="editable-avatar__image"
           style={position}

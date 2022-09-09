@@ -1,6 +1,6 @@
 import { IconVariant, RowItem } from '../../shared/components';
 import {
-  USERS_EP_URL,
+  AVATAR_EP_URL,
   USERS_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
@@ -18,7 +18,7 @@ const mapUserToRow = (user: User): RowItem => {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: {
       url: user.avatarId
-        ? `${USERS_EP_URL}/${user.id}/avatar`
+        ? `${AVATAR_EP_URL}/${user.avatarId}`
         : WILDCARD_AVATAR_URL,
       status: 'offline',
       XCoordinate: user.avatarX,
@@ -31,7 +31,7 @@ const mapUserToRow = (user: User): RowItem => {
   };
 };
 
-export default function Users() {
+export default function UsersPage() {
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
       usersApi.userControllerGetUsers(requestParameters),

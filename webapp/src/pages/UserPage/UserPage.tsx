@@ -12,7 +12,11 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { USER_URL, USERS_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import {
+  USER_URL,
+  WILDCARD_AVATAR_URL,
+  AVATAR_EP_URL,
+} from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { goBack } from '../../shared/callbacks';
 import { useCallback } from 'react';
@@ -31,7 +35,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     [],
   );
   const getUserById = useCallback(
-    () => usersApi.userControllerGetUserById({ uuid: param.id! }),
+    () => usersApi.userControllerGetUserById({ userId: param.id! }),
     [param.id],
   );
   const { data: user } = useData(isMe ? getCurrentUser : getUserById);
@@ -57,7 +61,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
         <LargeAvatar
           url={
             user.avatarId
-              ? `${USERS_EP_URL}/${user.id}/avatar`
+              ? `${AVATAR_EP_URL}/${user.avatarId}`
               : WILDCARD_AVATAR_URL
           }
           caption="level 4"
