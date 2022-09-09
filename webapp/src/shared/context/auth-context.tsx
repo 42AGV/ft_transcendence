@@ -28,6 +28,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   const { data, isLoading: isDataLoading } = useData<User>(getCurrentUser);
   const navigate = useNavigate();
+  const authBroadcastChannel = useMemo(
+    () => new BroadcastChannel('auth_channel'),
+    [],
+  );
+  authBroadcastChannel.onmessage = (event) => {
+    if (user && event.data.user && event.data.user.id === user.id) {
+      setUser(null);
+      navigate(HOST_URL);
+    }
+  };
 
   useEffect(() => {
     setIsLoading(isDataLoading);
@@ -37,13 +47,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useCallback(async () => {
     try {
       await authApi.authControllerLogout();
+      authBroadcastChannel.postMessage({ user: user });
     } catch (err) {
       console.error(err);
     } finally {
       setUser(null);
       navigate(HOST_URL);
     }
-  }, [navigate]);
+  }, [navigate, authBroadcastChannel, user]);
 
   const contextValue = useMemo(
     () => ({
