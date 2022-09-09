@@ -18,3 +18,10 @@
   margin-bottom: 0.875rem;
   width: 15rem;
 }
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: flex-start;
+}

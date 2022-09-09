@@ -10,16 +10,49 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
+import { authApi, usersApi } from '../../shared/services/ApiService';
 import { LOGIN_EP_URL } from '../../shared/urls';
 import './Login.css';
 
+type SubmitStatus = {
+  type: 'success' | 'error' | 'pending';
+  message: string;
+};
+
 export default function Login() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [status, setStatus] = useState<SubmitStatus>({
+    type: 'pending',
+    message: '',
+  });
+  // await usersApi.userControllerUpdateCurrentUser({
+  //   updateUserDto: { username, password, status },
+  // });
+  //   try {
+  //     await authApi.setStatus({
+  //       type: 'success',
+  //       message: 'Update successfully',
+  //     });
+  //   } catch (error) {
+  //     if (error instanceof ResponseError) {
+  //       if (error.response.status === 400) {
+  //         setStatus({ type: 'error', message: 'Invalid or missing fields' });
+  //       } else if (error.response.status === 422) {
+  //         setStatus({ type: 'error', message: 'Username already exists' });
+  //       } else {
+  //         setStatus({ type: 'error', message: `${error.response.statusText}` });
+  //       }
+  //     } else if (error instanceof Error) {
+  //       setStatus({ type: 'error', message: `${error.message}` });
+  //     }
+  //   }
+  // }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     alert(`username=${username}\npassword=${password}`);
   };
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+
   return (
     <div className="login">
       <div className="landing-title">
@@ -74,18 +107,20 @@ export default function Login() {
           iconVariant={IconVariant.LOGIN}
           children="Login"
         />
-        <Text
-          variant={TextVariant.SUBHEADING}
-          color={TextColor.LIGHT}
-          weight={TextWeight.BOLD}
-          children="Forgot password?"
-        />
-        <Text
-          variant={TextVariant.SUBHEADING}
-          color={TextColor.LIGHT}
-          weight={TextWeight.BOLD}
-          children="No account? Create one"
-        />
+        <div className="text-container">
+          <Text
+            variant={TextVariant.SUBHEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.BOLD}
+            children="Forgot password?"
+          />
+          <Text
+            variant={TextVariant.SUBHEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.BOLD}
+            children="No account? Create one"
+          />
+        </div>
       </div>
     </div>
   );
