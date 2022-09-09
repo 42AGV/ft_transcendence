@@ -3,12 +3,12 @@ import React from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {
-  Chat,
-  Landing,
-  Play,
-  Users,
+  ChatPage,
+  LandingPage,
+  PlayPage,
+  UsersPage,
   UserPage,
-  ComponentsBook,
+  ComponentsBookPage,
   EditUserPage,
   EditAvatarPage,
 } from './pages';
@@ -34,12 +34,12 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<LandingPage />} />
           <Route
             path={USERS_URL}
             element={
               <RequireAuth>
-                <Users />
+                <UsersPage />
               </RequireAuth>
             }
           />
@@ -47,7 +47,7 @@ root.render(
             path={PLAY_URL}
             element={
               <RequireAuth>
-                <Play />
+                <PlayPage />
               </RequireAuth>
             }
           />
@@ -55,7 +55,7 @@ root.render(
             path={CHAT_URL}
             element={
               <RequireAuth>
-                <Chat />
+                <ChatPage />
               </RequireAuth>
             }
           />
@@ -92,7 +92,10 @@ root.render(
             }
           />
           {developmentMode && (
-            <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBook />} />
+            <Route
+              path={COMPONENTS_BOOK_URL}
+              element={<ComponentsBookPage />}
+            />
           )}
         </Routes>
       </AuthProvider>

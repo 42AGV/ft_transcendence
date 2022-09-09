@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { StaticRouter } from 'react-router-dom/server';
-import Landing from '../Landing';
+import LandingPage from '../LandingPage';
 
 test('renders landing', () => {
   render(
     <StaticRouter location="/">
-      <Landing />
+      <LandingPage />
     </StaticRouter>,
   );
   const element = screen.getByText(/Play online pong with your friends/i);
