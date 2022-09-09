@@ -16,74 +16,74 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface UserDto
+ * @interface RegisterUserDto
  */
-export interface UserDto {
+export interface RegisterUserDto {
     /**
      * 
      * @type {string}
-     * @memberof UserDto
+     * @memberof RegisterUserDto
      */
     username: string;
     /**
      * 
      * @type {string}
-     * @memberof UserDto
-     */
-    email: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserDto
+     * @memberof RegisterUserDto
      */
     fullName: string;
     /**
      * 
      * @type {string}
-     * @memberof UserDto
+     * @memberof RegisterUserDto
      */
-    password: string | null;
+    email: string;
     /**
      * 
      * @type {string}
-     * @memberof UserDto
+     * @memberof RegisterUserDto
      */
-    avatarId: string | null;
+    password: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterUserDto
+     */
+    confirmationPassword: string;
 }
 
 /**
- * Check if a given object implements the UserDto interface.
+ * Check if a given object implements the RegisterUserDto interface.
  */
-export function instanceOfUserDto(value: object): boolean {
+export function instanceOfRegisterUserDto(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "username" in value;
-    isInstance = isInstance && "email" in value;
     isInstance = isInstance && "fullName" in value;
+    isInstance = isInstance && "email" in value;
     isInstance = isInstance && "password" in value;
-    isInstance = isInstance && "avatarId" in value;
+    isInstance = isInstance && "confirmationPassword" in value;
 
     return isInstance;
 }
 
-export function UserDtoFromJSON(json: any): UserDto {
-    return UserDtoFromJSONTyped(json, false);
+export function RegisterUserDtoFromJSON(json: any): RegisterUserDto {
+    return RegisterUserDtoFromJSONTyped(json, false);
 }
 
-export function UserDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): UserDto {
+export function RegisterUserDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): RegisterUserDto {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
         'username': json['username'],
-        'email': json['email'],
         'fullName': json['fullName'],
+        'email': json['email'],
         'password': json['password'],
-        'avatarId': json['avatarId'],
+        'confirmationPassword': json['confirmationPassword'],
     };
 }
 
-export function UserDtoToJSON(value?: UserDto | null): any {
+export function RegisterUserDtoToJSON(value?: RegisterUserDto | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -93,10 +93,10 @@ export function UserDtoToJSON(value?: UserDto | null): any {
     return {
         
         'username': value.username,
-        'email': value.email,
         'fullName': value.fullName,
+        'email': value.email,
         'password': value.password,
-        'avatarId': value.avatarId,
+        'confirmationPassword': value.confirmationPassword,
     };
 }
 

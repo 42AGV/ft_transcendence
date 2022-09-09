@@ -10,8 +10,9 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
+import { ResponseError } from '../../shared/generated';
 import { authApi, usersApi } from '../../shared/services/ApiService';
-import { LOGIN_EP_URL } from '../../shared/urls';
+import { LOGIN_EP_URL, USERS_URL } from '../../shared/urls';
 import './Login.css';
 
 type SubmitStatus = {
@@ -26,31 +27,31 @@ export default function Login() {
     type: 'pending',
     message: '',
   });
-  // await usersApi.userControllerUpdateCurrentUser({
-  //   updateUserDto: { username, password, status },
-  // });
-  //   try {
-  //     await authApi.setStatus({
-  //       type: 'success',
-  //       message: 'Update successfully',
-  //     });
-  //   } catch (error) {
-  //     if (error instanceof ResponseError) {
-  //       if (error.response.status === 400) {
-  //         setStatus({ type: 'error', message: 'Invalid or missing fields' });
-  //       } else if (error.response.status === 422) {
-  //         setStatus({ type: 'error', message: 'Username already exists' });
-  //       } else {
-  //         setStatus({ type: 'error', message: `${error.response.statusText}` });
-  //       }
-  //     } else if (error instanceof Error) {
-  //       setStatus({ type: 'error', message: `${error.message}` });
-  //     }
-  //   }
-  // }
+
+  async function login() {
+    try {
+      await authApi.authControllerLoginLocalUser({
+        loginUserDto: { username, password },
+      });
+      window.location.replace(USERS_URL);
+    } catch (error) {
+      if (error instanceof ResponseError) {
+        if (error.response.status === 400) {
+          setStatus({
+            type: 'error',
+            message: 'Incorrect username or password',
+          });
+        } else {
+          setStatus({ type: 'error', message: `${error.response.statusText}` });
+        }
+      } else if (error instanceof Error) {
+        setStatus({ type: 'error', message: `${error.message}` });
+      }
+    }
+  }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    alert(`username=${username}\npassword=${password}`);
+    login();
   };
 
   return (
@@ -99,6 +100,14 @@ export default function Login() {
                 setPassword(e.target.value);
               }}
             />
+            <Text
+              variant={TextVariant.PARAGRAPH}
+              color={
+                status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+              }
+            >
+              {status.message}
+            </Text>
           </div>
         </form>
         <Button
