@@ -11,7 +11,7 @@ import {
   TextWeight,
 } from '../../shared/components';
 import { ResponseError } from '../../shared/generated';
-import { authApi, usersApi } from '../../shared/services/ApiService';
+import { authApi } from '../../shared/services/ApiService';
 import { LOGIN_EP_URL, USERS_URL } from '../../shared/urls';
 import './Login.css';
 
@@ -36,7 +36,7 @@ export default function Login() {
       window.location.replace(USERS_URL);
     } catch (error) {
       if (error instanceof ResponseError) {
-        if (error.response.status === 400) {
+        if (error.response.status === 403 || error.response.status === 401) {
           setStatus({
             type: 'error',
             message: 'Incorrect username or password',
@@ -56,14 +56,19 @@ export default function Login() {
 
   return (
     <div className="login">
-      <div className="landing-title">
+      <div className="login-title">
         <Text
-          variant={TextVariant.HEADING}
+          variant={TextVariant.SUBTITLE}
           color={TextColor.GAME}
           weight={TextWeight.BOLD}
         >
           PONG
         </Text>
+      </div>
+      <div className="landing-animation">
+        <div className="landing-animation-ping"></div>
+        <div className="landing-animation-pong"></div>
+        <div className="landing-animation-ball"></div>
       </div>
       <div className="login-container">
         <Button
@@ -100,6 +105,8 @@ export default function Login() {
                 setPassword(e.target.value);
               }}
             />
+          </div>
+          <div className="text-error">
             <Text
               variant={TextVariant.PARAGRAPH}
               color={
@@ -110,20 +117,20 @@ export default function Login() {
             </Text>
           </div>
         </form>
+      </div>
+      <div className="final-button-text-container">
         <Button
           form="login-form"
           variant={ButtonVariant.SUBMIT}
           iconVariant={IconVariant.LOGIN}
           children="Login"
         />
-        <div className="text-container">
-          <Text
-            variant={TextVariant.SUBHEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
-            children="No account? Create one"
-          />
-        </div>
+        <Text
+          variant={TextVariant.SUBHEADING}
+          color={TextColor.LIGHT}
+          weight={TextWeight.BOLD}
+          children="No account? Create one"
+        />
       </div>
     </div>
   );

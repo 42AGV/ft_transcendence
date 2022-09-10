@@ -16,12 +16,6 @@ import {
 } from '../../shared/urls';
 import './LandingPage.css';
 
-type LocationState = {
-  state: {
-    from: Location;
-  };
-};
-
 export default function Landing() {
   const { user, isLoading } = useAuth();
 

@@ -43,13 +43,13 @@
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
-  width: 100%;
 }
 
 .landing-buttons,
-.landing-buttons > button {
+.landing-buttons > Link > button {
   min-width: 15rem;
   max-width: 20rem;
+  width: 100%;
 }
 
 /* Styles for viewports wider than 768 pixels. */
