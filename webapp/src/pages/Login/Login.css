@@ -69,6 +69,14 @@
   max-width: 20rem;
 }
 
+.login-form .inputs-container > p:empty::before {
+  content: '';
+  display: inline-block;
+}
+.login .landing-animation {
+  display: none;
+}
+
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
   .login {
@@ -87,177 +95,7 @@
     align-self: center;
     justify-self: start;
   }
-}
-
-/* Modified from https://codepen.io/Yousra_M/pen/WjLBzX */
-.landing-animation {
-  width: 100%;
-  height: 100%;
-  margin: auto;
-  position: relative;
-  grid-area: animation;
-}
-
-.landing-animation-ping,
-.landing-animation-pong {
-  width: 5rem;
-  height: 0.75rem;
-  border-radius: 1rem;
-  position: absolute;
-  background: var(--color-light);
-}
-
-.landing-animation-ping {
-  top: 6%;
-  animation: ping 4.5s infinite linear;
-}
-
-.landing-animation-pong {
-  bottom: 6%;
-  animation: pong 4.5s infinite linear;
-}
-
-.landing-animation-ball {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 100%;
-  position: absolute;
-  background: var(--color-light);
-  animation: ball 4.5s infinite linear;
-}
-
-/* ----- keyframes ------ */
-@keyframes ball {
-  0%,
-  100% {
-    /* start and stop in the middle */
-    left: 34%;
-    top: 52%;
-  }
-  8.3% {
-    /* pong */
-    left: 52%;
-    top: 85%;
-  }
-  24.9% {
-    /* ping */
-    left: 85%;
-    top: 8%;
-  }
-  30% {
-    left: 98%;
-    top: 27%;
-  }
-  41.5% {
-    /* pong */
-    left: 70%;
-    top: 85%;
-  }
-  58.1% {
-    /* ping */
-    left: 55%;
-    top: 8%;
-  }
-  74.7% {
-    /* pong */
-    left: 13%;
-    top: 85%;
-  }
-  79% {
-    left: 1%;
-    top: 70%;
-  }
-  91.3% {
-    /* ping */
-    left: 22%;
-    top: 8%;
-  }
-}
-
-@keyframes ping {
-  /* top player */
-  0%,
-  100% {
-    left: 10%;
-  }
-  5% {
-    left: 10%;
-  }
-  9% {
-    left: 24%;
-  }
-  13% {
-    left: 17%;
-  }
-  24.9% {
-    /* tap */
-    left: 82%;
-  }
-  47% {
-    left: 37%;
-  }
-  52% {
-    left: 41%;
-  }
-  56% {
-    left: 64%;
-  }
-  58.1% {
-    /* tap */
-    left: 54%;
-  }
-  70% {
-    left: 74%;
-  }
-  84% {
-    left: 12%;
-  }
-  91.3% {
-    /* tap */
-    left: 18%;
-  }
-}
-
-@keyframes pong {
-  /* bottom player */
-  0%,
-  100% {
-    left: 85%;
-  }
-  8.3% {
-    /* tap */
-    left: 51%;
-  }
-  20% {
-    left: 60%;
-  }
-  25% {
-    left: 34%;
-  }
-  41.5% {
-    /* tap */
-    left: 68%;
-  }
-  46% {
-    left: 36%;
-  }
-  52% {
-    left: 18%;
-  }
-  58.1% {
-    left: 53%;
-  }
-  66% {
-    left: 14%;
-  }
-  70% {
-    left: 20%;
-  }
-  74.7% {
-    left: 10%;
-  }
-  91.3% {
-    /* tap */
-    left: 10%;
+  .login .landing-animation {
+    display: inline;
   }
 }

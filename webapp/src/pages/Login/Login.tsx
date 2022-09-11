@@ -105,8 +105,6 @@ export default function Login() {
                 setPassword(e.target.value);
               }}
             />
-          </div>
-          <div className="text-error">
             <Text
               variant={TextVariant.PARAGRAPH}
               color={
