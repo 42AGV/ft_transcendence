@@ -1,15 +1,12 @@
 import './EditAvatarPage.css';
 import {
-  AvatarProps,
   Button,
   ButtonVariant,
   EditableAvatar,
   Header,
   IconVariant,
-  LargeAvatar,
   Loading,
   Row,
-  SmallAvatar,
 } from '../../shared/components';
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
@@ -18,9 +15,10 @@ import { useNavigate } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
 import { useData } from '../../shared/hooks/UseData';
-
-export const EDITABLE_AVATAR_SCALE = 1.29;
-export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
+import {
+  EDITABLE_AVATAR_SCALE,
+  EDITABLE_AVATAR_SCALE_REVERSE,
+} from '../../shared/components/Avatar/EditableAvatar';
 
 type ImgData = {
   imgName: string | null;
@@ -34,22 +32,29 @@ export default function EditAvatarPage() {
   );
   const { data: user } = useData(getCurrentUser);
   const navigate = useNavigate();
+  const reverseTransform = useCallback(
+    (value: number) => -value * EDITABLE_AVATAR_SCALE,
+    [],
+  );
   const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);
+    useDrag({
+      startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
+      reverseTransform,
+    });
   const [imgData, setImgData] = useState<ImgData>({
     imgName: null,
     imgFile: null,
   });
 
   const { imgName, imgFile } = imgData;
-  const avatarX = Math.round(picturePosition.x * EDITABLE_AVATAR_SCALE_REVERSE);
-  const avatarY = Math.round(picturePosition.y * EDITABLE_AVATAR_SCALE_REVERSE);
+  const FormatNumber = (value: number) =>
+    Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
   const submitPlacement = async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
-          avatarX: avatarX,
-          avatarY: avatarY,
+          avatarX: FormatNumber(picturePosition.x),
+          avatarY: FormatNumber(picturePosition.y),
         },
       })
       .catch((e) => console.error(e));
@@ -78,16 +83,6 @@ export default function EditAvatarPage() {
       imgName: event.target.files[0].name,
     });
   };
-
-  const DbgAvatarProps = {
-    url:
-      user && user.avatarId
-        ? `${AVATAR_EP_URL}/${user.avatarId}`
-        : WILDCARD_AVATAR_URL,
-    status: 'offline',
-    XCoordinate: avatarX,
-    YCoordinate: avatarY,
-  } as AvatarProps;
 
   return user === null ? (
     <div className="edit-avatar-page">
@@ -125,10 +120,6 @@ export default function EditAvatarPage() {
       >
         {imgFile !== null ? 'Upload' : 'Save changes'}
       </Button>
-      <div className="avatars-position-dbg">
-        <LargeAvatar {...DbgAvatarProps} />
-        <SmallAvatar {...DbgAvatarProps} />
-      </div>
     </div>
   );
 }
