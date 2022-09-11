@@ -15,13 +15,6 @@
     'end end end end';
 }
 
-.login-loading {
-  grid-column: 1/-1;
-  grid-row: 1/-1;
-  align-self: center;
-  justify-self: center;
-}
-
 .login-title > *,
 .login-subtitle > * {
   margin: 0;
@@ -39,9 +32,7 @@
   gap: 0.5rem var(--column-gap);
   align-items: center;
 }
-.text-error {
-  grid-area: error;
-}
+
 .login-form .inputs-container > .input {
   margin-bottom: 0.875rem;
   width: 100%;
@@ -54,25 +45,15 @@
   align-items: center;
 }
 
-.login-buttons {
-  grid-area: buttons;
-  justify-self: center;
-  display: flex;
-  flex-direction: column;
-  gap: 1.4rem;
-  width: 100%;
-}
-
-.login-buttons,
-.login-buttons > button {
-  min-width: 15rem;
-  max-width: 20rem;
-}
-
 .login-form .inputs-container > p:empty::before {
   content: '';
   display: inline-block;
 }
+
+.final-text {
+  display: flex;
+}
+
 .login .landing-animation {
   display: none;
 }
@@ -81,20 +62,22 @@
 @media (min-width: 768px) {
   .login {
     min-height: 20rem;
-    gap: 6rem var(--column-gap);
     padding: 4rem var(--padding-sides) 8rem var(--padding-sides);
     grid-template-columns: repeat(var(--column-number), 1fr);
     grid-template-rows: repeat(3, auto);
     grid-template-areas:
       'title title title title title title ... ... ... ... ... ...'
       'main main main main main ... ... ... animation animation animation animation'
-      'end end end end ... ... ... ... animation animation animation animation';
+      'end end end end end ... ... ... animation animation animation animation';
+  }
+  .login-container {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem var(--column-gap);
+    align-items: center;
   }
 
-  .login-buttons {
-    align-self: center;
-    justify-self: start;
-  }
   .login .landing-animation {
     display: inline;
   }

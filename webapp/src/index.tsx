@@ -11,7 +11,7 @@ import {
   ComponentsBookPage,
   EditUserPage,
   EditAvatarPage,
-  Login,
+  LoginPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -37,7 +37,7 @@ root.render(
       <AuthProvider>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path={LOGIN_OPTIONS_URL} element={<Login />} />
+          <Route path={LOGIN_OPTIONS_URL} element={<LoginPage />} />
           <Route
             path={USERS_URL}
             element={

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -12,15 +13,15 @@ import {
 } from '../../shared/components';
 import { ResponseError } from '../../shared/generated';
 import { authApi } from '../../shared/services/ApiService';
-import { LOGIN_EP_URL, USERS_URL } from '../../shared/urls';
-import './Login.css';
+import { LOGIN_EP_URL, REGISTER_URL, USERS_URL } from '../../shared/urls';
+import './LoginPage.css';
 
 type SubmitStatus = {
   type: 'success' | 'error' | 'pending';
   message: string;
 };
 
-export default function Login() {
+export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<SubmitStatus>({
@@ -123,12 +124,22 @@ export default function Login() {
           iconVariant={IconVariant.LOGIN}
           children="Login"
         />
-        <Text
-          variant={TextVariant.SUBHEADING}
-          color={TextColor.LIGHT}
-          weight={TextWeight.BOLD}
-          children="No account? Create one"
-        />
+        <div className="final-text">
+          <Text
+            variant={TextVariant.SUBHEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.BOLD}
+            children="No account?"
+          />
+          <Link to={REGISTER_URL}>
+            <Text
+              variant={TextVariant.SUBHEADING}
+              color={TextColor.SUBMIT}
+              weight={TextWeight.BOLD}
+              children="Create one"
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );
