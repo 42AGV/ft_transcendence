@@ -76,12 +76,17 @@
   margin: auto;
   position: relative;
   grid-area: animation;
+  --paddle-width: 5rem;
+  --paddle-height: 0.75rem;
+  --paddle-position: 6%;
+  --ball-width: 1rem;
+  --ball-height: 1rem;
 }
 
 .landing-animation-ping,
 .landing-animation-pong {
-  width: 5rem;
-  height: 0.75rem;
+  width: var(--paddle-width);
+  height: var(--paddle-height);
   border-radius: 1rem;
   position: absolute;
   background: var(--color-light);
@@ -98,8 +103,8 @@
 }
 
 .landing-animation-ball {
-  width: 1rem;
-  height: 1rem;
+  width: var(--ball-width);
+  height: var(--ball-height);
   border-radius: 100%;
   position: absolute;
   background: var(--color-light);
@@ -117,12 +122,14 @@
   8.3% {
     /* pong */
     left: 52%;
-    top: 85%;
+    top: calc(
+      100% - var(--paddle-position) - var(--paddle-height) - var(--ball-height)
+    );
   }
   24.9% {
     /* ping */
     left: 85%;
-    top: 8%;
+    top: calc(0% + var(--paddle-position) + var(--paddle-height));
   }
   30% {
     left: 98%;
@@ -131,17 +138,21 @@
   41.5% {
     /* pong */
     left: 70%;
-    top: 85%;
+    top: calc(
+      100% - var(--paddle-position) - var(--paddle-height) - var(--ball-height)
+    );
   }
   58.1% {
     /* ping */
     left: 55%;
-    top: 8%;
+    top: calc(0% + var(--paddle-position) + var(--paddle-height));
   }
   74.7% {
     /* pong */
     left: 13%;
-    top: 85%;
+    top: calc(
+      100% - var(--paddle-position) - var(--paddle-height) - var(--ball-height)
+    );
   }
   79% {
     left: 1%;
@@ -150,7 +161,7 @@
   91.3% {
     /* ping */
     left: 22%;
-    top: 8%;
+    top: calc(0% + var(--paddle-position) + var(--paddle-height));
   }
 }
 
