@@ -26,9 +26,14 @@ type ImgData = {
 };
 
 export default function EditAvatarPage() {
+  const [imgData, setImgData] = useState<ImgData>({
+    imgName: null,
+    imgFile: null,
+  });
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
-    [],
+    // eslint-disable-next-line
+    [imgData],
   );
   const { data: user } = useData(getCurrentUser);
   const navigate = useNavigate();
@@ -41,10 +46,6 @@ export default function EditAvatarPage() {
       startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
       reverseTransform,
     });
-  const [imgData, setImgData] = useState<ImgData>({
-    imgName: null,
-    imgFile: null,
-  });
 
   const { imgName, imgFile } = imgData;
   const FormatNumber = (value: number) =>
