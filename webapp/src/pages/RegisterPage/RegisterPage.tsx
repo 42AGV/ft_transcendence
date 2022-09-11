@@ -1,9 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
-  Button,
-  ButtonVariant,
-  IconVariant,
   Input,
   InputVariant,
   Text,
@@ -13,24 +9,32 @@ import {
 } from '../../shared/components';
 import { ResponseError } from '../../shared/generated';
 import { authApi } from '../../shared/services/ApiService';
-import { LOGIN_EP_URL, REGISTER_URL, USERS_URL } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
-import './LoginPage.css';
+import { LOGIN_OPTIONS_URL } from '../../shared/urls';
+import './RegisterPage.css';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [username, setUsername] = useState('');
+  const [fullName, SetFullName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmationPassword, setConfirmationPassword] = useState('');
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
   });
-
-  async function login() {
+  async function register() {
     try {
-      await authApi.authControllerLoginLocalUser({
-        loginUserDto: { username, password },
+      await authApi.authControllerRegisterLocalUser({
+        registerUserDto: {
+          username,
+          password,
+          confirmationPassword,
+          email,
+          fullName,
+        },
       });
-      window.location.replace(USERS_URL);
+      window.location.replace(LOGIN_OPTIONS_URL);
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 403 || error.response.status === 401) {
@@ -48,12 +52,12 @@ export default function LoginPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    login();
+    register();
   };
 
   return (
-    <div className="login">
-      <div className="login-title">
+    <div className="register">
+      <div className="register-title">
         <Text
           variant={TextVariant.SUBTITLE}
           color={TextColor.GAME}
@@ -67,25 +71,13 @@ export default function LoginPage() {
         <div className="landing-animation-pong"></div>
         <div className="landing-animation-ball"></div>
       </div>
-      <div className="login-container">
-        <Button
-          variant={ButtonVariant.SUBMIT}
-          onClick={() => window.location.replace(`${LOGIN_EP_URL}`)}
-        >
-          Login with 42
-        </Button>
-        <Text
-          variant={TextVariant.SUBHEADING}
-          color={TextColor.LIGHT}
-          weight={TextWeight.BOLD}
-        >
-          or
-        </Text>
+      <div className="register-container">
         <form id="login-form" className="login-form" onSubmit={handleOnSubmit}>
           <div className="inputs-container">
             <Input
               variant={InputVariant.LIGHT}
-              placeholder="Username"
+              label="Username"
+              placeholder="username"
               value={username}
               name="username"
               onChange={(e) => {
@@ -94,12 +86,43 @@ export default function LoginPage() {
             />
             <Input
               variant={InputVariant.LIGHT}
-              placeholder="Password"
+              label="Email"
+              placeholder="email"
+              value={email}
+              name="email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Full Name"
+              placeholder="full name"
+              value={fullName}
+              name="fullname"
+              onChange={(e) => {
+                SetFullName(e.target.value);
+              }}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Password"
+              placeholder="password"
               value={password}
               name="password"
               type="password"
               onChange={(e) => {
                 setPassword(e.target.value);
+              }}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              placeholder="repeat password"
+              value={confirmationPassword}
+              name="confirmationPassword"
+              type="password"
+              onChange={(e) => {
+                setConfirmationPassword(e.target.value);
               }}
             />
             <Text
@@ -112,30 +135,6 @@ export default function LoginPage() {
             </Text>
           </div>
         </form>
-      </div>
-      <div className="final-button-text-container">
-        <Button
-          form="login-form"
-          variant={ButtonVariant.SUBMIT}
-          iconVariant={IconVariant.LOGIN}
-          children="Login"
-        />
-        <div className="final-text">
-          <Text
-            variant={TextVariant.SUBHEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
-            children="No account?"
-          />
-          <Link to={REGISTER_URL}>
-            <Text
-              variant={TextVariant.SUBHEADING}
-              color={TextColor.SUBMIT}
-              weight={TextWeight.BOLD}
-              children="Create one"
-            />
-          </Link>
-        </div>
       </div>
     </div>
   );
