@@ -5,9 +5,9 @@ import Loading from '../Loading/Loading';
 import './RequireAuth.css';
 
 export default function RequireAuth({ children }: { children: JSX.Element }) {
-  const auth = useAuth();
+  const { isLoggedIn, isLoading } = useAuth();
 
-  if (auth.isLoading) {
+  if (isLoading) {
     return (
       <div className="require-auth">
         <Loading />
@@ -15,7 +15,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
     );
   }
 
-  if (!auth.user) {
+  if (!isLoggedIn) {
     return <Navigate to={HOST_URL} />;
   }
 
