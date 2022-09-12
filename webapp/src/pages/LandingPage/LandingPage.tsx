@@ -13,9 +13,9 @@ import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
 import './LandingPage.css';
 
 export default function Landing() {
-  const { user, isLoading } = useAuth();
+  const { isLoggedIn, isLoading } = useAuth();
 
-  if (user) {
+  if (isLoggedIn) {
     return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
   }
 
@@ -41,9 +41,9 @@ export default function Landing() {
         </Text>
       </div>
       <div className="landing-animation">
-        <div className="landing-animation-ping"></div>
-        <div className="landing-animation-pong"></div>
-        <div className="landing-animation-ball"></div>
+        <div className="landing-animation-ping" />
+        <div className="landing-animation-pong" />
+        <div className="landing-animation-ball" />
       </div>
       <div className="landing-subtitle">
         <Text

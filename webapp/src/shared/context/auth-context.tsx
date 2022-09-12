@@ -13,7 +13,7 @@ import { authApi, usersApi } from '../services/ApiService';
 import { HOST_URL } from '../urls';
 
 interface AuthContextType {
-  user: User | null;
+  isLoggedIn: boolean;
   isLoading: boolean;
   logout: () => void;
 }
@@ -58,9 +58,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const contextValue = useMemo(
     () => ({
-      isLoading,
-      user,
-      logout,
+      isLoading: isLoading,
+      logout: logout,
+      isLoggedIn: user !== null,
     }),
     [isLoading, user, logout],
   );

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Position } from '../types';
-import { EDITABLE_AVATAR_SCALE } from '../../pages/EditAvatarPage/EditAvatarPage';
 
 type DragInfo = {
   isLoading: boolean;
@@ -10,7 +9,15 @@ type DragInfo = {
   lastTranslation: Position | null;
 };
 
-export const useDrag = (startingPosition: Position | null) => {
+type useDragProps = {
+  startingPosition: Position | null;
+  reverseTransform: (arg0: number) => number;
+};
+
+export const useDrag = ({
+  startingPosition,
+  reverseTransform,
+}: useDragProps) => {
   const [dragInfo, setDragInfo] = useState<DragInfo>({
     isLoading: true,
     isDragging: false,
@@ -23,8 +30,8 @@ export const useDrag = (startingPosition: Position | null) => {
   useEffect(() => {
     if (startingPosition && isLoading) {
       const scaledStartingPosition = {
-        x: -startingPosition.x * EDITABLE_AVATAR_SCALE,
-        y: -startingPosition.y * EDITABLE_AVATAR_SCALE,
+        x: reverseTransform(startingPosition.x),
+        y: reverseTransform(startingPosition.y),
       };
       setDragInfo({
         ...dragInfo,
@@ -33,7 +40,7 @@ export const useDrag = (startingPosition: Position | null) => {
         lastTranslation: scaledStartingPosition,
       });
     }
-  }, [startingPosition, dragInfo, isLoading]);
+  }, [startingPosition, dragInfo, isLoading, reverseTransform]);
 
   const handleMouseDown = ({ clientX, clientY }: React.MouseEvent) => {
     if (!isDragging && !isLoading)
