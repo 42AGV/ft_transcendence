@@ -1,4 +1,4 @@
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -17,6 +17,7 @@ import {
 import './LandingPage.css';
 
 export default function Landing() {
+  const navigate = useNavigate();
   const { user, isLoading } = useAuth();
 
   if (user) {
@@ -59,12 +60,18 @@ export default function Landing() {
         </Text>
       </div>
       <div className="landing-buttons">
-        <Link to={REGISTER_URL}>
-          <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
-        </Link>
-        <Link to={LOGIN_OPTIONS_URL}>
-          <Button variant={ButtonVariant.ALTERNATIVE}>Login</Button>
-        </Link>
+        <Button
+          variant={ButtonVariant.SUBMIT}
+          onClick={() => navigate(REGISTER_URL)}
+        >
+          Create new account
+        </Button>
+        <Button
+          variant={ButtonVariant.ALTERNATIVE}
+          onClick={() => navigate(LOGIN_OPTIONS_URL)}
+        >
+          Login
+        </Button>
       </div>
     </div>
   );
