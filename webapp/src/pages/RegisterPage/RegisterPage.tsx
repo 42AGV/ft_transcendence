@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import {
+  Button,
+  ButtonVariant,
   Input,
   InputVariant,
   Text,
@@ -72,7 +74,11 @@ export default function RegisterPage() {
         <div className="landing-animation-ball"></div>
       </div>
       <div className="register-container">
-        <form id="login-form" className="login-form" onSubmit={handleOnSubmit}>
+        <form
+          id="register-form"
+          className="register-form"
+          onSubmit={handleOnSubmit}
+        >
           <div className="inputs-container">
             <Input
               variant={InputVariant.LIGHT}
@@ -133,6 +139,7 @@ export default function RegisterPage() {
             >
               {status.message}
             </Text>
+            <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
           </div>
         </form>
       </div>
