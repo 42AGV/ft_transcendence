@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -24,14 +24,13 @@ export default function LoginPage() {
     type: 'pending',
     message: '',
   });
-  const navigate = useNavigate();
 
   async function login() {
     try {
       await authApi.authControllerLoginLocalUser({
         loginUserDto: { username, password },
       });
-      navigate(USERS_URL, { replace: true });
+      window.location.href = USERS_URL;
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 403 || error.response.status === 401) {
