@@ -39,10 +39,15 @@ export default function RegisterPage() {
       window.location.replace(LOGIN_OPTIONS_URL);
     } catch (error) {
       if (error instanceof ResponseError) {
-        if (error.response.status === 403 || error.response.status === 401) {
+        if (error.response.status === 422) {
           setStatus({
             type: 'error',
-            message: 'Incorrect username or password',
+            message: 'Username already registered',
+          });
+        } else if (error.response.status === 400) {
+          setStatus({
+            type: 'error',
+            message: 'Invalid email or wrong passwords',
           });
         } else {
           setStatus({ type: 'error', message: `${error.response.statusText}` });
