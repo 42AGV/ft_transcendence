@@ -1,0 +1,47 @@
+.register {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  min-height: 40rem;
+  overflow: scroll;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  grid-template-columns: repeat(var(--column-number), 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'title title title title'
+    'main main main main';
+}
+
+.register-title > *,
+.register-subtitle > * {
+  margin: 0;
+}
+
+.register-title {
+  grid-area: title;
+}
+
+.register-container {
+  grid-area: main;
+  padding-top: 8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem var(--column-gap);
+  align-items: center;
+}
+
+.register-form .inputs-container > .input {
+  margin-bottom: 0.875rem;
+  width: 100%;
+}
+
+.register-form .inputs-container > p:empty::before {
+  content: '';
+  display: inline-block;
+}
+
+.register .landing-animation {
+  display: none;
+}
