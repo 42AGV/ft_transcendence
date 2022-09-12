@@ -116,8 +116,6 @@ export default function LoginPage() {
             </Text>
           </div>
         </form>
-      </div>
-      <div className="final-button-text-container">
         <Button
           form="login-form"
           variant={ButtonVariant.SUBMIT}
@@ -129,12 +127,12 @@ export default function LoginPage() {
             variant={TextVariant.SUBHEADING}
             color={TextColor.LIGHT}
             weight={TextWeight.BOLD}
-            children="No account?"
+            children="No account?&nbsp;"
           />
           <Link to={REGISTER_URL}>
             <Text
               variant={TextVariant.SUBHEADING}
-              color={TextColor.SUBMIT}
+              color={TextColor.LIGHT}
               weight={TextWeight.BOLD}
               children="Create one"
             />

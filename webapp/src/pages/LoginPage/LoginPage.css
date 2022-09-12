@@ -35,14 +35,7 @@
 
 .login-form .inputs-container > .input {
   margin-bottom: 0.875rem;
-  width: 100%;
-}
-
-.final-button-text-container {
-  grid-area: end;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 15rem;
 }
 
 .login-form .inputs-container > p:empty::before {
