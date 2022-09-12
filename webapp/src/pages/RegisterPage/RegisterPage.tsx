@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -25,6 +26,7 @@ export default function RegisterPage() {
     type: 'pending',
     message: '',
   });
+  const navigate = useNavigate();
   async function register() {
     try {
       await authApi.authControllerRegisterLocalUser({
@@ -36,7 +38,13 @@ export default function RegisterPage() {
           fullName,
         },
       });
-      window.location.replace(LOGIN_OPTIONS_URL);
+      setStatus({
+        type: 'success',
+        message: 'Registration complete',
+      });
+      const timer = setTimeout(() => {
+        navigate(LOGIN_OPTIONS_URL);
+      }, 2000);
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 422) {

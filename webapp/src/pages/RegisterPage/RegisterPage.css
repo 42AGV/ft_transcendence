@@ -34,7 +34,7 @@
 
 .register-form .inputs-container > .input {
   margin-bottom: 0.875rem;
-  width: 100%;
+  width: 15rem;
 }
 
 .register-form .inputs-container > p:empty::before {
