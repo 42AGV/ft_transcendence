@@ -8,7 +8,7 @@
   color: var(--color-light);
   display: grid;
   grid-template-columns: repeat(var(--column-number), 1fr);
-  grid-template-rows: auto 1fr 33%;
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
     'title title title title'
     'main main main main'
@@ -26,7 +26,7 @@
 
 .login-container {
   grid-area: main;
-  padding-top: 8rem;
+  align-self: center;
   display: flex;
   flex-direction: column;
   gap: 0.5rem var(--column-gap);
@@ -45,6 +45,11 @@
 
 .final-text {
   display: flex;
+  gap: 0.3rem;
+}
+
+.final-text a {
+  text-decoration: none;
 }
 
 .login .landing-animation {
@@ -60,15 +65,14 @@
     grid-template-rows: repeat(3, auto);
     grid-template-areas:
       'title title title title title title ... ... ... ... ... ...'
-      'main main main main main ... ... ... animation animation animation animation'
-      'end end end end end ... ... ... animation animation animation animation';
+      'main main main main main ... ... animation animation animation animation animation'
+      'end end end end end ... ... ... ... ... ... ...';
   }
   .login-container {
     grid-area: main;
     display: flex;
     flex-direction: column;
     gap: 0.5rem var(--column-gap);
-    align-items: center;
   }
 
   .login .landing-animation {

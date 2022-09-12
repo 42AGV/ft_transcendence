@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -28,13 +28,14 @@ export default function LoginPage() {
     type: 'pending',
     message: '',
   });
+  const navigate = useNavigate();
 
   async function login() {
     try {
       await authApi.authControllerLoginLocalUser({
         loginUserDto: { username, password },
       });
-      window.location.replace(USERS_URL);
+      navigate(USERS_URL, { replace: true });
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 403 || error.response.status === 401) {
@@ -74,7 +75,7 @@ export default function LoginPage() {
       <div className="login-container">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => window.location.replace(`${LOGIN_EP_URL}`)}
+          onClick={() => window.location.replace(LOGIN_EP_URL)}
         >
           Login with 42
         </Button>
@@ -89,7 +90,7 @@ export default function LoginPage() {
           <div className="inputs-container">
             <Input
               variant={InputVariant.LIGHT}
-              placeholder="Username"
+              placeholder="username"
               value={username}
               name="username"
               onChange={(e) => {
@@ -98,7 +99,7 @@ export default function LoginPage() {
             />
             <Input
               variant={InputVariant.LIGHT}
-              placeholder="Password"
+              placeholder="password"
               value={password}
               name="password"
               type="password"
@@ -126,14 +127,14 @@ export default function LoginPage() {
           <Text
             variant={TextVariant.SUBHEADING}
             color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
+            weight={TextWeight.REGULAR}
             children="No account?&nbsp;"
           />
           <Link to={REGISTER_URL}>
             <Text
               variant={TextVariant.SUBHEADING}
-              color={TextColor.LIGHT}
-              weight={TextWeight.BOLD}
+              color={TextColor.ONLINE}
+              weight={TextWeight.MEDIUM}
               children="Create one"
             />
           </Link>
