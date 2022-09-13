@@ -10,14 +10,15 @@ import {
 } from '../../shared/components';
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { goBack } from '../../shared/callbacks';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
-import { useAuth } from '../../shared/hooks/UseAuth';
-
-export const EDITABLE_AVATAR_SCALE = 1.29;
-export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
+import { useData } from '../../shared/hooks/UseData';
+import {
+  EDITABLE_AVATAR_SCALE,
+  EDITABLE_AVATAR_SCALE_REVERSE,
+} from '../../shared/components/Avatar/EditableAvatar';
 
 type ImgData = {
   imgName: string | null;
@@ -25,26 +26,36 @@ type ImgData = {
 };
 
 export default function EditAvatarPage() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag(user ? { x: user.avatarX, y: user.avatarY } : null);
   const [imgData, setImgData] = useState<ImgData>({
     imgName: null,
     imgFile: null,
   });
+  const getCurrentUser = useCallback(
+    () => usersApi.userControllerGetCurrentUser(),
+    // eslint-disable-next-line
+    [imgData],
+  );
+  const { data: user } = useData(getCurrentUser);
+  const navigate = useNavigate();
+  const reverseTransform = useCallback(
+    (value: number) => -value * EDITABLE_AVATAR_SCALE,
+    [],
+  );
+  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
+    useDrag({
+      startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
+      reverseTransform,
+    });
 
   const { imgName, imgFile } = imgData;
+  const FormatNumber = (value: number) =>
+    Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
   const submitPlacement = async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
-          avatarX: Math.round(
-            picturePosition.x * EDITABLE_AVATAR_SCALE_REVERSE,
-          ),
-          avatarY: Math.round(
-            picturePosition.y * EDITABLE_AVATAR_SCALE_REVERSE,
-          ),
+          avatarX: FormatNumber(picturePosition.x),
+          avatarY: FormatNumber(picturePosition.y),
         },
       })
       .catch((e) => console.error(e));

@@ -51,6 +51,7 @@
 .landing-buttons > button {
   min-width: 15rem;
   max-width: 20rem;
+  width: 100%;
 }
 
 /* Styles for viewports wider than 768 pixels. */

@@ -48,7 +48,7 @@ export default function LoginPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    login();
+    login().catch((e) => console.error(e));
   };
 
   return (
@@ -82,35 +82,33 @@ export default function LoginPage() {
           or
         </Text>
         <form id="login-form" className="login-form" onSubmit={handleOnSubmit}>
-          <div className="inputs-container">
-            <Input
-              variant={InputVariant.LIGHT}
-              placeholder="username"
-              value={username}
-              name="username"
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              placeholder="password"
-              value={password}
-              name="password"
-              type="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
-            <Text
-              variant={TextVariant.PARAGRAPH}
-              color={
-                status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-              }
-            >
-              {status.message}
-            </Text>
-          </div>
+          <Input
+            variant={InputVariant.LIGHT}
+            placeholder="username"
+            value={username}
+            name="username"
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            placeholder="password"
+            value={password}
+            name="password"
+            type="password"
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+          />
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={
+              status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+            }
+          >
+            {status.message}
+          </Text>
         </form>
         <Button
           form="login-form"

@@ -25,7 +25,12 @@
 }
 
 .edit-avatar-page .row {
+  cursor: pointer;
   width: 15rem;
+}
+
+.edit-avatar-page .button {
+  z-index: 1;
 }
 
 @media (min-height: 800px) {
