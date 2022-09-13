@@ -42,7 +42,7 @@ export default function RegisterPage() {
         type: 'success',
         message: 'Registration complete',
       });
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         navigate(LOGIN_OPTIONS_URL);
       }, 2000);
     } catch (error) {
