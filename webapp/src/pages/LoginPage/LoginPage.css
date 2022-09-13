@@ -18,6 +18,7 @@
 .login-title > *,
 .login-subtitle > * {
   margin: 0;
+  margin-bottom: 4rem;
 }
 
 .login-title {

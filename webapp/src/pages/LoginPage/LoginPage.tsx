@@ -52,7 +52,7 @@ export default function LoginPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    login();
+    login().catch((e) => console.error(e));
   };
 
   return (
