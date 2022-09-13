@@ -31,15 +31,25 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem var(--column-gap);
-  align-items: center;
 }
 
-.login-form .inputs-container > .input {
+.login-form > .input,
+.button {
   margin-bottom: 0.875rem;
-  width: 15rem;
+  width: 100%;
+  min-width: 15rem;
+  max-width: 20rem;
 }
 
-.login-form .inputs-container > p:empty::before {
+.login-form {
+  width: 100%;
+}
+.login-form > .button {
+  margin-bottom: 0.875rem;
+  width: 100%;
+}
+
+.login-form > p:empty::before {
   content: '';
   display: inline-block;
 }
