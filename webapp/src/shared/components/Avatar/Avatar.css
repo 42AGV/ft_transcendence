@@ -10,6 +10,13 @@
   background: var(--gradient-game);
 }
 
+.avatar-xs {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
 .avatar-small {
   display: flex;
   position: relative;
@@ -26,6 +33,7 @@
   justify-content: center;
 }
 
+.avatar-xs__image-wrapper,
 .avatar-small__image-wrapper,
 .avatar-large__image-wrapper {
   border-radius: 50%;
@@ -46,7 +54,14 @@
   --radius: 0.945rem;
 }
 
+.avatar-xs__image {
+  width: 1.5rem;
+  height: 1.5rem;
+  --radius: 0.45rem;
+}
+
 .avatar-large__image,
+.avatar-xs__image,
 .avatar-small__image {
   object-fit: cover;
   -webkit-transform: scale(

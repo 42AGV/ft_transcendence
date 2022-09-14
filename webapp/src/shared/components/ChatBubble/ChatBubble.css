@@ -1,0 +1,27 @@
+.chat-bubble {
+  display: flex;
+  align-items: end;
+}
+
+.chat-bubble-self {
+  flex-direction: row-reverse;
+}
+
+.chat-bubble-other {
+  flex-direction: row;
+}
+
+.chat-bubble-text {
+  border-radius: 8px;
+  padding: 0 0.625rem 0 0.625rem;
+}
+p {
+  margin: 0.4rem auto 0;
+}
+.chat-bubble-text-self {
+  background-color: #595959;
+}
+
+.chat-bubble-text-other {
+  background-color: #262934;
+}

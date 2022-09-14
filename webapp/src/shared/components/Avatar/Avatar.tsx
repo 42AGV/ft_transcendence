@@ -17,9 +17,41 @@ type LargeAvatarProps = AvatarProps & {
   editUrl?: string;
 };
 
+const XS_AVATAR_DOWNSCALE = 0.05;
 const SMALL_AVATAR_DOWNSCALE = 0.2;
 const LARGE_AVATAR_DOWNSCALE = 0.62;
 
+export function XSAvatar({
+  url,
+  status,
+  XCoordinate,
+  YCoordinate,
+}: AvatarProps) {
+  const FormatNumber = (value: number) =>
+    Math.round(value * XS_AVATAR_DOWNSCALE);
+  const position =
+    XCoordinate && YCoordinate
+      ? {
+          objectPosition: `${FormatNumber(XCoordinate)}px ${FormatNumber(
+            YCoordinate,
+          )}px`,
+        }
+      : {
+          objectPosition: '0 0',
+        };
+  return (
+    <div className="avatar-xs">
+      <figure className={`avatar-xs__image-wrapper  avatar-status--${status}`}>
+        <img
+          src={url}
+          alt={url}
+          className="avatar-xs__image"
+          style={position}
+        />
+      </figure>
+    </div>
+  );
+}
 export function SmallAvatar({
   url,
   status,
