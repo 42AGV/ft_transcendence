@@ -59,7 +59,7 @@ export default function LoginPage() {
     <div className="login">
       <div className="login-title">
         <Text
-          variant={TextVariant.SUBTITLE}
+          variant={TextVariant.TITLE}
           color={TextColor.GAME}
           weight={TextWeight.BOLD}
         >
@@ -78,13 +78,15 @@ export default function LoginPage() {
         >
           Login with 42
         </Button>
-        <Text
-          variant={TextVariant.SUBHEADING}
-          color={TextColor.LIGHT}
-          weight={TextWeight.BOLD}
-        >
-          or
-        </Text>
+        <div className="login-container__separator">
+          <Text
+            variant={TextVariant.SUBHEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.BOLD}
+          >
+            or
+          </Text>
+        </div>
         <form id="login-form" className="login-form" onSubmit={handleOnSubmit}>
           <Input
             variant={InputVariant.LIGHT}
