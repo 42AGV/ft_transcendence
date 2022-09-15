@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -10,18 +10,27 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { ResponseError } from '../../shared/generated';
+import { RegisterUserDto, ResponseError } from '../../shared/generated';
 import { authApi } from '../../shared/services/ApiService';
 import { SubmitStatus } from '../../shared/types';
 import { LOGIN_OPTIONS_URL } from '../../shared/urls';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
-  const [username, setUsername] = useState('');
-  const [fullName, SetFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmationPassword, setConfirmationPassword] = useState('');
+  const initialuserRegisterUserDto: RegisterUserDto = {
+    username: '',
+    fullName: '',
+    email: '',
+    password: '',
+    confirmationPassword: '',
+  };
+  const [userRegisterUserDto, updateUserRegisterUserDto] = useReducer(
+    (userRegisterUserDto: RegisterUserDto, updateUserRegisterUserDto: any) => ({
+      ...userRegisterUserDto,
+      ...updateUserRegisterUserDto,
+    }),
+    initialuserRegisterUserDto,
+  );
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
@@ -30,13 +39,7 @@ export default function RegisterPage() {
   async function register() {
     try {
       await authApi.authControllerRegisterLocalUser({
-        registerUserDto: {
-          username,
-          password,
-          confirmationPassword,
-          email,
-          fullName,
-        },
+        registerUserDto: userRegisterUserDto,
       });
       setStatus({
         type: 'success',
@@ -67,7 +70,7 @@ export default function RegisterPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    register();
+    register().catch((e) => console.error(e));
   };
 
   return (
@@ -97,51 +100,53 @@ export default function RegisterPage() {
               variant={InputVariant.LIGHT}
               label="Username"
               placeholder="username"
-              value={username}
+              value={userRegisterUserDto.username}
               name="username"
               onChange={(e) => {
-                setUsername(e.target.value);
+                updateUserRegisterUserDto({ username: e.target.value });
               }}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Email"
               placeholder="email"
-              value={email}
+              value={userRegisterUserDto.email}
               name="email"
               onChange={(e) => {
-                setEmail(e.target.value);
+                updateUserRegisterUserDto({ email: e.target.value });
               }}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Full Name"
               placeholder="full name"
-              value={fullName}
+              value={userRegisterUserDto.fullName}
               name="fullname"
               onChange={(e) => {
-                SetFullName(e.target.value);
+                updateUserRegisterUserDto({ fullName: e.target.value });
               }}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Password"
               placeholder="password"
-              value={password}
+              value={userRegisterUserDto.password}
               name="password"
               type="password"
               onChange={(e) => {
-                setPassword(e.target.value);
+                updateUserRegisterUserDto({ password: e.target.value });
               }}
             />
             <Input
               variant={InputVariant.LIGHT}
               placeholder="repeat password"
-              value={confirmationPassword}
+              value={userRegisterUserDto.confirmationPassword}
               name="confirmationPassword"
               type="password"
               onChange={(e) => {
-                setConfirmationPassword(e.target.value);
+                updateUserRegisterUserDto({
+                  confirmationPassword: e.target.value,
+                });
               }}
             />
             <Text

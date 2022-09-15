@@ -1,4 +1,4 @@
-.login {
+.register {
   margin: 0;
   padding: var(--padding-top-bottom) var(--padding-sides);
   height: 100vh;
@@ -9,24 +9,23 @@
   display: grid;
   gap: 2rem var(--column-gap);
   grid-template-columns: repeat(var(--column-number), 1fr);
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
     'title title title title'
-    'main main main main'
-    'end end end end';
+    'main main main main';
 }
 
-.login-title > *,
-.login-subtitle > * {
+.register-title > *,
+.register-subtitle > * {
   margin: 0;
   margin-bottom: 4rem;
 }
 
-.login-title {
+.register-title {
   grid-area: title;
 }
 
-.login-container {
+.register-container {
   grid-area: main;
   align-self: center;
   display: flex;
@@ -34,61 +33,42 @@
   gap: 0.5rem var(--column-gap);
 }
 
-.login-form > .input,
-.button {
+.register-form .inputs-container > .input {
   margin-bottom: 0.875rem;
   width: 100%;
   min-width: 15rem;
   max-width: 20rem;
 }
 
-.login-form {
-  width: 100%;
-}
-.login-form > .button {
-  margin-bottom: 0.875rem;
-  width: 100%;
-}
-
-.login-form > p:empty::before {
+.register-form .inputs-container > p:empty::before {
   content: '';
   display: inline-block;
 }
 
-.final-text {
-  display: flex;
-  gap: 0.3rem;
-}
-
-.final-text a {
-  text-decoration: none;
-}
-
-.login .landing-animation {
+.register .landing-animation {
   display: none;
 }
 
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
-  .login {
+  .register {
     min-height: 20rem;
     gap: 2rem var(--column-gap);
     padding: 4rem var(--padding-sides) 8rem var(--padding-sides);
     grid-template-columns: repeat(var(--column-number), 1fr);
-    grid-template-rows: repeat(3, auto);
+    grid-template-rows: repeat(2, auto);
     grid-template-areas:
       'title title title title title title ... ... ... ... ... ...'
-      'main main main main main ... ... animation animation animation animation animation'
-      'end end end end end ... ... ... ... ... ... ...';
+      'main main main main main ... ... animation animation animation animation animation';
   }
-  .login-container {
+  .register-container {
     grid-area: main;
     display: flex;
     flex-direction: column;
     gap: 0.5rem var(--column-gap);
   }
 
-  .login .landing-animation {
+  .register .landing-animation {
     display: inline;
   }
 }
