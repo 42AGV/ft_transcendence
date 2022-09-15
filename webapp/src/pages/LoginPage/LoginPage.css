@@ -3,7 +3,7 @@
   padding: var(--padding-top-bottom) var(--padding-sides);
   height: 100vh;
   min-height: 40rem;
-  overflow: scroll;
+  overflow: hidden;
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
