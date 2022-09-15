@@ -6,3 +6,4 @@ export { default as PlayPage } from './PlayPage/PlayPage';
 export { default as ChatPage } from './ChatPage/ChatPage';
 export { default as ComponentsBookPage } from './ComponentsBookPage/ComponentsBookPage';
 export { default as EditAvatarPage } from './EditAvatarPage/EditAvatarPage';
+export { default as LoginPage } from './LoginPage/LoginPage';

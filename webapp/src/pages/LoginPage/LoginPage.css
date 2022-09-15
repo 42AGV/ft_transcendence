@@ -1,0 +1,92 @@
+.login {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  min-height: 40rem;
+  overflow: scroll;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  grid-template-columns: repeat(var(--column-number), 1fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'title title title title'
+    'main main main main'
+    'end end end end';
+}
+
+.login-title > *,
+.login-subtitle > * {
+  margin: 0;
+  margin-bottom: 4rem;
+}
+
+.login-title {
+  grid-area: title;
+}
+
+.login-container {
+  grid-area: main;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem var(--column-gap);
+}
+
+.login-form > .input,
+.button {
+  margin-bottom: 0.875rem;
+  width: 100%;
+  min-width: 15rem;
+  max-width: 20rem;
+}
+
+.login-form {
+  width: 100%;
+}
+.login-form > .button {
+  margin-bottom: 0.875rem;
+  width: 100%;
+}
+
+.login-form > p:empty::before {
+  content: '';
+  display: inline-block;
+}
+
+.final-text {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.final-text a {
+  text-decoration: none;
+}
+
+.login .landing-animation {
+  display: none;
+}
+
+/* Styles for viewports wider than 768 pixels. */
+@media (min-width: 768px) {
+  .login {
+    min-height: 20rem;
+    padding: 4rem var(--padding-sides) 8rem var(--padding-sides);
+    grid-template-columns: repeat(var(--column-number), 1fr);
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas:
+      'title title title title title title ... ... ... ... ... ...'
+      'main main main main main ... ... animation animation animation animation animation'
+      'end end end end end ... ... ... ... ... ... ...';
+  }
+  .login-container {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem var(--column-gap);
+  }
+
+  .login .landing-animation {
+    display: inline;
+  }
+}

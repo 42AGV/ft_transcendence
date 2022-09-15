@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -9,10 +9,15 @@ import {
   TextWeight,
 } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { DEFAULT_LOGIN_REDIRECT_URL, LOGIN_EP_URL } from '../../shared/urls';
+import {
+  DEFAULT_LOGIN_REDIRECT_URL,
+  LOGIN_OPTIONS_URL,
+  REGISTER_URL,
+} from '../../shared/urls';
 import './LandingPage.css';
 
 export default function Landing() {
+  const navigate = useNavigate();
   const { isLoggedIn, isLoading } = useAuth();
 
   if (isLoggedIn) {
@@ -54,10 +59,16 @@ export default function Landing() {
           Play online pong with your friends
         </Text>
       </div>
-      <div className="landing-login-button">
+      <div className="landing-buttons">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => window.location.replace(LOGIN_EP_URL)}
+          onClick={() => navigate(REGISTER_URL)}
+        >
+          Create new account
+        </Button>
+        <Button
+          variant={ButtonVariant.ALTERNATIVE}
+          onClick={() => navigate(LOGIN_OPTIONS_URL)}
         >
           Login
         </Button>

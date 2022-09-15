@@ -4,6 +4,7 @@ import './Button.css';
 export enum ButtonVariant {
   SUBMIT = 'submit',
   WARNING = 'warning',
+  ALTERNATIVE = 'submit-alternative',
 }
 
 type ButtonProps = {

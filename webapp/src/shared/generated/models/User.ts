@@ -42,6 +42,12 @@ export interface User {
      * @type {string}
      * @memberof User
      */
+    password: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
     avatarId: string | null;
     /**
      * 
@@ -77,6 +83,7 @@ export function instanceOfUser(value: object): boolean {
     isInstance = isInstance && "username" in value;
     isInstance = isInstance && "email" in value;
     isInstance = isInstance && "fullName" in value;
+    isInstance = isInstance && "password" in value;
     isInstance = isInstance && "avatarId" in value;
     isInstance = isInstance && "avatarX" in value;
     isInstance = isInstance && "avatarY" in value;
@@ -99,6 +106,7 @@ export function UserFromJSONTyped(json: any, ignoreDiscriminator: boolean): User
         'username': json['username'],
         'email': json['email'],
         'fullName': json['fullName'],
+        'password': json['password'],
         'avatarId': json['avatarId'],
         'avatarX': json['avatarX'],
         'avatarY': json['avatarY'],
@@ -119,6 +127,7 @@ export function UserToJSON(value?: User | null): any {
         'username': value.username,
         'email': value.email,
         'fullName': value.fullName,
+        'password': value.password,
         'avatarId': value.avatarId,
         'avatarX': value.avatarX,
         'avatarY': value.avatarY,

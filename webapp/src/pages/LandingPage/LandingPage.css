@@ -7,7 +7,7 @@
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  gap: 4rem var(--column-gap);
+  gap: 2rem var(--column-gap);
   grid-template-columns: repeat(var(--column-number), 1fr);
   grid-template-rows: auto 1fr auto auto;
   grid-template-areas:
@@ -37,16 +37,21 @@
   grid-area: subtitle;
 }
 
-.landing-login-button {
+.landing-buttons {
   grid-area: login;
   justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  width: 100%;
 }
 
-.landing-login-button,
-.landing-login-button > button {
-  width: 100%;
+.landing-buttons,
+.landing-buttons > button {
   min-width: 15rem;
   max-width: 20rem;
+  width: 100%;
 }
 
 /* Styles for viewports wider than 768 pixels. */
@@ -63,7 +68,7 @@
       'login login login login ... ... ... ... animation animation animation animation';
   }
 
-  .landing-login-button {
+  .landing-buttons {
     align-self: center;
     justify-self: start;
   }

@@ -24,6 +24,12 @@
   background: var(--color-submit);
 }
 
+.button-submit-alternative {
+  background: var(--color-light);
+  border: 0.1875rem solid var(--color-submit);
+  color: var(--color-submit);
+}
+
 .button-icon {
   display: flex;
   position: absolute;
