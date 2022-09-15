@@ -1,6 +1,6 @@
 .chat-bubble {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .chat-bubble-self {
@@ -13,15 +13,19 @@
 
 .chat-bubble-text {
   border-radius: 8px;
-  padding: 0 0.625rem 0 0.625rem;
+  padding: 0.625rem;
 }
-p {
-  margin: 0.4rem auto 0;
+
+.chat-bubble-text > p {
+  margin: 0;
 }
+
 .chat-bubble-text-self {
   background-color: #595959;
+  margin-right: 0.625rem;
 }
 
 .chat-bubble-text-other {
   background-color: #262934;
+  margin-left: 0.625rem;
 }

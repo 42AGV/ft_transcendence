@@ -12,7 +12,22 @@ export const ChatBubbleExample = () => (
       variant={ChatBubbleVariant.SELF}
       avatar={avProps}
       text="Lorem fistrum nisi irure te voy a borrar el cerito elit amatomaa te voy a borrar el cerito. Sed quis amatomaa a peich. Ese hombree esse duis tiene musho peligro esse pupita eiusmod laboris torpedo. Ex consequat tiene musho peligro de la pradera apetecan. Et ese pedazo de mamaar esse. "
+    />
+    <ChatBubble
+      variant={ChatBubbleVariant.OTHER}
+      avatar={avProps}
+      text="Lorem fistrum nisi irure te voy a borrar el cerito elit amatomaa te voy a borrar el cerito. Sed quis amatomaa a peich. Ese hombree esse duis tiene musho peligro esse pupita eiusmod laboris torpedo. Ex consequat tiene musho peligro de la pradera apetecan. Et ese pedazo de mamaar esse. "
+    />
+
+    <ChatBubble
+      variant={ChatBubbleVariant.OTHER}
+      avatar={avProps}
+      text="Lorem fistrum nisi irure te voy a borrar el cerito elit amatomaa te voy a borrar el cerito. Sed quis amatomaa a peich. Ese hombree esse duis tiene musho peligro esse pupita eiusmod laboris torpedo. Ex consequat tiene musho peligro de la pradera apetecan. Et ese pedazo de mamaar esse. "
       name="fportela"
+    />
+    <ChatBubble
+      variant={ChatBubbleVariant.OTHER}
+      text="Lorem fistrum nisi irure te voy a borrar el cerito elit amatomaa te voy a borrar el cerito. Sed quis amatomaa a peich. Ese hombree esse duis tiene musho peligro esse pupita eiusmod laboris torpedo. Ex consequat tiene musho peligro de la pradera apetecan. Et ese pedazo de mamaar esse. "
     />
   </BookSection>
 );

@@ -9,7 +9,7 @@ export enum ChatBubbleVariant {
 
 type ChatBubbleProps = {
   variant: ChatBubbleVariant;
-  avatar: AvatarProps;
+  avatar?: AvatarProps;
   text: string;
   name?: string;
 };
@@ -22,7 +22,7 @@ export default function ChatBubble({
 }: ChatBubbleProps) {
   return (
     <div className={`chat-bubble chat-bubble-${variant}`}>
-      <XSAvatar {...avatar} />
+      {avatar && <XSAvatar {...avatar} />}
       <div className={`chat-bubble-text chat-bubble-text-${variant}`}>
         {name && (
           <Text
