@@ -34,3 +34,5 @@ export { default as Loading } from './Loading/Loading';
 
 export { default as ChatBubble } from './ChatBubble/ChatBubble';
 export * from './ChatBubble/ChatBubble';
+
+export { default as ToggleSwitch } from './ToggleSwitch/ToggleSwitch';
