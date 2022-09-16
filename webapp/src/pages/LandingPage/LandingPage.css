@@ -139,11 +139,11 @@
   }
   24.9% {
     /* ping */
-    left: 85%;
+    left: 75%;
     top: calc(0% + var(--paddle-position) + var(--paddle-height));
   }
   30% {
-    left: 98%;
+    right: 0;
     top: 27%;
   }
   41.5% {
@@ -193,7 +193,7 @@
   }
   24.9% {
     /* tap */
-    left: 82%;
+    left: 72%;
   }
   47% {
     left: 37%;
@@ -224,7 +224,7 @@
   /* bottom player */
   0%,
   100% {
-    left: 85%;
+    left: 75%;
   }
   8.3% {
     /* tap */
