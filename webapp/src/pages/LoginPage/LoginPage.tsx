@@ -14,8 +14,12 @@ import {
 import { ResponseError } from '../../shared/generated';
 import { authApi } from '../../shared/services/ApiService';
 import { LOGIN_EP_URL, REGISTER_URL, USERS_URL } from '../../shared/urls';
-import { SubmitStatus } from '../../shared/types';
 import './LoginPage.css';
+
+type SubmitStatus = {
+  type: 'success' | 'error' | 'pending';
+  message: string;
+};
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');

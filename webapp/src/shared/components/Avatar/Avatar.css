@@ -10,14 +10,14 @@
   background: var(--gradient-game);
 }
 
-.avatar-xs {
+.avatar-small {
   display: flex;
   position: relative;
   align-items: center;
   justify-content: center;
 }
 
-.avatar-small {
+.avatar-medium {
   display: flex;
   position: relative;
   align-items: center;
@@ -33,8 +33,8 @@
   justify-content: center;
 }
 
-.avatar-xs__image-wrapper,
 .avatar-small__image-wrapper,
+.avatar-medium__image-wrapper,
 .avatar-large__image-wrapper {
   border-radius: 50%;
   display: flex;
@@ -48,21 +48,21 @@
   --radius: 3rem;
 }
 
-.avatar-small__image {
+.avatar-medium__image {
   width: 3.22rem;
   height: 3.22rem;
   --radius: 0.945rem;
 }
 
-.avatar-xs__image {
+.avatar-small__image {
   width: 1.5rem;
   height: 1.5rem;
   --radius: 0.45rem;
 }
 
 .avatar-large__image,
-.avatar-xs__image,
-.avatar-small__image {
+.avatar-small__image,
+.avatar-medium__image {
   object-fit: cover;
   -webkit-transform: scale(
     1.55

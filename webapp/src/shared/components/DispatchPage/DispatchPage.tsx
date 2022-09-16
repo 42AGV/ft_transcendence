@@ -2,7 +2,7 @@ import './DispatchPage.css';
 import { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { USER_URL, AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../urls';
-import { SmallAvatar } from '../Avatar/Avatar';
+import { MediumAvatar } from '../Avatar/Avatar';
 import SearchForm from '../Input/SearchForm';
 import RowsList, { RowItem } from '../RowsList/RowsList';
 import NavigationBar from '../NavigationBar/NavigationBar';
@@ -107,7 +107,7 @@ export default function DispatchPage<T>({
     <div className="dispatch-page">
       <div className="dispatch-page-avatar">
         <Link to={USER_URL}>
-          <SmallAvatar
+          <MediumAvatar
             url={
               user.avatarId
                 ? `${AVATAR_EP_URL}/${user.avatarId}`

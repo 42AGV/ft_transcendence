@@ -12,7 +12,6 @@ import {
   EditUserPage,
   EditAvatarPage,
   LoginPage,
-  RegisterPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -24,7 +23,6 @@ import {
   EDIT_USER_URL,
   EDIT_AVATAR_URL,
   LOGIN_OPTIONS_URL,
-  REGISTER_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -40,7 +38,6 @@ root.render(
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path={LOGIN_OPTIONS_URL} element={<LoginPage />} />
-          <Route path={REGISTER_URL} element={<RegisterPage />} />
           <Route
             path={USERS_URL}
             element={
