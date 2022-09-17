@@ -21,11 +21,11 @@
 }
 
 .chat-bubble-text-self {
-  background-color: #595959;
+  background-color: var(--color-light-variant);
   margin-right: 0.625rem;
 }
 
 .chat-bubble-text-other {
-  background-color: #262934;
+  background-color: var(--color-dark);
   margin-left: 0.625rem;
 }
