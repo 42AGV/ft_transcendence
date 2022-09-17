@@ -1,38 +1,44 @@
-.toggle-switch {
+toggle-switch {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.toggle-switch-label {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 25px;
+  width: 3rem;
+  height: 1.5rem;
 }
-.toggle-switch input[type='checkbox'] {
+.toggle-switch-label input {
   display: none;
 }
-.toggle-switch .switch {
+.toggle-switch-label .switch {
   position: absolute;
   cursor: pointer;
-  background-color: #ccc;
-  border-radius: 25px;
+  background-color: var(--color-light);
+  border-radius: 1.5rem;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   transition: background-color 0.2s ease;
 }
-.toggle-switch .switch::before {
+.toggle-switch-label .switch::before {
   position: absolute;
   content: '';
-  left: 2px;
-  top: 2px;
-  width: 21px;
-  height: 21px;
-  background-color: #aaa;
+  left: 0.12rem;
+  top: 0.12rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  background-color: var(--color-dark);
   border-radius: 50%;
   transition: transform 0.3s ease;
 }
-.toggle-switch input[type='checkbox']:checked + .switch::before {
-  transform: translateX(25px);
-  background-color: #6699cc;
+.toggle-switch-label input[type='checkbox']:checked + .switch::before {
+  transform: translateX(1.5rem);
+  background-color: var(--color-dark);
 }
-.toggle-switch input[type='checkbox']:checked + .switch {
-  background-color: #336699;
+.toggle-switch-label input[type='checkbox']:checked + .switch {
+  background-color: var(--color-submit);
 }

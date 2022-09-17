@@ -1,13 +1,34 @@
-import { useState } from 'react';
+import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './ToggleSwitch.css';
 
-export default function ToggleSwitch() {
-  const [isToggled, setIsToggled] = useState(false);
-  const onToggle = () => setIsToggled(!isToggled);
+type ToggleSwitchProps = {
+  value?: string;
+  isToggled: boolean;
+  onToggle: any;
+};
+
+export default function ToggleSwitch({
+  value,
+  isToggled,
+  onToggle,
+}: ToggleSwitchProps) {
   return (
-    <label className="toggle-switch">
-      <input type="checkbox" checked={isToggled} onChange={onToggle} />
-      <span className="switch" />
-    </label>
+    <div className="toggle-switch">
+      <label className="toggle-switch-label">
+        <input type="checkbox" checked={isToggled} onChange={onToggle} />
+        <span className="switch" />
+      </label>
+      <div>
+        {value && (
+          <Text
+            variant={TextVariant.HEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.BOLD}
+          >
+            {value}
+          </Text>
+        )}
+      </div>
+    </div>
   );
 }
