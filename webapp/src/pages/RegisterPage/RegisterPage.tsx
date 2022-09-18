@@ -77,7 +77,7 @@ export default function RegisterPage() {
     <div className="register">
       <div className="register-title">
         <Text
-          variant={TextVariant.SUBTITLE}
+          variant={TextVariant.TITLE}
           color={TextColor.GAME}
           weight={TextWeight.BOLD}
         >
