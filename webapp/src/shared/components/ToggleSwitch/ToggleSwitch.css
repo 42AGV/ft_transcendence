@@ -1,7 +1,5 @@
 toggle-switch {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 .toggle-switch-label {
@@ -41,4 +39,10 @@ toggle-switch {
 }
 .toggle-switch-label input[type='checkbox']:checked + .switch {
   background-color: var(--color-submit);
+}
+
+.toggle-switch-text {
+  position: relative;
+  left: 8rem;
+  top: -3.5rem;
 }

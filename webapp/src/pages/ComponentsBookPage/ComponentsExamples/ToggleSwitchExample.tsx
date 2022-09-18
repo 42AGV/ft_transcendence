@@ -8,6 +8,7 @@ export const ToggleSwitchExample = () => {
   return (
     <BookSection title="Chat Bubble component">
       <ToggleSwitch value="value" isToggled={false} onToggle={onToggle} />
+      {/* <ToggleSwitch value="value" /> */}
     </BookSection>
   );
 };
