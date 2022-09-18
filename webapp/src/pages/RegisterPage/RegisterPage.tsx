@@ -49,7 +49,35 @@ export default function RegisterPage() {
         navigate(LOGIN_OPTIONS_URL);
       }, 2000);
     } catch (error) {
-      if (error instanceof ResponseError) {
+      if (userRegisterUserDto.username === '') {
+        setStatus({
+          type: 'error',
+          message: 'Username can not be empty',
+        });
+      } else if (userRegisterUserDto.email === '') {
+        setStatus({
+          type: 'error',
+          message: 'Email can not be empty',
+        });
+      } else if (userRegisterUserDto.fullName === '') {
+        setStatus({
+          type: 'error',
+          message: 'Full Name can not be empty',
+        });
+      } else if (userRegisterUserDto.password === '') {
+        setStatus({
+          type: 'error',
+          message: 'Password can not be empty',
+        });
+      } else if (
+        userRegisterUserDto.password !==
+        userRegisterUserDto.confirmationPassword
+      ) {
+        setStatus({
+          type: 'error',
+          message: 'Passwords are different',
+        });
+      } else if (error instanceof ResponseError) {
         if (error.response.status === 422) {
           setStatus({
             type: 'error',
@@ -58,7 +86,7 @@ export default function RegisterPage() {
         } else if (error.response.status === 400) {
           setStatus({
             type: 'error',
-            message: 'Invalid email or wrong passwords',
+            message: 'Invalid email',
           });
         } else {
           setStatus({ type: 'error', message: `${error.response.statusText}` });
