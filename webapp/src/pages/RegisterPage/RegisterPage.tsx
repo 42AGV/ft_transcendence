@@ -17,29 +17,68 @@ import { LOGIN_OPTIONS_URL } from '../../shared/urls';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
-  const initialuserRegisterUserDto: RegisterUserDto = {
+  const initialFormValues: RegisterUserDto = {
     username: '',
     fullName: '',
     email: '',
     password: '',
     confirmationPassword: '',
   };
-  const [userRegisterUserDto, updateUserRegisterUserDto] = useReducer(
-    (userRegisterUserDto: RegisterUserDto, updateUserRegisterUserDto: any) => ({
-      ...userRegisterUserDto,
-      ...updateUserRegisterUserDto,
-    }),
-    initialuserRegisterUserDto,
-  );
+  const [formValues, setFormValues] =
+    useState<RegisterUserDto>(initialFormValues);
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
   });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((previousValues) => {
+      return { ...previousValues, [name]: value };
+    });
+  };
+  function hasValidFormValues() {
+    if (formValues.username === '') {
+      setStatus({
+        type: 'error',
+        message: 'Username can not be empty',
+      });
+      return false;
+    } else if (formValues.email === '') {
+      setStatus({
+        type: 'error',
+        message: 'Email can not be empty',
+      });
+      return false;
+    } else if (formValues.fullName === '') {
+      setStatus({
+        type: 'error',
+        message: 'Full Name can not be empty',
+      });
+      return false;
+    } else if (formValues.password === '') {
+      setStatus({
+        type: 'error',
+        message: 'Password can not be empty',
+      });
+      return false;
+    } else if (formValues.password !== formValues.confirmationPassword) {
+      setStatus({
+        type: 'error',
+        message: 'Passwords are different',
+      });
+      return false;
+    }
+    return true;
+  }
   const navigate = useNavigate();
   async function register() {
+    if (hasValidFormValues()) {
+      return;
+    }
     try {
       await authApi.authControllerRegisterLocalUser({
-        registerUserDto: userRegisterUserDto,
+        registerUserDto: formValues,
       });
       setStatus({
         type: 'success',
@@ -49,35 +88,7 @@ export default function RegisterPage() {
         navigate(LOGIN_OPTIONS_URL);
       }, 2000);
     } catch (error) {
-      if (userRegisterUserDto.username === '') {
-        setStatus({
-          type: 'error',
-          message: 'Username can not be empty',
-        });
-      } else if (userRegisterUserDto.email === '') {
-        setStatus({
-          type: 'error',
-          message: 'Email can not be empty',
-        });
-      } else if (userRegisterUserDto.fullName === '') {
-        setStatus({
-          type: 'error',
-          message: 'Full Name can not be empty',
-        });
-      } else if (userRegisterUserDto.password === '') {
-        setStatus({
-          type: 'error',
-          message: 'Password can not be empty',
-        });
-      } else if (
-        userRegisterUserDto.password !==
-        userRegisterUserDto.confirmationPassword
-      ) {
-        setStatus({
-          type: 'error',
-          message: 'Passwords are different',
-        });
-      } else if (error instanceof ResponseError) {
+      if (error instanceof ResponseError) {
         if (error.response.status === 422) {
           setStatus({
             type: 'error',
@@ -128,54 +139,43 @@ export default function RegisterPage() {
               variant={InputVariant.LIGHT}
               label="Username"
               placeholder="username"
-              value={userRegisterUserDto.username}
+              value={formValues.username}
               name="username"
-              onChange={(e) => {
-                updateUserRegisterUserDto({ username: e.target.value });
-              }}
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Email"
               placeholder="email"
-              value={userRegisterUserDto.email}
+              value={formValues.email}
               name="email"
-              onChange={(e) => {
-                updateUserRegisterUserDto({ email: e.target.value });
-              }}
+              type="email"
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Full Name"
               placeholder="full name"
-              value={userRegisterUserDto.fullName}
-              name="fullname"
-              onChange={(e) => {
-                updateUserRegisterUserDto({ fullName: e.target.value });
-              }}
+              value={formValues.fullName}
+              name="fullName"
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Password"
               placeholder="password"
-              value={userRegisterUserDto.password}
+              value={formValues.password}
               name="password"
               type="password"
-              onChange={(e) => {
-                updateUserRegisterUserDto({ password: e.target.value });
-              }}
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               placeholder="repeat password"
-              value={userRegisterUserDto.confirmationPassword}
+              value={formValues.confirmationPassword}
               name="confirmationPassword"
               type="password"
-              onChange={(e) => {
-                updateUserRegisterUserDto({
-                  confirmationPassword: e.target.value,
-                });
-              }}
+              onChange={handleInputChange}
             />
             <Text
               variant={TextVariant.PARAGRAPH}
