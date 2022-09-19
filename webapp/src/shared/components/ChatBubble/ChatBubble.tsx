@@ -30,7 +30,7 @@ export default function ChatBubble({
               variant={TextVariant.CAPTION}
               color={TextColor.LIGHT}
               weight={TextWeight.MEDIUM}
-              children={`${name}:`}
+              children={name}
             />
           )}
         </div>
