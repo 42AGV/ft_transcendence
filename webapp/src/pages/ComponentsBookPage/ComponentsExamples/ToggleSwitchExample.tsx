@@ -1,28 +1,20 @@
 import { useState } from 'react';
-import {
-  ToggleSwitch,
-  Text,
-  TextColor,
-  TextVariant,
-  TextWeight,
-} from '../../../shared/components';
+import { ToggleSwitch } from '../../../shared/components';
 import { BookSection } from '../BookSection';
 
 export const ToggleSwitchExample = () => {
   const [isToggled, setIsToggled] = useState(false);
   const onToggle = () => setIsToggled(!isToggled);
-  const value = isToggled ? 'toggled' : 'not toggled';
 
   return (
-    <BookSection title="Chat Bubble component">
-      <ToggleSwitch isToggled={isToggled} onToggle={onToggle} />
-      <Text
-        variant={TextVariant.HEADING}
-        color={TextColor.LIGHT}
-        weight={TextWeight.BOLD}
-      >
-        {value}
-      </Text>
+    <BookSection title="Toggle switch component" displayVertical>
+      <ToggleSwitch isToggled={isToggled} onToggle={onToggle} label="ReactJS" />
+      <ToggleSwitch isToggled={isToggled} onToggle={onToggle} label="NestJS" />
+      <ToggleSwitch
+        isToggled={isToggled}
+        onToggle={onToggle}
+        label=" I read and agree with the terms and conditions."
+      />
     </BookSection>
   );
 };

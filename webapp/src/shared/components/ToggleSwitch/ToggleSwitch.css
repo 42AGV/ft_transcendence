@@ -43,6 +43,7 @@ toggle-switch {
 
 .toggle-switch-text {
   position: relative;
-  left: 8rem;
-  top: -3.5rem;
+  left: 4rem;
+  top: -1rem;
+  white-space: nowrap;
 }
