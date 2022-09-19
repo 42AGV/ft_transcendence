@@ -23,21 +23,25 @@ export default function ChatBubble({
   return (
     <div className={`chat-bubble chat-bubble-${variant}`}>
       {avatar && <SmallAvatar {...avatar} />}
-      <div className={`chat-bubble-text chat-bubble-text-${variant}`}>
-        {name && (
+      <div className={'chat-bubble-text-container'}>
+        <div className={'chat-bubble-text-author'}>
+          {name && (
+            <Text
+              variant={TextVariant.CAPTION}
+              color={TextColor.LIGHT}
+              weight={TextWeight.MEDIUM}
+              children={`${name}:`}
+            />
+          )}
+        </div>
+        <div className={`chat-bubble-text chat-bubble-text-${variant}`}>
           <Text
             variant={TextVariant.CAPTION}
             color={TextColor.LIGHT}
             weight={TextWeight.REGULAR}
-            children={`${name}:`}
+            children={text}
           />
-        )}
-        <Text
-          variant={TextVariant.CAPTION}
-          color={TextColor.LIGHT}
-          weight={TextWeight.REGULAR}
-          children={text}
-        />
+        </div>
       </div>
     </div>
   );
