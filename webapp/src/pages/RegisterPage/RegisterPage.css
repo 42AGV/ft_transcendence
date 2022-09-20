@@ -3,21 +3,23 @@
   padding: var(--padding-top-bottom) var(--padding-sides);
   height: 100vh;
   min-height: 40rem;
-  overflow: scroll;
+  overflow: hidden;
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  grid-template-columns: repeat(var(--column-number), 1fr);
+  gap: 6rem var(--column-gap);
+  grid-template-columns: repeat(var(--column-number), auto);
   grid-template-rows: auto 1fr;
   grid-template-areas:
     'title title title title'
-    'main main main main';
+    '... main main ...';
 }
 
 .register-title > *,
 .register-subtitle > * {
   margin: 0;
-  margin-bottom: 4rem;
+  justify-self: center;
+  max-width: 20rem;
 }
 
 .register-title {
@@ -26,6 +28,7 @@
 
 .register-container {
   grid-area: main;
+  width: 100%;
   align-self: center;
   display: flex;
   flex-direction: column;

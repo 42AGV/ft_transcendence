@@ -3,7 +3,7 @@
   padding: var(--padding-top-bottom) var(--padding-sides);
   height: 100vh;
   min-height: 40rem;
-  overflow: scroll;
+  overflow: hidden;
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
@@ -11,7 +11,7 @@
   grid-template-columns: repeat(var(--column-number), 1fr);
   grid-template-rows: auto 1fr auto auto;
   grid-template-areas:
-    'title title title title'
+    'title title ... ...'
     'animation animation animation animation'
     'subtitle subtitle subtitle subtitle'
     'login login login login';
@@ -35,10 +35,13 @@
 
 .landing-subtitle {
   grid-area: subtitle;
+  justify-self: center;
+  max-width: 20rem;
 }
 
 .landing-buttons {
   grid-area: login;
+  margin: 0;
   justify-self: center;
   display: flex;
   flex-direction: column;
@@ -49,8 +52,6 @@
 
 .landing-buttons,
 .landing-buttons > button {
-  min-width: 15rem;
-  max-width: 20rem;
   width: 100%;
 }
 
@@ -63,13 +64,18 @@
     grid-template-columns: repeat(var(--column-number), 1fr);
     grid-template-rows: repeat(3, auto);
     grid-template-areas:
-      'title title title title title title ... ... ... ... ... ...'
-      'subtitle subtitle subtitle subtitle subtitle ... ... ... animation animation animation animation'
+      'title title title ... ... ... ... ... ... ... ... ...'
+      'subtitle subtitle subtitle subtitle ... ... ... ... animation animation animation animation'
       'login login login login ... ... ... ... animation animation animation animation';
   }
 
   .landing-buttons {
-    align-self: center;
+    /* align-self: center; */
+    justify-self: start;
+    align-items: flex-start;
+  }
+
+  .landing-subtitle {
     justify-self: start;
   }
 }
@@ -133,11 +139,11 @@
   }
   24.9% {
     /* ping */
-    left: 85%;
+    left: 75%;
     top: calc(0% + var(--paddle-position) + var(--paddle-height));
   }
   30% {
-    left: 98%;
+    right: 0;
     top: 27%;
   }
   41.5% {
@@ -187,7 +193,7 @@
   }
   24.9% {
     /* tap */
-    left: 82%;
+    left: 72%;
   }
   47% {
     left: 37%;
@@ -218,7 +224,7 @@
   /* bottom player */
   0%,
   100% {
-    left: 85%;
+    left: 75%;
   }
   8.3% {
     /* tap */
