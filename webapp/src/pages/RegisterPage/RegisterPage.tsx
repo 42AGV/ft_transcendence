@@ -10,33 +10,75 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { ResponseError } from '../../shared/generated';
+import { RegisterUserDto, ResponseError } from '../../shared/generated';
 import { authApi } from '../../shared/services/ApiService';
 import { SubmitStatus } from '../../shared/types';
 import { LOGIN_OPTIONS_URL } from '../../shared/urls';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
-  const [username, setUsername] = useState('');
-  const [fullName, SetFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmationPassword, setConfirmationPassword] = useState('');
+  const initialFormValues: RegisterUserDto = {
+    username: '',
+    fullName: '',
+    email: '',
+    password: '',
+    confirmationPassword: '',
+  };
+  const [formValues, setFormValues] =
+    useState<RegisterUserDto>(initialFormValues);
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
   });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((previousValues) => {
+      return { ...previousValues, [name]: value };
+    });
+  };
+  function hasValidFormValues() {
+    if (formValues.username === '') {
+      setStatus({
+        type: 'error',
+        message: 'Username can not be empty',
+      });
+      return false;
+    } else if (formValues.email === '') {
+      setStatus({
+        type: 'error',
+        message: 'Email can not be empty',
+      });
+      return false;
+    } else if (formValues.fullName === '') {
+      setStatus({
+        type: 'error',
+        message: 'Full Name can not be empty',
+      });
+      return false;
+    } else if (formValues.password === '') {
+      setStatus({
+        type: 'error',
+        message: 'Password can not be empty',
+      });
+      return false;
+    } else if (formValues.password !== formValues.confirmationPassword) {
+      setStatus({
+        type: 'error',
+        message: 'Passwords are different',
+      });
+      return false;
+    }
+    return true;
+  }
   const navigate = useNavigate();
   async function register() {
+    if (!hasValidFormValues()) {
+      return;
+    }
     try {
       await authApi.authControllerRegisterLocalUser({
-        registerUserDto: {
-          username,
-          password,
-          confirmationPassword,
-          email,
-          fullName,
-        },
+        registerUserDto: formValues,
       });
       setStatus({
         type: 'success',
@@ -55,7 +97,7 @@ export default function RegisterPage() {
         } else if (error.response.status === 400) {
           setStatus({
             type: 'error',
-            message: 'Invalid email or wrong passwords',
+            message: 'Invalid email',
           });
         } else {
           setStatus({ type: 'error', message: `${error.response.statusText}` });
@@ -67,14 +109,14 @@ export default function RegisterPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    register();
+    register().catch((e) => console.error(e));
   };
 
   return (
     <div className="register">
       <div className="register-title">
         <Text
-          variant={TextVariant.SUBTITLE}
+          variant={TextVariant.TITLE}
           color={TextColor.GAME}
           weight={TextWeight.BOLD}
         >
@@ -97,52 +139,43 @@ export default function RegisterPage() {
               variant={InputVariant.LIGHT}
               label="Username"
               placeholder="username"
-              value={username}
+              value={formValues.username}
               name="username"
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Email"
               placeholder="email"
-              value={email}
+              value={formValues.email}
               name="email"
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              type="email"
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Full Name"
               placeholder="full name"
-              value={fullName}
-              name="fullname"
-              onChange={(e) => {
-                SetFullName(e.target.value);
-              }}
+              value={formValues.fullName}
+              name="fullName"
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               label="Password"
               placeholder="password"
-              value={password}
+              value={formValues.password}
               name="password"
               type="password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={handleInputChange}
             />
             <Input
               variant={InputVariant.LIGHT}
               placeholder="repeat password"
-              value={confirmationPassword}
+              value={formValues.confirmationPassword}
               name="confirmationPassword"
               type="password"
-              onChange={(e) => {
-                setConfirmationPassword(e.target.value);
-              }}
+              onChange={handleInputChange}
             />
             <Text
               variant={TextVariant.PARAGRAPH}
