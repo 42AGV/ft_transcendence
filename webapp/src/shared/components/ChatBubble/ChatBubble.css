@@ -1,0 +1,39 @@
+.chat-bubble {
+  display: flex;
+  align-items: flex-end;
+}
+
+.chat-bubble-self {
+  flex-direction: row-reverse;
+}
+
+.chat-bubble-other {
+  flex-direction: row;
+}
+
+.chat-bubble-text-author {
+  padding-left: 0.625rem;
+}
+
+.chat-bubble-text-author > p {
+  margin-bottom: 0.3rem;
+}
+
+.chat-bubble-text {
+  border-radius: 8px;
+  padding: 0.625rem;
+}
+
+.chat-bubble-text > p {
+  margin: 0;
+}
+
+.chat-bubble-text-self {
+  background-color: var(--color-submit);
+  margin-right: 0.625rem;
+}
+
+.chat-bubble-text-other {
+  background-color: var(--color-dark);
+  margin-left: 0.625rem;
+}
