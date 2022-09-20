@@ -38,7 +38,7 @@ export default function Landing() {
     <div className="landing">
       <div className="landing-title">
         <Text
-          variant={TextVariant.SUBTITLE}
+          variant={TextVariant.TITLE}
           color={TextColor.GAME}
           weight={TextWeight.BOLD}
         >
