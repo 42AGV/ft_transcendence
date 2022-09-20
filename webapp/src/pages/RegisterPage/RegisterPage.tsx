@@ -73,7 +73,7 @@ export default function RegisterPage() {
   }
   const navigate = useNavigate();
   async function register() {
-    if (hasValidFormValues()) {
+    if (!hasValidFormValues()) {
       return;
     }
     try {
