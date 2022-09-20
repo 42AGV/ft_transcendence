@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Color } from '../../types';
-import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
+import { AvatarProps, MediumAvatar } from '../Avatar/Avatar';
 import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import Status, { StatusVariant } from '../Status/Status';
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
@@ -48,7 +48,7 @@ export default function Header({
       {icon ? (
         <Icon variant={icon} size={IconSize.SMALL} color={Color.LIGHT} />
       ) : (
-        avatar && <SmallAvatar {...avatar} />
+        avatar && <MediumAvatar {...avatar} />
       )}
     </>
   );
