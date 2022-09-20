@@ -7,6 +7,7 @@
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
+  gap: 2rem var(--column-gap);
   grid-template-columns: repeat(var(--column-number), 1fr);
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
@@ -83,6 +84,7 @@
 @media (min-width: 768px) {
   .login {
     min-height: 20rem;
+    gap: 2rem var(--column-gap);
     padding: 4rem var(--padding-sides) 8rem var(--padding-sides);
     grid-template-columns: repeat(var(--column-number), 1fr);
     grid-template-rows: repeat(3, auto);
