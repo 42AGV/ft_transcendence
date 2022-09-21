@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -11,9 +11,13 @@ import {
   TextWeight,
 } from '../../shared/components';
 import { RegisterUserDto, ResponseError } from '../../shared/generated';
+import { useAuth } from '../../shared/hooks/UseAuth';
 import { authApi } from '../../shared/services/ApiService';
 import { SubmitStatus } from '../../shared/types';
-import { LOGIN_OPTIONS_URL } from '../../shared/urls';
+import {
+  DEFAULT_LOGIN_REDIRECT_URL,
+  LOGIN_OPTIONS_URL,
+} from '../../shared/urls';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
@@ -24,12 +28,18 @@ export default function RegisterPage() {
     password: '',
     confirmationPassword: '',
   };
+  const navigate = useNavigate();
   const [formValues, setFormValues] =
     useState<RegisterUserDto>(initialFormValues);
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
   });
+
+  const { isLoggedIn } = useAuth();
+  if (isLoggedIn) {
+    return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -71,7 +81,6 @@ export default function RegisterPage() {
     }
     return true;
   }
-  const navigate = useNavigate();
   async function register() {
     if (!hasValidFormValues()) {
       return;
