@@ -9,7 +9,7 @@ import {
   User,
   UserControllerGetUsersRequest,
 } from '../../shared/generated';
-import { DispatchPage } from '../../shared/components/index';
+import { RowsTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 
@@ -41,7 +41,7 @@ export default function PlayPage() {
     [],
   );
   return (
-    <DispatchPage
+    <RowsTemplate
       dataValidator={instanceOfUser}
       fetchFn={getUsers}
       dataMapper={mapUserToRow}

@@ -9,9 +9,10 @@ import {
   User,
   UserControllerGetUsersRequest,
 } from '../../shared/generated';
-import { DispatchPage } from '../../shared/components/index';
+import { RowsTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
+import { SearchContextProvider } from '../../shared/context/SearchContext';
 
 const mapUserToRow = (user: User): RowItem => {
   return {
@@ -31,17 +32,28 @@ const mapUserToRow = (user: User): RowItem => {
   };
 };
 
-export default function UsersPage() {
+// Aqui nos suscribimos al contexto, hacemos la peticion y gestionamos el ciclo de vida de los datos
+// Al template le pasamos los datos de las rows para que los pinte
+
+function UsersTemplateInstance() {
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
       usersApi.userControllerGetUsers(requestParameters),
     [],
   );
   return (
-    <DispatchPage
+    <RowsTemplate
       dataValidator={instanceOfUser}
       fetchFn={getUsers}
       dataMapper={mapUserToRow}
     />
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <SearchContextProvider>
+      <UsersTemplateInstance />
+    </SearchContextProvider>
   );
 }

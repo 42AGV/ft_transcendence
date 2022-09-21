@@ -1,15 +1,16 @@
-import './DispatchPage.css';
+import './RowsTemplate.css';
 import { useCallback, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { USER_URL, AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../urls';
-import { MediumAvatar } from '../Avatar/Avatar';
-import SearchForm from '../Input/SearchForm';
-import RowsList, { RowItem } from '../RowsList/RowsList';
-import NavigationBar from '../NavigationBar/NavigationBar';
-import UseSearch from '../../hooks/UseSearch';
-import { useData } from '../../hooks/UseData';
-import Loading from '../Loading/Loading';
-import { usersApi } from '../../services/ApiService';
+import { USER_URL, AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../../urls';
+import { MediumAvatar } from '../../Avatar/Avatar';
+import SearchForm from '../../Input/SearchForm';
+import RowsList, { RowItem } from '../../RowsList/RowsList';
+import NavigationBar from '../../NavigationBar/NavigationBar';
+import UseSearch from '../../../hooks/UseSearch';
+import { useData } from '../../../hooks/UseData';
+import Loading from '../../Loading/Loading';
+import { usersApi } from '../../../services/ApiService';
+import { useSearchContext } from '../../../context/SearchContext';
 
 type SearchFetchFnParams = {
   search: string;
@@ -20,28 +21,25 @@ type SearchFetchFn<T> = (
   requestParameters: SearchFetchFnParams,
 ) => Promise<T[]>;
 
-type DispatchPageProps<T> = {
+type RowsTemplateProps<T> = {
   fetchFn: SearchFetchFn<T>;
   dataValidator: (data: T) => boolean;
   dataMapper: (data: T) => RowItem;
   button?: JSX.Element; // TODO: this is provisional, until we have a better idiom
 };
 
-export default function DispatchPage<T>({
+export default function RowsTemplate<T>({
   fetchFn,
   dataValidator,
   dataMapper,
   button,
-}: DispatchPageProps<T>) {
-  const [searchParams, setSearchParams] = useState<SearchFetchFnParams>({
-    search: '',
-    offset: 0,
-  });
-  const { search } = searchParams;
+}: RowsTemplateProps<T>) {
+  const { query, setQuery } = useSearchContext();
+
   const getData = useCallback(() => {
-    return fetchFn(searchParams);
-  }, [fetchFn, searchParams]);
-  const { data, isLoading, hasMore } = UseSearch(search, getData);
+    return fetchFn(query);
+  }, [fetchFn, query]);
+  const { data, isLoading, hasMore } = UseSearch(query.search, getData);
   const observer = useRef<IntersectionObserver | null>(null);
 
   const lastRowElementRef = useCallback(
@@ -54,7 +52,7 @@ export default function DispatchPage<T>({
       }
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setSearchParams((prevSearchParams) => ({
+          setQuery((prevSearchParams) => ({
             ...prevSearchParams,
             offset: data.length,
           }));
@@ -64,7 +62,7 @@ export default function DispatchPage<T>({
         observer.current.observe(row);
       }
     },
-    [isLoading, hasMore, data.length],
+    [isLoading, hasMore, data.length, setQuery],
   );
 
   const mapDataToRows = (
@@ -84,9 +82,6 @@ export default function DispatchPage<T>({
     return array.every((element) => elementChecker(element));
   };
 
-  const handleSearch = (value: string) => {
-    setSearchParams({ search: value, offset: 0 });
-  };
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
     [],
@@ -119,7 +114,7 @@ export default function DispatchPage<T>({
         </Link>
       </div>
       <div className="dispatch-page-search">
-        <SearchForm search={search} onSearchChange={handleSearch} />
+        <SearchForm />
       </div>
       <div className="dispatch-page-rows">
         {instanceOfArrayTyped(data, dataValidator) && (
