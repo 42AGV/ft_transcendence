@@ -9,3 +9,5 @@ export { RowsListExample } from './RowsListExample';
 export { InputExample } from './InputExample';
 export { HeaderExample } from './HeaderExample';
 export { LoadingExample } from './LoadingExample';
+export { ChatBubbleExample } from './ChatBubbleExample';
+export { ToggleSwitchExample } from './ToggleSwitchExample';

@@ -17,6 +17,8 @@ import {
   InputExample,
   HeaderExample,
   LoadingExample,
+  ChatBubbleExample,
+  ToggleSwitchExample,
 } from './ComponentsExamples';
 import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
 
@@ -42,6 +44,8 @@ export default function ComponentsBookPage() {
       <RowsListExample />
       <InputExample />
       <LoadingExample />
+      <ChatBubbleExample />
+      <ToggleSwitchExample />
     </div>
   );
 }

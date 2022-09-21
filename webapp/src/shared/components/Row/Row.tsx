@@ -2,7 +2,7 @@ import Icon, { IconVariant, IconSize } from '../Icon/Icon';
 import './Row.css';
 import { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';
-import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
+import { AvatarProps, MediumAvatar } from '../Avatar/Avatar';
 import { Link } from 'react-router-dom';
 import React from 'react';
 
@@ -57,7 +57,7 @@ export default function Row({
   };
   const RowChildren: JSX.Element = (
     <>
-      {avatarProps && <SmallAvatar {...avatarProps} />}
+      {avatarProps && <MediumAvatar {...avatarProps} />}
       <div className={`row_text_wrapper`}>
         {title && (
           <Text
