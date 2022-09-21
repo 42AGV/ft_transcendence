@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -13,9 +13,15 @@ import {
 } from '../../shared/components';
 import { ResponseError } from '../../shared/generated';
 import { authApi } from '../../shared/services/ApiService';
-import { LOGIN_EP_URL, REGISTER_URL, USERS_URL } from '../../shared/urls';
+import {
+  DEFAULT_LOGIN_REDIRECT_URL,
+  LOGIN_EP_URL,
+  REGISTER_URL,
+  USERS_URL,
+} from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
 import './LoginPage.css';
+import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -25,6 +31,10 @@ export default function LoginPage() {
     message: '',
   });
 
+  const { isLoggedIn } = useAuth();
+  if (isLoggedIn) {
+    return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
+  }
   async function login() {
     try {
       await authApi.authControllerLoginLocalUser({
