@@ -1,50 +1,51 @@
-import { IconVariant, RowItem } from '../../shared/components';
-import {
-  AVATAR_EP_URL,
-  USERS_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
-import {
-  instanceOfUser,
-  User,
-  UserControllerGetUsersRequest,
-} from '../../shared/generated';
-import { DispatchPage } from '../../shared/components/index';
-import { useCallback } from 'react';
-import { usersApi } from '../../shared/services/ApiService';
+import io from 'socket.io-client';
+import { useEffect, useState } from 'react';
 
-/* TODO: implement this
-const mapChatToRow = (chat: Chat): RowItem => {
-  return {
-  };
-}; */
-const mapUserToRow = (user: User): RowItem => {
-  return {
-    iconVariant: IconVariant.ARROW_FORWARD,
-    avatarProps: {
-      url: user.avatarId
-        ? `${AVATAR_EP_URL}/${user.avatarId}`
-        : WILDCARD_AVATAR_URL,
-      status: 'offline',
-    },
-    url: `${USERS_URL}/${user.id}`,
-    title: user.username,
-    subtitle: 'level x',
-    key: user.id,
-  };
-};
+const socket = io.connect('http://localhost:3001');
 
-export default function ChatPage() {
-  const getUsers = useCallback(
-    (requestParameters: UserControllerGetUsersRequest) =>
-      usersApi.userControllerGetUsers(requestParameters),
-    [],
-  );
+function App() {
+  //Room State
+  const [room, setRoom] = useState('');
+
+  // Messages States
+  const [message, setMessage] = useState('');
+  const [messageReceived, setMessageReceived] = useState('');
+
+  const joinRoom = () => {
+    if (room !== '') {
+      socket.emit('join_room', room);
+    }
+  };
+
+  const sendMessage = () => {
+    socket.emit('send_message', { message, room });
+  };
+
+  useEffect(() => {
+    socket.on('receive_message', (data: any) => {
+      setMessageReceived(data.message);
+    });
+  }, [socket]);
   return (
-    <DispatchPage
-      dataValidator={instanceOfUser}
-      fetchFn={getUsers}
-      dataMapper={mapUserToRow}
-    />
+    <div className="App">
+      <input
+        placeholder="Room Number..."
+        onChange={(event) => {
+          setRoom(event.target.value);
+        }}
+      />
+      <button onClick={joinRoom}> Join Room</button>
+      <input
+        placeholder="Message..."
+        onChange={(event) => {
+          setMessage(event.target.value);
+        }}
+      />
+      <button onClick={sendMessage}> Send Message</button>
+      <h1> Message:</h1>
+      {messageReceived}
+    </div>
   );
 }
+
+export default App;

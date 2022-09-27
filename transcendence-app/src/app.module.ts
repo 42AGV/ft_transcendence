@@ -10,6 +10,7 @@ import * as session from 'express-session';
 import * as ConnectMemcached from 'connect-memcached';
 import * as passport from 'passport';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
+    ChatGateway,
   ],
 })
 export class AppModule {
