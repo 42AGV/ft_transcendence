@@ -1,4 +1,5 @@
 import {
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -8,45 +9,31 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway(81, {
-  cors: { origin: '*' },
+@WebSocketGateway({
+  cors: { origin: 'localhost:3000' },
+  namespace: 'api',
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   afterInit() {
-    console.log('Esto se ejecuta cuando inicia');
+    console.log('Al iniciar');
   }
 
   handleConnection() {
-    console.log('Hola alguien se conecto al socket 👌👌👌');
+    console.log('Conexión al sochet hecha');
   }
 
   handleDisconnect() {
     console.log('ALguien se fue! chao chao');
   }
 
-  @SubscribeMessage('event_join')
-  handleJoinRoom(client: Socket, room: string) {
-    client.join(`room_${room}`);
-  }
-
-  @SubscribeMessage('event_message') //TODO Backend
-  handleIncommingMessage(
-    client: Socket,
-    payload: { room: string; message: string },
-  ) {
-    const { room, message } = payload;
-    console.log(payload);
-    this.server.to(`room_${room}`).emit('new_message', message);
-  }
-
-  @SubscribeMessage('event_leave')
-  handleRoomLeave(client: Socket, room: string) {
-    console.log(`chao room_${room}`);
-    client.leave(`room_${room}`);
+  @SubscribeMessage('send_message')
+  handleIncommingMessage(@MessageBody() message: string): void {
+    console.log(message);
+    this.server.emit('new_message', message);
   }
 }
