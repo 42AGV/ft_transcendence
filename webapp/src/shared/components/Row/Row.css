@@ -27,9 +27,11 @@
 .row_text_wrapper > * {
   margin: 0;
   text-align: left;
+  overflow: hidden;
+  grid-column: 2/3;
+  max-width: 70vw;
   white-space: nowrap;
   text-overflow: ellipsis;
-  grid-column: 2/3;
 }
 
 .row-icon {
