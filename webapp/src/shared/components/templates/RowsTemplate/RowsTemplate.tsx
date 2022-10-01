@@ -1,97 +1,61 @@
 import './RowsTemplate.css';
-import { useCallback, useRef, useState } from 'react';
+import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { USER_URL, AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../../urls';
 import { MediumAvatar } from '../../Avatar/Avatar';
 import SearchForm from '../../Input/SearchForm';
 import RowsList, { RowItem } from '../../RowsList/RowsList';
 import NavigationBar from '../../NavigationBar/NavigationBar';
-import UseSearch from '../../../hooks/UseSearch';
 import { useData } from '../../../hooks/UseData';
 import Loading from '../../Loading/Loading';
 import { usersApi } from '../../../services/ApiService';
 import { useSearchContext } from '../../../context/SearchContext';
+import { UseIsElementVisible } from '../../../hooks/UseIsElementVisible';
 
-type SearchFetchFnParams = {
-  search: string;
-  offset: number;
+type RowsTemplateProps = {
+  setIsLastRow: React.Dispatch<React.SetStateAction<boolean>>;
+  data: RowItem[] | null;
+  isLoading: boolean;
+  hasMore: boolean;
 };
 
-type SearchFetchFn<T> = (
-  requestParameters: SearchFetchFnParams,
-) => Promise<T[]>;
+// Check and map in a single iteration to reduce calculations,
+export function validateAndMapDataToRow<T>(
+  elementChecker: (object: any) => boolean,
+  rowMapper: (data: T) => RowItem,
+  array: object,
+): RowItem[] | null {
+  let rows = [];
 
-type RowsTemplateProps<T> = {
-  fetchFn: SearchFetchFn<T>;
-  dataValidator: (data: T) => boolean;
-  dataMapper: (data: T) => RowItem;
-  button?: JSX.Element; // TODO: this is provisional, until we have a better idiom
-};
-
-export default function RowsTemplate<T>({
-  fetchFn,
-  dataValidator,
-  dataMapper,
-  button,
-}: RowsTemplateProps<T>) {
-  const { query, setQuery } = useSearchContext();
-
-  const getData = useCallback(() => {
-    return fetchFn(query);
-  }, [fetchFn, query]);
-  const { data, isLoading, hasMore } = UseSearch(query.search, getData);
-  const observer = useRef<IntersectionObserver | null>(null);
-
-  const lastRowElementRef = useCallback(
-    (row: HTMLLIElement) => {
-      if (isLoading) {
-        return;
-      }
-      if (observer.current) {
-        observer.current.disconnect();
-      }
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setQuery((prevSearchParams) => ({
-            ...prevSearchParams,
-            offset: data.length,
-          }));
-        }
-      });
-      if (row) {
-        observer.current.observe(row);
-      }
-    },
-    [isLoading, hasMore, data.length, setQuery],
-  );
-
-  const mapDataToRows = (
-    callBack: (data: T) => RowItem,
-    data: T[],
-  ): RowItem[] => {
-    return data.map((item) => callBack(item));
-  };
-
-  const instanceOfArrayTyped = (
-    array: object,
-    elementChecker: (object: any) => boolean,
-  ): boolean => {
-    if (!Array.isArray(array)) {
-      return false;
+  if (!Array.isArray(array)) {
+    return null;
+  }
+  for (let i = 0; i < array.length; i++) {
+    if (!elementChecker(array[i])) {
+      return null;
     }
-    return array.every((element) => elementChecker(element));
-  };
+    rows.push(rowMapper(array[i]));
+  }
+  return rows;
+}
 
-  const getCurrentUser = useCallback(
+export default function RowsTemplate({
+  data,
+  setIsLastRow,
+  isLoading,
+}: RowsTemplateProps) {
+  // Mover a un componente navigation
+  const getCurrentUser = React.useCallback(
     () => usersApi.userControllerGetCurrentUser(),
     [],
   );
   const { data: user } = useData(getCurrentUser);
+  //
 
-  if (!user) {
+  if (!(user && data)) {
     return (
-      <div className="dispatch-page">
-        <div className="dispatch-page-loading">
+      <div className="rows-template">
+        <div className="rows-template-loading">
           <Loading />
         </div>
       </div>
@@ -99,8 +63,8 @@ export default function RowsTemplate<T>({
   }
 
   return (
-    <div className="dispatch-page">
-      <div className="dispatch-page-avatar">
+    <div className="rows-template">
+      <div className="rows-template-avatar">
         <Link to={USER_URL}>
           <MediumAvatar
             url={
@@ -113,19 +77,16 @@ export default function RowsTemplate<T>({
           />
         </Link>
       </div>
-      <div className="dispatch-page-search">
+      <div className="rows-template-search">
         <SearchForm />
       </div>
-      <div className="dispatch-page-rows">
-        {instanceOfArrayTyped(data, dataValidator) && (
-          <RowsList
-            rows={mapDataToRows(dataMapper, data)}
-            lastRowRef={lastRowElementRef}
-          />
-        )}
+      <div className="rows-template-rows">
+        <RowsList
+          rows={data}
+          onLastRowVisible={() => console.log('is visible!')}
+        />
       </div>
-      {button && <div className="dispatch-page-button">{button}</div>}
-      <div className="dispatch-page-navigation">
+      <div className="rows-template-navigation">
         <NavigationBar />
       </div>
     </div>

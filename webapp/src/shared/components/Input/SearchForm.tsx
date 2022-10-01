@@ -5,7 +5,6 @@ import { IconVariant } from '../Icon/Icon';
 import { useSearchContext } from '../../context/SearchContext';
 
 export default function SearchForm() {
-  console.log('RenderSearchForm');
   const { query, onChange } = useSearchContext();
 
   return (

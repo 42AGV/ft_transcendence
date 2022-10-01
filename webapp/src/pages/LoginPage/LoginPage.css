@@ -1,8 +1,7 @@
 .login {
   margin: 0;
   padding: var(--padding-top-bottom) var(--padding-sides);
-  height: 100vh;
-  min-height: 40rem;
+  min-height: 100vh;
   overflow: hidden;
   background-color: var(--color-background);
   color: var(--color-light);

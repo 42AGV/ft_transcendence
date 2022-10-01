@@ -41,10 +41,11 @@ export default function ChatPage() {
     [],
   );
   return (
-    <RowsTemplate
-      dataValidator={instanceOfUser}
-      fetchFn={getUsers}
-      dataMapper={mapUserToRow}
-    />
+    // <RowsTemplate
+    //   dataValidator={instanceOfUser}
+    //   fetchFn={getUsers}
+    //   dataMapper={mapUserToRow}
+    // />
+    <div>BUILDING</div>
   );
 }

@@ -57,7 +57,11 @@ export default function Row({
   };
   const RowChildren: JSX.Element = (
     <>
-      {avatarProps && <MediumAvatar {...avatarProps} />}
+      {avatarProps && (
+        <div className="row-avatar">
+          <MediumAvatar {...avatarProps} />
+        </div>
+      )}
       <div className={`row_text_wrapper`}>
         {title && (
           <Text

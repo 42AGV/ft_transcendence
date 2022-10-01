@@ -18,6 +18,7 @@ import {
   LOGIN_EP_URL,
   REGISTER_URL,
   USERS_URL,
+  HOST_URL,
 } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
 import './LoginPage.css';
@@ -63,7 +64,7 @@ export default function LoginPage() {
 
   return (
     <div className="login">
-      <div className="login-title">
+      <Link className="login-title" to={HOST_URL}>
         <Text
           variant={TextVariant.TITLE}
           color={TextColor.GAME}
@@ -71,7 +72,7 @@ export default function LoginPage() {
         >
           PONG
         </Text>
-      </div>
+      </Link>
       <div className="landing-animation">
         <div className="landing-animation-ping"></div>
         <div className="landing-animation-pong"></div>

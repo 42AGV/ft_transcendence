@@ -1,25 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useData } from './UseData';
+import { useSearchContext } from '../context/SearchContext';
 
 export default function UseSearch<T>(
-  search: string,
-  fetchFn: () => Promise<T[]>,
+  fetchFn: (requestParams: {}) => Promise<T[]>,
 ) {
-  const [data, setData] = useState<T[]>([]);
-  const [hasMore, setHasMore] = useState(false);
-  const results = useData(fetchFn);
+  type SearchResult<T> = {
+    data: T[];
+    hasMore: boolean;
+  };
+
+  const [result, setResult] = useState<SearchResult<T>>({
+    data: [],
+    hasMore: false,
+  });
+
+  // revisar esto, mover esta logica dentro del contexto?
+  const { query } = useSearchContext();
+
+  const getData = useCallback(() => {
+    return fetchFn(query);
+  }, [fetchFn, query]);
+
+  const { data, error, isLoading } = useData(getData);
 
   useEffect(() => {
-    setData([]);
-  }, [search]);
-
-  useEffect(() => {
-    const newData = results.data;
-    if (newData) {
-      setData((prevData) => [...prevData, ...newData]);
-      setHasMore(newData.length > 0);
+    if (data && data.length > 0) {
+      //setResult((prevResult) => [...prevResult, ...data]);
+      setResult({
+        data: [...data],
+        hasMore: data.length > 0,
+      });
+    } else {
+      setResult({
+        data: [],
+        hasMore: false,
+      });
     }
-  }, [results.data]);
+  }, [data]);
 
-  return { isLoading: results.isLoading, error: results.error, data, hasMore };
+  return { isLoading, error, result };
 }

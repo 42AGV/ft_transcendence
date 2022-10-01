@@ -9,10 +9,16 @@ import {
   User,
   UserControllerGetUsersRequest,
 } from '../../shared/generated';
-import { RowsTemplate } from '../../shared/components/index';
+import {
+  RowsTemplate,
+  validateAndMapDataToRow,
+} from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
+import UseSearch from '../../shared/hooks/UseSearch';
+import { useState, useEffect } from 'react';
+import { useSearchContext } from '../../shared/context/SearchContext';
 
 const mapUserToRow = (user: User): RowItem => {
   return {
@@ -41,11 +47,32 @@ function UsersTemplateInstance() {
       usersApi.userControllerGetUsers(requestParameters),
     [],
   );
+  const [isLastRow, setIsLastRow] = useState(false);
+  const { result, isLoading } = UseSearch(getUsers);
+  const { setQuery } = useSearchContext();
+  const data = validateAndMapDataToRow(
+    instanceOfUser,
+    mapUserToRow,
+    result.data,
+  );
+
+  useEffect(() => {
+    // is loading ...
+    // if (result.hasMore) {
+    //   setQuery((prevSearchParams) => ({
+    //     ...prevSearchParams,
+    //     // darle una vuelta a esto
+    //     offset: data?.length ?? 0,
+    //   }));
+    // }
+  }, [setQuery, data]);
+
   return (
     <RowsTemplate
-      dataValidator={instanceOfUser}
-      fetchFn={getUsers}
-      dataMapper={mapUserToRow}
+      data={data}
+      setIsLastRow={setIsLastRow}
+      isLoading={isLoading}
+      hasMore={result.hasMore}
     />
   );
 }
