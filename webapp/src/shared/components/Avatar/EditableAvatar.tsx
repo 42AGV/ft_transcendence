@@ -7,27 +7,18 @@ export const EDITABLE_AVATAR_SCALE = 1.29;
 export const EDITABLE_AVATAR_SCALE_REVERSE = 1 / EDITABLE_AVATAR_SCALE;
 
 type EditableAvatarProps = AvatarProps & {
-  handleMouseDown?: ({
-    clientX,
-    clientY,
-  }: React.MouseEvent<Element, MouseEvent>) => void;
-  handleMouseMove?: ({
-    clientX,
-    clientY,
-  }: React.MouseEvent<Element, MouseEvent>) => void;
-  handleMouseUp?: ({
-    clientX,
-    clientY,
-  }: React.MouseEvent<Element, MouseEvent>) => void;
+  handleDown?: (e: React.MouseEvent | React.TouchEvent) => void;
+  handleMove?: (e: React.MouseEvent | React.TouchEvent) => void;
+  handleUp?: (e: React.MouseEvent | React.TouchEvent) => void;
 };
 
 export default function EditableAvatar({
   url,
   XCoordinate,
   YCoordinate,
-  handleMouseDown,
-  handleMouseUp,
-  handleMouseMove,
+  handleDown,
+  handleUp,
+  handleMove,
 }: EditableAvatarProps) {
   const FormatNumber = (value: number) =>
     Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
@@ -47,11 +38,14 @@ export default function EditableAvatar({
       </Text>
       <figure
         className="editable-avatar-wrapper"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseMove}
-        onMouseOut={handleMouseUp}
-        onMouseUp={handleMouseUp}
+        onMouseDown={handleDown}
+        onMouseMove={handleMove}
+        onMouseLeave={handleMove}
+        onMouseOut={handleUp}
+        onMouseUp={handleUp}
+        onTouchStart={handleDown}
+        onTouchMove={handleMove}
+        onTouchEnd={handleUp}
       >
         <img
           onDragStart={(e) => e.preventDefault()}

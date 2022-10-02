@@ -41,11 +41,10 @@ export default function EditAvatarPage() {
     (value: number) => -value * EDITABLE_AVATAR_SCALE,
     [],
   );
-  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag({
-      startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
-      reverseTransform,
-    });
+  const { picturePosition, handleDown, handleMove, handleUp } = useDrag({
+    startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
+    reverseTransform,
+  });
 
   const { imgName, imgFile } = imgData;
   const FormatNumber = (value: number) =>
@@ -110,9 +109,9 @@ export default function EditAvatarPage() {
         }
         XCoordinate={picturePosition.x}
         YCoordinate={picturePosition.y}
-        handleMouseDown={handleMouseDown}
-        handleMouseUp={handleMouseUp}
-        handleMouseMove={handleMouseMove}
+        handleDown={handleDown}
+        handleUp={handleUp}
+        handleMove={handleMove}
       />
       <Button
         variant={ButtonVariant.SUBMIT}

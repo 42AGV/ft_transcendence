@@ -12,6 +12,7 @@
 /* with the previous block, to improve human readability. */
 
 .edit-avatar-page {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem 0.5rem;
@@ -24,13 +25,19 @@
   align-self: center;
 }
 
+.edit-avatar-loading {
+  position: absolute;
+  top: 45%;
+}
+
 .edit-avatar-page .row {
   cursor: pointer;
-  width: 15rem;
+  width: 100%;
 }
 
 .edit-avatar-page .button {
   z-index: 1;
+  width: 100%;
 }
 
 @media (min-height: 800px) {
@@ -51,5 +58,11 @@
 
   .edit-avatar-page .editable-avatar {
     align-self: flex-start;
+  }
+}
+
+@media all and (min-width: 768px) {
+  .edit-avatar-page .row {
+    width: 15rem;
   }
 }

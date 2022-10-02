@@ -20,11 +20,10 @@
 }
 
 .editable-avatar__image {
-  user-drag: none;
   -webkit-user-drag: none;
   margin: 0;
-  width: 16rem;
-  height: 16rem;
+  width: 15rem;
+  height: 15rem;
   object-fit: cover;
   transform: scale(1.29); /* EDITABLE_AVATAR_SCALE */
   mask-image: radial-gradient(

@@ -74,7 +74,7 @@ export default function EditUserForm({
   }, [status]);
 
   return (
-    <>
+    <div className="edit-user">
       <form
         id="edit-user-form"
         className="edit-user-form"
@@ -121,13 +121,11 @@ export default function EditUserForm({
           </Text>
         </div>
       </form>
-      <div className="edit-user-form-button">
-        <Button
-          form="edit-user-form"
-          children="Save"
-          variant={ButtonVariant.SUBMIT}
-        />
-      </div>
-    </>
+      <Button
+        form="edit-user-form"
+        children="Save"
+        variant={ButtonVariant.SUBMIT}
+      />
+    </div>
   );
 }
