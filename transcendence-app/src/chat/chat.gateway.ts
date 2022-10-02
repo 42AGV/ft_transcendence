@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -8,6 +9,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { User } from 'src/user/user.domain';
 
 @WebSocketGateway({
   cors: { origin: 'localhost:3000' },
@@ -24,7 +26,7 @@ export class ChatGateway
   }
 
   handleConnection() {
-    console.log('Conexión al sochet hecha');
+    console.log('Conexión al socket lista');
   }
 
   handleDisconnect() {
@@ -32,8 +34,21 @@ export class ChatGateway
   }
 
   @SubscribeMessage('send_message')
-  handleIncommingMessage(@MessageBody() message: string): void {
-    console.log(message);
-    this.server.emit('new_message', message);
+  handleIncommingMessage(
+    socket: Socket,
+    data: { room: string; message: string; userId: string },
+  ): void {
+    const { message, room, userId } = data;
+    console.log({ message: message, userId: userId });
+    this.server
+      .to(room)
+      .emit('new_message', { message: message, userId: userId });
+  }
+  @SubscribeMessage('join_room')
+  handleJoinRoom(
+    @MessageBody() room: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.join(room);
   }
 }

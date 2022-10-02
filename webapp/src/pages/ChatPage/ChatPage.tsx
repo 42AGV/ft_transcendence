@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ChatBubble,
   ChatBubbleVariant,
@@ -13,37 +13,59 @@ import {
 import { USER_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import './chatPage.css';
 import { Link } from 'react-router-dom';
-import { usersApi } from '../../shared/services/ApiService';
+import { useAuth } from '../../shared/hooks/UseAuth';
 
 const socket = io('localhost:3000/api');
 type SearchFetchFnParams = {
   search: string;
   offset: number;
 };
+type Message = {
+  message: string;
+  userId: string;
+};
 export default function ChatPage() {
+  const [room, setroom] = useState('');
   const [message, setMessage] = useState('');
-  const [messageReceived, setMessageReceived] = useState('');
+  const [myMessage, setMyMessage] = useState(false);
+  const [messagesReceived, setMessagesReceived] = useState<Message[]>([]);
   const [searchParams, setSearchParams] = useState<SearchFetchFnParams>({
     search: '',
     offset: 0,
   });
   const { search } = searchParams;
+  const { me } = useAuth();
+  const myId = me?.id;
   const sendMessage = () => {
-    socket.emit('send_message', { message });
+    if (myId) {
+      socket.emit('send_message', { message, room, myId });
+    }
   };
 
   useEffect(() => {
-    socket.on('new_message', (data: any) => {
-      setMessageReceived(data.message);
+    socket.on('new_message', (data: Message) => {
+      setMessagesReceived([...messagesReceived, data]);
+      data.userId === myId ? setMyMessage(true) : setMyMessage(false);
     });
-  }, [socket]);
+  }, [messagesReceived, myId]);
   const randomAvatar = WILDCARD_AVATAR_URL;
-  const buttonAction = (): void => alert('This is an alert');
+  const buttonAction1 = () => {
+    setroom('1');
+    socket.emit('join_room', room);
+  };
+  const buttonAction2 = () => {
+    setroom('2');
+    socket.emit('join_room', room);
+  };
+  const buttonAction3 = () => {
+    setroom('3');
+    socket.emit('join_room', room);
+  };
   const rowsData: RowItem[] = [
     {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: { url: randomAvatar, status: 'online' },
-      onClick: buttonAction,
+      onClick: buttonAction1,
       title: 'John Doe',
       subtitle: 'level 3',
       key: '75442486-0878-440c-9db1-a7006c25a39f',
@@ -51,7 +73,7 @@ export default function ChatPage() {
     {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: { url: randomAvatar, status: 'offline' },
-      onClick: buttonAction,
+      onClick: buttonAction2,
       title: 'Jane Doe',
       subtitle: 'level 99',
       key: '99a46451-975e-4d08-a697-9fa9c15f47a6',
@@ -59,7 +81,7 @@ export default function ChatPage() {
     {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: { url: randomAvatar, status: 'playing' },
-      onClick: buttonAction,
+      onClick: buttonAction3,
       title: 'Joe Shmoe',
       subtitle: 'level 0',
       key: '5c2013ba-45a0-45b9-b65e-750757df21a0',
@@ -94,11 +116,21 @@ export default function ChatPage() {
         <button onClick={sendMessage}> Send Message</button>
       </div>
       <div className="chat-page-messages">
-        <ChatBubble
-          text={messageReceived}
-          variant={ChatBubbleVariant.OTHER}
-        ></ChatBubble>
+        {messagesReceived.map((item) =>
+          myMessage ? (
+            <ChatBubble
+              text={item.message}
+              variant={ChatBubbleVariant.SELF}
+            ></ChatBubble>
+          ) : (
+            <ChatBubble
+              text={item.message}
+              variant={ChatBubbleVariant.OTHER}
+            ></ChatBubble>
+          ),
+        )}
       </div>
+      <h1 className="room">Room: {room}</h1>
     </div>
   );
 }

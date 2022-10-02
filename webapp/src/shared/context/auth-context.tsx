@@ -15,6 +15,7 @@ import { HOST_URL } from '../urls';
 interface AuthContextType {
   isLoggedIn: boolean;
   isLoading: boolean;
+  me: User | null;
   logout: () => void;
 }
 
@@ -61,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isLoading: isLoading,
       logout: logout,
       isLoggedIn: user !== null,
+      me: user,
     }),
     [isLoading, user, logout],
   );

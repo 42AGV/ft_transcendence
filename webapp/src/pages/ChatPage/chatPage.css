@@ -58,16 +58,9 @@
     grid-column: 5 / var(--column-end);
     grid-row: 3/4;
   }
-}
 
-@media all and (min-width: 1200px) {
-  .chat-page-navigation {
-    grid-column: 9 / var(--column-end);
-  }
-}
-
-@media all and (max-width: 1200px) {
-  .chat-page-avatar {
-    display: flex;
+  .room {
+    grid-column: 1 / 5;
+    grid-row: 3/4;
   }
 }
