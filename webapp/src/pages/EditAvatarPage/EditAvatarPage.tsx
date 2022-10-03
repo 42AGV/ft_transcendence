@@ -6,9 +6,13 @@ import {
   Header,
   IconVariant,
   Loading,
+  Text,
+  TextVariant,
+  TextColor,
   Row,
 } from '../../shared/components';
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { SubmitStatus } from '../../shared/types';
 import { goBack } from '../../shared/callbacks';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +30,10 @@ type ImgData = {
 };
 
 export default function EditAvatarPage() {
+  const [status, setStatus] = useState<SubmitStatus>({
+    type: 'pending',
+    message: '',
+  });
   const [imgData, setImgData] = useState<ImgData>({
     imgName: null,
     imgFile: null,
@@ -57,14 +65,27 @@ export default function EditAvatarPage() {
           avatarY: FormatNumber(picturePosition.y),
         },
       })
-      .catch((e) => console.error(e));
+      .then(() =>
+        setStatus({
+          type: 'success',
+          message: 'Image settings saved correctly.',
+        }),
+      )
+      .catch((e) =>
+        setStatus({ type: 'error', message: e.response.statusText }),
+      );
   };
 
   const uploadAvatar = async () => {
     if (imgFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
-        .catch((e) => console.error(e))
+        .then(() =>
+          setStatus({ type: 'success', message: 'Image uploaded correctly.' }),
+        )
+        .catch((e) =>
+          setStatus({ type: 'error', message: e.response.statusText }),
+        )
         .finally(() => {
           setImgData({
             imgName: null,
@@ -113,6 +134,16 @@ export default function EditAvatarPage() {
         handleUp={handleUp}
         handleMove={handleMove}
       />
+      {status.type !== 'pending' && (
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={
+            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+          }
+        >
+          {status.message}
+        </Text>
+      )}
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}

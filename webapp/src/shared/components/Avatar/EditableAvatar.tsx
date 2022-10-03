@@ -40,7 +40,7 @@ export default function EditableAvatar({
         className="editable-avatar-wrapper"
         onMouseDown={handleDown}
         onMouseMove={handleMove}
-        onMouseLeave={handleMove}
+        onMouseLeave={handleUp}
         onMouseOut={handleUp}
         onMouseUp={handleUp}
         onTouchStart={handleDown}
