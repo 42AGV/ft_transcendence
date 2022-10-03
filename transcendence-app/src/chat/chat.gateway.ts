@@ -9,7 +9,13 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { User } from 'src/user/user.domain';
+import { v4 as uuidv4 } from 'uuid';
+
+type Message = {
+  messageId: string;
+  message: string;
+  userId: string;
+};
 
 @WebSocketGateway({
   cors: { origin: 'localhost:3000' },
@@ -35,14 +41,17 @@ export class ChatGateway
 
   @SubscribeMessage('send_message')
   handleIncommingMessage(
-    socket: Socket,
-    data: { room: string; message: string; userId: string },
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { message: string; room: string; myId: string },
   ): void {
-    const { message, room, userId } = data;
-    console.log({ message: message, userId: userId });
-    this.server
-      .to(room)
-      .emit('new_message', { message: message, userId: userId });
+    console.log(data);
+    const newMessage: Message = {
+      messageId: uuidv4(),
+      message: data.message,
+      userId: data.myId,
+    };
+    console.log({ newMessage });
+    this.server.to(data.room).emit('new_message', newMessage);
   }
   @SubscribeMessage('join_room')
   handleJoinRoom(
@@ -50,5 +59,12 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
   ) {
     client.join(room);
+  }
+  @SubscribeMessage('leave_room')
+  handleLeaveRoom(
+    @MessageBody() room: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.leave(room);
   }
 }

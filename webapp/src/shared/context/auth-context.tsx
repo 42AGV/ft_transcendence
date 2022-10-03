@@ -24,8 +24,8 @@ export const AuthContext = createContext<AuthContextType>(null!);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const getCurrentUser = useCallback(() => {
-    return usersApi.userControllerGetCurrentUser();
+  const getCurrentUser = useCallback(async () => {
+    return await usersApi.userControllerGetCurrentUser();
   }, []);
   const { data, isLoading: isDataLoading } = useData<User>(getCurrentUser);
   const navigate = useNavigate();

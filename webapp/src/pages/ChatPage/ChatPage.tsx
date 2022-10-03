@@ -4,6 +4,7 @@ import {
   ChatBubble,
   ChatBubbleVariant,
   IconVariant,
+  Input,
   MediumAvatar,
   NavigationBar,
   RowItem,
@@ -21,13 +22,13 @@ type SearchFetchFnParams = {
   offset: number;
 };
 type Message = {
+  messageId: string;
   message: string;
   userId: string;
 };
 export default function ChatPage() {
   const [room, setroom] = useState('');
   const [message, setMessage] = useState('');
-  const [myMessage, setMyMessage] = useState(false);
   const [messagesReceived, setMessagesReceived] = useState<Message[]>([]);
   const [searchParams, setSearchParams] = useState<SearchFetchFnParams>({
     search: '',
@@ -39,25 +40,33 @@ export default function ChatPage() {
   const sendMessage = () => {
     if (myId) {
       socket.emit('send_message', { message, room, myId });
+      console.log({ message, room, myId });
     }
   };
-
   useEffect(() => {
     socket.on('new_message', (data: Message) => {
       setMessagesReceived([...messagesReceived, data]);
-      data.userId === myId ? setMyMessage(true) : setMyMessage(false);
     });
   }, [messagesReceived, myId]);
   const randomAvatar = WILDCARD_AVATAR_URL;
   const buttonAction1 = () => {
+    if (room !== '') {
+      socket.emit('leave_room', room);
+    }
     setroom('1');
     socket.emit('join_room', room);
   };
   const buttonAction2 = () => {
+    if (room !== '') {
+      socket.emit('leave_room', room);
+    }
     setroom('2');
     socket.emit('join_room', room);
   };
   const buttonAction3 = () => {
+    if (room !== '') {
+      socket.emit('leave_room', room);
+    }
     setroom('3');
     socket.emit('join_room', room);
   };
@@ -107,26 +116,47 @@ export default function ChatPage() {
         <RowsList rows={rowsData} />
       </div>
       <div className="chat-page-input-message">
-        <input
+        <Input
           placeholder="Message..."
           onChange={(event) => {
             setMessage(event.target.value);
           }}
+          iconVariant={IconVariant.ARROW_FORWARD}
         />
         <button onClick={sendMessage}> Send Message</button>
       </div>
       <div className="chat-page-messages">
-        {messagesReceived.map((item) =>
-          myMessage ? (
-            <ChatBubble
-              text={item.message}
-              variant={ChatBubbleVariant.SELF}
-            ></ChatBubble>
+        {messagesReceived.map((item, index) =>
+          item.userId === myId ? (
+            <li key={index}>
+              <ChatBubble
+                text={item.message}
+                variant={ChatBubbleVariant.SELF}
+                avatar={
+                  index === 0
+                    ? { url: randomAvatar }
+                    : messagesReceived[index].userId ===
+                      messagesReceived[index - 1].userId
+                    ? { url: '' }
+                    : { url: randomAvatar }
+                }
+              ></ChatBubble>
+            </li>
           ) : (
-            <ChatBubble
-              text={item.message}
-              variant={ChatBubbleVariant.OTHER}
-            ></ChatBubble>
+            <li key={index}>
+              <ChatBubble
+                text={item.message}
+                variant={ChatBubbleVariant.OTHER}
+                avatar={
+                  index === 0
+                    ? { url: randomAvatar }
+                    : messagesReceived[index].userId ===
+                      messagesReceived[index - 1].userId
+                    ? { url: '' }
+                    : { url: randomAvatar }
+                }
+              ></ChatBubble>
+            </li>
           ),
         )}
       </div>
