@@ -45,8 +45,9 @@ export default function RowsTemplate<T>({
   dataMapper,
 }: RowsTemplateProps<T>) {
   const { result, isLoading } = UseSearch(fetchFn, maxEntries);
-  const data = validateAndMapDataToRow(dataValidator, dataMapper, result.data);
   const { query, setQuery } = useSearchContext();
+
+  const data = validateAndMapDataToRow(dataValidator, dataMapper, result.data);
 
   const getCurrentUser = React.useCallback(
     () => usersApi.userControllerGetCurrentUser(),
@@ -64,6 +65,7 @@ export default function RowsTemplate<T>({
     );
   }
 
+  console.log(data);
   return (
     <div className="rows-template">
       <div className="rows-template-avatar">
@@ -86,7 +88,6 @@ export default function RowsTemplate<T>({
         <RowsList
           rows={data}
           onLastRowVisible={() => {
-            console.log(result);
             if (!isLoading && result.hasMore) {
               setQuery({ search: query.search, offset: data.length });
             }
