@@ -26,21 +26,11 @@ function Messages({ socket }: MessagesProps) {
       });
     };
 
-    const deleteMessageListener = (messageID: string) => {
-      setMessages((prevMessages) => {
-        const newMessages = { ...prevMessages };
-        delete newMessages[messageID];
-        return newMessages;
-      });
-    };
-
     socket.on('message', messageListener);
-    socket.on('deleteMessage', deleteMessageListener);
     socket.emit('getMessages');
 
     return () => {
       socket.off('message', messageListener);
-      socket.off('deleteMessage', deleteMessageListener);
     };
   }, [socket]);
 
