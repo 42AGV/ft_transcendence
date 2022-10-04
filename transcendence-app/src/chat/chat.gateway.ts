@@ -22,7 +22,7 @@ type Message = {
   createdAt: number;
 };
 
-@WebSocketGateway()
+@WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
