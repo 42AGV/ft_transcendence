@@ -12,16 +12,16 @@
   border-bottom: 1px solid var(--color-light);
 }
 
-.user,
-.date {
+.message-username,
+.message-date {
   font-size: 0.625rem;
   color: var(--color-light);
 }
 
-.user {
+.message-username {
   min-width: 7.5rem;
 }
 
-.message {
+.message-content {
   flex-grow: 1;
 }

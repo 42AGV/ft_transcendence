@@ -17,9 +17,9 @@ import { ChatService } from './chat.service';
 
 type Message = {
   id: string;
-  username: string;
-  value: string;
-  time: number;
+  user: User;
+  content: string;
+  createdAt: number;
 };
 
 @WebSocketGateway()
@@ -73,9 +73,9 @@ export class ChatGateway
     if (user) {
       const message: Message = {
         id: uuidv4(),
-        username: user.username,
-        value: data,
-        time: Date.now(),
+        user: user,
+        content: data,
+        createdAt: Date.now(),
       };
       this.messages.add(message);
       this.sendMessage(message);
@@ -89,6 +89,6 @@ export class ChatGateway
 
   @SubscribeMessage('getMessages')
   handleGetMessages() {
-    return this.messages;
+    this.messages.forEach((message) => this.sendMessage(message));
   }
 }

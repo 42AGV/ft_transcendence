@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
+import { User } from '../../shared/generated';
 import './Messages.css';
 
 type MessagesProps = {
@@ -8,9 +9,9 @@ type MessagesProps = {
 
 type MessageType = {
   id: string;
-  username: string;
-  value: string;
-  time: number;
+  user: User;
+  content: string;
+  createdAt: number;
 };
 
 function Messages({ socket }: MessagesProps) {
@@ -46,17 +47,19 @@ function Messages({ socket }: MessagesProps) {
   return (
     <div className="message-list">
       {[...Object.values(messages)]
-        .sort((a: MessageType, b: MessageType) => a.time - b.time)
+        .sort((a: MessageType, b: MessageType) => a.createdAt - b.createdAt)
         .map((message) => (
           <div
             key={message.id}
             className="message-container"
-            title={`Sent at ${new Date(message.time).toLocaleTimeString()}`}
+            title={`Sent at ${new Date(
+              message.createdAt,
+            ).toLocaleTimeString()}`}
           >
-            <span className="user">{message.username}:</span>
-            <span className="message">{message.value}</span>
-            <span className="date">
-              {new Date(message.time).toLocaleTimeString()}
+            <span className="message-username">{message.user.username}:</span>
+            <span className="message-content">{message.content}</span>
+            <span className="message-date">
+              {new Date(message.createdAt).toLocaleTimeString()}
             </span>
           </div>
         ))}
