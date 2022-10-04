@@ -1,4 +1,4 @@
-import { Logger /*, UseGuards */ } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -8,56 +8,56 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Request } from 'express';
 import { Socket, Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-// TODO: Implement WebSocket authentication guard WsAuthenticatedGuard
-// import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
+import { User } from '../user/user.domain';
 
-type UserType = {
+type Message = {
   id: string;
-  name: string;
-};
-
-type MessageType = {
-  id: string;
-  user: UserType;
+  username: string;
   value: string;
   time: number;
 };
 
-const defaultUser = {
-  id: 'anon',
-  name: 'Anonymous',
-};
-
 @WebSocketGateway()
-// @UseGuards(AuthenticatedGuard)
+@UseGuards(WsAuthenticatedGuard)
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
   logger = new Logger(ChatGateway.name);
-  messages = new Set<MessageType>();
-  users = new Map<Socket, UserType>();
+  messages = new Set<Message>();
+  users = new Map<string, User>();
 
-  handleConnection(socket: Socket) {
-    this.logger.log(`client ${socket.id} connected`);
-    this.users.set(socket, { id: socket.id, name: socket.id });
+  async handleConnection(client: Socket) {
+    const user = await (client.request as Request).user;
+    if (!user) {
+      client.disconnect();
+    } else {
+      this.users.set((user as User).id, user as User);
+      this.logger.log(`user ${(user as User).username} connected`);
+    }
   }
 
-  handleDisconnect(socket: Socket) {
-    this.logger.log(`client ${socket.id} disconnected`);
-    this.users.delete(socket);
+  async handleDisconnect(client: Socket) {
+    const user = await (client.request as Request).user;
+    if (user) {
+      this.users.delete((user as User).id);
+      this.logger.log(`user ${(user as User).username} disconnected`);
+    }
   }
 
   @SubscribeMessage('message')
-  handleMessage(
+  async handleMessage(
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const message: MessageType = {
+    const user = await (client.request as Request).user;
+    const message: Message = {
       id: uuidv4(),
-      user: this.users.get(client) || defaultUser,
+      username: (user as User).username,
       value: data,
       time: Date.now(),
     };
@@ -65,7 +65,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.sendMessage(message);
   }
 
-  sendMessage(message: MessageType) {
+  sendMessage(message: Message) {
     // client.broadcast.emit('message', message);
     this.server.emit('message', message);
   }

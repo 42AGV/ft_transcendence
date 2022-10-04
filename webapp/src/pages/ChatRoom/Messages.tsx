@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import './Messages.css';
 
@@ -6,14 +6,9 @@ type MessagesProps = {
   socket: Socket;
 };
 
-type UserType = {
-  id: string;
-  name: string;
-};
-
 type MessageType = {
   id: string;
-  user: UserType;
+  username: string;
   value: string;
   time: number;
 };
@@ -58,7 +53,7 @@ function Messages({ socket }: MessagesProps) {
             className="message-container"
             title={`Sent at ${new Date(message.time).toLocaleTimeString()}`}
           >
-            <span className="user">{message.user.name}:</span>
+            <span className="user">{message.username}:</span>
             <span className="message">{message.value}</span>
             <span className="date">
               {new Date(message.time).toLocaleTimeString()}
