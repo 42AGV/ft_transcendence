@@ -8,11 +8,10 @@ import {
   EnvironmentVariables,
   validate,
 } from '../../src/config/env.validation';
-import * as session from 'express-session';
-import * as ConnectMemcached from 'connect-memcached';
-import * as passport from 'passport';
 import { AuthService } from '../../src/auth/auth.service';
 import { UserModule } from '../../src/user/user.module';
+import { setupApp } from '../../src/setup-app';
+import { ChatModule } from '../../src/chat/chat.module';
 
 describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
@@ -29,6 +28,7 @@ describe('[Feature] Auth - /auth', () => {
         }),
         AuthModule,
         UserModule,
+        ChatModule,
       ],
       providers: [AuthService],
       controllers: [AuthController],
@@ -37,24 +37,7 @@ describe('[Feature] Auth - /auth', () => {
     app = moduleFixture.createNestApplication();
     config =
       moduleFixture.get<ConfigService<EnvironmentVariables>>(ConfigService);
-
-    const MemcachedStore = ConnectMemcached(session);
-    const memcachedHost = config.get('MEMCACHED_HOST') as string;
-    const memcachedPort = config.get('MEMCACHED_PORT') as string;
-
-    app.use(
-      session({
-        secret: config.get('SESSION_SECRET') as string,
-        resave: false,
-        saveUninitialized: false,
-        store: new MemcachedStore({
-          hosts: [`${memcachedHost}:${memcachedPort}`],
-          secret: config.get('MEMCACHED_SECRET'),
-        }),
-      }),
-    );
-    app.use(passport.initialize());
-    app.use(passport.session());
+    setupApp(app);
     app.init();
   });
 
