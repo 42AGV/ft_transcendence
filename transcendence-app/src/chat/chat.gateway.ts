@@ -8,7 +8,6 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Request } from 'express';
 import { Socket, Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
@@ -29,23 +28,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   logger = new Logger(ChatGateway.name);
   messages = new Set<Message>();
-  users = new Map<string, User>();
+  connectedUsers = new Map<string, User>();
 
   async handleConnection(client: Socket) {
-    const user = await (client.request as Request).user;
+    const user = await client.request.user;
     if (!user) {
       client.disconnect();
     } else {
-      this.users.set((user as User).id, user as User);
-      this.logger.log(`user ${(user as User).username} connected`);
+      this.connectedUsers.set(user.id, user);
+      this.logger.log(`user ${user.username} connected`);
     }
   }
 
   async handleDisconnect(client: Socket) {
-    const user = await (client.request as Request).user;
+    const user = await client.request.user;
     if (user) {
-      this.users.delete((user as User).id);
-      this.logger.log(`user ${(user as User).username} disconnected`);
+      this.connectedUsers.delete(user.id);
+      this.logger.log(`user ${user.username} disconnected`);
     }
   }
 
@@ -54,15 +53,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const user = await (client.request as Request).user;
-    const message: Message = {
-      id: uuidv4(),
-      username: (user as User).username,
-      value: data,
-      time: Date.now(),
-    };
-    this.messages.add(message);
-    this.sendMessage(message);
+    const user = await client.request.user;
+    if (user) {
+      const message: Message = {
+        id: uuidv4(),
+        username: user.username,
+        value: data,
+        time: Date.now(),
+      };
+      this.messages.add(message);
+      this.sendMessage(message);
+    }
   }
 
   sendMessage(message: Message) {
