@@ -52,8 +52,11 @@ export class ChatGateway
     } else {
       this.connectedUsers.set(user.id, user);
       const sessionId = client.request.session.id;
+      // Join the session ID room to keep track of all the clients linked to this session ID
       client.join(sessionId);
-      const matchingSockets = await this.server.in(sessionId).allSockets();
+      // Join the user ID room to keep track of all the connected clients
+      client.join(user.id);
+      const matchingSockets = await this.server.in(user.id).allSockets();
       const isConnectedOnce = matchingSockets.size === 1;
       if (isConnectedOnce) {
         this.server.emit('userConnected', user);
@@ -69,13 +72,13 @@ export class ChatGateway
   async handleDisconnect(client: Socket) {
     const user = client.request.user;
     if (user) {
-      const sessionId = client.request.session.id;
-      const matchingSockets = await this.server.in(sessionId).allSockets();
+      const matchingSockets = await this.server.in(user.id).allSockets();
       const isDisconnectedAll = matchingSockets.size === 0;
       if (isDisconnectedAll) {
         this.connectedUsers.delete(user.id);
         this.server.emit('userDisconnected', user);
       }
+      const sessionId = client.request.session.id;
       this.logger.log(
         `user ${user.username} with sessionID ${sessionId} and socketID ${
           client.id

@@ -36,7 +36,6 @@ function Messages() {
     };
 
     const userConnectedListener = (newUser: User) => {
-      console.log('user connected', newUser);
       setConnectedUsers(
         (prevConnectedUsers) =>
           new Map(prevConnectedUsers.set(newUser.id, newUser)),
@@ -44,7 +43,6 @@ function Messages() {
     };
 
     const userDisconnectedListener = (user: User) => {
-      console.log('user disconnected', user);
       setConnectedUsers((prevConnectedUsers) => {
         prevConnectedUsers.delete(user.id);
         return new Map(prevConnectedUsers);
