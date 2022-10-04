@@ -21,6 +21,10 @@
   grid-area: messages;
   overflow-y: scroll;
   overflow-x: hidden;
+
+  /* Scroll to the bottom of the messages list using CSS - https://stackoverflow.com/a/72644230 */
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .chat-room-message-input {
