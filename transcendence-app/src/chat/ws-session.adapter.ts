@@ -25,8 +25,8 @@ export class WsSessionAdapter extends IoAdapter {
     server.use(wrap(passport.session()));
 
     // only allow authenticated users
-    server.use(async (socket, next) => {
-      const user = await socket.request.user;
+    server.use((socket, next) => {
+      const user = socket.request.user;
       if (user) {
         next();
       } else {

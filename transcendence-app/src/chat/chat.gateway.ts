@@ -1,4 +1,9 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Logger,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -24,6 +29,7 @@ type Message = {
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -40,36 +46,50 @@ export class ChatGateway
   }
 
   async handleConnection(client: Socket) {
-    const user = await client.request.user;
+    const user = client.request.user;
     if (!user) {
       client.disconnect();
     } else {
       this.connectedUsers.set(user.id, user);
       const sessionId = client.request.session.id;
       client.join(sessionId);
+      const matchingSockets = await this.server.in(sessionId).allSockets();
+      const isConnectedOnce = matchingSockets.size === 1;
+      if (isConnectedOnce) {
+        this.server.emit('userConnected', user);
+      }
       this.logger.log(
-        `user ${user.username} with sessionID ${sessionId} and socketID ${client.id} connected`,
+        `user ${user.username} with sessionID ${sessionId} and socketID ${
+          client.id
+        } connected ${isConnectedOnce ? '' : 'from a new tab or window'}`,
       );
     }
   }
 
   async handleDisconnect(client: Socket) {
-    const user = await client.request.user;
+    const user = client.request.user;
     if (user) {
-      this.connectedUsers.delete(user.id);
       const sessionId = client.request.session.id;
+      const matchingSockets = await this.server.in(sessionId).allSockets();
+      const isDisconnectedAll = matchingSockets.size === 0;
+      if (isDisconnectedAll) {
+        this.connectedUsers.delete(user.id);
+        this.server.emit('userDisconnected', user);
+      }
       this.logger.log(
-        `user ${user.username} with sessionID ${sessionId} and socketID ${client.id} disconnected`,
+        `user ${user.username} with sessionID ${sessionId} and socketID ${
+          client.id
+        } disconnected ${isDisconnectedAll ? '' : 'from a tab or window'}`,
       );
     }
   }
 
   @SubscribeMessage('message')
-  async handleMessage(
+  handleMessage(
     @MessageBody() data: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const user = await client.request.user;
+    const user = client.request.user;
     if (user) {
       const message: Message = {
         id: uuidv4(),
@@ -83,12 +103,16 @@ export class ChatGateway
   }
 
   sendMessage(message: Message) {
-    // client.broadcast.emit('message', message);
     this.server.emit('message', message);
   }
 
   @SubscribeMessage('getMessages')
   handleGetMessages() {
     this.server.emit('messages', [...this.messages]);
+  }
+
+  @SubscribeMessage('getConnectedUsers')
+  handleGetConnectedUsers() {
+    this.server.emit('users', Array.from(this.connectedUsers.values()));
   }
 }
