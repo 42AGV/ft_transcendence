@@ -3,6 +3,14 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, Socket } from 'socket.io';
 import * as express from 'express';
 import * as passport from 'passport';
+import { User } from '../user/user.domain';
+
+// TODO: Move this module declaration to another file
+declare module 'http' {
+  interface IncomingMessage {
+    user: User;
+  }
+}
 
 export class WsSessionAdapter extends IoAdapter {
   constructor(
@@ -19,12 +27,16 @@ export class WsSessionAdapter extends IoAdapter {
         middleware(socket.request, {}, next);
       };
 
-    // server.use((socket, next) => {
-    //   this.session(socket.request, {}, next);
-    // });
     server.use(wrap(this.session));
     server.use(wrap(passport.initialize()));
     server.use(wrap(passport.session()));
+    server.use((socket, next) => {
+      if (socket.request.user) {
+        next();
+      } else {
+        next(new Error('Forbidden'));
+      }
+    });
     return server;
   }
 }
