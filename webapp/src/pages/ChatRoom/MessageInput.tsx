@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Socket } from 'socket.io-client';
+import { Input, InputVariant } from '../../shared/components';
 import './MessageInput.css';
 
 type NewMessagesProps = {
@@ -15,9 +16,9 @@ const NewMessage = ({ socket }: NewMessagesProps) => {
   };
 
   return (
-    <form onSubmit={submitForm}>
-      <input
-        autoFocus
+    <form className="message-input-form" onSubmit={submitForm}>
+      <Input
+        variant={InputVariant.LIGHT}
         value={value}
         placeholder="Type your message"
         onChange={(e) => {

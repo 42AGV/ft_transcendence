@@ -6,22 +6,6 @@
 .message-container {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  flex-direction: row;
-  padding: 0.5rem;
+  justify-content: space-between;
   border-bottom: 1px solid var(--color-light);
-}
-
-.message-username,
-.message-date {
-  font-size: 0.625rem;
-  color: var(--color-light);
-}
-
-.message-username {
-  min-width: 7.5rem;
-}
-
-.message-content {
-  flex-grow: 1;
 }

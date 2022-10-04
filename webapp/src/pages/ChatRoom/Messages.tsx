@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
+import { Text, TextColor, TextVariant } from '../../shared/components';
 import { User } from '../../shared/generated';
 import './Messages.css';
 
@@ -46,11 +47,15 @@ function Messages({ socket }: MessagesProps) {
               message.createdAt,
             ).toLocaleTimeString()}`}
           >
-            <span className="message-username">{message.user.username}:</span>
-            <span className="message-content">{message.content}</span>
-            <span className="message-date">
+            <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
+              {`${message.user.username}: `}
+            </Text>
+            <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
+              {message.content}
+            </Text>
+            <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
               {new Date(message.createdAt).toLocaleTimeString()}
-            </span>
+            </Text>
           </div>
         ))}
     </div>

@@ -1,9 +1,5 @@
-form {
+.message-input-form {
   max-width: 32rem;
   width: 100%;
-}
-
-input {
-  width: 100%;
-  padding: 0.5rem;
+  margin-top: 0.5rem;
 }
