@@ -57,6 +57,7 @@
   .chat-page-input-message {
     grid-column: 5 / var(--column-end);
     grid-row: 3/4;
+    display: flex;
   }
 
   .room {

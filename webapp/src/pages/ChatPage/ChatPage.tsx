@@ -1,10 +1,13 @@
 import io from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import {
+  Button,
+  ButtonVariant,
   ChatBubble,
   ChatBubbleVariant,
   IconVariant,
   Input,
+  InputVariant,
   MediumAvatar,
   NavigationBar,
   RowItem,
@@ -122,8 +125,13 @@ export default function ChatPage() {
             setMessage(event.target.value);
           }}
           iconVariant={IconVariant.ARROW_FORWARD}
+          variant={InputVariant.DARK}
         />
-        <button onClick={sendMessage}> Send Message</button>
+        <Button
+          children="Send Message"
+          variant={ButtonVariant.SUBMIT}
+          onClick={sendMessage}
+        />
       </div>
       <div className="chat-page-messages">
         {messagesReceived.map((item, index) =>
