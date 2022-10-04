@@ -40,18 +40,18 @@ function Messages() {
 
   return (
     <div className="messages-list">
-      {[...Object.values(messages)]
+      {messages
         .sort((a: MessageType, b: MessageType) => a.createdAt - b.createdAt)
         .map((message) => (
           <ChatBubble
-            text={message.content}
+            key={message.id}
             variant={
               user && user.id === message.user.id
                 ? ChatBubbleVariant.SELF
                 : ChatBubbleVariant.OTHER
             }
-            key={message.id}
             name={message.user.username}
+            text={message.content}
             avatar={{
               url: message.user.avatarId
                 ? `${AVATAR_EP_URL}/${message.user.avatarId}`
