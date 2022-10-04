@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { Socket } from 'socket.io-client';
 import { Input, InputVariant } from '../../shared/components';
+import socket from '../../shared/socket';
 import './MessageInput.css';
 
-type NewMessagesProps = {
-  socket: Socket;
-};
-
-const NewMessage = ({ socket }: NewMessagesProps) => {
+const NewMessage = () => {
   const [value, setValue] = useState('');
   const submitForm = (e: React.FormEvent) => {
     e.preventDefault();

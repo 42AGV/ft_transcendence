@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Socket } from 'socket.io-client';
 import { Text, TextColor, TextVariant } from '../../shared/components';
 import { User } from '../../shared/generated';
+import socket from '../../shared/socket';
 import './Messages.css';
-
-type MessagesProps = {
-  socket: Socket;
-};
 
 type MessageType = {
   id: string;
@@ -15,7 +11,7 @@ type MessageType = {
   createdAt: number;
 };
 
-function Messages({ socket }: MessagesProps) {
+function Messages() {
   const [messages, setMessages] = useState<Record<string, MessageType>>({});
 
   useEffect(() => {
@@ -33,7 +29,7 @@ function Messages({ socket }: MessagesProps) {
     return () => {
       socket.off('message', messageListener);
     };
-  }, [socket]);
+  }, []);
 
   return (
     <div className="message-list">
@@ -50,9 +46,11 @@ function Messages({ socket }: MessagesProps) {
             <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
               {`${message.user.username}: `}
             </Text>
-            <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
-              {message.content}
-            </Text>
+            <div className="message-content">
+              <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
+                {message.content}
+              </Text>
+            </div>
             <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
               {new Date(message.createdAt).toLocaleTimeString()}
             </Text>
