@@ -4,6 +4,7 @@ import {
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -12,6 +13,7 @@ import { Socket, Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { User } from '../user/user.domain';
+import { ChatService } from './chat.service';
 
 type Message = {
   id: string;
@@ -22,13 +24,20 @@ type Message = {
 
 @WebSocketGateway()
 @UseGuards(WsAuthenticatedGuard)
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer()
-  server!: Server;
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer() server!: Server;
 
   logger = new Logger(ChatGateway.name);
   messages = new Set<Message>();
   connectedUsers = new Map<string, User>();
+
+  constructor(private chatService: ChatService) {}
+
+  afterInit(server: Server) {
+    this.chatService.socket = server;
+  }
 
   async handleConnection(client: Socket) {
     const user = await client.request.user;
@@ -36,7 +45,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.disconnect();
     } else {
       this.connectedUsers.set(user.id, user);
-      this.logger.log(`user ${user.username} connected`);
+      const sessionId = client.request.session.id;
+      client.join(sessionId);
+      this.logger.log(
+        `user ${user.username} with sessionID ${sessionId} and socketID ${client.id} connected`,
+      );
     }
   }
 
@@ -44,7 +57,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const user = await client.request.user;
     if (user) {
       this.connectedUsers.delete(user.id);
-      this.logger.log(`user ${user.username} disconnected`);
+      const sessionId = client.request.session.id;
+      this.logger.log(
+        `user ${user.username} with sessionID ${sessionId} and socketID ${client.id} disconnected`,
+      );
     }
   }
 
