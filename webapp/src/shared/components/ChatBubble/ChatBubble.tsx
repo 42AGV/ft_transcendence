@@ -23,7 +23,9 @@ export default function ChatBubble({
   return (
     <div className={`chat-bubble chat-bubble-${variant}`}>
       {avatar && <SmallAvatar {...avatar} />}
-      <div className={'chat-bubble-text-container'}>
+      <div
+        className={`chat-bubble-text-container chat-bubble-text-container-${variant}`}
+      >
         <div className={'chat-bubble-text-author'}>
           {name && (
             <Text

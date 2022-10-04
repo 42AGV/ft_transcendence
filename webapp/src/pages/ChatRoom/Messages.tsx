@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Text, TextColor, TextVariant } from '../../shared/components';
+import { ChatBubble, ChatBubbleVariant } from '../../shared/components';
 import { User } from '../../shared/generated';
+import { useAuth } from '../../shared/hooks/UseAuth';
 import socket from '../../shared/socket';
-import './Messages.css';
+import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 
 type MessageType = {
   id: string;
@@ -12,49 +13,51 @@ type MessageType = {
 };
 
 function Messages() {
-  const [messages, setMessages] = useState<Record<string, MessageType>>({});
+  const [messages, setMessages] = useState<MessageType[]>([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     const messageListener = (message: MessageType) => {
       setMessages((prevMessages) => {
-        const newMessages = { ...prevMessages };
-        newMessages[message.id] = message;
+        const newMessages = [...prevMessages, message];
         return newMessages;
       });
     };
 
+    const messagesListener = (messages: MessageType[]) => {
+      setMessages(messages);
+    };
+
     socket.on('message', messageListener);
+    socket.on('messages', messagesListener);
     socket.emit('getMessages');
 
     return () => {
       socket.off('message', messageListener);
+      socket.off('messages', messageListener);
     };
   }, []);
 
   return (
-    <div className="message-list">
+    <div className="messages-list">
       {[...Object.values(messages)]
         .sort((a: MessageType, b: MessageType) => a.createdAt - b.createdAt)
         .map((message) => (
-          <div
+          <ChatBubble
+            text={message.content}
+            variant={
+              user && user.id === message.user.id
+                ? ChatBubbleVariant.SELF
+                : ChatBubbleVariant.OTHER
+            }
             key={message.id}
-            className="message-container"
-            title={`Sent at ${new Date(
-              message.createdAt,
-            ).toLocaleTimeString()}`}
-          >
-            <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
-              {`${message.user.username}: `}
-            </Text>
-            <div className="message-content">
-              <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
-                {message.content}
-              </Text>
-            </div>
-            <Text variant={TextVariant.PARAGRAPH} color={TextColor.LIGHT}>
-              {new Date(message.createdAt).toLocaleTimeString()}
-            </Text>
-          </div>
+            name={message.user.username}
+            avatar={{
+              url: message.user.avatarId
+                ? `${AVATAR_EP_URL}/${message.user.avatarId}`
+                : WILDCARD_AVATAR_URL,
+            }}
+          />
         ))}
     </div>
   );

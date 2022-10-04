@@ -89,6 +89,6 @@ export class ChatGateway
 
   @SubscribeMessage('getMessages')
   handleGetMessages() {
-    this.messages.forEach((message) => this.sendMessage(message));
+    this.server.emit('messages', [...this.messages]);
   }
 }

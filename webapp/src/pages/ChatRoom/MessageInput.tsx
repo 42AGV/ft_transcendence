@@ -14,7 +14,7 @@ const NewMessage = () => {
   return (
     <form className="message-input-form" onSubmit={submitForm}>
       <Input
-        variant={InputVariant.LIGHT}
+        variant={InputVariant.DARK}
         value={value}
         placeholder="Type your message"
         onChange={(e) => {

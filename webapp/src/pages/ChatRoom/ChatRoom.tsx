@@ -1,19 +1,25 @@
 import Messages from './Messages';
 import MessageInput from './MessageInput';
-import { Text, TextColor, TextVariant } from '../../shared/components';
+import { Header, IconVariant } from '../../shared/components';
 
 import './ChatRoom.css';
+import { useNavigate } from 'react-router-dom';
+import { goBack } from '../../shared/callbacks';
 
 function ChatRoom() {
+  const navigate = useNavigate();
+
   return (
     <div className="chat-room">
       <div className="chat-room-header">
-        <Text variant={TextVariant.HEADING} color={TextColor.LIGHT}>
+        <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
           Chat Room
-        </Text>
+        </Header>
       </div>
-      <div className="chat-room-container">
+      <div className="chat-room-messages">
         <Messages />
+      </div>
+      <div className="chat-room-message-input">
         <MessageInput />
       </div>
     </div>

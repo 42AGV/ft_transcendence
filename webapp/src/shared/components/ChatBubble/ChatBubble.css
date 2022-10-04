@@ -22,6 +22,7 @@
 .chat-bubble-text {
   border-radius: 8px;
   padding: 0.625rem;
+  overflow-x: hidden;
 }
 
 .chat-bubble-text > p {
@@ -30,10 +31,20 @@
 
 .chat-bubble-text-self {
   background-color: var(--color-submit);
-  margin-right: 0.625rem;
 }
 
 .chat-bubble-text-other {
   background-color: var(--color-dark);
+}
+
+.chat-bubble-text-container {
+  flex: 0 1 auto;
+  overflow-x: hidden;
+}
+
+.chat-bubble-text-container-self {
+  margin-right: 0.625rem;
+}
+.chat-bubble-text-container-other {
   margin-left: 0.625rem;
 }
