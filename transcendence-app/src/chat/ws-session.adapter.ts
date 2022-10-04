@@ -3,14 +3,6 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, Socket } from 'socket.io';
 import * as express from 'express';
 import * as passport from 'passport';
-import { User } from '../user/user.domain';
-
-// TODO: Move this module declaration to another file
-declare module 'http' {
-  interface IncomingMessage {
-    user: User;
-  }
-}
 
 export class WsSessionAdapter extends IoAdapter {
   constructor(
