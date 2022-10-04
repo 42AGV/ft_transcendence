@@ -28,6 +28,7 @@ import {
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
+import ChatRoom from './pages/ChatRoom/ChatRoom';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -94,6 +95,14 @@ root.render(
             element={
               <RequireAuth>
                 <EditAvatarPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="chatroom"
+            element={
+              <RequireAuth>
+                <ChatRoom />
               </RequireAuth>
             }
           />

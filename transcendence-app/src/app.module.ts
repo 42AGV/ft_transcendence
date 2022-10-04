@@ -10,6 +10,7 @@ import * as session from 'express-session';
 import * as ConnectMemcached from 'connect-memcached';
 import * as passport from 'passport';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       validate,
     }),
     AuthModule,
+    ChatModule,
   ],
   providers: [
     {

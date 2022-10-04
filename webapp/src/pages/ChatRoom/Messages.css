@@ -1,0 +1,27 @@
+.message-list {
+  max-width: 32rem;
+  width: 100%;
+}
+
+.message-container {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-direction: row;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-light);
+}
+
+.user,
+.date {
+  font-size: 0.625rem;
+  color: var(--color-light);
+}
+
+.user {
+  min-width: 7.5rem;
+}
+
+.message {
+  flex-grow: 1;
+}
