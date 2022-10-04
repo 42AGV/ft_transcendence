@@ -9,16 +9,12 @@ import {
   User,
   UserControllerGetUsersRequest,
 } from '../../shared/generated';
-import {
-  RowsTemplate,
-  validateAndMapDataToRow,
-} from '../../shared/components/index';
+import { RowsTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
-import UseSearch from '../../shared/hooks/UseSearch';
-import { useState, useEffect } from 'react';
-import { useSearchContext } from '../../shared/context/SearchContext';
+
+const ENTRIES_LIMIT = 15;
 
 const mapUserToRow = (user: User): RowItem => {
   return {
@@ -38,49 +34,24 @@ const mapUserToRow = (user: User): RowItem => {
   };
 };
 
-// Aqui nos suscribimos al contexto, hacemos la peticion y gestionamos el ciclo de vida de los datos
-// Al template le pasamos los datos de las rows para que los pinte
-
-function UsersTemplateInstance() {
+export default function UsersPage() {
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
-      usersApi.userControllerGetUsers(requestParameters),
+      usersApi.userControllerGetUsers({
+        ...requestParameters,
+        limit: ENTRIES_LIMIT,
+      }),
     [],
   );
-  const [isLastRow, setIsLastRow] = useState(false);
-  const { result, isLoading } = UseSearch(getUsers);
-  const { setQuery } = useSearchContext();
-  const data = validateAndMapDataToRow(
-    instanceOfUser,
-    mapUserToRow,
-    result.data,
-  );
 
-  useEffect(() => {
-    // is loading ...
-    // if (result.hasMore) {
-    //   setQuery((prevSearchParams) => ({
-    //     ...prevSearchParams,
-    //     // darle una vuelta a esto
-    //     offset: data?.length ?? 0,
-    //   }));
-    // }
-  }, [setQuery, data]);
-
-  return (
-    <RowsTemplate
-      data={data}
-      setIsLastRow={setIsLastRow}
-      isLoading={isLoading}
-      hasMore={result.hasMore}
-    />
-  );
-}
-
-export default function UsersPage() {
   return (
     <SearchContextProvider>
-      <UsersTemplateInstance />
+      <RowsTemplate
+        fetchFn={getUsers}
+        maxEntries={ENTRIES_LIMIT}
+        dataMapper={mapUserToRow}
+        dataValidator={instanceOfUser}
+      />
     </SearchContextProvider>
   );
 }

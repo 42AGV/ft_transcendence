@@ -9,17 +9,16 @@ import NavigationBar from '../../NavigationBar/NavigationBar';
 import { useData } from '../../../hooks/UseData';
 import Loading from '../../Loading/Loading';
 import { usersApi } from '../../../services/ApiService';
+import UseSearch from '../../../hooks/UseSearch';
 import { useSearchContext } from '../../../context/SearchContext';
-import { UseIsElementVisible } from '../../../hooks/UseIsElementVisible';
 
-type RowsTemplateProps = {
-  setIsLastRow: React.Dispatch<React.SetStateAction<boolean>>;
-  data: RowItem[] | null;
-  isLoading: boolean;
-  hasMore: boolean;
+type RowsTemplateProps<T> = {
+  fetchFn: (requestParams: {}) => Promise<T[]>;
+  maxEntries: number;
+  dataValidator: (data: T) => boolean;
+  dataMapper: (data: T) => RowItem;
 };
 
-// Check and map in a single iteration to reduce calculations,
 export function validateAndMapDataToRow<T>(
   elementChecker: (object: any) => boolean,
   rowMapper: (data: T) => RowItem,
@@ -39,18 +38,21 @@ export function validateAndMapDataToRow<T>(
   return rows;
 }
 
-export default function RowsTemplate({
-  data,
-  setIsLastRow,
-  isLoading,
-}: RowsTemplateProps) {
-  // Mover a un componente navigation
+export default function RowsTemplate<T>({
+  fetchFn,
+  maxEntries,
+  dataValidator,
+  dataMapper,
+}: RowsTemplateProps<T>) {
+  const { result, isLoading } = UseSearch(fetchFn, maxEntries);
+  const data = validateAndMapDataToRow(dataValidator, dataMapper, result.data);
+  const { query, setQuery } = useSearchContext();
+
   const getCurrentUser = React.useCallback(
     () => usersApi.userControllerGetCurrentUser(),
     [],
   );
   const { data: user } = useData(getCurrentUser);
-  //
 
   if (!(user && data)) {
     return (
@@ -83,7 +85,12 @@ export default function RowsTemplate({
       <div className="rows-template-rows">
         <RowsList
           rows={data}
-          onLastRowVisible={() => console.log('is visible!')}
+          onLastRowVisible={() => {
+            console.log(result);
+            if (!isLoading && result.hasMore) {
+              setQuery({ search: query.search, offset: data.length });
+            }
+          }}
         />
       </div>
       <div className="rows-template-navigation">

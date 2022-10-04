@@ -4,6 +4,7 @@ import { useSearchContext } from '../context/SearchContext';
 
 export default function UseSearch<T>(
   fetchFn: (requestParams: {}) => Promise<T[]>,
+  maxEntries: number,
 ) {
   type SearchResult<T> = {
     data: T[];
@@ -15,7 +16,6 @@ export default function UseSearch<T>(
     hasMore: false,
   });
 
-  // revisar esto, mover esta logica dentro del contexto?
   const { query } = useSearchContext();
 
   const getData = useCallback(() => {
@@ -26,11 +26,17 @@ export default function UseSearch<T>(
 
   useEffect(() => {
     if (data && data.length > 0) {
-      //setResult((prevResult) => [...prevResult, ...data]);
-      setResult({
-        data: [...data],
-        hasMore: data.length > 0,
-      });
+      if (query.offset > 0) {
+        setResult((prevResult) => ({
+          data: [...prevResult.data, ...data],
+          hasMore: data.length === maxEntries,
+        }));
+      } else {
+        setResult({
+          data: [...data],
+          hasMore: data.length === maxEntries,
+        });
+      }
     } else {
       setResult({
         data: [],

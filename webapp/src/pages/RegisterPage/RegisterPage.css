@@ -59,7 +59,7 @@
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
   .register {
-    min-height: 20rem;
+    min-height: 100vh;
     padding: 4rem var(--padding-sides) 8rem var(--padding-sides);
     grid-template-columns: repeat(var(--column-number), 1fr);
     grid-template-rows: repeat(2, auto);
