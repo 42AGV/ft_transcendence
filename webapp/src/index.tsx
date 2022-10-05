@@ -13,6 +13,7 @@ import {
   EditAvatarPage,
   LoginPage,
   RegisterPage,
+  ChatRoom,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -28,7 +29,6 @@ import {
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
-import ChatRoom from './pages/ChatRoom/ChatRoom';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
