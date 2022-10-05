@@ -37,7 +37,8 @@ export class ChatGateway
 
   logger = new Logger(ChatGateway.name);
   messages = new Set<Message>();
-  connectedUsers = new Map<string, User>();
+  // Set of user IDs of the connected users
+  connectedUsers = new Set<string>();
 
   constructor(private chatService: ChatService) {}
 
@@ -50,7 +51,7 @@ export class ChatGateway
     if (!user) {
       client.disconnect();
     } else {
-      this.connectedUsers.set(user.id, user);
+      this.connectedUsers.add(user.id);
       const sessionId = client.request.session.id;
       // Join the session ID room to keep track of all the clients linked to this session ID
       client.join(sessionId);
@@ -116,6 +117,6 @@ export class ChatGateway
 
   @SubscribeMessage('getConnectedUsers')
   handleGetConnectedUsers() {
-    this.server.emit('users', Array.from(this.connectedUsers.values()));
+    this.server.emit('users', [...this.connectedUsers]);
   }
 }
