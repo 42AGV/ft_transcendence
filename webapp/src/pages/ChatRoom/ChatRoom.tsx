@@ -1,10 +1,9 @@
 import Messages from './Messages';
 import MessageInput from './MessageInput';
 import { Header, IconVariant } from '../../shared/components';
-
-import './ChatRoom.css';
 import { useNavigate } from 'react-router-dom';
 import { goBack } from '../../shared/callbacks';
+import './ChatRoom.css';
 
 function ChatRoom() {
   const navigate = useNavigate();

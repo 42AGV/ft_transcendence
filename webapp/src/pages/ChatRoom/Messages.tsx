@@ -14,9 +14,6 @@ type MessageType = {
 
 function Messages() {
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [connectedUsers, setConnectedUsers] = useState<Map<string, User>>(
-    new Map<string, User>(),
-  );
   const { user: me } = useAuth();
 
   useEffect(() => {
@@ -31,38 +28,13 @@ function Messages() {
       });
     };
 
-    const usersListener = (users: User[]) => {
-      setConnectedUsers(new Map(users.map((user) => [user.id, user])));
-    };
-
-    const userConnectedListener = (newUser: User) => {
-      setConnectedUsers(
-        (prevConnectedUsers) =>
-          new Map(prevConnectedUsers.set(newUser.id, newUser)),
-      );
-    };
-
-    const userDisconnectedListener = (user: User) => {
-      setConnectedUsers((prevConnectedUsers) => {
-        prevConnectedUsers.delete(user.id);
-        return new Map(prevConnectedUsers);
-      });
-    };
-
     socket.on('message', messageListener);
     socket.on('messages', messagesListener);
-    socket.on('userConnected', userConnectedListener);
-    socket.on('userDisconnected', userDisconnectedListener);
-    socket.on('users', usersListener);
     socket.emit('getMessages');
-    socket.emit('getConnectedUsers');
 
     return () => {
       socket.off('message', messageListener);
       socket.off('messages', messageListener);
-      socket.off('userConnected', userConnectedListener);
-      socket.off('userDisconnected', userDisconnectedListener);
-      socket.off('users', usersListener);
     };
   }, []);
 
@@ -82,7 +54,6 @@ function Messages() {
             url: message.user.avatarId
               ? `${AVATAR_EP_URL}/${message.user.avatarId}`
               : WILDCARD_AVATAR_URL,
-            status: connectedUsers.has(message.user.id) ? 'online' : 'offline',
           }}
         />
       ))}
