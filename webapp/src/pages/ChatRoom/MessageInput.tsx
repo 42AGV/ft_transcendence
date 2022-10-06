@@ -21,6 +21,7 @@ const MessageInput = () => {
         className="message-input-text"
         placeholder="Type your message"
         onBeforeInput={(e) => setValue(e.currentTarget.innerText)}
+        onBlur={(e) => setValue(e.currentTarget.innerText)}
         contentEditable
         ref={messageInputRef}
       />
