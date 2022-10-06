@@ -11,6 +11,7 @@ import * as ConnectMemcached from 'connect-memcached';
 import * as passport from 'passport';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ChatGateway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ChatGateway } from './chat/chat.gateway';
       validate,
     }),
     AuthModule,
+    ChatModule,
   ],
   providers: [
     {

@@ -30,3 +30,15 @@ CREATE TABLE
     "userId" UUID REFERENCES Users(id),
     PRIMARY KEY ("providerId", "provider")
   )
+
+CREATE TABLE
+  IF NOT EXISTS Chats(
+    "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    "chatName" VARCHAR(100) NOT NULL UNIQUE,
+    "password" TEXT,
+    "avatarId" UUID REFERENCES LocalFile(id) UNIQUE,
+    "avatarX" SMALLINT DEFAULT 0,
+    "avatarY" SMALLINT DEFAULT 0,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    "owner" UUID REFERENCES Users(id) UNIQUE,
+  );
