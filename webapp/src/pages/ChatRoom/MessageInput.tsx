@@ -1,28 +1,32 @@
-import React, { useState } from 'react';
-import { Input, InputVariant } from '../../shared/components';
+import React, { useRef, useState } from 'react';
+import { Button, ButtonVariant } from '../../shared/components';
 import socket from '../../shared/socket';
 import './MessageInput.css';
 
-const NewMessage = () => {
+const MessageInput = () => {
   const [value, setValue] = useState('');
+  const messageInputRef = useRef<HTMLDivElement>(null);
   const submitForm = (e: React.FormEvent) => {
     e.preventDefault();
     socket.emit('message', value);
     setValue('');
+    if (messageInputRef.current) {
+      messageInputRef.current.innerText = '';
+    }
   };
 
   return (
     <form className="message-input-form" onSubmit={submitForm}>
-      <Input
-        variant={InputVariant.DARK}
-        value={value}
+      <div
+        className="message-input-text"
         placeholder="Type your message"
-        onChange={(e) => {
-          setValue(e.currentTarget.value);
-        }}
+        onBeforeInput={(e) => setValue(e.currentTarget.innerText)}
+        contentEditable
+        ref={messageInputRef}
       />
+      <Button variant={ButtonVariant.SUBMIT}>Send</Button>
     </form>
   );
 };
 
-export default NewMessage;
+export default MessageInput;
