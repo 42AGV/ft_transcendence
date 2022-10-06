@@ -13,6 +13,7 @@ type ChatBubbleProps = {
   text: string;
   name?: string;
   isConsecutive?: boolean;
+  isFirst?: boolean;
 };
 
 export default function ChatBubble({
@@ -21,6 +22,7 @@ export default function ChatBubble({
   text,
   name,
   isConsecutive = false,
+  isFirst = true,
 }: ChatBubbleProps) {
   return (
     <div className={`chat-bubble chat-bubble-${variant}`}>
@@ -31,7 +33,7 @@ export default function ChatBubble({
         className={`chat-bubble-text-container chat-bubble-text-container-${variant}`}
       >
         <div className={'chat-bubble-text-author'}>
-          {name && !isConsecutive && (
+          {name && isFirst && (
             <Text
               variant={TextVariant.CAPTION}
               color={TextColor.LIGHT}

@@ -45,6 +45,9 @@ function Messages() {
         const isConsecutive =
           index !== messages.length - 1 &&
           messages[index].user.id === messages[index + 1].user.id;
+        const isFirst =
+          index === 0 ||
+          messages[index].user.id !== messages[index - 1].user.id;
         return (
           <li key={message.id} className="messages-list-item">
             <ChatBubble
@@ -61,6 +64,7 @@ function Messages() {
                   : WILDCARD_AVATAR_URL,
               }}
               isConsecutive={isConsecutive}
+              isFirst={isFirst}
             />
           </li>
         );
