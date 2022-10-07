@@ -8,6 +8,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Console } from 'console';
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -44,7 +45,6 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { message: string; room: string; myId: string },
   ): void {
-    console.log(data);
     const newMessage: Message = {
       messageId: uuidv4(),
       message: data.message,
@@ -58,6 +58,7 @@ export class ChatGateway
     @MessageBody() room: string,
     @ConnectedSocket() client: Socket,
   ) {
+    console.log('room:', room);
     client.join(room);
   }
   @SubscribeMessage('leave_room')

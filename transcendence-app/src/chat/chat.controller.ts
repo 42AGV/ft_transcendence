@@ -16,8 +16,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserDto } from './dto/user.dto';
+import { ChatService } from './chat.service';
+import { ChatDto } from './dto/chat.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
   ApiBadRequestResponse,
@@ -32,9 +32,9 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
+import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
-import { User } from './user.domain';
+import { Chat } from './chat.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
 import {
   AVATARS_PATH,
@@ -42,7 +42,7 @@ import {
   AVATAR_MIMETYPE_WHITELIST,
   MAX_ENTRIES_PER_PAGE,
 } from '../constants';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateChatDto } from './dto/update-chat.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
@@ -65,18 +65,18 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
   },
 });
 
-@Controller('users')
+@Controller('Chats')
 @UseGuards(AuthenticatedGuard)
-@ApiTags('users')
+@ApiTags('Chats')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: ChatService) {}
 
   @Post()
   @ApiCreatedResponse({ description: 'Create a user', type: User })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addUser(@Body() userDto: UserDto): Promise<User> {
+  async addUser(@Body() userDto: ChatDto): Promise<User> {
     const user = await this.userService.addUser(userDto);
     if (!user) {
       throw new UnprocessableEntityException();
@@ -89,11 +89,11 @@ export class UserController {
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateCurrentUser(
     @GetUser() user: User,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateChatDto: UpdateChatDto,
   ): Promise<User> {
     const updatedUser = await this.userService.updateUser(
       user.id,
-      updateUserDto,
+      updateChatDto,
     );
     if (!updatedUser) {
       throw new UnprocessableEntityException();
@@ -109,19 +109,19 @@ export class UserController {
 
   @Get()
   @ApiOkResponse({
-    description: `Lists all users (max ${MAX_ENTRIES_PER_PAGE})`,
+    description: `Lists all Chats (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [User],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async getUsers(
-    @Query() usersPaginationQueryDto: UsersPaginationQueryDto,
+  async getChats(
+    @Query() ChatsPaginationQueryDto: ChatsPaginationQueryDto,
   ): Promise<User[]> {
-    const users = await this.userService.retrieveUsers(usersPaginationQueryDto);
-    if (!users) {
+    const Chats = await this.userService.retrieveChats(ChatsPaginationQueryDto);
+    if (!Chats) {
       throw new ServiceUnavailableException();
     }
-    return users;
+    return Chats;
   }
 
   @Get('avatars/:avatarId')

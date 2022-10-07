@@ -78,3 +78,19 @@ VALUES
     'vde-dios@transcendence.com',
     'vde-dios'
   );
+
+INSERT INTO
+  Chats ("chatName")
+VALUES
+  (
+    'Hablemos del tiempo',
+  );
+
+INSERT INTO
+  Chats ("chatName")
+VALUES
+  (
+    'Pong Games',
+  );
+
+

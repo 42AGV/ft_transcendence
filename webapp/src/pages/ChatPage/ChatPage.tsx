@@ -43,7 +43,6 @@ export default function ChatPage() {
   const sendMessage = () => {
     if (myId) {
       socket.emit('send_message', { message, room, myId });
-      console.log({ message, room, myId });
     }
   };
   useEffect(() => {
@@ -56,6 +55,7 @@ export default function ChatPage() {
     if (room !== '') {
       socket.emit('leave_room', room);
     }
+    setMessagesReceived([]);
     setroom('1');
     socket.emit('join_room', room);
   };
@@ -63,6 +63,7 @@ export default function ChatPage() {
     if (room !== '') {
       socket.emit('leave_room', room);
     }
+    setMessagesReceived([]);
     setroom('2');
     socket.emit('join_room', room);
   };
@@ -70,6 +71,7 @@ export default function ChatPage() {
     if (room !== '') {
       socket.emit('leave_room', room);
     }
+    setMessagesReceived([]);
     setroom('3');
     socket.emit('join_room', room);
   };
