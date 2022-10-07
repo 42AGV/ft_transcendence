@@ -33,7 +33,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
-import { User as GetUser } from './decorators/user.decorator';
+import { Chat as GetChat } from './decorators/chat.decorator';
 import { Chat } from './chat.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
 import {
@@ -69,55 +69,55 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 @UseGuards(AuthenticatedGuard)
 @ApiTags('Chats')
 @ApiForbiddenResponse({ description: 'Forbidden' })
-export class UserController {
-  constructor(private userService: ChatService) {}
+export class ChatController {
+  constructor(private chatService: ChatService) {}
 
   @Post()
-  @ApiCreatedResponse({ description: 'Create a user', type: User })
+  @ApiCreatedResponse({ description: 'Create a chat', type: Chat })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addUser(@Body() userDto: ChatDto): Promise<User> {
-    const user = await this.userService.addUser(userDto);
-    if (!user) {
+  async addChat(@Body() chatDto: ChatDto): Promise<Chat> {
+    const chat = await this.chatService.addChat(chatDto);
+    if (!chat) {
       throw new UnprocessableEntityException();
     }
-    return user;
+    return chat;
   }
 
   @Patch()
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
-  async updateCurrentUser(
-    @GetUser() user: User,
+  async updateCurrentChat(
+    @GetChat() chat: Chat,
     @Body() updateChatDto: UpdateChatDto,
-  ): Promise<User> {
-    const updatedUser = await this.userService.updateUser(
-      user.id,
+  ): Promise<Chat> {
+    const updatedChat = await this.chatService.updateChat(
+      chat.id,
       updateChatDto,
     );
-    if (!updatedUser) {
+    if (!updatedChat) {
       throw new UnprocessableEntityException();
     }
-    return user;
+    return chat;
   }
 
   @Get('me')
-  @ApiOkResponse({ description: 'Get the authenticated user', type: User })
-  getCurrentUser(@GetUser() user: User) {
-    return user;
+  @ApiOkResponse({ description: 'Get the authenticated chat', type: Chat })
+  getCurrentChat(@GetChat() chat: Chat) {
+    return chat;
   }
 
   @Get()
   @ApiOkResponse({
     description: `Lists all Chats (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [User],
+    type: [Chat],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChats(
     @Query() ChatsPaginationQueryDto: ChatsPaginationQueryDto,
-  ): Promise<User[]> {
-    const Chats = await this.userService.retrieveChats(ChatsPaginationQueryDto);
+  ): Promise<Chat[]> {
+    const Chats = await this.chatService.retrieveChats(ChatsPaginationQueryDto);
     if (!Chats) {
       throw new ServiceUnavailableException();
     }
@@ -137,7 +137,7 @@ export class UserController {
   async getAvatarByAvatarId(
     @Param('avatarId', ParseUUIDPipe) id: string,
   ): Promise<StreamableFile> {
-    const streamableFile = await this.userService.getAvatarByAvatarId(id);
+    const streamableFile = await this.chatService.getAvatarByAvatarId(id);
 
     if (!streamableFile) {
       throw new NotFoundException();
@@ -145,18 +145,18 @@ export class UserController {
     return streamableFile;
   }
 
-  @Get(':userId')
-  @ApiOkResponse({ description: 'Get a user', type: User })
+  @Get(':chatId')
+  @ApiOkResponse({ description: 'Get a chat', type: Chat })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserById(
-    @Param('userId', ParseUUIDPipe) uuid: string,
-  ): Promise<User> {
-    const user = await this.userService.retrieveUserWithId(uuid);
-    if (user === null) {
+  async getChatById(
+    @Param('chatId', ParseUUIDPipe) uuid: string,
+  ): Promise<Chat> {
+    const chat = await this.chatService.retrieveChatWithId(uuid);
+    if (chat === null) {
       throw new NotFoundException();
     }
-    return user;
+    return chat;
   }
 
   @Put('avatar')
@@ -174,7 +174,7 @@ export class UserController {
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   @UseInterceptors(AvatarFileInterceptor)
   async uploadAvatar(
-    @GetUser() user: User,
+    @GetChat() chat: Chat,
     @UploadedFile()
     file: Express.Multer.File,
   ): Promise<StreamableFile> {
@@ -182,7 +182,7 @@ export class UserController {
       throw new UnprocessableEntityException();
     }
 
-    const isValid = await this.userService.validateAvatarType(file.path);
+    const isValid = await this.chatService.validateAvatarType(file.path);
     if (!isValid) {
       const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
       throw new UnprocessableEntityException(
@@ -190,7 +190,7 @@ export class UserController {
       );
     }
 
-    const avatar = await this.userService.addAvatar(user, {
+    const avatar = await this.chatService.addAvatar(chat, {
       filename: file.filename,
       path: file.path,
       mimetype: file.mimetype,
