@@ -9,8 +9,39 @@
     'submit-button';
 }
 
-.message-input-text {
+.message-input-grow-wrap {
   grid-area: message-input;
+  /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
+  display: grid;
+}
+
+.message-input-grow-wrap::after {
+  /* Note the weird space! Needed to preventy jumpy behavior */
+  content: attr(data-replicated-value) ' ';
+
+  /* This is how textarea text behaves */
+  white-space: pre-wrap;
+
+  /* Hidden from view, clicks, and screen readers */
+  visibility: hidden;
+}
+
+.message-input-text {
+  /* You could leave this, but after a user resizes, then it ruins the auto sizing */
+  resize: none;
+}
+
+.message-input-text::placeholder {
+  color: var(--color-light);
+  opacity: 1;
+}
+
+.message-input-grow-wrap::after,
+.message-input-text {
+  /* Identical styling required!! */
+  outline: none;
+  border: none;
+  margin: 0;
   min-height: 3rem;
   max-height: 12rem;
   word-break: break-all;
@@ -20,6 +51,9 @@
   color: var(--color-light);
   padding: 0.8rem 0.6rem;
   border-radius: 0.4rem;
+
+  /* Place on top of each other */
+  grid-area: 1 / 1 / 2 / 2;
 }
 
 .message-input-form .button {
@@ -27,17 +61,6 @@
   justify-self: center;
   align-self: end;
   margin: 0;
-}
-
-.message-input-text[contenteditable='true']:empty:before {
-  content: attr(placeholder);
-  pointer-events: none;
-  display: block;
-}
-
-.message-input-text:focus {
-  outline: none;
-  border: 1px solid var(--color-light);
 }
 
 @media (min-width: 768px) {

@@ -5,26 +5,35 @@ import './MessageInput.css';
 
 const MessageInput = () => {
   const [value, setValue] = useState('');
-  const messageInputRef = useRef<HTMLDivElement>(null);
-  const submitForm = (e: React.FormEvent) => {
+  const divRef = useRef<HTMLDivElement>(null);
+
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     socket.emit('message', value);
     setValue('');
-    if (messageInputRef.current) {
-      messageInputRef.current.innerText = '';
+    if (divRef.current) {
+      divRef.current.dataset.replicatedValue = '';
+    }
+  };
+
+  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    if (divRef.current) {
+      divRef.current.dataset.replicatedValue = e.currentTarget.value;
+      setValue(e.currentTarget.value);
     }
   };
 
   return (
     <form className="message-input-form" onSubmit={submitForm}>
-      <div
-        className="message-input-text"
-        placeholder="Type your message"
-        onBeforeInput={(e) => setValue(e.currentTarget.innerText)}
-        onBlur={(e) => setValue(e.currentTarget.innerText)}
-        contentEditable
-        ref={messageInputRef}
-      />
+      <div className="message-input-grow-wrap paragraph-regular" ref={divRef}>
+        <textarea
+          className="message-input-text paragraph-regular"
+          placeholder="Type your message"
+          value={value}
+          rows={1}
+          onInput={handleInput}
+        />
+      </div>
       <Button variant={ButtonVariant.SUBMIT}>Send</Button>
     </form>
   );
