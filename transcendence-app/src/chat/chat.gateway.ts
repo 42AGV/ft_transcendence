@@ -25,7 +25,11 @@ type Message = {
   user: User;
   content: string;
   createdAt: number;
+  roomId: string;
 };
+
+type UserId = string;
+type RoomId = string;
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -36,9 +40,8 @@ export class ChatGateway
   @WebSocketServer() server!: Server;
 
   logger = new Logger(ChatGateway.name);
-  messages = new Set<Message>();
-  // Set of user IDs of the connected users
-  connectedUsers = new Set<string>();
+  connectedUsers = new Set<UserId>();
+  rooms = new Map<RoomId, Set<Message>>();
 
   constructor(private chatService: ChatService) {}
 
@@ -56,17 +59,13 @@ export class ChatGateway
       // Join the session ID room to keep track of all the clients linked to this session ID
       client.join(sessionId);
       // Join the user ID room to keep track of all the connected clients
+      // (one user could connect from multiple private tabs or browsers with different session IDs)
       client.join(user.id);
       const matchingSockets = await this.server.in(user.id).allSockets();
       const isConnectedOnce = matchingSockets.size === 1;
       if (isConnectedOnce) {
         this.server.emit('userConnected', user);
       }
-      this.logger.log(
-        `user ${user.username} with sessionID ${sessionId} and socketID ${
-          client.id
-        } connected ${isConnectedOnce ? '' : 'from a new tab or window'}`,
-      );
     }
   }
 
@@ -79,44 +78,62 @@ export class ChatGateway
         this.connectedUsers.delete(user.id);
         this.server.emit('userDisconnected', user);
       }
-      const sessionId = client.request.session.id;
-      this.logger.log(
-        `user ${user.username} with sessionID ${sessionId} and socketID ${
-          client.id
-        } disconnected ${isDisconnectedAll ? '' : 'from a tab or window'}`,
-      );
     }
   }
 
   @SubscribeMessage('message')
   handleMessage(
-    @MessageBody() data: string,
+    @MessageBody() data: { roomId: RoomId; content: string },
     @ConnectedSocket() client: Socket,
   ) {
     const user = client.request.user;
-    if (user) {
+    const { roomId, content } = data;
+    const room = this.rooms.get(roomId);
+    if (user && room) {
       const message: Message = {
         id: uuidv4(),
         user: user,
-        content: data,
+        content: content,
         createdAt: Date.now(),
+        roomId: roomId,
       };
-      this.messages.add(message);
-      this.sendMessage(message);
+      room.add(message);
+      this.server.to(roomId).emit('message', message);
     }
   }
 
-  sendMessage(message: Message) {
-    this.server.emit('message', message);
+  @SubscribeMessage('getMessages')
+  handleGetMessages(
+    @MessageBody() roomId: RoomId,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const messages = this.rooms.get(roomId);
+    if (messages) {
+      client.emit('messages', [...messages]);
+    }
   }
 
-  @SubscribeMessage('getMessages')
-  handleGetMessages() {
-    this.server.emit('messages', [...this.messages]);
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(
+    @MessageBody() roomId: RoomId,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.join(roomId);
+    if (!this.rooms.has(roomId)) {
+      this.rooms.set(roomId, new Set<Message>());
+    }
+  }
+
+  @SubscribeMessage('leaveRoom')
+  handleLeaveRoom(
+    @MessageBody() roomId: RoomId,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.leave(roomId);
   }
 
   @SubscribeMessage('getConnectedUsers')
-  handleGetConnectedUsers() {
-    this.server.emit('users', [...this.connectedUsers]);
+  handleGetConnectedUsers(@ConnectedSocket() client: Socket) {
+    client.emit('users', [...this.connectedUsers]);
   }
 }
