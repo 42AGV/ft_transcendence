@@ -31,7 +31,7 @@ function ChatRoom() {
     <div className="chat-room">
       <div className="chat-room-header">
         <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
-          Chat Room
+          {roomId}
         </Header>
       </div>
       <div className="chat-room-messages">
