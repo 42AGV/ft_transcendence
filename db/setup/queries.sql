@@ -26,12 +26,13 @@ VALUES
   );
 
 INSERT INTO
-  Users ("username", "email", "fullName")
+  Users ("username", "email", "fullName", "id")
 VALUES
   (
     'fportela-admin',
     'fportela-admin@transcendence.com',
-    'Fiz Purple'
+    'Fiz Purple',
+    '75be6ba4-bdc3-45c7-acd7-a5965286750a'
   );
 
 INSERT INTO
@@ -80,17 +81,17 @@ VALUES
   );
 
 INSERT INTO
-  Chats ("chatName")
+  Chats ("chatName", "owner")
 VALUES
   (
     'Hablemos del tiempo',
+    '75be6ba4-bdc3-45c7-acd7-a5965286750a'
   );
 
 INSERT INTO
-  Chats ("chatName")
+  Chats ("chatName", "owner")
 VALUES
   (
     'Pong Games',
+    '75be6ba4-bdc3-45c7-acd7-a5965286750a'
   );
-
-

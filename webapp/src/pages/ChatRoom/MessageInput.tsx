@@ -3,13 +3,17 @@ import { Button, ButtonVariant } from '../../shared/components';
 import socket from '../../shared/socket';
 import './MessageInput.css';
 
-const MessageInput = () => {
+type MessageInputProps = {
+  to: string;
+};
+
+const MessageInput = ({ to }: MessageInputProps) => {
   const [value, setValue] = useState('');
   const divRef = useRef<HTMLDivElement>(null);
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit('message', value);
+    socket.emit('message', { roomId: to, content: value });
     setValue('');
     if (divRef.current) {
       divRef.current.dataset.replicatedValue = '';

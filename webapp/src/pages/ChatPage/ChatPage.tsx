@@ -38,8 +38,8 @@ export default function ChatPage() {
     offset: 0,
   });
   const { search } = searchParams;
-  const { me } = useAuth();
-  const myId = me?.id;
+  const { user } = useAuth();
+  const myId = user?.id;
   const sendMessage = () => {
     if (myId) {
       socket.emit('send_message', { message, room, myId });

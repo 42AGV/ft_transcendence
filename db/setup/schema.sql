@@ -29,7 +29,7 @@ CREATE TABLE
     "provider" ProviderType NOT NULL,
     "userId" UUID REFERENCES Users(id),
     PRIMARY KEY ("providerId", "provider")
-  )
+  );
 
 CREATE TABLE
   IF NOT EXISTS Chats(
@@ -39,6 +39,6 @@ CREATE TABLE
     "avatarId" UUID REFERENCES LocalFile(id) UNIQUE,
     "avatarX" SMALLINT DEFAULT 0,
     "avatarY" SMALLINT DEFAULT 0,
-    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    "owner" UUID REFERENCES Users(id) UNIQUE,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "owner" UUID REFERENCES Users(id)
   );

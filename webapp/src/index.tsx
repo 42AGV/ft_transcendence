@@ -99,7 +99,7 @@ root.render(
             }
           />
           <Route
-            path="chatroom"
+            path={`${CHAT_URL}/:roomId`}
             element={
               <RequireAuth>
                 <ChatRoom />

@@ -13,7 +13,11 @@ type MessageType = {
   createdAt: number;
 };
 
-function Messages() {
+type MessagesProps = {
+  from: string;
+};
+
+function Messages({ from }: MessagesProps) {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const { user: me } = useAuth();
 
@@ -31,13 +35,13 @@ function Messages() {
 
     socket.on('message', messageListener);
     socket.on('messages', messagesListener);
-    socket.emit('getMessages');
+    socket.emit('getMessages', from);
 
     return () => {
       socket.off('message', messageListener);
       socket.off('messages', messageListener);
     };
-  }, []);
+  }, [from]);
 
   return (
     <ul className="messages-list">
