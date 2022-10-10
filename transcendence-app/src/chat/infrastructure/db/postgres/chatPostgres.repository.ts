@@ -10,11 +10,8 @@ import {
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFileEntity } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { PoolClient } from 'pg';
-import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.service';
 import { ChatEntity, chatKeys } from '../chat.entity';
 import { IChatRepository } from '../chat.repository';
-import { Chat } from 'src/chat/chat.domain';
-import { LocalFile } from 'src/shared/local-file/local-file.domain';
 import { UpdateChatDto } from 'src/chat/dto/update-chat.dto';
 
 @Injectable()

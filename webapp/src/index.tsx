@@ -13,6 +13,7 @@ import {
   EditAvatarPage,
   LoginPage,
   RegisterPage,
+  ChatRoom,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -94,6 +95,14 @@ root.render(
             element={
               <RequireAuth>
                 <EditAvatarPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="chatroom"
+            element={
+              <RequireAuth>
+                <ChatRoom />
               </RequireAuth>
             }
           />

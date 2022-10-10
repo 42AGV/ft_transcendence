@@ -3,6 +3,12 @@
   align-items: flex-end;
 }
 
+.chat-bubble-avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
 .chat-bubble-self {
   flex-direction: row-reverse;
 }
@@ -16,24 +22,38 @@
 }
 
 .chat-bubble-text-author > p {
+  margin-top: 0;
   margin-bottom: 0.3rem;
 }
 
 .chat-bubble-text {
   border-radius: 8px;
   padding: 0.625rem;
+  overflow-x: hidden;
 }
 
 .chat-bubble-text > p {
   margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .chat-bubble-text-self {
   background-color: var(--color-submit);
-  margin-right: 0.625rem;
 }
 
 .chat-bubble-text-other {
   background-color: var(--color-dark);
+}
+
+.chat-bubble-text-container {
+  flex: 0 1 auto;
+  overflow-x: hidden;
+}
+
+.chat-bubble-text-container-self {
+  margin-right: 0.625rem;
+}
+.chat-bubble-text-container-other {
   margin-left: 0.625rem;
 }

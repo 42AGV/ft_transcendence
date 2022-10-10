@@ -8,14 +8,15 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Console } from 'console';
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
+import { ChatService } from './chat.service';
 
 type Message = {
   messageId: string;
   message: string;
   userId: string;
+  createdAt: Date;
 };
 
 @WebSocketGateway({
@@ -25,11 +26,12 @@ type Message = {
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer()
-  server!: Server;
+  @WebSocketServer() server!: Server;
 
-  afterInit() {
-    console.log('Al iniciar');
+  constructor(private chatService: ChatService) {}
+
+  afterInit(server: Server) {
+    this.chatService.socket = server;
   }
 
   handleConnection() {
@@ -49,6 +51,7 @@ export class ChatGateway
       messageId: uuidv4(),
       message: data.message,
       userId: data.myId,
+      createdAt: new Date(Date.now()),
     };
     console.log({ newMessage });
     this.server.to(data.room).emit('new_message', newMessage);
