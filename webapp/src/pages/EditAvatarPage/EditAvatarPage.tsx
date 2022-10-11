@@ -14,7 +14,7 @@ import {
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
 import { goBack } from '../../shared/callbacks';
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
