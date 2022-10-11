@@ -103,8 +103,6 @@ export default function Row({
         className="invisible-input"
         id="file-upload"
         onChange={onChange}
-        // directory=""
-        // webkitdirectory=""
       />
     </>
   ) : (
@@ -119,11 +117,3 @@ export default function Row({
     )) || <div className={`row paragraph-regular`}>{RowChildren}</div>
   );
 }
-
-// declare module 'react' {
-//   interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
-//     // extends React's HTMLAttributes
-//     directory?: string; // remember to make these attributes optional....
-//     webkitdirectory?: string;
-//   }
-// }

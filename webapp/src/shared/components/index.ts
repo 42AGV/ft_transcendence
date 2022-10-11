@@ -29,8 +29,8 @@ export * from './RowsList/RowsList';
 export { default as EditUserForm } from './Input/EditUserForm';
 export { default as SearchForm } from './Input/SearchForm';
 
-export { default as RowsTemplate } from './templates/RowsTemplate/RowsPageTemplate';
-export * from './templates/RowsTemplate/RowsPageTemplate';
+export { default as RowsTemplate } from './templates/RowsPageTemplate/RowsPageTemplate';
+export * from './templates/RowsPageTemplate/RowsPageTemplate';
 
 export { default as EditableAvatar } from './Avatar/EditableAvatar';
 export { default as Loading } from './Loading/Loading';
