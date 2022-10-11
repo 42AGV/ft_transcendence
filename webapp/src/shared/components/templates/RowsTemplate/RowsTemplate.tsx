@@ -9,45 +9,33 @@ import NavigationBar from '../../NavigationBar/NavigationBar';
 import { useData } from '../../../hooks/UseData';
 import Loading from '../../Loading/Loading';
 import { usersApi } from '../../../services/ApiService';
-import UseSearch from '../../../hooks/UseSearch';
 import { useSearchContext } from '../../../context/SearchContext';
 
 type RowsTemplateProps<T> = {
-  fetchFn: (requestParams: {}) => Promise<T[]>;
-  maxEntries: number;
   dataValidator: (data: T) => boolean;
   dataMapper: (data: T) => RowItem;
 };
 
-export function validateAndMapDataToRow<T>(
-  elementChecker: (object: any) => boolean,
-  rowMapper: (data: T) => RowItem,
-  array: object,
-): RowItem[] | null {
-  let rows = [];
-
-  if (!Array.isArray(array)) {
-    return null;
-  }
-  for (let i = 0; i < array.length; i++) {
-    if (!elementChecker(array[i])) {
-      return null;
-    }
-    rows.push(rowMapper(array[i]));
-  }
-  return rows;
-}
-
 export default function RowsTemplate<T>({
-  fetchFn,
-  maxEntries,
   dataValidator,
   dataMapper,
 }: RowsTemplateProps<T>) {
-  const { result, isLoading } = UseSearch(fetchFn, maxEntries);
-  const { query, setQuery } = useSearchContext();
+  const { result, fetchMoreResults } = useSearchContext();
 
-  const data = validateAndMapDataToRow(dataValidator, dataMapper, result.data);
+  const data = ((array: object): RowItem[] | null => {
+    let rows = [];
+
+    if (!Array.isArray(array)) {
+      return null;
+    }
+    for (let i = 0; i < array.length; i++) {
+      if (!dataValidator(array[i])) {
+        return null;
+      }
+      rows.push(dataMapper(array[i]));
+    }
+    return rows;
+  })(result.data);
 
   const getCurrentUser = React.useCallback(
     () => usersApi.userControllerGetCurrentUser(),
@@ -65,7 +53,6 @@ export default function RowsTemplate<T>({
     );
   }
 
-  console.log(data);
   return (
     <div className="rows-template">
       <div className="rows-template-avatar">
@@ -85,14 +72,7 @@ export default function RowsTemplate<T>({
         <SearchForm />
       </div>
       <div className="rows-template-rows">
-        <RowsList
-          rows={data}
-          onLastRowVisible={() => {
-            if (!isLoading && result.hasMore) {
-              setQuery({ search: query.search, offset: data.length });
-            }
-          }}
-        />
+        <RowsList rows={data} onLastRowVisible={fetchMoreResults} />
       </div>
       <div className="rows-template-navigation">
         <NavigationBar />

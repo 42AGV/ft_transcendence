@@ -45,13 +45,8 @@ export default function UsersPage() {
   );
 
   return (
-    <SearchContextProvider>
-      <RowsTemplate
-        fetchFn={getUsers}
-        maxEntries={ENTRIES_LIMIT}
-        dataMapper={mapUserToRow}
-        dataValidator={instanceOfUser}
-      />
+    <SearchContextProvider fetchFn={getUsers} maxEntries={ENTRIES_LIMIT}>
+      <RowsTemplate dataMapper={mapUserToRow} dataValidator={instanceOfUser} />
     </SearchContextProvider>
   );
 }

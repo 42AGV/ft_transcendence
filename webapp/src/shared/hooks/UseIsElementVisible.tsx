@@ -22,6 +22,8 @@ export function UseIsElementVisible() {
       }
       observer.current = new IntersectionObserver(callback);
       observer.current.observe(element);
+    } else {
+      setIsVisible(false);
     }
   }, []);
 
