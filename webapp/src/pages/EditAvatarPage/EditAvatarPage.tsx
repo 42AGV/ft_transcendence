@@ -14,7 +14,7 @@ import {
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
 import { goBack } from '../../shared/callbacks';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
@@ -27,6 +27,7 @@ import {
 type ImgData = {
   imgName: string | null;
   imgFile: File | null;
+  imgSrc: string;
 };
 
 export default function EditAvatarPage() {
@@ -37,6 +38,7 @@ export default function EditAvatarPage() {
   const [imgData, setImgData] = useState<ImgData>({
     imgName: null,
     imgFile: null,
+    imgSrc: '',
   });
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
@@ -68,7 +70,7 @@ export default function EditAvatarPage() {
       .then(() =>
         setStatus({
           type: 'success',
-          message: 'Image settings saved correctly.',
+          message: 'Image visible area saved correctly.',
         }),
       )
       .catch((e) =>
@@ -90,6 +92,7 @@ export default function EditAvatarPage() {
           setImgData({
             imgName: null,
             imgFile: null,
+            imgSrc: '',
           });
         });
     }
@@ -102,6 +105,12 @@ export default function EditAvatarPage() {
     setImgData({
       imgFile: event.target.files[0],
       imgName: event.target.files[0].name,
+      imgSrc: URL.createObjectURL(event.target.files[0]),
+    });
+    console.log(imgData);
+    setStatus({
+      type: 'pending',
+      message: '',
     });
   };
 
@@ -125,7 +134,7 @@ export default function EditAvatarPage() {
       <EditableAvatar
         url={
           user.avatarId
-            ? `${AVATAR_EP_URL}/${user.avatarId}`
+            ? imgData.imgSrc || `${AVATAR_EP_URL}/${user.avatarId}`
             : WILDCARD_AVATAR_URL
         }
         XCoordinate={picturePosition.x}

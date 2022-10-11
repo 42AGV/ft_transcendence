@@ -1,4 +1,4 @@
-import './RowsTemplate.css';
+import './RowsPageTemplate.css';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { USER_URL, AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../../urls';
@@ -11,15 +11,15 @@ import Loading from '../../Loading/Loading';
 import { usersApi } from '../../../services/ApiService';
 import { useSearchContext } from '../../../context/SearchContext';
 
-type RowsTemplateProps<T> = {
+type RowsPageTemplateProps<T> = {
   dataValidator: (data: T) => boolean;
   dataMapper: (data: T) => RowItem;
 };
 
-export default function RowsTemplate<T>({
+export default function RowsPageTemplate<T>({
   dataValidator,
   dataMapper,
-}: RowsTemplateProps<T>) {
+}: RowsPageTemplateProps<T>) {
   const { result, fetchMoreResults } = useSearchContext();
 
   const data = ((array: object): RowItem[] | null => {
