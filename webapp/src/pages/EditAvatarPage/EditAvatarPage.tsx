@@ -133,6 +133,7 @@ export default function EditAvatarPage() {
         handleDown={handleDown}
         handleUp={handleUp}
         handleMove={handleMove}
+        disabled={imgFile !== null}
       />
       {status.type !== 'pending' && (
         <Text

@@ -105,8 +105,8 @@ export const SearchContextProvider = <T,>({
   );
 
   React.useEffect(() => {
-    if (!isLoading && !error) {
-      if (data && (data.value.length > 0 || data.offset > 0)) {
+    if (!isLoading && !error && data) {
+      if (data.value.length > 0 || data.offset > 0) {
         resultReducer({
           type: 'APPEND',
           data,

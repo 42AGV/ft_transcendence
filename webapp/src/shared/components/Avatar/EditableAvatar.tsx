@@ -10,6 +10,7 @@ type EditableAvatarProps = AvatarProps & {
   handleDown?: (e: React.MouseEvent | React.TouchEvent) => void;
   handleMove?: (e: React.MouseEvent | React.TouchEvent) => void;
   handleUp?: (e: React.MouseEvent | React.TouchEvent) => void;
+  disabled?: boolean;
 };
 
 export default function EditableAvatar({
@@ -19,6 +20,7 @@ export default function EditableAvatar({
   handleDown,
   handleUp,
   handleMove,
+  disabled = false,
 }: EditableAvatarProps) {
   const FormatNumber = (value: number) =>
     Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
@@ -28,7 +30,11 @@ export default function EditableAvatar({
     )}px`,
   };
   return (
-    <div className="editable-avatar">
+    <div
+      className={`editable-avatar editable-avatar--${
+        disabled ? 'disabled' : ''
+      }`}
+    >
       <Text
         variant={TextVariant.SUBHEADING}
         color={TextColor.LIGHT}
