@@ -40,6 +40,10 @@ export interface UserControllerGetUserByIdRequest {
     userId: string;
 }
 
+export interface UserControllerGetUserByUserNameRequest {
+    userName: string;
+}
+
 export interface UserControllerGetUsersRequest {
     limit?: number;
     offset?: number;
@@ -168,6 +172,34 @@ export class UsersApi extends runtime.BaseAPI {
      */
     async userControllerGetUserById(requestParameters: UserControllerGetUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User> {
         const response = await this.userControllerGetUserByIdRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async userControllerGetUserByUserNameRaw(requestParameters: UserControllerGetUserByUserNameRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<User>> {
+        if (requestParameters.userName === null || requestParameters.userName === undefined) {
+            throw new runtime.RequiredError('userName','Required parameter requestParameters.userName was null or undefined when calling userControllerGetUserByUserName.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/users/{userName}`.replace(`{${"userName"}}`, encodeURIComponent(String(requestParameters.userName))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async userControllerGetUserByUserName(requestParameters: UserControllerGetUserByUserNameRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User> {
+        const response = await this.userControllerGetUserByUserNameRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

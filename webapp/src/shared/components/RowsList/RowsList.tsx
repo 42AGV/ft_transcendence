@@ -17,6 +17,7 @@ type RowsListProps = {
 export default function RowsList({ rows, onLastRowVisible }: RowsListProps) {
   const { ref, isVisible } = useIsElementVisible();
 
+  console.log(rows);
   React.useEffect(() => {
     if (isVisible) {
       onLastRowVisible?.();

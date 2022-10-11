@@ -23,7 +23,7 @@ const mapUserToRow = (user: User): RowItem => {
       XCoordinate: user.avatarX,
       YCoordinate: user.avatarY,
     },
-    url: `${USERS_URL}/${user.id}`,
+    url: `${USERS_URL}/${user.username}`,
     title: user.username,
     subtitle: 'level x',
     key: user.id,

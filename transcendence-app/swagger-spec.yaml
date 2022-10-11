@@ -222,6 +222,28 @@ paths:
         "404":
           description: Not Found
       tags: *a3
+  "/api/v1/users/{userName}":
+    get:
+      operationId: UserController_getUserByUserName
+      parameters:
+        - name: userName
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
   /api/v1/users/avatar:
     put:
       operationId: UserController_uploadAvatar

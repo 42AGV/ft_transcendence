@@ -161,6 +161,20 @@ export class UserController {
     return user;
   }
 
+  @Get(':userName')
+  @ApiOkResponse({ description: 'Get a user', type: User })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  async getUserByUserName(
+    @Param('userName', ParseUUIDPipe) userName: string,
+  ): Promise<User> {
+    const user = await this.userService.retrieveUserWithUserName(userName);
+    if (user === null) {
+      throw new NotFoundException();
+    }
+    return user;
+  }
+
   @Put('avatar')
   @ApiConsumes('multipart/form-data')
   @ApiFile('file')

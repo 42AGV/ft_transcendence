@@ -35,8 +35,9 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     [],
   );
   const getUserById = useCallback(
-    () => usersApi.userControllerGetUserById({ userId: param.id! }),
-    [param.id],
+    () =>
+      usersApi.userControllerGetUserByUserName({ userName: param.userName! }),
+    [param.userName],
   );
   const { data: user } = useData(isMe ? getCurrentUser : getUserById);
   const navigate = useNavigate();
