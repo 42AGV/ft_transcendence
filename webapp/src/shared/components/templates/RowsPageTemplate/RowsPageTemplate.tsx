@@ -12,7 +12,7 @@ import { usersApi } from '../../../services/ApiService';
 import { useSearchContext } from '../../../context/SearchContext';
 
 type RowsPageTemplateProps<T> = {
-  dataValidator: (data: T) => boolean;
+  dataValidator: (data: object) => boolean;
   dataMapper: (data: T) => RowItem;
 };
 
