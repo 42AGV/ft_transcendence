@@ -36,10 +36,6 @@ export interface UserControllerGetAvatarByAvatarIdRequest {
     avatarId: string;
 }
 
-export interface UserControllerGetUserByIdRequest {
-    userId: string;
-}
-
 export interface UserControllerGetUserByUserNameRequest {
     userName: string;
 }
@@ -144,34 +140,6 @@ export class UsersApi extends runtime.BaseAPI {
      */
     async userControllerGetCurrentUser(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User> {
         const response = await this.userControllerGetCurrentUserRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async userControllerGetUserByIdRaw(requestParameters: UserControllerGetUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<User>> {
-        if (requestParameters.userId === null || requestParameters.userId === undefined) {
-            throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling userControllerGetUserById.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/users/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters.userId))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async userControllerGetUserById(requestParameters: UserControllerGetUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User> {
-        const response = await this.userControllerGetUserByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

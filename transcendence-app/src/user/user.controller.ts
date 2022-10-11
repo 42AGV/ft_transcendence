@@ -147,27 +147,11 @@ export class UserController {
     return streamableFile;
   }
 
-  @Get(':userId')
-  @ApiOkResponse({ description: 'Get a user', type: User })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserById(
-    @Param('userId', ParseUUIDPipe) uuid: string,
-  ): Promise<User> {
-    const user = await this.userService.retrieveUserWithId(uuid);
-    if (user === null) {
-      throw new NotFoundException();
-    }
-    return user;
-  }
-
   @Get(':userName')
   @ApiOkResponse({ description: 'Get a user', type: User })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserByUserName(
-    @Param('userName', ParseUUIDPipe) userName: string,
-  ): Promise<User> {
+  async getUserByUserName(@Param('userName') userName: string): Promise<User> {
     const user = await this.userService.retrieveUserWithUserName(userName);
     if (user === null) {
       throw new NotFoundException();

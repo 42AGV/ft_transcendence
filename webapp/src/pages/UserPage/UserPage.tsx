@@ -34,12 +34,12 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     () => usersApi.userControllerGetCurrentUser(),
     [],
   );
-  const getUserById = useCallback(
+  const getUserByUserName = useCallback(
     () =>
       usersApi.userControllerGetUserByUserName({ userName: param.userName! }),
     [param.userName],
   );
-  const { data: user } = useData(isMe ? getCurrentUser : getUserById);
+  const { data: user } = useData(isMe ? getCurrentUser : getUserByUserName);
   const navigate = useNavigate();
   const { logout } = useAuth();
 
