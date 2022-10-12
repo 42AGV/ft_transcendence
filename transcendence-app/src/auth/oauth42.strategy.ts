@@ -5,7 +5,7 @@ import { Strategy } from 'passport-oauth2';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Api42Service } from '../user/api42.service';
-import { AVATARS_PATH } from '../constants';
+import { AVATARS_PATH } from '../shared/constants';
 import { UserDto } from '../user/dto/user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';

@@ -8,7 +8,10 @@ import { User } from './user.domain';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
-import { AVATAR_MIMETYPE_WHITELIST, MAX_ENTRIES_PER_PAGE } from '../constants';
+import {
+  AVATAR_MIMETYPE_WHITELIST,
+  MAX_ENTRIES_PER_PAGE,
+} from '../shared/constants';
 import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';

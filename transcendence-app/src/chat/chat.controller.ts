@@ -41,7 +41,7 @@ import {
   AVATAR_MAX_SIZE,
   AVATAR_MIMETYPE_WHITELIST,
   MAX_ENTRIES_PER_PAGE,
-} from '../constants';
+} from '../shared/constants';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 
@@ -98,12 +98,6 @@ export class ChatController {
     if (!updatedChat) {
       throw new UnprocessableEntityException();
     }
-    return chat;
-  }
-
-  @Get('me')
-  @ApiOkResponse({ description: 'Get the authenticated chat', type: Chat })
-  getCurrentChat(@GetChat() chat: Chat) {
     return chat;
   }
 

@@ -10,7 +10,10 @@ import { IChatRepository } from './infrastructure/db/chat.repository';
 import { LocalFileDto } from 'src/shared/local-file/local-file.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { loadEsmModule } from 'src/shared/utils';
-import { AVATAR_MIMETYPE_WHITELIST, MAX_ENTRIES_PER_PAGE } from '../constants';
+import {
+  AVATAR_MIMETYPE_WHITELIST,
+  MAX_ENTRIES_PER_PAGE,
+} from '../shared/constants';
 import { createReadStream } from 'fs';
 
 @Injectable()
@@ -80,16 +83,6 @@ export class ChatService {
   ): Promise<Chat | null> {
     const chat = await this.chatRepository.updateById(chatId, updateChatDto);
     return chat ? new Chat(chat) : null;
-  }
-
-  async getAvatar(chatId: string): Promise<StreamableFile | null> {
-    const chat = await this.chatRepository.getById(chatId);
-
-    if (!chat || !chat.avatarId) {
-      return null;
-    }
-
-    return this.getAvatarByAvatarId(chat.avatarId);
   }
 
   async getAvatarByAvatarId(avatarId: string): Promise<StreamableFile | null> {

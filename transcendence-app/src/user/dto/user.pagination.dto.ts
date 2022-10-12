@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { MAX_ENTRIES_PER_PAGE } from '../../constants';
+import { MAX_ENTRIES_PER_PAGE } from '../../shared/constants';
 import { BooleanString } from '../../shared/enums/boolean-string.enum';
 
 export class UsersPaginationQueryDto {

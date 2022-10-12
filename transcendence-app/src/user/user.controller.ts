@@ -41,7 +41,7 @@ import {
   AVATAR_MAX_SIZE,
   AVATAR_MIMETYPE_WHITELIST,
   MAX_ENTRIES_PER_PAGE,
-} from '../constants';
+} from '../shared/constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 
