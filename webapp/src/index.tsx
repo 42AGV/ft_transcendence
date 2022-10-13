@@ -26,9 +26,11 @@ import {
   EDIT_AVATAR_URL,
   LOGIN_OPTIONS_URL,
   REGISTER_URL,
+  CREATE_CHAT_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
+import CreateChatPage from './pages/CreateChatPage/CreateChatPage';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -63,6 +65,14 @@ root.render(
             element={
               <RequireAuth>
                 <ChatPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={CREATE_CHAT_URL}
+            element={
+              <RequireAuth>
+                <CreateChatPage />
               </RequireAuth>
             }
           />

@@ -8,6 +8,7 @@ export const EDIT_USER_URL = `${USER_URL}/edit`;
 export const EDIT_AVATAR_URL = `${USER_URL}/edit/avatar`;
 export const PLAY_URL = '/play';
 export const CHAT_URL = '/chat';
+export const CREATE_CHAT_URL = '/createchat';
 export const COMPONENTS_BOOK_URL = '/components-book';
 export const DEFAULT_LOGIN_REDIRECT_URL = `${USERS_URL}`;
 
