@@ -1,11 +1,10 @@
-import Messages from './Messages';
-import MessageInput from './MessageInput';
-import { Header, IconVariant } from '../../shared/components';
-import { useNavigate, useParams } from 'react-router-dom';
-import { goBack } from '../../shared/callbacks';
-import './ChatRoom.css';
 import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { MessageInput, Messages } from './components';
+import { goBack } from '../../shared/callbacks';
+import { Header, IconVariant } from '../../shared/components';
 import socket from '../../shared/socket';
+import './ChatRoom.css';
 
 function ChatRoom() {
   const { roomId } = useParams();
