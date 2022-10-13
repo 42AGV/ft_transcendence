@@ -15,6 +15,7 @@ import { AVATAR_MIMETYPE_WHITELIST } from './constants';
 import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
+import { UserAvatarDto } from './dto/user.avatar.dto';
 
 @Injectable()
 export class UserService {
@@ -106,16 +107,20 @@ export class UserService {
   private async addAvatarAndUpdateUser(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<StreamableFile | null> {
+  ): Promise<UserAvatarDto | null> {
+    const avatarUUID = uuidv4();
     const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
-      { id: uuidv4(), createdAt: new Date(Date.now()), ...newAvatarFileDto },
+      { id: avatarUUID, createdAt: new Date(Date.now()), ...newAvatarFileDto },
       user,
     );
     if (!updatedUser) {
       this.localFileService.deleteFileData(newAvatarFileDto.path);
       return null;
     }
-    return this.streamAvatarData(newAvatarFileDto);
+    return {
+      avatarId: avatarUUID,
+      file: this.streamAvatarData(newAvatarFileDto),
+    };
   }
 
   private async deleteAvatar(avatarId: string) {
@@ -128,7 +133,7 @@ export class UserService {
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<StreamableFile | null> {
+  ): Promise<UserAvatarDto | null> {
     const previousAvatarId = user.avatarId;
     const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
     if (!avatar) {

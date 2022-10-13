@@ -12,16 +12,18 @@ import { useData } from '../hooks/UseData';
 import { authApi, usersApi } from '../services/ApiService';
 import { HOST_URL } from '../urls';
 
-interface AuthContextType {
+export interface AuthContextType {
   isLoggedIn: boolean;
   isLoading: boolean;
   logout: () => void;
+  authUser: User | null;
+  setAuthUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 export const AuthContext = createContext<AuthContextType>(null!);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [authUser, setAuthUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const getCurrentUser = useCallback(() => {
     return usersApi.userControllerGetCurrentUser();
@@ -33,36 +35,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
   authBroadcastChannel.onmessage = (event) => {
-    if (user && event.data && user.id === event.data.id) {
-      setUser(null);
+    if (authUser && event.data && authUser.id === event.data.id) {
+      setAuthUser(null);
       navigate(HOST_URL);
     }
   };
 
   useEffect(() => {
     setIsLoading(isDataLoading);
-    setUser(data);
+    setAuthUser(data);
   }, [data, isDataLoading]);
 
   const logout = useCallback(async () => {
     try {
       await authApi.authControllerLogout();
-      authBroadcastChannel.postMessage(user);
+      authBroadcastChannel.postMessage(authUser);
     } catch (err) {
       console.error(err);
     } finally {
-      setUser(null);
+      setAuthUser(null);
       navigate(HOST_URL);
     }
-  }, [navigate, authBroadcastChannel, user]);
+  }, [navigate, authBroadcastChannel, authUser]);
 
   const contextValue = useMemo(
     () => ({
       isLoading: isLoading,
       logout: logout,
-      isLoggedIn: user !== null,
+      isLoggedIn: authUser !== null,
+      authUser,
+      setAuthUser,
     }),
-    [isLoading, user, logout],
+    [isLoading, authUser, logout],
   );
 
   return (

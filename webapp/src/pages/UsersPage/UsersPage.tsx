@@ -1,7 +1,7 @@
 import { IconVariant, RowItem } from '../../shared/components';
 import {
   AVATAR_EP_URL,
-  USERS_URL,
+  USER_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { User, UserControllerGetUsersRequest } from '../../shared/generated';
@@ -23,7 +23,7 @@ const mapUserToRow = (user: User): RowItem => {
       XCoordinate: user.avatarX,
       YCoordinate: user.avatarY,
     },
-    url: `${USERS_URL}/${user.username}`,
+    url: `${USER_URL}/${user.username}`,
     title: user.username,
     subtitle: 'level x',
     key: user.id,

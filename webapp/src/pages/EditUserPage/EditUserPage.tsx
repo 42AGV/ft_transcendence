@@ -7,25 +7,29 @@ import {
   Loading,
 } from '../../shared/components';
 import {
+  USER_URL,
   AVATAR_EP_URL,
   EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { goBack } from '../../shared/callbacks';
-import { useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
-import { usersApi } from '../../shared/services/ApiService';
-import { useData } from '../../shared/hooks/UseData';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../shared/hooks/UseAuth';
+import { useEffect } from 'react';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 export default function EditUserPage() {
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    [],
-  );
-  const { data: user } = useData(getCurrentUser);
+  const param = useParams();
+  const { isMe, authUser } = useAuth(param.username);
   const navigate = useNavigate();
+  const { goBackTo } = useNavigation();
 
-  return user === null ? (
+  useEffect(() => {
+    if (!isMe) {
+      navigate('/');
+    }
+  }, [isMe, navigate]);
+
+  return authUser === null ? (
     <div className="edit-user-page">
       <div className="edit-user-loading">
         <Loading />
@@ -33,25 +37,28 @@ export default function EditUserPage() {
     </div>
   ) : (
     <div className="edit-user-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
+      <Header
+        icon={IconVariant.ARROW_BACK}
+        onClick={goBackTo(`${USER_URL}/${authUser.username}`)}
+      >
         edit profile
       </Header>
       <div className="edit-user-avatar">
         <LargeAvatar
           url={
-            user.avatarId
-              ? `${AVATAR_EP_URL}/${user.avatarId}`
+            authUser.avatarId
+              ? `${AVATAR_EP_URL}/${authUser.avatarId}`
               : WILDCARD_AVATAR_URL
           }
-          editUrl={EDIT_AVATAR_URL}
-          XCoordinate={user.avatarX}
-          YCoordinate={user.avatarY}
+          editUrl={EDIT_AVATAR_URL(authUser.username)}
+          XCoordinate={authUser.avatarX}
+          YCoordinate={authUser.avatarY}
         />
       </div>
       <EditUserForm
-        origUsername={user.username}
-        origFullName={user.fullName}
-        origEmail={user.email}
+        origUsername={authUser.username}
+        origFullName={authUser.fullName}
+        origEmail={authUser.email}
       />
     </div>
   );

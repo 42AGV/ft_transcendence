@@ -17,6 +17,7 @@ import * as runtime from '../runtime';
 import type {
   UpdateUserDto,
   User,
+  UserAvatarDto,
   UserDto,
 } from '../models';
 import {
@@ -24,6 +25,8 @@ import {
     UpdateUserDtoToJSON,
     UserFromJSON,
     UserToJSON,
+    UserAvatarDtoFromJSON,
+    UserAvatarDtoToJSON,
     UserDtoFromJSON,
     UserDtoToJSON,
 } from '../models';
@@ -244,7 +247,7 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async userControllerUploadAvatarRaw(requestParameters: UserControllerUploadAvatarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async userControllerUploadAvatarRaw(requestParameters: UserControllerUploadAvatarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserAvatarDto>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -277,12 +280,12 @@ export class UsersApi extends runtime.BaseAPI {
             body: formParams,
         }, initOverrides);
 
-        return new runtime.TextApiResponse(response) as any;
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserAvatarDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async userControllerUploadAvatar(requestParameters: UserControllerUploadAvatarRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async userControllerUploadAvatar(requestParameters: UserControllerUploadAvatarRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserAvatarDto> {
         const response = await this.userControllerUploadAvatarRaw(requestParameters, initOverrides);
         return await response.value();
     }

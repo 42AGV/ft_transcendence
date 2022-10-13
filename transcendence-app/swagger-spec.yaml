@@ -238,12 +238,11 @@ paths:
                   format: binary
       responses:
         "200":
-          description: ""
+          description: Update a user avatar
           content:
             image/jpeg:
               schema:
-                type: file
-                format: binary
+                $ref: "#/components/schemas/UserAvatarDto"
         "403": *a2
         "413":
           description: Payload Too Large
@@ -360,3 +359,16 @@ components:
           type: number
         avatarY:
           type: number
+    StreamableFile:
+      type: object
+      properties: {}
+    UserAvatarDto:
+      type: object
+      properties:
+        avatarId:
+          type: string
+        file:
+          $ref: "#/components/schemas/StreamableFile"
+      required:
+        - avatarId
+        - file

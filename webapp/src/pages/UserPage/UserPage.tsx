@@ -18,30 +18,26 @@ import {
   AVATAR_EP_URL,
 } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import { goBack } from '../../shared/callbacks';
 import { useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
-type UserPageProps = {
-  isMe: boolean;
-};
-
-export default function UserPage({ isMe = false }: UserPageProps) {
+export default function UserPage() {
   const param = useParams();
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    [],
-  );
+  const { isMe, logout, authUser } = useAuth(param.username);
   const getUserByUserName = useCallback(
     () =>
-      usersApi.userControllerGetUserByUserName({ userName: param.userName! }),
-    [param.userName],
+      usersApi.userControllerGetUserByUserName({ userName: param.username! }),
+    [param.username],
   );
-  const { data: user } = useData(isMe ? getCurrentUser : getUserByUserName);
-  const navigate = useNavigate();
-  const { logout } = useAuth();
+
+  // arreglar esto
+  const { data: username } = useData(getUserByUserName);
+  const user = isMe ? authUser : username;
+  // const { data: user } = useData(isMe ? getCurrentUser : getUserByUserName);
+  const { goBack } = useNavigation();
 
   return user === null ? (
     <div className="user-page">
@@ -53,7 +49,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
     <div className="user-page">
       <Header
         icon={IconVariant.ARROW_BACK}
-        onClick={goBack(navigate)}
+        onClick={goBack()}
         statusVariant="online"
       >
         {user.username}
@@ -88,7 +84,7 @@ export default function UserPage({ isMe = false }: UserPageProps) {
         {isMe && (
           <Row
             iconVariant={IconVariant.USERS}
-            url={USER_URL + '/edit'}
+            url={`${USER_URL}/${user.username}/edit`}
             title="Edit profile"
           />
         )}

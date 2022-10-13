@@ -13,16 +13,17 @@ import {
 } from '../../shared/components';
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
-import { goBack } from '../../shared/callbacks';
-import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback, useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
-import { useData } from '../../shared/hooks/UseData';
+import { useAuth } from '../../shared/hooks/UseAuth';
 import {
   EDITABLE_AVATAR_SCALE,
   EDITABLE_AVATAR_SCALE_REVERSE,
 } from '../../shared/components/Avatar/EditableAvatar';
+import { UserAvatarDto } from '../../shared/generated';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 type ImgData = {
   imgName: string | null;
@@ -31,6 +32,16 @@ type ImgData = {
 };
 
 export default function EditAvatarPage() {
+  const param = useParams();
+  const { isMe, authUser, setAuthUser } = useAuth(param.username);
+  const { navigate, goBack } = useNavigation();
+
+  useEffect(() => {
+    if (!isMe) {
+      navigate('/');
+    }
+  }, [isMe, navigate]);
+
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
@@ -40,39 +51,40 @@ export default function EditAvatarPage() {
     imgFile: null,
     imgSrc: '',
   });
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    // eslint-disable-next-line
-    [imgData],
-  );
-  const { data: user } = useData(getCurrentUser);
-  const navigate = useNavigate();
   const reverseTransform = useCallback(
     (value: number) => -value * EDITABLE_AVATAR_SCALE,
     [],
   );
   const { picturePosition, handleDown, handleMove, handleUp } = useDrag({
-    startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
+    startingPosition: authUser
+      ? { x: authUser.avatarX, y: authUser.avatarY }
+      : null,
     reverseTransform,
   });
 
   const { imgName, imgFile } = imgData;
   const FormatNumber = (value: number) =>
     Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
+  const avatarX = FormatNumber(picturePosition.x);
+  const avatarY = FormatNumber(picturePosition.y);
   const submitPlacement = async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
-          avatarX: FormatNumber(picturePosition.x),
-          avatarY: FormatNumber(picturePosition.y),
+          avatarX,
+          avatarY,
         },
       })
-      .then(() =>
+      .then(() => {
         setStatus({
           type: 'success',
           message: 'Image visible area saved correctly.',
-        }),
-      )
+        });
+        setAuthUser((prevState) => {
+          if (!prevState) return null;
+          return { ...prevState, avatarX, avatarY };
+        });
+      })
       .catch((e) =>
         setStatus({ type: 'error', message: e.response.statusText }),
       );
@@ -82,9 +94,14 @@ export default function EditAvatarPage() {
     if (imgFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
-        .then(() =>
-          setStatus({ type: 'success', message: 'Image uploaded correctly.' }),
-        )
+        .then((res: UserAvatarDto) => {
+          setStatus({ type: 'success', message: 'Image uploaded correctly.' });
+          setAuthUser((prevState) => {
+            if (!prevState) return null;
+            const { avatarId } = res;
+            return { ...prevState, avatarId };
+          });
+        })
         .catch((e) =>
           setStatus({ type: 'error', message: e.response.statusText }),
         )
@@ -113,7 +130,7 @@ export default function EditAvatarPage() {
     });
   };
 
-  return user === null ? (
+  return authUser === null ? (
     <div className="edit-avatar-page">
       <div className="edit-avatar-loading">
         <Loading />
@@ -121,7 +138,7 @@ export default function EditAvatarPage() {
     </div>
   ) : (
     <div className="edit-avatar-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
         edit avatar
       </Header>
       <Row
@@ -132,8 +149,8 @@ export default function EditAvatarPage() {
       />
       <EditableAvatar
         url={
-          user.avatarId
-            ? imgData.imgSrc || `${AVATAR_EP_URL}/${user.avatarId}`
+          authUser.avatarId
+            ? imgData.imgSrc || `${AVATAR_EP_URL}/${authUser.avatarId}`
             : WILDCARD_AVATAR_URL
         }
         XCoordinate={picturePosition.x}

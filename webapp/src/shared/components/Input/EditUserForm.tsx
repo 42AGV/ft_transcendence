@@ -11,6 +11,7 @@ import {
 import './EditUserForm.css';
 import { usersApi } from '../../services/ApiService';
 import { ResponseError } from '../../generated';
+import { useAuth } from '../../hooks/UseAuth';
 
 type EditUserFormSubmitStatus = {
   type: 'success' | 'error' | 'pending';
@@ -40,12 +41,18 @@ export default function EditUserForm({
     initialSubmitFormStatus,
   );
 
+  const { setAuthUser } = useAuth();
+
   async function updateData() {
     try {
       await usersApi.userControllerUpdateCurrentUser({
         updateUserDto: { username, fullName, email },
       });
       setStatus({ type: 'success', message: 'Update successfully' });
+      setAuthUser((prevState) => {
+        if (!prevState) return null;
+        return { ...prevState, username, fullName, email };
+      });
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 400) {

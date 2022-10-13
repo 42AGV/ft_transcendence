@@ -14,7 +14,7 @@ import {
   LoginPage,
   RegisterPage,
 } from './pages';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import {
   CHAT_URL,
   PLAY_URL,
@@ -66,18 +66,10 @@ root.render(
             }
           />
           <Route
-            path={USER_URL}
+            path={`${USER_URL}/:username`}
             element={
               <RequireAuth>
-                <UserPage isMe={true} />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={`${USERS_URL}/:userName`}
-            element={
-              <RequireAuth>
-                <UserPage isMe={false} />
+                <UserPage />
               </RequireAuth>
             }
           />
@@ -90,7 +82,7 @@ root.render(
             }
           />
           <Route
-            path={EDIT_AVATAR_URL}
+            path={EDIT_AVATAR_URL(':username')}
             element={
               <RequireAuth>
                 <EditAvatarPage />
@@ -103,6 +95,14 @@ root.render(
               element={<ComponentsBookPage />}
             />
           )}
+          <Route
+            path="*"
+            element={
+              <RequireAuth>
+                <Navigate to="/" />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
