@@ -1,6 +1,12 @@
-import { IconVariant, RowItem } from '../../shared/components';
+import {
+  Button,
+  ButtonVariant,
+  IconVariant,
+  RowItem,
+} from '../../shared/components';
 import {
   AVATAR_EP_URL,
+  LOGIN_OPTIONS_URL,
   USERS_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
@@ -12,6 +18,7 @@ import {
 import { DispatchPage } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
+import { useNavigate } from 'react-router-dom';
 
 /* TODO: implement this
 const mapGameToRow = (game: Game): RowItem => {
@@ -40,11 +47,19 @@ export default function PlayPage() {
       usersApi.userControllerGetUsers(requestParameters),
     [],
   );
+  const navigate = useNavigate();
+
+  const addUsersButton = {
+    variant: ButtonVariant.SUBMIT,
+    iconVariant: IconVariant.ARROW_FORWARD,
+    onclick: navigate(LOGIN_OPTIONS_URL),
+  };
   return (
     <DispatchPage
       dataValidator={instanceOfUser}
       fetchFn={getUsers}
       dataMapper={mapUserToRow}
+      button={<Button variant={ButtonVariant.SUBMIT}>Add Users</Button>}
     />
   );
 }

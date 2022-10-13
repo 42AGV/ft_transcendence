@@ -10,27 +10,24 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { RegisterUserDto, ResponseError } from '../../shared/generated';
+import { CreateChatDto, ResponseError } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { authApi } from '../../shared/services/ApiService';
 import { SubmitStatus } from '../../shared/types';
 import {
   DEFAULT_LOGIN_REDIRECT_URL,
   LOGIN_OPTIONS_URL,
 } from '../../shared/urls';
-import './RegisterPage.css';
+import './CreateChat.css';
 
-export default function RegisterPage() {
-  const initialFormValues: RegisterUserDto = {
-    username: '',
-    fullName: '',
-    email: '',
+export default function CreateChat() {
+  const initialFormValues: CreateChatDto = {
+    chatName: '',
     password: '',
     confirmationPassword: '',
   };
   const navigate = useNavigate();
   const [formValues, setFormValues] =
-    useState<RegisterUserDto>(initialFormValues);
+    useState<CreateChatDto>(initialFormValues);
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
@@ -43,27 +40,15 @@ export default function RegisterPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormValues((previousValues) => {
+    setFormValues((previousValues: any) => {
       return { ...previousValues, [name]: value };
     });
   };
   function hasValidFormValues() {
-    if (formValues.username === '') {
+    if (formValues.chatName === '') {
       setStatus({
         type: 'error',
-        message: 'Username can not be empty',
-      });
-      return false;
-    } else if (formValues.email === '') {
-      setStatus({
-        type: 'error',
-        message: 'Email can not be empty',
-      });
-      return false;
-    } else if (formValues.fullName === '') {
-      setStatus({
-        type: 'error',
-        message: 'Full Name can not be empty',
+        message: 'ChatName can not be empty',
       });
       return false;
     } else if (formValues.password === '') {
@@ -86,9 +71,9 @@ export default function RegisterPage() {
       return;
     }
     try {
-      await authApi.authControllerRegisterLocalUser({
-        registerUserDto: formValues,
-      });
+      await {
+        createChatDto: formValues, //TODO: updated with
+      };
       setStatus({
         type: 'success',
         message: 'Registration complete',
@@ -101,12 +86,7 @@ export default function RegisterPage() {
         if (error.response.status === 422) {
           setStatus({
             type: 'error',
-            message: 'Username already registered',
-          });
-        } else if (error.response.status === 400) {
-          setStatus({
-            type: 'error',
-            message: 'Invalid email',
+            message: 'ChatName already registered',
           });
         } else {
           setStatus({ type: 'error', message: `${error.response.statusText}` });
@@ -122,8 +102,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="register">
-      <div className="register-title">
+    <div className="create-chat">
+      <div className="create-chat-title">
         <Text
           variant={TextVariant.TITLE}
           color={TextColor.GAME}
@@ -137,36 +117,19 @@ export default function RegisterPage() {
         <div className="landing-animation-pong"></div>
         <div className="landing-animation-ball"></div>
       </div>
-      <div className="register-container">
+      <div className="create-chat-container">
         <form
-          id="register-form"
-          className="register-form"
+          id="create-chat-form"
+          className="create-chat-form"
           onSubmit={handleOnSubmit}
         >
           <div className="inputs-container">
             <Input
               variant={InputVariant.LIGHT}
-              label="Username"
-              placeholder="username"
-              value={formValues.username}
-              name="username"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Email"
-              placeholder="email"
-              value={formValues.email}
-              name="email"
-              type="email"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Full Name"
-              placeholder="full name"
-              value={formValues.fullName}
-              name="fullName"
+              label="ChatName"
+              placeholder="chatName"
+              value={formValues.chatName}
+              name="chatName"
               onChange={handleInputChange}
             />
             <Input
