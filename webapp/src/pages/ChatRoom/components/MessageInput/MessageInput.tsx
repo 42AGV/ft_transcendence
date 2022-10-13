@@ -11,7 +11,7 @@ const MessageInput = ({ to }: MessageInputProps) => {
   const [value, setValue] = useState('');
   const divRef = useRef<HTMLDivElement>(null);
 
-  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     socket.emit('message', { roomId: to, content: value });
     setValue('');
@@ -20,7 +20,7 @@ const MessageInput = ({ to }: MessageInputProps) => {
     }
   };
 
-  const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+  const handleOnInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     if (divRef.current) {
       divRef.current.dataset.replicatedValue = e.currentTarget.value;
       setValue(e.currentTarget.value);
@@ -28,14 +28,14 @@ const MessageInput = ({ to }: MessageInputProps) => {
   };
 
   return (
-    <form className="message-input-form" onSubmit={submitForm}>
+    <form className="message-input-form" onSubmit={handleOnSubmit}>
       <div className="message-input-grow-wrap paragraph-regular" ref={divRef}>
         <textarea
           className="message-input-text paragraph-regular"
           placeholder="Type your message"
           value={value}
           rows={1}
-          onInput={handleInput}
+          onInput={handleOnInput}
         />
       </div>
       <Button variant={ButtonVariant.SUBMIT}>Send</Button>
