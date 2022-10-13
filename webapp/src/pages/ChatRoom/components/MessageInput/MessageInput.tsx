@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Button, ButtonVariant } from '../../shared/components';
-import socket from '../../shared/socket';
+import { Button, ButtonVariant } from '../../../../shared/components';
+import socket from '../../../../shared/socket';
 import './MessageInput.css';
 
 type MessageInputProps = {
