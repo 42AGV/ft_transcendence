@@ -18,8 +18,8 @@ import { useEffect } from 'react';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 export default function EditUserPage() {
-  const param = useParams();
-  const { isMe, authUser } = useAuth(param.username);
+  const { username } = useParams();
+  const { isMe, authUser } = useAuth(username);
   const navigate = useNavigate();
   const { goBackTo } = useNavigation();
 

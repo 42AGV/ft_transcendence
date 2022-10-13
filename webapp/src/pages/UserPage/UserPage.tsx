@@ -23,21 +23,19 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { User } from '../../shared/generated';
 
-export default function UserPage() {
-  const param = useParams();
-  const { isMe, logout, authUser } = useAuth(param.username);
-  const getUserByUserName = useCallback(
-    () =>
-      usersApi.userControllerGetUserByUserName({ userName: param.username! }),
-    [param.username],
-  );
+type UserComponentTemplateProps = {
+  user: User | null;
+  isAuthUser: boolean;
+};
 
-  // arreglar esto
-  const { data: username } = useData(getUserByUserName);
-  const user = isMe ? authUser : username;
-  // const { data: user } = useData(isMe ? getCurrentUser : getUserByUserName);
+const UserComponentTemplate = ({
+  user,
+  isAuthUser,
+}: UserComponentTemplateProps) => {
   const { goBack } = useNavigation();
+  const { logout } = useAuth();
 
   return user === null ? (
     <div className="user-page">
@@ -81,7 +79,7 @@ export default function UserPage() {
             {user.email}
           </Text>
         </div>
-        {isMe && (
+        {isAuthUser && (
           <Row
             iconVariant={IconVariant.USERS}
             url={`${USER_URL}/${user.username}/edit`}
@@ -89,7 +87,7 @@ export default function UserPage() {
           />
         )}
       </div>
-      {isMe && (
+      {isAuthUser && (
         <Button
           variant={ButtonVariant.WARNING}
           iconVariant={IconVariant.LOGOUT}
@@ -100,4 +98,27 @@ export default function UserPage() {
       )}
     </div>
   );
+};
+
+const AuthUserComponent = (username?: string) => {
+  const { authUser } = useAuth(username);
+
+  return UserComponentTemplate({ user: authUser, isAuthUser: true });
+};
+
+const UserComponent = (username?: string) => {
+  const getUserByUserName = useCallback(
+    () => usersApi.userControllerGetUserByUserName({ userName: username! }),
+    [username],
+  );
+  const { data: user } = useData(getUserByUserName);
+
+  return UserComponentTemplate({ user, isAuthUser: false });
+};
+
+export default function UserPage() {
+  const { username } = useParams();
+  const { isMe } = useAuth(username);
+
+  return isMe ? AuthUserComponent(username) : UserComponent(username);
 }

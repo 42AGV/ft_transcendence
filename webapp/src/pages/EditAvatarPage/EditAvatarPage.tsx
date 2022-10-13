@@ -32,8 +32,8 @@ type ImgData = {
 };
 
 export default function EditAvatarPage() {
-  const param = useParams();
-  const { isMe, authUser, setAuthUser } = useAuth(param.username);
+  const { username } = useParams();
+  const { isMe, authUser, setAuthUser } = useAuth(username);
   const { navigate, goBack } = useNavigation();
 
   useEffect(() => {
