@@ -30,6 +30,7 @@ type Message = {
 
 type UserId = string;
 type RoomId = string;
+type SocketId = string;
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -61,7 +62,9 @@ export class ChatGateway
       // Join the user ID room to keep track of all the connected clients
       // (one user could connect from multiple private tabs or browsers with different session IDs)
       client.join(user.id);
-      const matchingSockets = await this.server.in(user.id).allSockets();
+      const matchingSockets: Set<SocketId> = await this.server
+        .in(user.id)
+        .allSockets();
       const isConnectedOnce = matchingSockets.size === 1;
       if (isConnectedOnce) {
         this.server.emit('userConnected', user);
@@ -72,7 +75,9 @@ export class ChatGateway
   async handleDisconnect(client: Socket) {
     const user = client.request.user;
     if (user) {
-      const matchingSockets = await this.server.in(user.id).allSockets();
+      const matchingSockets: Set<SocketId> = await this.server
+        .in(user.id)
+        .allSockets();
       const isDisconnectedAll = matchingSockets.size === 0;
       if (isDisconnectedAll) {
         this.connectedUsers.delete(user.id);
