@@ -9,3 +9,4 @@ export { default as EditAvatarPage } from './EditAvatarPage/EditAvatarPage';
 export { default as LoginPage } from './LoginPage/LoginPage';
 export { default as RegisterPage } from './RegisterPage/RegisterPage';
 export { default as ChatRoom } from './ChatRoom/ChatRoom';
+export { default as CreateChatPage } from './CreateChatPage/CreateChatPage';

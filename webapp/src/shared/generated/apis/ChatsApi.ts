@@ -16,20 +16,20 @@
 import * as runtime from '../runtime';
 import type {
   Chat,
-  ChatDto,
+  CreateChatDto,
   UpdateChatDto,
 } from '../models';
 import {
     ChatFromJSON,
     ChatToJSON,
-    ChatDtoFromJSON,
-    ChatDtoToJSON,
+    CreateChatDtoFromJSON,
+    CreateChatDtoToJSON,
     UpdateChatDtoFromJSON,
     UpdateChatDtoToJSON,
 } from '../models';
 
 export interface ChatControllerAddChatRequest {
-    chatDto: ChatDto;
+    createChatDto: CreateChatDto;
 }
 
 export interface ChatControllerGetAvatarByAvatarIdRequest {
@@ -63,8 +63,8 @@ export class ChatsApi extends runtime.BaseAPI {
     /**
      */
     async chatControllerAddChatRaw(requestParameters: ChatControllerAddChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Chat>> {
-        if (requestParameters.chatDto === null || requestParameters.chatDto === undefined) {
-            throw new runtime.RequiredError('chatDto','Required parameter requestParameters.chatDto was null or undefined when calling chatControllerAddChat.');
+        if (requestParameters.createChatDto === null || requestParameters.createChatDto === undefined) {
+            throw new runtime.RequiredError('createChatDto','Required parameter requestParameters.createChatDto was null or undefined when calling chatControllerAddChat.');
         }
 
         const queryParameters: any = {};
@@ -78,7 +78,7 @@ export class ChatsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: ChatDtoToJSON(requestParameters.chatDto),
+            body: CreateChatDtoToJSON(requestParameters.createChatDto),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ChatFromJSON(jsonValue));

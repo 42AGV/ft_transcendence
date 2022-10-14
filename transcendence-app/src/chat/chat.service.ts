@@ -15,6 +15,7 @@ import {
   MAX_ENTRIES_PER_PAGE,
 } from '../shared/constants';
 import { createReadStream } from 'fs';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -49,12 +50,13 @@ export class ChatService {
     return chat ? new Chat(chat) : null;
   }
 
-  async addChat(chatDto: ChatDto): Promise<Chat | null> {
+  async addChat(chatDto: CreateChatDto): Promise<Chat | null> {
     const chat = await this.chatRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
+      avatarId: null,
       ...chatDto,
     });
     return chat ? new Chat(chat) : null;

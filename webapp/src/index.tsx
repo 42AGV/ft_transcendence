@@ -14,6 +14,7 @@ import {
   LoginPage,
   RegisterPage,
   ChatRoom,
+  CreateChatPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -30,7 +31,6 @@ import {
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
-import CreateChatPage from './pages/CreateChatPage/CreateChatPage';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

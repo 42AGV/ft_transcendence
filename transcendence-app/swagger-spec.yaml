@@ -261,7 +261,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ChatDto"
+              $ref: "#/components/schemas/CreateChatDto"
       responses:
         "201":
           description: Create a chat
@@ -529,23 +529,21 @@ components:
           type: number
         avatarY:
           type: number
-    ChatDto:
+    CreateChatDto:
       type: object
       properties:
         chatName:
           type: string
         password:
           type: string
-          nullable: true
-        avatarId:
+        confirmationPassword:
           type: string
-          nullable: true
         owner:
           type: string
       required:
         - chatName
         - password
-        - avatarId
+        - confirmationPassword
         - owner
     Chat:
       type: object

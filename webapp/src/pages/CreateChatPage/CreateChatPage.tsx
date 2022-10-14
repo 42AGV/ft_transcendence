@@ -12,94 +12,96 @@ import {
 } from '../../shared/components';
 import { CreateChatDto, ResponseError } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import { chatsApi } from '../../shared/services/ApiService';
 import { SubmitStatus } from '../../shared/types';
-import {
-  DEFAULT_LOGIN_REDIRECT_URL,
-  LOGIN_OPTIONS_URL,
-} from '../../shared/urls';
-import './CreateChat.css';
+import { CHAT_URL, DEFAULT_LOGIN_REDIRECT_URL } from '../../shared/urls';
+import './CreateChatPage.css';
 
-export default function CreateChat() {
-  const initialFormValues: CreateChatDto = {
-    chatName: '',
-    password: '',
-    confirmationPassword: '',
-  };
-  const navigate = useNavigate();
-  const [formValues, setFormValues] =
-    useState<CreateChatDto>(initialFormValues);
-  const [status, setStatus] = useState<SubmitStatus>({
-    type: 'pending',
-    message: '',
-  });
+export default function CreateChatPage() {
+  // const initialFormValues: CreateChatDto = {
+  //   chatName: '',
+  //   password: '',
+  //   confirmationPassword: '',
+  //   owner: '',
+  // };
+  // // const navigate = useNavigate();
+  // const [formValues, setFormValues] =
+  //   useState<CreateChatDto>(initialFormValues);
+  // const [status, setStatus] = useState<SubmitStatus>({
+  //   type: 'pending',
+  //   message: '',
+  // });
 
-  const { isLoggedIn } = useAuth();
-  if (isLoggedIn) {
-    return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
-  }
+  // const { isLoggedIn, user } = useAuth();
+  // if (isLoggedIn) {
+  //   return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
+  // }
+  // setFormValues((previousValues: any) => {
+  //   return { ...previousValues, owner: user?.id };
+  // });
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormValues((previousValues: any) => {
+  //     return { ...previousValues, [name]: value };
+  //   });
+  // };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormValues((previousValues: any) => {
-      return { ...previousValues, [name]: value };
-    });
-  };
-  function hasValidFormValues() {
-    if (formValues.chatName === '') {
-      setStatus({
-        type: 'error',
-        message: 'ChatName can not be empty',
-      });
-      return false;
-    } else if (formValues.password === '') {
-      setStatus({
-        type: 'error',
-        message: 'Password can not be empty',
-      });
-      return false;
-    } else if (formValues.password !== formValues.confirmationPassword) {
-      setStatus({
-        type: 'error',
-        message: 'Passwords are different',
-      });
-      return false;
-    }
-    return true;
-  }
-  async function register() {
-    if (!hasValidFormValues()) {
-      return;
-    }
-    try {
-      await {
-        createChatDto: formValues, //TODO: updated with
-      };
-      setStatus({
-        type: 'success',
-        message: 'Registration complete',
-      });
-      setTimeout(() => {
-        navigate(LOGIN_OPTIONS_URL);
-      }, 2000);
-    } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 422) {
-          setStatus({
-            type: 'error',
-            message: 'ChatName already registered',
-          });
-        } else {
-          setStatus({ type: 'error', message: `${error.response.statusText}` });
-        }
-      } else if (error instanceof Error) {
-        setStatus({ type: 'error', message: `${error.message}` });
-      }
-    }
-  }
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    register().catch((e) => console.error(e));
-  };
+  // function hasValidFormValues() {
+  //   if (formValues.chatName === '') {
+  //     setStatus({
+  //       type: 'error',
+  //       message: 'ChatName can not be empty',
+  //     });
+  //     return false;
+  //   } else if (formValues.password === '') {
+  //     setStatus({
+  //       type: 'error',
+  //       message: 'Password can not be empty',
+  //     });
+  //     return false;
+  //   } else if (formValues.password !== formValues.confirmationPassword) {
+  //     setStatus({
+  //       type: 'error',
+  //       message: 'Passwords are different',
+  //     });
+  //     return false;
+  //   }
+  //   return true;
+  // }
+  // async function register() {
+  //   if (!hasValidFormValues()) {
+  //     return;
+  //   }
+  //   try {
+  //     await chatsApi.chatControllerAddChat({
+  //       createChatDto: formValues,
+  //     });
+  //     setStatus({
+  //       type: 'success',
+  //       message: 'Registration complete',
+  //     });
+  //     setTimeout(() => {
+  //       navigate(CHAT_URL);
+  //     }, 2000);
+  //   } catch (error) {
+  //     if (error instanceof ResponseError) {
+  //       if (error.response.status === 422) {
+  //         setStatus({
+  //           type: 'error',
+  //           message: 'ChatName already registered',
+  //         });
+  //       } else {
+  //         setStatus({ type: 'error', message: `${error.response.statusText}` });
+  //       }
+  //     } else if (error instanceof Error) {
+  //       setStatus({ type: 'error', message: `${error.message}` });
+  //     }
+  //   }
+  // }
+  // const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  //   e.preventDefault();
+  //   register().catch((e) => console.error(e));
+  // };
 
   return (
     <div className="create-chat">
@@ -112,16 +114,11 @@ export default function CreateChat() {
           PONG
         </Text>
       </div>
-      <div className="landing-animation">
-        <div className="landing-animation-ping"></div>
-        <div className="landing-animation-pong"></div>
-        <div className="landing-animation-ball"></div>
-      </div>
       <div className="create-chat-container">
-        <form
+        {/* <form
           id="create-chat-form"
           className="create-chat-form"
-          onSubmit={handleOnSubmit}
+          // onSubmit={handleOnSubmit}
         >
           <div className="inputs-container">
             <Input
@@ -157,9 +154,9 @@ export default function CreateChat() {
             >
               {status.message}
             </Text>
-            <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
+            <Button variant={ButtonVariant.SUBMIT}>Create new chat</Button>
           </div>
-        </form>
+        </form> */}
       </div>
     </div>
   );

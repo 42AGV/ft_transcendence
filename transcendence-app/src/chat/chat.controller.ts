@@ -44,6 +44,7 @@ import {
 } from '../shared/constants';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -76,7 +77,7 @@ export class ChatController {
   @ApiCreatedResponse({ description: 'Create a chat', type: Chat })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addChat(@Body() chatDto: ChatDto): Promise<Chat> {
+  async addChat(@Body() chatDto: CreateChatDto): Promise<Chat> {
     const chat = await this.chatService.addChat(chatDto);
     if (!chat) {
       throw new UnprocessableEntityException();

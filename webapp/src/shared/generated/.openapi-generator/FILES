@@ -4,7 +4,7 @@ apis/UsersApi.ts
 apis/index.ts
 index.ts
 models/Chat.ts
-models/ChatDto.ts
+models/CreateChatDto.ts
 models/LoginUserDto.ts
 models/RegisterUserDto.ts
 models/UpdateChatDto.ts
