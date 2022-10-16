@@ -107,7 +107,6 @@ export default function EditAvatarPage() {
       imgName: event.target.files[0].name,
       imgSrc: URL.createObjectURL(event.target.files[0]),
     });
-    console.log(imgData);
     setStatus({
       type: 'pending',
       message: '',
