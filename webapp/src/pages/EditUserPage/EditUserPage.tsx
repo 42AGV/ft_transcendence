@@ -7,7 +7,7 @@ import {
   Loading,
 } from '../../shared/components';
 import {
-  USER_URL,
+  USER_ME_URL,
   AVATAR_EP_URL,
   EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
@@ -39,7 +39,7 @@ export default function EditUserPage() {
     <div className="edit-user-page">
       <Header
         icon={IconVariant.ARROW_BACK}
-        onClick={goBackTo(`${USER_URL}/${authUser.username}`)}
+        onClick={goBackTo(`${USER_ME_URL}/${authUser.username}`)}
       >
         edit profile
       </Header>

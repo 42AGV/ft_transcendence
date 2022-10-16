@@ -3,10 +3,11 @@ export const HOST_URL = `/`;
 export const LOGIN_OPTIONS_URL = '/login';
 export const REGISTER_URL = '/register';
 export const USER_URL = '/user';
+export const USER_ME_URL = '/user/me';
 export const USERS_URL = '/users';
-export const EDIT_USER_URL = `${USER_URL}/:username/edit`;
+export const EDIT_USER_URL = `${USER_ME_URL}/:username/edit`;
 export const EDIT_AVATAR_URL = (username: string) =>
-  `${USER_URL}/${username}/edit/avatar`;
+  `${USER_ME_URL}/${username}/edit/avatar`;
 export const PLAY_URL = '/play';
 export const CHAT_URL = '/chat';
 export const COMPONENTS_BOOK_URL = '/components-book';

@@ -13,7 +13,7 @@ import {
   TextWeight,
 } from '../../shared/components';
 import {
-  USER_URL,
+  USER_ME_URL,
   WILDCARD_AVATAR_URL,
   AVATAR_EP_URL,
 } from '../../shared/urls';
@@ -24,6 +24,10 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { User } from '../../shared/generated';
+
+type UserPageProps = {
+  displayAsAuthUser?: boolean;
+};
 
 type UserComponentTemplateProps = {
   user: User | null;
@@ -82,7 +86,7 @@ const UserComponentTemplate = ({
         {isAuthUser && (
           <Row
             iconVariant={IconVariant.USERS}
-            url={`${USER_URL}/${user.username}/edit`}
+            url={`${USER_ME_URL}/${user.username}/edit`}
             title="Edit profile"
           />
         )}
@@ -116,9 +120,11 @@ const UserComponent = (username?: string) => {
   return UserComponentTemplate({ user, isAuthUser: false });
 };
 
-export default function UserPage() {
+export default function UserPage({ displayAsAuthUser = false }: UserPageProps) {
   const { username } = useParams();
   const { isMe } = useAuth(username);
 
-  return isMe ? AuthUserComponent(username) : UserComponent(username);
+  return isMe && displayAsAuthUser
+    ? AuthUserComponent(username)
+    : UserComponent(username);
 }

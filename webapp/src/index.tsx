@@ -18,9 +18,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   CHAT_URL,
   PLAY_URL,
+  USER_URL,
+  USER_ME_URL,
   USERS_URL,
   COMPONENTS_BOOK_URL,
-  USER_URL,
   EDIT_USER_URL,
   EDIT_AVATAR_URL,
   LOGIN_OPTIONS_URL,
@@ -71,6 +72,14 @@ root.render(
             element={
               <RequireAuth>
                 <UserPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={`${USER_ME_URL}/:username`}
+            element={
+              <RequireAuth>
+                <UserPage displayAsAuthUser />
               </RequireAuth>
             }
           />
