@@ -72,6 +72,10 @@ body {
   font-family: var(--primary-font);
 }
 
+a {
+  text-decoration: none;
+}
+
 /* text styles */
 .title-bold {
   font-size: var(--title-font-size);

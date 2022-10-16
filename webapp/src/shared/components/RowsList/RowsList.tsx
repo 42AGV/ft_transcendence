@@ -1,5 +1,9 @@
-import './RowsList.css';
+import * as React from 'react';
+import { useIsElementVisible } from '../../hooks/UseIsElementVisible';
+
 import Row, { RowProps } from '../Row/Row';
+
+import './RowsList.css';
 
 export type RowItem = RowProps & {
   key: string;
@@ -7,10 +11,18 @@ export type RowItem = RowProps & {
 
 type RowsListProps = {
   rows?: RowItem[];
-  lastRowRef?: (row: HTMLLIElement) => void;
+  onLastRowVisible?: () => void;
 };
 
-export default function RowsList({ rows, lastRowRef }: RowsListProps) {
+export default function RowsList({ rows, onLastRowVisible }: RowsListProps) {
+  const { ref, isVisible } = useIsElementVisible();
+
+  React.useEffect(() => {
+    if (isVisible) {
+      onLastRowVisible?.();
+    }
+  }, [isVisible, onLastRowVisible]);
+
   return (
     <ul className="rows-list">
       {rows &&
@@ -18,7 +30,7 @@ export default function RowsList({ rows, lastRowRef }: RowsListProps) {
           const { key, ...rowProps } = rowItem;
           return (
             <li
-              ref={rows.length === index + 1 ? lastRowRef : undefined}
+              ref={rows.length === index + 1 ? ref : undefined}
               className="rows-list-item"
               key={key}
             >

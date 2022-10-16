@@ -1,6 +1,8 @@
 .row {
   text-decoration: none;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr;
   width: 100%;
   min-width: fit-content;
   padding: 1rem 1.75rem;
@@ -17,14 +19,23 @@
   display: none;
 }
 
+.row-avatar {
+  grid-column: 1 / 2;
+}
+
 .row_text_wrapper,
 .row_text_wrapper > * {
   margin: 0;
   text-align: left;
+  overflow: hidden;
+  grid-column: span 1;
+  max-width: 70vw;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .row-icon {
   display: flex;
   margin-left: auto;
+  grid-column: 3/4;
 }

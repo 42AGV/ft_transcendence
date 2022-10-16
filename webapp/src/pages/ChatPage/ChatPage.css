@@ -10,6 +10,11 @@
   gap: var(--row-gap) var(--column-gap);
 }
 
+.chat-page-button {
+  position: fixed;
+  bottom: 5rem;
+}
+
 @media all and (min-width: 768px) {
   .chat-page {
     column-gap: var(--column-gap);

@@ -1,162 +1,79 @@
-import { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import './CreateChatPage.css';
 import {
-  Button,
-  ButtonVariant,
+  Header,
+  IconVariant,
   Input,
   InputVariant,
-  Text,
-  TextColor,
-  TextVariant,
-  TextWeight,
+  LargeAvatar,
+  RowItem,
+  RowsList,
 } from '../../shared/components';
-import { CreateChatDto, ResponseError } from '../../shared/generated';
-import { useAuth } from '../../shared/hooks/UseAuth';
-import { chatsApi } from '../../shared/services/ApiService';
-import { SubmitStatus } from '../../shared/types';
-import { CHAT_URL, DEFAULT_LOGIN_REDIRECT_URL } from '../../shared/urls';
-import './CreateChatPage.css';
+import {
+  AVATAR_EP_URL,
+  EDIT_AVATAR_URL,
+  USERS_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
+import { goBack } from '../../shared/callbacks';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { User } from '../../shared/generated';
 
 export default function CreateChatPage() {
-  // const initialFormValues: CreateChatDto = {
-  //   chatName: '',
-  //   password: '',
-  //   confirmationPassword: '',
-  //   owner: '',
-  // };
-  // // const navigate = useNavigate();
-  // const [formValues, setFormValues] =
-  //   useState<CreateChatDto>(initialFormValues);
-  // const [status, setStatus] = useState<SubmitStatus>({
-  //   type: 'pending',
-  //   message: '',
-  // });
-
-  // const { isLoggedIn, user } = useAuth();
-  // if (isLoggedIn) {
-  //   return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
-  // }
-  // setFormValues((previousValues: any) => {
-  //   return { ...previousValues, owner: user?.id };
-  // });
-  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setFormValues((previousValues: any) => {
-  //     return { ...previousValues, [name]: value };
-  //   });
-  // };
-
-  // function hasValidFormValues() {
-  //   if (formValues.chatName === '') {
-  //     setStatus({
-  //       type: 'error',
-  //       message: 'ChatName can not be empty',
-  //     });
-  //     return false;
-  //   } else if (formValues.password === '') {
-  //     setStatus({
-  //       type: 'error',
-  //       message: 'Password can not be empty',
-  //     });
-  //     return false;
-  //   } else if (formValues.password !== formValues.confirmationPassword) {
-  //     setStatus({
-  //       type: 'error',
-  //       message: 'Passwords are different',
-  //     });
-  //     return false;
-  //   }
-  //   return true;
-  // }
-  // async function register() {
-  //   if (!hasValidFormValues()) {
-  //     return;
-  //   }
-  //   try {
-  //     await chatsApi.chatControllerAddChat({
-  //       createChatDto: formValues,
-  //     });
-  //     setStatus({
-  //       type: 'success',
-  //       message: 'Registration complete',
-  //     });
-  //     setTimeout(() => {
-  //       navigate(CHAT_URL);
-  //     }, 2000);
-  //   } catch (error) {
-  //     if (error instanceof ResponseError) {
-  //       if (error.response.status === 422) {
-  //         setStatus({
-  //           type: 'error',
-  //           message: 'ChatName already registered',
-  //         });
-  //       } else {
-  //         setStatus({ type: 'error', message: `${error.response.statusText}` });
-  //       }
-  //     } else if (error instanceof Error) {
-  //       setStatus({ type: 'error', message: `${error.message}` });
-  //     }
-  //   }
-  // }
-  // const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-  //   e.preventDefault();
-  //   register().catch((e) => console.error(e));
-  // };
-
+  const [chatName, setChatName] = useState('');
+  const navigate = useNavigate();
+  const mapDataToRows = (
+    callBack: (data: User) => RowItem,
+    data: User[],
+  ): RowItem[] => {
+    return data.map((item) => callBack(item));
+  };
+  const mapUserToRow = (user: User): RowItem => {
+    return {
+      iconVariant: IconVariant.ARROW_FORWARD,
+      avatarProps: {
+        url: user.avatarId
+          ? `${AVATAR_EP_URL}/${user.avatarId}`
+          : WILDCARD_AVATAR_URL,
+        status: 'offline',
+        XCoordinate: user.avatarX,
+        YCoordinate: user.avatarY,
+      },
+      url: `${USERS_URL}/${user.id}`,
+      title: user.username,
+      subtitle: 'level x',
+      key: user.id,
+    };
+  };
   return (
-    <div className="create-chat">
-      <div className="create-chat-title">
-        <Text
-          variant={TextVariant.TITLE}
-          color={TextColor.GAME}
-          weight={TextWeight.BOLD}
-        >
-          PONG
-        </Text>
+    <div className="create-chat-page">
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
+        add chat
+      </Header>
+      <div className="create-chat-page-avatar">
+        <LargeAvatar url={WILDCARD_AVATAR_URL} editUrl={EDIT_AVATAR_URL} />
       </div>
-      <div className="create-chat-container">
-        {/* <form
-          id="create-chat-form"
-          className="create-chat-form"
-          // onSubmit={handleOnSubmit}
+      <div className="create-chat-page-input-name">
+        <Input
+          variant={InputVariant.LIGHT}
+          iconVariant={IconVariant.CHAT}
+          value={chatName}
+          label="Chat Name:"
+          name="chatName"
+          placeholder="chat name"
+          onChange={(e) => setChatName(e.target.value)}
+        />
+      </div>
+      <div className="create-chat-page-row">
+        <Link
+          className={`row paragraph-regular`}
+          to={EDIT_AVATAR_URL}
+          style={{
+            cursor: 'pointer',
+          }}
         >
-          <div className="inputs-container">
-            <Input
-              variant={InputVariant.LIGHT}
-              label="ChatName"
-              placeholder="chatName"
-              value={formValues.chatName}
-              name="chatName"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Password"
-              placeholder="password"
-              value={formValues.password}
-              name="password"
-              type="password"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              placeholder="repeat password"
-              value={formValues.confirmationPassword}
-              name="confirmationPassword"
-              type="password"
-              onChange={handleInputChange}
-            />
-            <Text
-              variant={TextVariant.PARAGRAPH}
-              color={
-                status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-              }
-            >
-              {status.message}
-            </Text>
-            <Button variant={ButtonVariant.SUBMIT}>Create new chat</Button>
-          </div>
-        </form> */}
+          add users
+        </Link>
       </div>
     </div>
   );

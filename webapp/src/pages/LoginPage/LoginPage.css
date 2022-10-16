@@ -1,8 +1,8 @@
 .login {
   margin: 0;
+  min-height: 100vh;
   padding: var(--padding-top-bottom) var(--padding-sides);
-  height: 100vh;
-  min-height: 40rem;
+  min-height: 100vh;
   overflow: hidden;
   background-color: var(--color-background);
   color: var(--color-light);
@@ -83,7 +83,7 @@
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
   .login {
-    min-height: 20rem;
+    min-height: 100vh;
     gap: 2rem var(--column-gap);
     padding: 4rem var(--padding-sides) 8rem var(--padding-sides);
     grid-template-columns: repeat(var(--column-number), 1fr);

@@ -3,30 +3,22 @@ import {
   ButtonVariant,
   IconVariant,
   RowItem,
+  RowsTemplate,
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
   CHAT_URL,
-  COMPONENTS_BOOK_URL,
   CREATE_CHAT_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import {
-  Chat,
-  ChatControllerGetChatsRequest,
-  ChatsApi,
-  instanceOfChat,
-} from '../../shared/generated';
-import { DispatchPage } from '../../shared/components/index';
+import { Chat, ChatControllerGetChatsRequest } from '../../shared/generated';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { chatsApi } from '../../shared/services/ApiService';
+import { SearchContextProvider } from '../../shared/context/SearchContext';
+import './ChatPage.css';
 
-/* TODO: implement this
-const mapGameToRow = (game: Game): RowItem => {
-  return {
-  };
-}; */
+const ENTRIES_LIMIT = 15;
 const mapChatToRow = (chat: Chat): RowItem => {
   return {
     iconVariant: IconVariant.ARROW_FORWARD,
@@ -52,20 +44,20 @@ export default function ChatPage() {
   const navigate = useNavigate();
 
   return (
-    <DispatchPage
-      dataValidator={instanceOfChat}
-      fetchFn={getChats}
-      dataMapper={mapChatToRow}
-      button={
+    <div className="chat-page">
+      <div className="chat-page-content">
+        <SearchContextProvider fetchFn={getChats} maxEntries={ENTRIES_LIMIT}>
+          <RowsTemplate dataMapper={mapChatToRow} />
+        </SearchContextProvider>
+      </div>
+      <div className="chat-page-button">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={(): void => {
-            window.location.replace(CREATE_CHAT_URL);
-          }}
+          onClick={() => navigate(CREATE_CHAT_URL)}
         >
-          Add Chat
+          add chat
         </Button>
-      }
-    />
+      </div>
+    </div>
   );
 }
