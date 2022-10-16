@@ -76,7 +76,7 @@ root.render(
             }
           />
           <Route
-            path={`${USER_ME_URL}/:username`}
+            path={USER_ME_URL}
             element={
               <RequireAuth>
                 <UserPage displayAsAuthUser />

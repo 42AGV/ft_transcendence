@@ -40,7 +40,7 @@ export default function RowsPageTemplate<T>({
   return (
     <div className="rows-template">
       <div className="rows-template-avatar">
-        <Link to={`${USER_ME_URL}/${authUser.username}`}>
+        <Link to={`${USER_ME_URL}`}>
           <MediumAvatar
             url={
               authUser.avatarId

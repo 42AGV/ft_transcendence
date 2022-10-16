@@ -5,7 +5,6 @@ type Callback = () => void;
 type UseNavigationReturn = {
   navigate: NavigateFunction;
   goBack: () => Callback;
-  goBackTo: (route: string) => Callback;
 };
 
 export const useNavigation = (): UseNavigationReturn => {
@@ -17,12 +16,5 @@ export const useNavigation = (): UseNavigationReturn => {
     };
   };
 
-  const goBackTo = (route: string) => {
-    return () => {
-      navigate(-1);
-      navigate(route);
-    };
-  };
-
-  return { navigate, goBack, goBackTo };
+  return { navigate, goBack };
 };

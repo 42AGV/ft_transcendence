@@ -7,26 +7,18 @@ import {
   Loading,
 } from '../../shared/components';
 import {
-  USER_ME_URL,
+  EDIT_AVATAR_URL,
   AVATAR_EP_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { useEffect } from 'react';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 export default function EditUserPage() {
   const { username } = useParams();
-  const { isMe, authUser } = useAuth(username);
-  const navigate = useNavigate();
-  const { goBackTo } = useNavigation();
-
-  useEffect(() => {
-    if (!isMe) {
-      navigate('/');
-    }
-  }, [isMe, navigate]);
+  const { authUser } = useAuth(username);
+  const { goBack } = useNavigation();
 
   return authUser === null ? (
     <div className="edit-user-page">
@@ -36,10 +28,7 @@ export default function EditUserPage() {
     </div>
   ) : (
     <div className="edit-user-page">
-      <Header
-        icon={IconVariant.ARROW_BACK}
-        onClick={goBackTo(`${USER_ME_URL}/${authUser.username}`)}
-      >
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
         edit profile
       </Header>
       <div className="edit-user-avatar">
@@ -49,7 +38,7 @@ export default function EditUserPage() {
               ? `${AVATAR_EP_URL}/${authUser.avatarId}`
               : WILDCARD_AVATAR_URL
           }
-          editUrl={`${USER_ME_URL}/${authUser.username}/edit/avatar`}
+          editUrl={EDIT_AVATAR_URL}
           XCoordinate={authUser.avatarX}
           YCoordinate={authUser.avatarY}
         />

@@ -13,7 +13,7 @@ import {
 } from '../../shared/components';
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
@@ -33,14 +33,8 @@ type ImgData = {
 
 export default function EditAvatarPage() {
   const { username } = useParams();
-  const { isMe, authUser, setAuthUser } = useAuth(username);
-  const { navigate, goBack } = useNavigation();
-
-  useEffect(() => {
-    if (!isMe) {
-      navigate('/');
-    }
-  }, [isMe, navigate]);
+  const { authUser, setAuthUser } = useAuth(username);
+  const { goBack } = useNavigation();
 
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',

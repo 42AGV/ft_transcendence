@@ -13,7 +13,7 @@ import {
   TextWeight,
 } from '../../shared/components';
 import {
-  USER_ME_URL,
+  EDIT_USER_URL,
   WILDCARD_AVATAR_URL,
   AVATAR_EP_URL,
 } from '../../shared/urls';
@@ -86,7 +86,7 @@ const UserComponentTemplate = ({
         {isAuthUser && (
           <Row
             iconVariant={IconVariant.USERS}
-            url={`${USER_ME_URL}/${user.username}/edit`}
+            url={EDIT_USER_URL}
             title="Edit profile"
           />
         )}
@@ -104,13 +104,15 @@ const UserComponentTemplate = ({
   );
 };
 
-const AuthUserComponent = (username?: string) => {
-  const { authUser } = useAuth(username);
+const AuthUserComponent = () => {
+  const { authUser } = useAuth();
 
   return UserComponentTemplate({ user: authUser, isAuthUser: true });
 };
 
-const UserComponent = (username?: string) => {
+const UserComponent = () => {
+  const { username } = useParams();
+
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
@@ -121,10 +123,5 @@ const UserComponent = (username?: string) => {
 };
 
 export default function UserPage({ displayAsAuthUser = false }: UserPageProps) {
-  const { username } = useParams();
-  const { isMe } = useAuth(username);
-
-  return isMe && displayAsAuthUser
-    ? AuthUserComponent(username)
-    : UserComponent(username);
+  return displayAsAuthUser ? AuthUserComponent() : UserComponent();
 }
