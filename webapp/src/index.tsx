@@ -14,7 +14,7 @@ import {
   LoginPage,
   RegisterPage,
 } from './pages';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   CHAT_URL,
   PLAY_URL,
@@ -28,6 +28,7 @@ import {
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -99,7 +100,7 @@ root.render(
             path="*"
             element={
               <RequireAuth>
-                <Navigate to="/" />
+                <NotFoundPage />
               </RequireAuth>
             }
           />
