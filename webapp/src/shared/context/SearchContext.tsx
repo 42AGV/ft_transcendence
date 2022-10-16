@@ -9,7 +9,7 @@ type SearchContextProps<T> = {
 };
 
 type Query = {
-  search?: string;
+  search: string;
   offset: number;
 };
 
@@ -17,15 +17,13 @@ type Result<T> = {
   data: T[];
 };
 
-type QueryReducerAction = {
-  type: 'SEARCH' | 'LOAD_MORE';
-  value?: string;
-  offset?: number;
-};
+type QueryReducerAction =
+  | { type: 'SEARCH'; value: string }
+  | { type: 'LOAD_MORE'; limit: number };
 
 type ResultReducerAction<T> = {
-  type: 'APPEND' | 'FLUSH';
-  data?: { value: T[]; offset: number };
+  type: 'APPEND' | 'REPLACE';
+  data: T[];
 };
 
 type Context<T> = {
@@ -36,12 +34,12 @@ type Context<T> = {
 };
 
 function queryReducerCallback(state: Query, action: QueryReducerAction) {
-  const { type, value, offset } = action;
+  const { type } = action;
 
   if (type === 'SEARCH') {
-    return { search: value, offset: 0 };
+    return { search: action.value, offset: 0 };
   } else if (type === 'LOAD_MORE') {
-    return { ...state, offset: state.offset + (offset ?? 0) };
+    return { ...state, offset: state.offset + action.limit };
   }
   throw new Error('Unknown query reducer action');
 }
@@ -52,18 +50,14 @@ function resultReducerCallback<T>(
 ) {
   const { type, data } = action;
 
-  if (type === 'APPEND' && data) {
-    if (data.offset > 0) {
-      return {
-        data: [...state.data, ...data.value],
-      };
-    } else {
-      return {
-        data: [...data.value],
-      };
-    }
-  } else if (type === 'FLUSH') {
-    return { data: [] };
+  if (type === 'APPEND') {
+    return {
+      data: [...state.data, ...data],
+    };
+  } else if (type === 'REPLACE') {
+    return {
+      data: [...data],
+    };
   }
   throw new Error('Unknown result reducer action');
 }
@@ -93,7 +87,7 @@ export const SearchContextProvider = <T,>({
   );
 
   const fetchMoreResults = React.useCallback(() => {
-    queryReducer({ type: 'LOAD_MORE', offset: maxEntries });
+    queryReducer({ type: 'LOAD_MORE', limit: maxEntries });
   }, [maxEntries]);
 
   const onChange = React.useCallback(
@@ -106,13 +100,16 @@ export const SearchContextProvider = <T,>({
 
   React.useEffect(() => {
     if (!isLoading && !error && data) {
-      if (data.value.length > 0 || data.offset > 0) {
+      if (data.offset > 0) {
         resultReducer({
           type: 'APPEND',
-          data,
+          data: data.value,
         });
       } else {
-        resultReducer({ type: 'FLUSH' });
+        resultReducer({
+          type: 'REPLACE',
+          data: data.value,
+        });
       }
     }
   }, [data, isLoading, error]);
