@@ -19,8 +19,8 @@
   display: none;
 }
 
-.row-icon {
-  grid-column: 1/2;
+.row-avatar {
+  grid-column: 1 / 2;
 }
 
 .row_text_wrapper,
@@ -28,7 +28,7 @@
   margin: 0;
   text-align: left;
   overflow: hidden;
-  grid-column: 2/3;
+  grid-column: span 1;
   max-width: 70vw;
   white-space: nowrap;
   text-overflow: ellipsis;
