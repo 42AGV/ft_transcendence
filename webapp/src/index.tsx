@@ -92,7 +92,7 @@ root.render(
             }
           />
           <Route
-            path={EDIT_AVATAR_URL(':username')}
+            path={EDIT_AVATAR_URL}
             element={
               <RequireAuth>
                 <EditAvatarPage />

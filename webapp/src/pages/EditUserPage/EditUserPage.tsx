@@ -9,7 +9,6 @@ import {
 import {
   USER_ME_URL,
   AVATAR_EP_URL,
-  EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -50,7 +49,7 @@ export default function EditUserPage() {
               ? `${AVATAR_EP_URL}/${authUser.avatarId}`
               : WILDCARD_AVATAR_URL
           }
-          editUrl={EDIT_AVATAR_URL(authUser.username)}
+          editUrl={`${USER_ME_URL}/${authUser.username}/edit/avatar`}
           XCoordinate={authUser.avatarX}
           YCoordinate={authUser.avatarY}
         />
