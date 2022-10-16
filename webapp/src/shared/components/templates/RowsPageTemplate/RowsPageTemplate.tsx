@@ -12,29 +12,19 @@ import { usersApi } from '../../../services/ApiService';
 import { useSearchContext } from '../../../context/SearchContext';
 
 type RowsPageTemplateProps<T> = {
-  dataValidator: (data: object) => boolean;
   dataMapper: (data: T) => RowItem;
 };
 
 export default function RowsPageTemplate<T>({
-  dataValidator,
   dataMapper,
 }: RowsPageTemplateProps<T>) {
   const { result, fetchMoreResults } = useSearchContext();
 
   const data = ((array: object): RowItem[] | null => {
-    let rows = [];
-
     if (!Array.isArray(array)) {
       return null;
     }
-    for (let i = 0; i < array.length; i++) {
-      if (!dataValidator(array[i])) {
-        return null;
-      }
-      rows.push(dataMapper(array[i]));
-    }
-    return rows;
+    return array.map((el) => dataMapper(el));
   })(result.data);
 
   const getCurrentUser = React.useCallback(

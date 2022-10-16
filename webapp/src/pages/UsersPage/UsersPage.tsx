@@ -4,11 +4,7 @@ import {
   USERS_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import {
-  instanceOfUser,
-  User,
-  UserControllerGetUsersRequest,
-} from '../../shared/generated';
+import { User, UserControllerGetUsersRequest } from '../../shared/generated';
 import { RowsTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
@@ -46,7 +42,7 @@ export default function UsersPage() {
 
   return (
     <SearchContextProvider fetchFn={getUsers} maxEntries={ENTRIES_LIMIT}>
-      <RowsTemplate dataMapper={mapUserToRow} dataValidator={instanceOfUser} />
+      <RowsTemplate dataMapper={mapUserToRow} />
     </SearchContextProvider>
   );
 }
