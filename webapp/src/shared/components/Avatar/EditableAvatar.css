@@ -27,8 +27,8 @@
 .editable-avatar__image {
   -webkit-user-drag: none;
   margin: 0;
-  width: 15rem;
-  height: 15rem;
+  width: 16rem;
+  height: 16rem;
   object-fit: cover;
   transform: scale(1.29); /* EDITABLE_AVATAR_SCALE */
   mask-image: radial-gradient(
