@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function UseIsElementVisible() {
+export function useIsElementVisible() {
   const [isVisible, setIsVisible] = React.useState(false);
   const observer = React.useRef<IntersectionObserver | null>();
 

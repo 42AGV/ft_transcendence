@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UseIsElementVisible } from '../../hooks/UseIsElementVisible';
+import { useIsElementVisible } from '../../hooks/UseIsElementVisible';
 
 import Row, { RowProps } from '../Row/Row';
 
@@ -15,7 +15,7 @@ type RowsListProps = {
 };
 
 export default function RowsList({ rows, onLastRowVisible }: RowsListProps) {
-  const { ref, isVisible } = UseIsElementVisible();
+  const { ref, isVisible } = useIsElementVisible();
 
   React.useEffect(() => {
     if (isVisible) {
