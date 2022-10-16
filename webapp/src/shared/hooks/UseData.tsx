@@ -13,7 +13,6 @@ export function useData<T>(fetchFn: () => Promise<T>): DataReturn<T> {
 
   useEffect(() => {
     let ignore = false;
-
     setIsLoading(true);
     fetchFn()
       .then((result) => {

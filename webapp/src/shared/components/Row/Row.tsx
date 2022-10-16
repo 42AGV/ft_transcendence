@@ -57,7 +57,11 @@ export default function Row({
   };
   const RowChildren: JSX.Element = (
     <>
-      {avatarProps && <MediumAvatar {...avatarProps} />}
+      {avatarProps && (
+        <div className="row-avatar">
+          <MediumAvatar {...avatarProps} />
+        </div>
+      )}
       <div className={`row_text_wrapper`}>
         {title && (
           <Text
@@ -95,9 +99,9 @@ export default function Row({
         {RowChildren}
       </label>
       <input
+        type="file"
         className="invisible-input"
         id="file-upload"
-        type="file"
         onChange={onChange}
       />
     </>

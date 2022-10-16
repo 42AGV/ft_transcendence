@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -17,6 +18,7 @@ import { SubmitStatus } from '../../shared/types';
 import {
   DEFAULT_LOGIN_REDIRECT_URL,
   LOGIN_OPTIONS_URL,
+  HOST_URL,
 } from '../../shared/urls';
 import './RegisterPage.css';
 
@@ -123,7 +125,7 @@ export default function RegisterPage() {
 
   return (
     <div className="register">
-      <div className="register-title">
+      <Link className="register-title" to={HOST_URL}>
         <Text
           variant={TextVariant.TITLE}
           color={TextColor.GAME}
@@ -131,7 +133,7 @@ export default function RegisterPage() {
         >
           PONG
         </Text>
-      </div>
+      </Link>
       <div className="landing-animation">
         <div className="landing-animation-ping"></div>
         <div className="landing-animation-pong"></div>

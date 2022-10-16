@@ -6,6 +6,11 @@
   align-items: flex-start;
 }
 
+.editable-avatar--disabled {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
 .editable-avatar .text-color-light {
   margin: 0 0 1rem 0;
 }
@@ -20,7 +25,6 @@
 }
 
 .editable-avatar__image {
-  user-drag: none;
   -webkit-user-drag: none;
   margin: 0;
   width: 16rem;

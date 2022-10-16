@@ -42,29 +42,50 @@ export const useDrag = ({
     }
   }, [startingPosition, dragInfo, isLoading, reverseTransform]);
 
-  const handleMouseDown = ({ clientX, clientY }: React.MouseEvent) => {
-    if (!isDragging && !isLoading)
-      setDragInfo({
-        ...dragInfo,
-        isDragging: true,
-        origin: { x: clientX, y: clientY },
-      });
-  };
-
-  const handleMouseMove = ({ clientX, clientY }: React.MouseEvent) => {
-    if (isDragging && !isLoading) {
-      const { origin, lastTranslation } = dragInfo;
-      setDragInfo({
-        ...dragInfo,
-        translation: {
-          x: origin.x + lastTranslation!.x - clientX,
-          y: origin.y + lastTranslation!.y - clientY,
-        },
-      });
+  const handleDown = (event: React.MouseEvent | React.TouchEvent) => {
+    const e = event.nativeEvent;
+    if (!isDragging && !isLoading) {
+      if (e instanceof MouseEvent) {
+        setDragInfo({
+          ...dragInfo,
+          isDragging: true,
+          origin: { x: e.clientX, y: e.clientY },
+        });
+      } else if (e instanceof TouchEvent) {
+        setDragInfo({
+          ...dragInfo,
+          isDragging: true,
+          origin: { x: e.touches[0].clientX, y: e.touches[0].clientY },
+        });
+      }
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMove = (event: React.MouseEvent | React.TouchEvent) => {
+    const e = event.nativeEvent;
+    if (isDragging && !isLoading) {
+      const { origin, lastTranslation } = dragInfo;
+      if (e instanceof MouseEvent) {
+        setDragInfo({
+          ...dragInfo,
+          translation: {
+            x: origin.x + lastTranslation!.x - e.clientX,
+            y: origin.y + lastTranslation!.y - e.clientY,
+          },
+        });
+      } else if (e instanceof TouchEvent) {
+        setDragInfo({
+          ...dragInfo,
+          translation: {
+            x: origin.x + lastTranslation!.x - e.touches[0].clientX,
+            y: origin.y + lastTranslation!.y - e.touches[0].clientY,
+          },
+        });
+      }
+    }
+  };
+
+  const handleUp = () => {
     if (isDragging && !isLoading) {
       const { translation } = dragInfo;
       setDragInfo({
@@ -82,8 +103,8 @@ export const useDrag = ({
 
   return {
     picturePosition,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
+    handleDown,
+    handleMove,
+    handleUp,
   };
 };

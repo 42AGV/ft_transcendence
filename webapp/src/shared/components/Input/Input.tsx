@@ -46,6 +46,7 @@ export default function Input({
           onChange={onChange}
           name={name}
           type={type}
+          autoComplete="off"
         />
       </div>
     </div>

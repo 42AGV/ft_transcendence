@@ -6,9 +6,13 @@ import {
   Header,
   IconVariant,
   Loading,
+  Text,
+  TextVariant,
+  TextColor,
   Row,
 } from '../../shared/components';
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { SubmitStatus } from '../../shared/types';
 import { goBack } from '../../shared/callbacks';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -23,12 +27,18 @@ import {
 type ImgData = {
   imgName: string | null;
   imgFile: File | null;
+  imgSrc: string;
 };
 
 export default function EditAvatarPage() {
+  const [status, setStatus] = useState<SubmitStatus>({
+    type: 'pending',
+    message: '',
+  });
   const [imgData, setImgData] = useState<ImgData>({
     imgName: null,
     imgFile: null,
+    imgSrc: '',
   });
   const getCurrentUser = useCallback(
     () => usersApi.userControllerGetCurrentUser(),
@@ -41,11 +51,10 @@ export default function EditAvatarPage() {
     (value: number) => -value * EDITABLE_AVATAR_SCALE,
     [],
   );
-  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag({
-      startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
-      reverseTransform,
-    });
+  const { picturePosition, handleDown, handleMove, handleUp } = useDrag({
+    startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
+    reverseTransform,
+  });
 
   const { imgName, imgFile } = imgData;
   const FormatNumber = (value: number) =>
@@ -58,18 +67,32 @@ export default function EditAvatarPage() {
           avatarY: FormatNumber(picturePosition.y),
         },
       })
-      .catch((e) => console.error(e));
+      .then(() =>
+        setStatus({
+          type: 'success',
+          message: 'Image visible area saved correctly.',
+        }),
+      )
+      .catch((e) =>
+        setStatus({ type: 'error', message: e.response.statusText }),
+      );
   };
 
   const uploadAvatar = async () => {
     if (imgFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
-        .catch((e) => console.error(e))
+        .then(() =>
+          setStatus({ type: 'success', message: 'Image uploaded correctly.' }),
+        )
+        .catch((e) =>
+          setStatus({ type: 'error', message: e.response.statusText }),
+        )
         .finally(() => {
           setImgData({
             imgName: null,
             imgFile: null,
+            imgSrc: '',
           });
         });
     }
@@ -82,6 +105,11 @@ export default function EditAvatarPage() {
     setImgData({
       imgFile: event.target.files[0],
       imgName: event.target.files[0].name,
+      imgSrc: URL.createObjectURL(event.target.files[0]),
+    });
+    setStatus({
+      type: 'pending',
+      message: '',
     });
   };
 
@@ -105,15 +133,26 @@ export default function EditAvatarPage() {
       <EditableAvatar
         url={
           user.avatarId
-            ? `${AVATAR_EP_URL}/${user.avatarId}`
+            ? imgData.imgSrc || `${AVATAR_EP_URL}/${user.avatarId}`
             : WILDCARD_AVATAR_URL
         }
         XCoordinate={picturePosition.x}
         YCoordinate={picturePosition.y}
-        handleMouseDown={handleMouseDown}
-        handleMouseUp={handleMouseUp}
-        handleMouseMove={handleMouseMove}
+        handleDown={handleDown}
+        handleUp={handleUp}
+        handleMove={handleMove}
+        disabled={imgFile !== null}
       />
+      {status.type !== 'pending' && (
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={
+            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+          }
+        >
+          {status.message}
+        </Text>
+      )}
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}
