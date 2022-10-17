@@ -18,9 +18,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   CHAT_URL,
   PLAY_URL,
+  USER_URL,
+  USER_ME_URL,
   USERS_URL,
   COMPONENTS_BOOK_URL,
-  USER_URL,
   EDIT_USER_URL,
   EDIT_AVATAR_URL,
   LOGIN_OPTIONS_URL,
@@ -28,6 +29,7 @@ import {
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -66,18 +68,18 @@ root.render(
             }
           />
           <Route
-            path={USER_URL}
+            path={`${USER_URL}/:username`}
             element={
               <RequireAuth>
-                <UserPage isMe={true} />
+                <UserPage />
               </RequireAuth>
             }
           />
           <Route
-            path={`${USERS_URL}/:id`}
+            path={USER_ME_URL}
             element={
               <RequireAuth>
-                <UserPage isMe={false} />
+                <UserPage displayAsAuthUser />
               </RequireAuth>
             }
           />
@@ -103,6 +105,14 @@ root.render(
               element={<ComponentsBookPage />}
             />
           )}
+          <Route
+            path="*"
+            element={
+              <RequireAuth>
+                <NotFoundPage />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

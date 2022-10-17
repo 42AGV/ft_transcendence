@@ -46,6 +46,7 @@ import {
 } from './constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
+import { UserAvatarDto } from './dto/user.avatar.dto';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -147,14 +148,12 @@ export class UserController {
     return streamableFile;
   }
 
-  @Get(':userId')
+  @Get(':userName')
   @ApiOkResponse({ description: 'Get a user', type: User })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserById(
-    @Param('userId', ParseUUIDPipe) uuid: string,
-  ): Promise<User> {
-    const user = await this.userService.retrieveUserWithId(uuid);
+  async getUserByUserName(@Param('userName') userName: string): Promise<User> {
+    const user = await this.userService.retrieveUserWithUserName(userName);
     if (user === null) {
       throw new NotFoundException();
     }
@@ -165,12 +164,7 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @ApiFile('file')
   @ApiProduces('image/jpeg')
-  @ApiOkResponse({
-    schema: {
-      type: 'file',
-      format: 'binary',
-    },
-  })
+  @ApiOkResponse({ description: 'Update a user avatar', type: UserAvatarDto })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   @ApiPayloadTooLargeResponse({ description: 'Payload Too Large' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
@@ -179,7 +173,7 @@ export class UserController {
     @GetUser() user: User,
     @UploadedFile()
     file: Express.Multer.File,
-  ): Promise<StreamableFile> {
+  ): Promise<UserAvatarDto> {
     if (!file) {
       throw new UnprocessableEntityException();
     }

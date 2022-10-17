@@ -13,46 +13,54 @@ import {
   TextWeight,
 } from '../../shared/components';
 import {
-  USER_URL,
+  EDIT_USER_URL,
   WILDCARD_AVATAR_URL,
   AVATAR_EP_URL,
 } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import { goBack } from '../../shared/callbacks';
 import { useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { User } from '../../shared/generated';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 type UserPageProps = {
-  isMe: boolean;
+  displayAsAuthUser?: boolean;
 };
 
-export default function UserPage({ isMe = false }: UserPageProps) {
-  const param = useParams();
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    [],
-  );
-  const getUserById = useCallback(
-    () => usersApi.userControllerGetUserById({ userId: param.id! }),
-    [param.id],
-  );
-  const { data: user } = useData(isMe ? getCurrentUser : getUserById);
-  const navigate = useNavigate();
+type UserComponentTemplateProps = {
+  user: User | null;
+  isAuthUser: boolean;
+  isLoading: boolean;
+};
+
+const UserComponentTemplate = ({
+  user,
+  isAuthUser,
+  isLoading,
+}: UserComponentTemplateProps) => {
+  const { goBack } = useNavigation();
   const { logout } = useAuth();
 
-  return user === null ? (
-    <div className="user-page">
-      <div className="user-page-loading">
-        <Loading />
+  if (isLoading) {
+    return (
+      <div className="user-page">
+        <div className="user-page-loading">
+          <Loading />
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  return user === null ? (
+    <NotFoundPage />
   ) : (
     <div className="user-page">
       <Header
         icon={IconVariant.ARROW_BACK}
-        onClick={goBack(navigate)}
+        onClick={goBack()}
         statusVariant="online"
       >
         {user.username}
@@ -84,15 +92,15 @@ export default function UserPage({ isMe = false }: UserPageProps) {
             {user.email}
           </Text>
         </div>
-        {isMe && (
+        {isAuthUser && (
           <Row
             iconVariant={IconVariant.USERS}
-            url={USER_URL + '/edit'}
+            url={EDIT_USER_URL}
             title="Edit profile"
           />
         )}
       </div>
-      {isMe && (
+      {isAuthUser && (
         <Button
           variant={ButtonVariant.WARNING}
           iconVariant={IconVariant.LOGOUT}
@@ -103,4 +111,30 @@ export default function UserPage({ isMe = false }: UserPageProps) {
       )}
     </div>
   );
+};
+
+const AuthUserComponent = () => {
+  const { authUser, isLoading } = useAuth();
+
+  return UserComponentTemplate({
+    user: authUser,
+    isAuthUser: true,
+    isLoading,
+  });
+};
+
+const UserComponent = () => {
+  const { username } = useParams();
+
+  const getUserByUserName = useCallback(
+    () => usersApi.userControllerGetUserByUserName({ userName: username! }),
+    [username],
+  );
+  const { data: user, isLoading } = useData(getUserByUserName);
+
+  return UserComponentTemplate({ user, isAuthUser: false, isLoading });
+};
+
+export default function UserPage({ displayAsAuthUser = false }: UserPageProps) {
+  return displayAsAuthUser ? AuthUserComponent() : UserComponent();
 }

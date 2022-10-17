@@ -14,6 +14,7 @@ const testUserDto: UserDto = {
   avatarId: uuidv4(),
 };
 const testUserId = uuidv4();
+const testUsername = 'paquito';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -90,20 +91,20 @@ describe('UserController', () => {
     });
   });
 
-  describe('getUserById', () => {
-    describe('when user with ID exists', () => {
+  describe('getUserByUsername', () => {
+    describe('when user with username exists', () => {
       it('should return the user object', async () => {
-        const user = await controller.getUserById(testUserId);
-        expect(user.id).toEqual(testUserId);
+        const user = await controller.getUserByUserName(testUsername);
+        expect(user.username).toEqual(testUsername);
       });
     });
 
     describe('when user with ID does not exists', () => {
       it('should throw the "NotFoundException"', async () => {
-        mockUserService.retrieveUserWithId = () => Promise.resolve(null);
+        mockUserService.retrieveUserWithUserName = () => Promise.resolve(null);
         expect.assertions(1);
         try {
-          await controller.getUserById(testUserId);
+          await controller.getUserByUserName(testUsername);
         } catch (err) {
           expect(err).toBeInstanceOf(NotFoundException);
         }

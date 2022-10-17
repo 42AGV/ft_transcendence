@@ -14,7 +14,7 @@ export class BasePostgresRepository<T> implements IBaseRepository<T> {
     });
   }
 
-  async add(entity: T): Promise<T | null> {
+  async add(entity: Partial<T>): Promise<T | null> {
     const { cols, params, values } = entityQueryMapper(entity);
 
     const data = await makeQuery<T>(this.pool, {
