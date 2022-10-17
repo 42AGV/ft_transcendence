@@ -54,6 +54,7 @@ export default function ChatPage() {
         <Button
           variant={ButtonVariant.SUBMIT}
           onClick={() => navigate(CREATE_CHAT_URL)}
+          iconVariant={IconVariant.ADD}
         >
           add chat
         </Button>
