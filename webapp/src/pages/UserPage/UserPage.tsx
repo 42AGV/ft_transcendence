@@ -24,6 +24,7 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { User } from '../../shared/generated';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 type UserPageProps = {
   displayAsAuthUser?: boolean;
@@ -32,21 +33,29 @@ type UserPageProps = {
 type UserComponentTemplateProps = {
   user: User | null;
   isAuthUser: boolean;
+  isLoading: boolean;
 };
 
 const UserComponentTemplate = ({
   user,
   isAuthUser,
+  isLoading,
 }: UserComponentTemplateProps) => {
   const { goBack } = useNavigation();
   const { logout } = useAuth();
 
-  return user === null ? (
-    <div className="user-page">
-      <div className="user-page-loading">
-        <Loading />
+  if (isLoading) {
+    return (
+      <div className="user-page">
+        <div className="user-page-loading">
+          <Loading />
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  return user === null ? (
+    <NotFoundPage />
   ) : (
     <div className="user-page">
       <Header
@@ -105,9 +114,13 @@ const UserComponentTemplate = ({
 };
 
 const AuthUserComponent = () => {
-  const { authUser } = useAuth();
+  const { authUser, isLoading } = useAuth();
 
-  return UserComponentTemplate({ user: authUser, isAuthUser: true });
+  return UserComponentTemplate({
+    user: authUser,
+    isAuthUser: true,
+    isLoading,
+  });
 };
 
 const UserComponent = () => {
@@ -117,9 +130,9 @@ const UserComponent = () => {
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
-  const { data: user } = useData(getUserByUserName);
+  const { data: user, isLoading } = useData(getUserByUserName);
 
-  return UserComponentTemplate({ user, isAuthUser: false });
+  return UserComponentTemplate({ user, isAuthUser: false, isLoading });
 };
 
 export default function UserPage({ displayAsAuthUser = false }: UserPageProps) {
