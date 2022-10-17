@@ -1,15 +1,19 @@
 import './CreateChatPage.css';
 import {
+  Button,
+  ButtonVariant,
   Header,
+  Icon,
+  IconSize,
   IconVariant,
   Input,
   InputVariant,
-  LargeAvatar,
+  MediumAvatar,
   RowItem,
-  RowsList,
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
+  CREATE_CHAT_URL,
   EDIT_AVATAR_URL,
   USERS_URL,
   WILDCARD_AVATAR_URL,
@@ -18,6 +22,7 @@ import { goBack } from '../../shared/callbacks';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { User } from '../../shared/generated';
+import { Color } from '../../shared/types';
 
 export default function CreateChatPage() {
   const [chatName, setChatName] = useState('');
@@ -45,24 +50,38 @@ export default function CreateChatPage() {
       key: user.id,
     };
   };
+  const RowChildren: JSX.Element = (
+    <>
+      <div className="row-icon">
+        <Icon
+          variant={IconVariant.ADD}
+          size={IconSize.SMALL}
+          color={Color.LIGHT}
+        />
+      </div>
+      <h4>add users</h4>
+    </>
+  );
   return (
     <div className="create-chat-page">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
         add chat
       </Header>
-      <div className="create-chat-page-avatar">
-        <LargeAvatar url={WILDCARD_AVATAR_URL} editUrl={EDIT_AVATAR_URL} />
-      </div>
-      <div className="create-chat-page-input-name">
-        <Input
-          variant={InputVariant.LIGHT}
-          iconVariant={IconVariant.CHAT}
-          value={chatName}
-          label="Chat Name:"
-          name="chatName"
-          placeholder="chat name"
-          onChange={(e) => setChatName(e.target.value)}
-        />
+      <div className="create-chat-page-avatar-input-container">
+        <div className="create-chat-page-avatar">
+          <MediumAvatar url={WILDCARD_AVATAR_URL} />
+        </div>
+        <div className="create-chat-page-input-name">
+          <Input
+            variant={InputVariant.LIGHT}
+            iconVariant={IconVariant.CHAT}
+            value={chatName}
+            label="Chat Name:"
+            name="chatName"
+            placeholder="chat name"
+            onChange={(e) => setChatName(e.target.value)}
+          />
+        </div>
       </div>
       <div className="create-chat-page-row">
         <Link
@@ -72,8 +91,22 @@ export default function CreateChatPage() {
             cursor: 'pointer',
           }}
         >
-          add users
+          {RowChildren}
         </Link>
+      </div>
+      <div className="create-chat-page-buttons">
+        <Button
+          variant={ButtonVariant.SUBMIT}
+          onClick={() => navigate(CREATE_CHAT_URL)}
+        >
+          advanced options
+        </Button>
+        <Button
+          variant={ButtonVariant.ALTERNATIVE}
+          onClick={() => navigate(CREATE_CHAT_URL)}
+        >
+          save
+        </Button>
       </div>
     </div>
   );
