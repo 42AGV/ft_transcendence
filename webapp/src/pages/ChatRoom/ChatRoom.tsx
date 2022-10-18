@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { MessageInput, Messages } from './components';
-import { goBack } from '../../shared/callbacks';
 import { Header, IconVariant } from '../../shared/components';
 import socket from '../../shared/socket';
 import './ChatRoom.css';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 function ChatRoom() {
   const { roomId } = useParams();
-  const navigate = useNavigate();
+  const { goBack } = useNavigation();
 
   useEffect(() => {
     if (roomId) {
@@ -29,7 +29,7 @@ function ChatRoom() {
   return (
     <div className="chat-room">
       <div className="chat-room-header">
-        <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
+        <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
           {roomId}
         </Header>
       </div>

@@ -6,70 +6,104 @@ import {
   Header,
   IconVariant,
   Loading,
+  Text,
+  TextVariant,
+  TextColor,
   Row,
 } from '../../shared/components';
 import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
-import { goBack } from '../../shared/callbacks';
+import { SubmitStatus } from '../../shared/types';
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useDrag } from '../../shared/hooks/UseDrag';
-import { useData } from '../../shared/hooks/UseData';
+import { useAuth } from '../../shared/hooks/UseAuth';
 import {
   EDITABLE_AVATAR_SCALE,
   EDITABLE_AVATAR_SCALE_REVERSE,
 } from '../../shared/components/Avatar/EditableAvatar';
+import { UserAvatarDto } from '../../shared/generated';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 type ImgData = {
   imgName: string | null;
   imgFile: File | null;
+  imgSrc: string;
 };
 
 export default function EditAvatarPage() {
+  const { username } = useParams();
+  const { authUser, setAuthUser } = useAuth(username);
+  const { goBack } = useNavigation();
+
+  const [status, setStatus] = useState<SubmitStatus>({
+    type: 'pending',
+    message: '',
+  });
   const [imgData, setImgData] = useState<ImgData>({
     imgName: null,
     imgFile: null,
+    imgSrc: '',
   });
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    // eslint-disable-next-line
-    [imgData],
-  );
-  const { data: user } = useData(getCurrentUser);
-  const navigate = useNavigate();
   const reverseTransform = useCallback(
     (value: number) => -value * EDITABLE_AVATAR_SCALE,
     [],
   );
-  const { picturePosition, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDrag({
-      startingPosition: user ? { x: user.avatarX, y: user.avatarY } : null,
-      reverseTransform,
-    });
+  const { picturePosition, handleDown, handleMove, handleUp } = useDrag({
+    startingPosition: authUser
+      ? { x: authUser.avatarX, y: authUser.avatarY }
+      : null,
+    reverseTransform,
+  });
 
   const { imgName, imgFile } = imgData;
   const FormatNumber = (value: number) =>
     Math.round(value * EDITABLE_AVATAR_SCALE_REVERSE);
+  const avatarX = FormatNumber(picturePosition.x);
+  const avatarY = FormatNumber(picturePosition.y);
   const submitPlacement = async () => {
     usersApi
       .userControllerUpdateCurrentUserRaw({
         updateUserDto: {
-          avatarX: FormatNumber(picturePosition.x),
-          avatarY: FormatNumber(picturePosition.y),
+          avatarX,
+          avatarY,
         },
       })
-      .catch((e) => console.error(e));
+      .then(() => {
+        setStatus({
+          type: 'success',
+          message: 'Image visible area saved correctly.',
+        });
+        setAuthUser((prevState) => {
+          if (!prevState) return null;
+          return { ...prevState, avatarX, avatarY };
+        });
+      })
+      .catch((e) =>
+        setStatus({ type: 'error', message: e.response.statusText }),
+      );
   };
 
   const uploadAvatar = async () => {
     if (imgFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
-        .catch((e) => console.error(e))
+        .then((res: UserAvatarDto) => {
+          setStatus({ type: 'success', message: 'Image uploaded correctly.' });
+          setAuthUser((prevState) => {
+            if (!prevState) return null;
+            const { avatarId } = res;
+            return { ...prevState, avatarId };
+          });
+        })
+        .catch((e) =>
+          setStatus({ type: 'error', message: e.response.statusText }),
+        )
         .finally(() => {
           setImgData({
             imgName: null,
             imgFile: null,
+            imgSrc: '',
           });
         });
     }
@@ -82,10 +116,15 @@ export default function EditAvatarPage() {
     setImgData({
       imgFile: event.target.files[0],
       imgName: event.target.files[0].name,
+      imgSrc: URL.createObjectURL(event.target.files[0]),
+    });
+    setStatus({
+      type: 'pending',
+      message: '',
     });
   };
 
-  return user === null ? (
+  return authUser === null ? (
     <div className="edit-avatar-page">
       <div className="edit-avatar-loading">
         <Loading />
@@ -93,7 +132,7 @@ export default function EditAvatarPage() {
     </div>
   ) : (
     <div className="edit-avatar-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
         edit avatar
       </Header>
       <Row
@@ -104,16 +143,27 @@ export default function EditAvatarPage() {
       />
       <EditableAvatar
         url={
-          user.avatarId
-            ? `${AVATAR_EP_URL}/${user.avatarId}`
+          authUser.avatarId
+            ? imgData.imgSrc || `${AVATAR_EP_URL}/${authUser.avatarId}`
             : WILDCARD_AVATAR_URL
         }
         XCoordinate={picturePosition.x}
         YCoordinate={picturePosition.y}
-        handleMouseDown={handleMouseDown}
-        handleMouseUp={handleMouseUp}
-        handleMouseMove={handleMouseMove}
+        handleDown={handleDown}
+        handleUp={handleUp}
+        handleMove={handleMove}
+        disabled={imgFile !== null}
       />
+      {status.type !== 'pending' && (
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={
+            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+          }
+        >
+          {status.message}
+        </Text>
+      )}
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}

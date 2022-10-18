@@ -1,7 +1,8 @@
-.dispatch-page {
+.rows-template {
+  position: relative;
   margin: 0;
+  min-height: 100vh;
   padding: var(--padding-top-bottom) var(--padding-sides);
-  height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
@@ -10,36 +11,44 @@
   gap: var(--row-gap) var(--column-gap);
 }
 
-.dispatch-page-loading {
+.rows-template-loading {
   grid-column: 1/-1;
   grid-row: 1/-1;
   align-self: center;
   justify-self: center;
 }
 
-.dispatch-page-avatar {
+.rows-template-avatar {
   grid-row: 1/2;
 }
 
-.dispatch-page-avatar .avatar-small__image-wrapper {
+.rows-template-avatar .avatar-small__image-wrapper {
   margin: 0;
 }
 
-.dispatch-page-search {
+.rows-template-search {
   grid-row: 2/3;
 }
 
-.dispatch-page-rows {
+.rows-template-rows {
   grid-row: 3/4;
-  overflow-y: auto;
+  padding-bottom: var(--padding-top-bottom);
 }
 
-.dispatch-page-navigation {
-  grid-row: 4/5;
+@media all and (max-width: 768px) {
+  .rows-template-navigation {
+    position: fixed;
+    padding: var(--padding-top-bottom) var(--padding-sides);
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--color-background);
+  }
 }
 
 @media all and (min-width: 768px) {
-  .dispatch-page {
+  .rows-template {
+    height: 100vh;
     column-gap: var(--column-gap);
     row-gap: var(--row-gap);
     display: grid;
@@ -47,31 +56,32 @@
     grid-template-rows: auto 1fr;
   }
 
-  .dispatch-page-avatar {
+  .rows-template-avatar {
     align-self: center;
     grid-column: 1/2;
     grid-row: 1/2;
   }
 
-  .dispatch-page-search {
+  .rows-template-search {
     align-self: center;
     margin: 0;
     grid-column: 2/6;
     grid-row: 1/2;
   }
 
-  .dispatch-page-search .input-container {
+  .rows-template-search .input-container {
     margin: 0;
   }
 
-  .dispatch-page-navigation {
+  .rows-template-navigation {
     margin-top: 0;
     align-self: center;
     grid-column: 8 / var(--column-end);
     grid-row: 1/2;
+    /* position: relative; */
   }
 
-  .dispatch-page-rows {
+  .rows-template-rows {
     grid-column: 1 / var(--column-end);
     grid-row: 2/3;
     overflow-y: auto;
@@ -79,13 +89,13 @@
 }
 
 @media all and (min-width: 1200px) {
-  .dispatch-page-navigation {
+  .rows-template-navigation {
     grid-column: 9 / var(--column-end);
   }
 }
 
 @media all and (max-width: 1200px) {
-  .dispatch-page-avatar {
+  .rows-template-avatar {
     display: flex;
   }
 }

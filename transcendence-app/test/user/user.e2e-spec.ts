@@ -60,7 +60,7 @@ describe('[Feature] User - /users', () => {
       .send(testUserDto)
       .expect(HttpStatus.CREATED);
     await request(server)
-      .get(`/users/${response.body.id}`)
+      .get(`/users/${response.body.username}`)
       .expect(HttpStatus.OK);
     await request(server)
       .get(`/users/${testUserId}`)

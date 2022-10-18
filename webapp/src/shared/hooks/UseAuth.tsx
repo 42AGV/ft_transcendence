@@ -1,6 +1,17 @@
 import { useContext } from 'react';
-import { AuthContext } from '../context/auth-context';
+import { AuthContext, AuthContextType } from '../context/auth-context';
 
-export function useAuth() {
-  return useContext(AuthContext);
+interface UseAuthType extends AuthContextType {
+  isMe?: boolean;
+}
+
+export function useAuth(routeUsername?: string): UseAuthType {
+  const authContext = useContext(AuthContext);
+
+  return {
+    isMe: routeUsername
+      ? authContext.authUser?.username === routeUsername
+      : undefined,
+    ...authContext,
+  };
 }

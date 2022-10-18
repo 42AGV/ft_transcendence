@@ -39,6 +39,9 @@ const rowsData: RowItem[] = [
 
 export const RowsListExample = () => (
   <BookSection title="Rows list component">
-    <RowsList rows={rowsData} />
+    <RowsList
+      rows={rowsData}
+      onLastRowVisible={() => alert('last row visible!')}
+    />
   </BookSection>
 );

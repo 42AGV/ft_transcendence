@@ -11,6 +11,7 @@ import {
 import './EditUserForm.css';
 import { usersApi } from '../../services/ApiService';
 import { ResponseError } from '../../generated';
+import { useAuth } from '../../hooks/UseAuth';
 
 type EditUserFormSubmitStatus = {
   type: 'success' | 'error' | 'pending';
@@ -40,12 +41,18 @@ export default function EditUserForm({
     initialSubmitFormStatus,
   );
 
+  const { setAuthUser } = useAuth();
+
   async function updateData() {
     try {
       await usersApi.userControllerUpdateCurrentUser({
         updateUserDto: { username, fullName, email },
       });
       setStatus({ type: 'success', message: 'Update successfully' });
+      setAuthUser((prevState) => {
+        if (!prevState) return null;
+        return { ...prevState, username, fullName, email };
+      });
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 400) {
@@ -74,60 +81,56 @@ export default function EditUserForm({
   }, [status]);
 
   return (
-    <>
-      <form
-        id="edit-user-form"
-        className="edit-user-form"
-        onSubmit={handleOnSubmit}
-      >
-        <div className="inputs-container">
-          <Input
-            variant={InputVariant.LIGHT}
-            label="Username"
-            placeholder="Username"
-            value={username}
-            name="username"
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-          <Input
-            variant={InputVariant.LIGHT}
-            label="Full Name"
-            placeholder="Full Name"
-            value={fullName}
-            name="fullName"
-            onChange={(e) => {
-              setFullName(e.target.value);
-            }}
-          />
-          <Input
-            variant={InputVariant.LIGHT}
-            label="Email"
-            placeholder="Email"
-            value={email}
-            name="email"
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={
-              status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-            }
-          >
-            {status.message}
-          </Text>
-        </div>
-      </form>
-      <div className="edit-user-form-button">
-        <Button
-          form="edit-user-form"
-          children="Save"
-          variant={ButtonVariant.SUBMIT}
+    <form
+      id="edit-user-form"
+      className="edit-user-form"
+      onSubmit={handleOnSubmit}
+    >
+      <div className="inputs-container">
+        <Input
+          variant={InputVariant.LIGHT}
+          label="Username"
+          placeholder="Username"
+          value={username}
+          name="username"
+          onChange={(e) => {
+            setUsername(e.target.value);
+          }}
         />
+        <Input
+          variant={InputVariant.LIGHT}
+          label="Full Name"
+          placeholder="Full Name"
+          value={fullName}
+          name="fullName"
+          onChange={(e) => {
+            setFullName(e.target.value);
+          }}
+        />
+        <Input
+          variant={InputVariant.LIGHT}
+          label="Email"
+          placeholder="Email"
+          value={email}
+          name="email"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+        />
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={
+            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+          }
+        >
+          {status.message}
+        </Text>
       </div>
-    </>
+      <Button
+        form="edit-user-form"
+        children="Save"
+        variant={ButtonVariant.SUBMIT}
+      />
+    </form>
   );
 }

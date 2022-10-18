@@ -1,17 +1,16 @@
 import { IconVariant, RowItem } from '../../shared/components';
 import {
   AVATAR_EP_URL,
-  USERS_URL,
+  USER_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import {
-  instanceOfUser,
-  User,
-  UserControllerGetUsersRequest,
-} from '../../shared/generated';
-import { DispatchPage } from '../../shared/components/index';
+import { User, UserControllerGetUsersRequest } from '../../shared/generated';
+import { RowsTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
+import { SearchContextProvider } from '../../shared/context/SearchContext';
+
+const ENTRIES_LIMIT = 15;
 
 const mapUserToRow = (user: User): RowItem => {
   return {
@@ -24,7 +23,7 @@ const mapUserToRow = (user: User): RowItem => {
       XCoordinate: user.avatarX,
       YCoordinate: user.avatarY,
     },
-    url: `${USERS_URL}/${user.id}`,
+    url: `${USER_URL}/${user.username}`,
     title: user.username,
     subtitle: 'level x',
     key: user.id,
@@ -34,14 +33,16 @@ const mapUserToRow = (user: User): RowItem => {
 export default function UsersPage() {
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
-      usersApi.userControllerGetUsers(requestParameters),
+      usersApi.userControllerGetUsers({
+        ...requestParameters,
+        limit: ENTRIES_LIMIT,
+      }),
     [],
   );
+
   return (
-    <DispatchPage
-      dataValidator={instanceOfUser}
-      fetchFn={getUsers}
-      dataMapper={mapUserToRow}
-    />
+    <SearchContextProvider fetchFn={getUsers} maxEntries={ENTRIES_LIMIT}>
+      <RowsTemplate dataMapper={mapUserToRow} />
+    </SearchContextProvider>
   );
 }

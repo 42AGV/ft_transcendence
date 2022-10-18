@@ -19,7 +19,7 @@ type MessagesProps = {
 
 function Messages({ from }: MessagesProps) {
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const { user: me } = useAuth();
+  const { authUser: me } = useAuth();
 
   useEffect(() => {
     const messagesListener = (messages: MessageType[]) => {
