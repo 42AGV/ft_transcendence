@@ -6,10 +6,12 @@ import {
   Icon,
   IconSize,
   IconVariant,
-  Input,
-  InputVariant,
   MediumAvatar,
   RowItem,
+  Text,
+  TextColor,
+  TextVariant,
+  TextWeight,
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
@@ -18,15 +20,16 @@ import {
   USERS_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { goBack } from '../../shared/callbacks';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { User } from '../../shared/generated';
 import { Color } from '../../shared/types';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 export default function CreateChatPage() {
   const [chatName, setChatName] = useState('');
   const navigate = useNavigate();
+  const { goBack } = useNavigation();
   const mapDataToRows = (
     callBack: (data: User) => RowItem,
     data: User[],
@@ -44,7 +47,7 @@ export default function CreateChatPage() {
         XCoordinate: user.avatarX,
         YCoordinate: user.avatarY,
       },
-      url: `${USERS_URL}/${user.id}`,
+      url: `${USERS_URL}/${user.username}`,
       title: user.username,
       subtitle: 'level x',
       key: user.id,
@@ -64,23 +67,28 @@ export default function CreateChatPage() {
   );
   return (
     <div className="create-chat-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
         add chat
       </Header>
-      <div className="create-chat-page-avatar-input-container">
+      <div className="create-chat-page-avatar-properties">
         <div className="create-chat-page-avatar">
           <MediumAvatar url={WILDCARD_AVATAR_URL} />
         </div>
-        <div className="create-chat-page-input-name">
-          <Input
-            variant={InputVariant.LIGHT}
-            iconVariant={IconVariant.CHAT}
-            value={chatName}
-            label="Chat Name:"
-            name="chatName"
-            placeholder="chat name"
-            onChange={(e) => setChatName(e.target.value)}
-          />
+        <div className="create-chat-page-properties">
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.REGULAR}
+          >
+            chat name
+          </Text>
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.REGULAR}
+          >
+            public channel
+          </Text>
         </div>
       </div>
       <div className="create-chat-page-row">
@@ -100,12 +108,6 @@ export default function CreateChatPage() {
           onClick={() => navigate(CREATE_CHAT_URL)}
         >
           advanced options
-        </Button>
-        <Button
-          variant={ButtonVariant.ALTERNATIVE}
-          onClick={() => navigate(CREATE_CHAT_URL)}
-        >
-          save
         </Button>
       </div>
     </div>

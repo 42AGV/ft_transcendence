@@ -13,7 +13,7 @@
   overflow: scroll;
 }
 
-.create-chat-page-avatar-input-container {
+.create-chat-page-avatar-properties {
   grid-row: 2/3;
   grid-column: 1 / var(--column-end);
   display: flex;
@@ -32,11 +32,6 @@
 
 .create-chat-page-row > .paragraph-regular > .row-icon {
   grid-column: 1/2;
-}
-
-.create-chat-page-input-name {
-  width: 100%;
-  max-width: 20rem;
 }
 
 .create-chat-page-row {
@@ -70,8 +65,6 @@
   .create-chat-page-avatar {
     grid-column: 2/6;
     grid-row: 3/4;
-    align-self: start;
-    justify-self: flex-end;
   }
 
   .create-chat-page-buttons {
