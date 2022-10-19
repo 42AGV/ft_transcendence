@@ -1,0 +1,16 @@
+.not-found-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.not-found-page__message {
+  margin-top: 30vh;
+  text-align: center;
+}

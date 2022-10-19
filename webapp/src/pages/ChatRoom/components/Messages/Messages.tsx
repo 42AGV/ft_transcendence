@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ChatBubble, ChatBubbleVariant } from '../../shared/components';
-import { User } from '../../shared/generated';
-import { useAuth } from '../../shared/hooks/UseAuth';
-import socket from '../../shared/socket';
-import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { ChatBubble, ChatBubbleVariant } from '../../../../shared/components';
+import { User } from '../../../../shared/generated';
+import { useAuth } from '../../../../shared/hooks/UseAuth';
+import socket from '../../../../shared/socket';
+import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../../../shared/urls';
 import './Messages.css';
 
 type MessageType = {
@@ -19,7 +19,7 @@ type MessagesProps = {
 
 function Messages({ from }: MessagesProps) {
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const { user: me } = useAuth();
+  const { authUser: me } = useAuth();
 
   useEffect(() => {
     const messagesListener = (messages: MessageType[]) => {

@@ -7,4 +7,5 @@ export * from './RegisterUserDto';
 export * from './UpdateChatDto';
 export * from './UpdateUserDto';
 export * from './User';
+export * from './UserAvatarDto';
 export * from './UserDto';

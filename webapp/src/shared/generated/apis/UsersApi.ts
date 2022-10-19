@@ -17,6 +17,7 @@ import * as runtime from '../runtime';
 import type {
   UpdateUserDto,
   User,
+  UserAvatarDto,
   UserDto,
 } from '../models';
 import {
@@ -24,6 +25,8 @@ import {
     UpdateUserDtoToJSON,
     UserFromJSON,
     UserToJSON,
+    UserAvatarDtoFromJSON,
+    UserAvatarDtoToJSON,
     UserDtoFromJSON,
     UserDtoToJSON,
 } from '../models';
@@ -36,8 +39,8 @@ export interface UserControllerGetAvatarByAvatarIdRequest {
     avatarId: string;
 }
 
-export interface UserControllerGetUserByIdRequest {
-    userId: string;
+export interface UserControllerGetUserByUserNameRequest {
+    userName: string;
 }
 
 export interface UserControllerGetUsersRequest {
@@ -145,9 +148,9 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async userControllerGetUserByIdRaw(requestParameters: UserControllerGetUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<User>> {
-        if (requestParameters.userId === null || requestParameters.userId === undefined) {
-            throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling userControllerGetUserById.');
+    async userControllerGetUserByUserNameRaw(requestParameters: UserControllerGetUserByUserNameRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<User>> {
+        if (requestParameters.userName === null || requestParameters.userName === undefined) {
+            throw new runtime.RequiredError('userName','Required parameter requestParameters.userName was null or undefined when calling userControllerGetUserByUserName.');
         }
 
         const queryParameters: any = {};
@@ -155,7 +158,7 @@ export class UsersApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/users/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters.userId))),
+            path: `/api/v1/users/{userName}`.replace(`{${"userName"}}`, encodeURIComponent(String(requestParameters.userName))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -166,8 +169,8 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async userControllerGetUserById(requestParameters: UserControllerGetUserByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User> {
-        const response = await this.userControllerGetUserByIdRaw(requestParameters, initOverrides);
+    async userControllerGetUserByUserName(requestParameters: UserControllerGetUserByUserNameRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User> {
+        const response = await this.userControllerGetUserByUserNameRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -244,7 +247,7 @@ export class UsersApi extends runtime.BaseAPI {
 
     /**
      */
-    async userControllerUploadAvatarRaw(requestParameters: UserControllerUploadAvatarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async userControllerUploadAvatarRaw(requestParameters: UserControllerUploadAvatarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserAvatarDto>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -277,12 +280,12 @@ export class UsersApi extends runtime.BaseAPI {
             body: formParams,
         }, initOverrides);
 
-        return new runtime.TextApiResponse(response) as any;
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserAvatarDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async userControllerUploadAvatar(requestParameters: UserControllerUploadAvatarRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+    async userControllerUploadAvatar(requestParameters: UserControllerUploadAvatarRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserAvatarDto> {
         const response = await this.userControllerUploadAvatarRaw(requestParameters, initOverrides);
         return await response.value();
     }

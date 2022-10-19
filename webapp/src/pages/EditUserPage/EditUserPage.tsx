@@ -7,25 +7,20 @@ import {
   Loading,
 } from '../../shared/components';
 import {
-  AVATAR_EP_URL,
   EDIT_AVATAR_URL,
+  AVATAR_EP_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { goBack } from '../../shared/callbacks';
-import { useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
-import { usersApi } from '../../shared/services/ApiService';
-import { useData } from '../../shared/hooks/UseData';
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../../shared/hooks/UseAuth';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 export default function EditUserPage() {
-  const getCurrentUser = useCallback(
-    () => usersApi.userControllerGetCurrentUser(),
-    [],
-  );
-  const { data: user } = useData(getCurrentUser);
-  const navigate = useNavigate();
+  const { username } = useParams();
+  const { authUser } = useAuth(username);
+  const { goBack } = useNavigation();
 
-  return user === null ? (
+  return authUser === null ? (
     <div className="edit-user-page">
       <div className="edit-user-loading">
         <Loading />
@@ -33,25 +28,25 @@ export default function EditUserPage() {
     </div>
   ) : (
     <div className="edit-user-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack(navigate)}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
         edit profile
       </Header>
       <div className="edit-user-avatar">
         <LargeAvatar
           url={
-            user.avatarId
-              ? `${AVATAR_EP_URL}/${user.avatarId}`
+            authUser.avatarId
+              ? `${AVATAR_EP_URL}/${authUser.avatarId}`
               : WILDCARD_AVATAR_URL
           }
           editUrl={EDIT_AVATAR_URL}
-          XCoordinate={user.avatarX}
-          YCoordinate={user.avatarY}
+          XCoordinate={authUser.avatarX}
+          YCoordinate={authUser.avatarY}
         />
       </div>
       <EditUserForm
-        origUsername={user.username}
-        origFullName={user.fullName}
-        origEmail={user.email}
+        origUsername={authUser.username}
+        origFullName={authUser.fullName}
+        origEmail={authUser.email}
       />
     </div>
   );

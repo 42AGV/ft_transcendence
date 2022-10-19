@@ -10,6 +10,7 @@ models/RegisterUserDto.ts
 models/UpdateChatDto.ts
 models/UpdateUserDto.ts
 models/User.ts
+models/UserAvatarDto.ts
 models/UserDto.ts
 models/index.ts
 runtime.ts
