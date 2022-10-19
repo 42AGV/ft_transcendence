@@ -4,7 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { validate } from './config/env.validation';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { EventsModule } from './events/events.module';
-import { ChatModule } from './chat/chat.module';
+import { ChatRoomModule } from './chat-room/chat-room.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { ChatModule } from './chat/chat.module';
     }),
     AuthModule,
     EventsModule,
-    ChatModule,
+    ChatRoomModule,
   ],
   providers: [
     {
