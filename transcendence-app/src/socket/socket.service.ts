@@ -2,6 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 
 @Injectable()
-export class EventsService {
+export class SocketService {
   public socket: Server | null = null;
 }

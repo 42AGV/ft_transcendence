@@ -14,7 +14,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
-import { EventsService } from './events.service';
+import { SocketService } from './socket.service';
 
 type UserId = string;
 type SocketId = string;
@@ -22,13 +22,13 @@ type SocketId = string;
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
-export class EventsGateway
+export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server!: Server;
   connectedUsers = new Set<UserId>();
 
-  constructor(private eventsService: EventsService) {}
+  constructor(private eventsService: SocketService) {}
 
   afterInit(server: Server) {
     this.eventsService.socket = server;

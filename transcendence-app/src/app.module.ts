@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { validate } from './config/env.validation';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { EventsModule } from './events/events.module';
+import { SocketModule } from './socket/socket.module';
 import { ChatRoomModule } from './chat-room/chat-room.module';
 
 @Module({
@@ -15,7 +15,7 @@ import { ChatRoomModule } from './chat-room/chat-room.module';
       validate,
     }),
     AuthModule,
-    EventsModule,
+    SocketModule,
     ChatRoomModule,
   ],
   providers: [
