@@ -38,8 +38,8 @@ function Messages({ from }: MessagesProps) {
     socket.emit('getMessages', from);
 
     return () => {
-      socket.off('message', messageListener);
-      socket.off('messages', messageListener);
+      socket.off('message');
+      socket.off('messages');
     };
   }, [from]);
 
