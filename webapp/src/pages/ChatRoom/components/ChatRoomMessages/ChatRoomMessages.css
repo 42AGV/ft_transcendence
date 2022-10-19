@@ -1,9 +1,9 @@
-.messages-list {
+.chat-room-messages-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
-.messages-list-item:not(:last-child) {
+.chat-room-messages-list-item:not(:last-child) {
   margin-bottom: 0.5rem;
 }

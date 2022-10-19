@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { Button, ButtonVariant } from '../../../../shared/components';
 import socket from '../../../../shared/socket';
-import './MessageInput.css';
+import './ChatRoomMessageInput.css';
 
-type MessageInputProps = {
+type ChatRoomMessageInputProps = {
   to: string;
 };
 
-const MessageInput = ({ to }: MessageInputProps) => {
+const ChatRoomMessageInput = ({ to }: ChatRoomMessageInputProps) => {
   const [value, setValue] = useState('');
 
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit('message', { roomId: to, content: value });
+    socket.emit('chatRoomMessage', { chatRoomId: to, content: value });
     setValue('');
   };
 
@@ -21,13 +21,13 @@ const MessageInput = ({ to }: MessageInputProps) => {
   };
 
   return (
-    <form className="message-input-form" onSubmit={handleOnSubmit}>
+    <form className="chat-room-message-input-form" onSubmit={handleOnSubmit}>
       <div
-        className="message-input-grow-wrap paragraph-regular"
+        className="chat-room-message-input-grow-wrap paragraph-regular"
         data-replicated-value={value}
       >
         <textarea
-          className="message-input-text paragraph-regular"
+          className="chat-room-message-input-text paragraph-regular"
           placeholder="Type your message"
           value={value}
           rows={1}
@@ -39,4 +39,4 @@ const MessageInput = ({ to }: MessageInputProps) => {
   );
 };
 
-export default MessageInput;
+export default ChatRoomMessageInput;
