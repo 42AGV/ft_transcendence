@@ -17,7 +17,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ChatDto } from './dto/chat.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
   ApiBadRequestResponse,

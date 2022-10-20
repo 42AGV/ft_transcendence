@@ -5,7 +5,6 @@ import { validate } from './config/env.validation';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SocketModule } from './socket/socket.module';
 import { ChatModule } from './chat/chat.module';
-import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
