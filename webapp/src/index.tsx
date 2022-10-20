@@ -14,7 +14,7 @@ import {
   LoginPage,
   RegisterPage,
   ChatRoom,
-  CreateChatPage,
+  CreateChatRoomPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -28,7 +28,8 @@ import {
   EDIT_AVATAR_URL,
   LOGIN_OPTIONS_URL,
   REGISTER_URL,
-  CREATE_CHAT_URL,
+  CHATROOM_URL,
+  CREATE_CHATROOM_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -71,10 +72,10 @@ root.render(
             }
           />
           <Route
-            path={CREATE_CHAT_URL}
+            path={CREATE_CHATROOM_URL}
             element={
               <RequireAuth>
-                <CreateChatPage />
+                <CreateChatRoomPage />
               </RequireAuth>
             }
           />
@@ -111,7 +112,7 @@ root.render(
             }
           />
           <Route
-            path={`${CHAT_URL}/:roomId`}
+            path={`${CHATROOM_URL}/:chatRoomId`}
             element={
               <RequireAuth>
                 <ChatRoom />

@@ -1,4 +1,3 @@
-import './CreateChatPage.css';
 import {
   Button,
   ButtonVariant,
@@ -15,7 +14,7 @@ import {
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
-  CREATE_CHAT_URL,
+  CREATE_CHATROOM_URL,
   EDIT_AVATAR_URL,
   USERS_URL,
   WILDCARD_AVATAR_URL,
@@ -25,8 +24,9 @@ import { useState } from 'react';
 import { User } from '../../shared/generated';
 import { Color } from '../../shared/types';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import './CreateChatRoomPage.css';
 
-export default function CreateChatPage() {
+export default function CreateChatRoomPage() {
   const [chatName, setChatName] = useState('');
   const navigate = useNavigate();
   const { goBack } = useNavigation();
@@ -105,7 +105,7 @@ export default function CreateChatPage() {
       <div className="create-chat-page-buttons">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => navigate(CREATE_CHAT_URL)}
+          onClick={() => navigate(CREATE_CHATROOM_URL)}
         >
           advanced options
         </Button>

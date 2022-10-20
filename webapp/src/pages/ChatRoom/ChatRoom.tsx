@@ -1,28 +1,28 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { MessageInput, Messages } from './components';
+import { ChatRoomMessageInput, ChatRoomMessages } from './components';
 import { Header, IconVariant } from '../../shared/components';
 import socket from '../../shared/socket';
 import './ChatRoom.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 function ChatRoom() {
-  const { roomId } = useParams();
+  const { chatRoomId } = useParams();
   const { goBack } = useNavigation();
 
   useEffect(() => {
-    if (roomId) {
-      socket.emit('joinRoom', roomId);
+    if (chatRoomId) {
+      socket.emit('joinChatRoom', chatRoomId);
     }
 
     return () => {
-      if (roomId) {
-        socket.emit('leaveRoom', roomId);
+      if (chatRoomId) {
+        socket.emit('leaveChatRoom', chatRoomId);
       }
     };
-  }, [roomId]);
+  }, [chatRoomId]);
 
-  if (!roomId) {
+  if (!chatRoomId) {
     return null;
   }
 
@@ -30,14 +30,14 @@ function ChatRoom() {
     <div className="chat-room">
       <div className="chat-room-header">
         <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-          {roomId}
+          {chatRoomId}
         </Header>
       </div>
       <div className="chat-room-messages">
-        <Messages from={roomId} />
+        <ChatRoomMessages from={chatRoomId} />
       </div>
       <div className="chat-room-message-input">
-        <MessageInput to={roomId} />
+        <ChatRoomMessageInput to={chatRoomId} />
       </div>
     </div>
   );

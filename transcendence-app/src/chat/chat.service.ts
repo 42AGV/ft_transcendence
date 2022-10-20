@@ -1,6 +1,5 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { Server } from 'socket.io';
 import { BooleanString } from 'src/shared/enums/boolean-string.enum';
 import { LocalFileService } from 'src/shared/local-file/local-file.service';
 import { Chat } from './chat.domain';
@@ -19,7 +18,6 @@ import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
 export class ChatService {
-  public socket: Server | null = null;
   constructor(
     private chatRepository: IChatRepository,
     private localFileService: LocalFileService,

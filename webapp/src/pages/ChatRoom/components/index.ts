@@ -1,2 +1,2 @@
-export { default as MessageInput } from './MessageInput/MessageInput';
-export { default as Messages } from './Messages/Messages';
+export { default as ChatRoomMessageInput } from './ChatRoomMessageInput/ChatRoomMessageInput';
+export { default as ChatRoomMessages } from './ChatRoomMessages/ChatRoomMessages';

@@ -7,8 +7,9 @@ import {
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
+  CHATROOM_URL,
   CHAT_URL,
-  CREATE_CHAT_URL,
+  CREATE_CHATROOM_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { Chat, ChatControllerGetChatsRequest } from '../../shared/generated';
@@ -28,7 +29,7 @@ const mapChatToRow = (chat: Chat): RowItem => {
         : WILDCARD_AVATAR_URL,
       status: 'offline',
     },
-    url: `${CHAT_URL}/${chat.chatName}`,
+    url: `${CHATROOM_URL}/${chat.chatName}`,
     title: chat.chatName,
     subtitle: 'last message',
     key: chat.id,
@@ -53,7 +54,7 @@ export default function ChatPage() {
       <div className="chat-page-button">
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => navigate(CREATE_CHAT_URL)}
+          onClick={() => navigate(CREATE_CHATROOM_URL)}
           iconVariant={IconVariant.ADD}
         >
           add chat

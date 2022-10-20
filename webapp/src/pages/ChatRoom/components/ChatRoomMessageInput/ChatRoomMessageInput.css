@@ -1,4 +1,4 @@
-.message-input-form {
+.chat-room-message-input-form {
   width: 100%;
   display: grid;
   gap: 0.5rem;
@@ -9,13 +9,13 @@
     'submit-button';
 }
 
-.message-input-grow-wrap {
+.chat-room-message-input-grow-wrap {
   grid-area: message-input;
   /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
   display: grid;
 }
 
-.message-input-grow-wrap::after {
+.chat-room-message-input-grow-wrap::after {
   /* Note the weird space! Needed to preventy jumpy behavior */
   content: attr(data-replicated-value) ' ';
 
@@ -26,18 +26,18 @@
   visibility: hidden;
 }
 
-.message-input-text {
+.chat-room-message-input-text {
   /* You could leave this, but after a user resizes, then it ruins the auto sizing */
   resize: none;
 }
 
-.message-input-text::placeholder {
+.chat-room-message-input-text::placeholder {
   color: var(--color-light);
   opacity: 1;
 }
 
-.message-input-grow-wrap::after,
-.message-input-text {
+.chat-room-message-input-grow-wrap::after,
+.chat-room-message-input-text {
   /* Identical styling required!! */
   outline: none;
   border: none;
@@ -55,7 +55,7 @@
   grid-area: 1 / 1 / 2 / 2;
 }
 
-.message-input-form .button {
+.chat-room-message-input-form .button {
   grid-area: submit-button;
   justify-self: center;
   align-self: end;
@@ -63,7 +63,7 @@
 }
 
 @media (min-width: 768px) {
-  .message-input-form {
+  .chat-room-message-input-form {
     grid-template-columns: 1fr auto;
     grid-template-rows: auto;
     grid-template-areas: 'message-input submit-button';

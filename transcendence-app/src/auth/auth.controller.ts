@@ -22,7 +22,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ChatService } from '../chat/chat.service';
+import { SocketService } from '../socket/socket.service';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
@@ -35,7 +35,7 @@ import { OAuth42Guard } from './oauth42.guard';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly chatService: ChatService,
+    private readonly socketService: SocketService,
   ) {}
 
   @Get('login')
@@ -61,8 +61,8 @@ export class AuthController {
         throw new NotFoundException(err.message);
       }
       // disconnect all Socket.IO connections linked to this session ID
-      if (this.chatService.socket) {
-        this.chatService.socket.to(sessionId).disconnectSockets();
+      if (this.socketService.socket) {
+        this.socketService.socket.to(sessionId).disconnectSockets();
       }
     });
   }

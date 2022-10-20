@@ -4,7 +4,7 @@ import * as ConnectMemcached from 'connect-memcached';
 import * as passport from 'passport';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from './config/env.validation';
-import { WsSessionAdapter } from './chat/ws-session.adapter';
+import { WsSessionAdapter } from './shared/adapters/ws-session.adapter';
 
 export const setupApp = (app: INestApplication) => {
   app.useGlobalPipes(
