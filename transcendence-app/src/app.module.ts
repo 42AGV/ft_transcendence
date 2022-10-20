@@ -24,7 +24,6 @@ import { ChatGateway } from './chat/chat.gateway';
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
-    ChatGateway,
   ],
 })
 export class AppModule {}
