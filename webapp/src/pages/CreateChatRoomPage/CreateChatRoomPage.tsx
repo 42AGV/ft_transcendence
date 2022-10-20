@@ -6,53 +6,21 @@ import {
   IconSize,
   IconVariant,
   MediumAvatar,
-  RowItem,
   Text,
   TextColor,
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import {
-  AVATAR_EP_URL,
-  CREATE_CHATROOM_URL,
-  EDIT_AVATAR_URL,
-  USERS_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { CREATE_CHATROOM_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { User } from '../../shared/generated';
 import { Color } from '../../shared/types';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import './CreateChatRoomPage.css';
 
 export default function CreateChatRoomPage() {
-  const [chatName, setChatName] = useState('');
   const navigate = useNavigate();
   const { goBack } = useNavigation();
-  const mapDataToRows = (
-    callBack: (data: User) => RowItem,
-    data: User[],
-  ): RowItem[] => {
-    return data.map((item) => callBack(item));
-  };
-  const mapUserToRow = (user: User): RowItem => {
-    return {
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: {
-        url: user.avatarId
-          ? `${AVATAR_EP_URL}/${user.avatarId}`
-          : WILDCARD_AVATAR_URL,
-        status: 'offline',
-        XCoordinate: user.avatarX,
-        YCoordinate: user.avatarY,
-      },
-      url: `${USERS_URL}/${user.username}`,
-      title: user.username,
-      subtitle: 'level x',
-      key: user.id,
-    };
-  };
+
   const RowChildren: JSX.Element = (
     <>
       <div className="row-icon">
@@ -62,7 +30,13 @@ export default function CreateChatRoomPage() {
           color={Color.LIGHT}
         />
       </div>
-      <h4>add users</h4>
+      <Text
+        variant={TextVariant.PARAGRAPH}
+        color={TextColor.LIGHT}
+        weight={TextWeight.REGULAR}
+      >
+        add users
+      </Text>
     </>
   );
   return (
@@ -94,7 +68,7 @@ export default function CreateChatRoomPage() {
       <div className="create-chat-page-row">
         <Link
           className={`row paragraph-regular`}
-          to={EDIT_AVATAR_URL}
+          to={CREATE_CHATROOM_URL}
           style={{
             cursor: 'pointer',
           }}

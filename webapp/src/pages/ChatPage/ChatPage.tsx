@@ -8,7 +8,6 @@ import {
 import {
   AVATAR_EP_URL,
   CHATROOM_URL,
-  CHAT_URL,
   CREATE_CHATROOM_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
