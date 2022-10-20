@@ -13,6 +13,7 @@ import {
   EditAvatarPage,
   LoginPage,
   RegisterPage,
+  ChatRoom,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -26,6 +27,7 @@ import {
   EDIT_AVATAR_URL,
   LOGIN_OPTIONS_URL,
   REGISTER_URL,
+  CHATROOM_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -96,6 +98,14 @@ root.render(
             element={
               <RequireAuth>
                 <EditAvatarPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={`${CHATROOM_URL}/:chatRoomId`}
+            element={
+              <RequireAuth>
+                <ChatRoom />
               </RequireAuth>
             }
           />

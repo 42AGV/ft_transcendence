@@ -1,10 +1,11 @@
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
 import { AppModule } from './app.module';
 import * as yaml from 'yaml';
+import { setupApp } from './setup-app';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -14,16 +15,7 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: '1',
   });
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-      forbidUnknownValues: true,
-    }),
-  );
+  setupApp(app);
   const options = new DocumentBuilder()
     .setTitle('transcendence-app')
     .setDescription('The transcendence-app API description')
