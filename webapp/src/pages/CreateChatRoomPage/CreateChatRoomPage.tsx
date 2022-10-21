@@ -11,12 +11,8 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import {
-  CHAT_URL,
-  DEFAULT_LOGIN_REDIRECT_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { useNavigate } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import './CreateChatRoomPage.css';
 import { useEffect, useState } from 'react';
@@ -55,7 +51,7 @@ export default function CreateChatRoomPage() {
     }, 5000);
     return () => clearTimeout(timer);
   }, [status]);
-  const { isLoggedIn, authUser } = useAuth();
+  const { authUser } = useAuth();
   if (authUser) {
     formValues.owner = authUser.id;
   }
@@ -88,7 +84,8 @@ export default function CreateChatRoomPage() {
       return;
     }
     try {
-      await chatsApi.chatControllerAddChat({
+      console.log(formValues);
+      await chatsApi.chatControllerCreateChat({
         createChatDto: formValues,
       });
       setStatus({

@@ -260,7 +260,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateChatDto"
+              $ref: "#/components/schemas/ChatDto"
       responses:
         "201":
           description: Create a chat
@@ -344,6 +344,29 @@ paths:
         "403": *a4
         "503":
           description: Service unavailable
+      tags: *a5
+  /api/v1/Chats/createchat:
+    post:
+      operationId: ChatController_createChat
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChatDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "422":
+          description: Unprocessable Entity
       tags: *a5
   "/api/v1/Chats/avatars/{avatarId}":
     get:
@@ -541,21 +564,23 @@ components:
       required:
         - avatarId
         - file
-    CreateChatDto:
+    ChatDto:
       type: object
       properties:
         chatName:
           type: string
         password:
           type: string
-        confirmationPassword:
+          nullable: true
+        avatarId:
           type: string
+          nullable: true
         owner:
           type: string
       required:
         - chatName
         - password
-        - confirmationPassword
+        - avatarId
         - owner
     Chat:
       type: object
@@ -598,3 +623,19 @@ components:
           type: number
         avatarY:
           type: number
+    CreateChatDto:
+      type: object
+      properties:
+        chatName:
+          type: string
+        password:
+          type: string
+        confirmationPassword:
+          type: string
+        owner:
+          type: string
+      required:
+        - chatName
+        - password
+        - confirmationPassword
+        - owner

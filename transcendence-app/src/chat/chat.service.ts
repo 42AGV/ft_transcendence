@@ -1,4 +1,8 @@
-import { Injectable, StreamableFile } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  StreamableFile,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from 'src/shared/enums/boolean-string.enum';
 import { LocalFileService } from 'src/shared/local-file/local-file.service';
@@ -15,9 +19,16 @@ import {
 } from '../shared/constants';
 import { createReadStream } from 'fs';
 import { CreateChatDto } from './dto/create-chat.dto';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class ChatService {
+  readonly saltLength = 8;
+  readonly hashLength = 32;
+
   constructor(
     private chatRepository: IChatRepository,
     private localFileService: LocalFileService,
@@ -48,16 +59,35 @@ export class ChatService {
     return chat ? new Chat(chat) : null;
   }
 
-  async addChat(chatDto: CreateChatDto): Promise<Chat | null> {
-    const chat = await this.chatRepository.add({
+  async addChat(chatDto: ChatDto): Promise<Chat | null> {
+    const chatcompl = {
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
-      avatarId: null,
       ...chatDto,
-    });
+    };
+    console.log(chatcompl);
+    const chat = await this.chatRepository.add(chatcompl);
     return chat ? new Chat(chat) : null;
+  }
+
+  async createChat(chat: CreateChatDto) {
+    if (chat.password !== chat.confirmationPassword) {
+      throw new BadRequestException(
+        'Password and Confirmation Password must match',
+      );
+    }
+
+    const salt = randomBytes(this.saltLength).toString('hex');
+    const hash = (await scrypt(chat.password, salt, this.hashLength)) as Buffer;
+    const result = salt + '.' + hash.toString('hex');
+    const { confirmationPassword: _, ...newChat } = chat;
+    return this.addChat({
+      ...newChat,
+      avatarId: null,
+      password: result,
+    });
   }
 
   async addAvatarAndChat(
