@@ -48,11 +48,9 @@ export class Api42Service {
     return validatedUser;
   }
 
-  async get42UserData(accessToken: string): Promise<{
-    userDto: UserDto;
-    avatarUrl: string;
-    providerId: string;
-  }> {
+  async get42UserData(
+    accessToken: string,
+  ): Promise<{ userDto: UserDto; avatarUrl: string; providerId: string }> {
     const data = await this.fetch42UserData(accessToken);
     const userDto: UserDto = {
       username: data.login,
