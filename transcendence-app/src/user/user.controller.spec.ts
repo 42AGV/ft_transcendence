@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { BlockService } from '../shared/block/block.service';
 
 const testUserDto: UserDto = {
   username: 'user',
@@ -19,6 +20,7 @@ const testUsername = 'paquito';
 describe('UserController', () => {
   let controller: UserController;
   let mockUserService: Partial<UserService>;
+  const mockBlockService: Partial<BlockService> = {};
   const mockAvatarFileInterceptor = {};
 
   beforeEach(async () => {
@@ -59,6 +61,10 @@ describe('UserController', () => {
         {
           provide: UserService,
           useValue: mockUserService,
+        },
+        {
+          provide: BlockService,
+          useValue: mockBlockService,
         },
       ],
     })
