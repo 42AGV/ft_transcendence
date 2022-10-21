@@ -1,5 +1,5 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
-import { CreateSocialUserDto } from './dto/create-social-user.dto';
+import { UserDto } from './dto/user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import {
   MAX_USER_ENTRIES_PER_PAGE,
@@ -49,9 +49,20 @@ export class UserService {
     return user ? new User(user) : null;
   }
 
-  async addAvatarAndSocialUser(
+  async addUser(userDto: UserDto): Promise<User | null> {
+    const user = await this.userRepository.add({
+      id: uuidv4(),
+      createdAt: new Date(Date.now()),
+      avatarX: 0,
+      avatarY: 0,
+      ...userDto,
+    });
+    return user ? new User(user) : null;
+  }
+
+  async addAvatarAndUser(
     fileDto: LocalFileDto,
-    userDto: CreateSocialUserDto,
+    userDto: UserDto,
   ): Promise<User | null> {
     const user = await this.userRepository.addAvatarAndAddUser(
       { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
@@ -60,8 +71,6 @@ export class UserService {
         createdAt: new Date(Date.now()),
         avatarX: 0,
         avatarY: 0,
-        password: null,
-        avatarId: null,
         ...userDto,
       },
     );

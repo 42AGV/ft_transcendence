@@ -1,7 +1,13 @@
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  ValidateIf,
+} from 'class-validator';
 
-export class CreateSocialUserDto {
+export class UserDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
@@ -14,4 +20,13 @@ export class CreateSocialUserDto {
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   fullName!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((object, value) => value !== null)
+  password!: string | null;
+
+  @IsUUID()
+  @ValidateIf((object, value) => value !== null)
+  avatarId!: string | null;
 }

@@ -1,14 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AvatarFileInterceptor, UserController } from './user.controller';
 import { UserService } from './user.service';
-import { CreateSocialUserDto } from './dto/create-social-user.dto';
+import { UserDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
-const testUserDto: CreateSocialUserDto = {
+const testUserDto: UserDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
+  password: null,
+  avatarId: uuidv4(),
 };
 const testUsername = 'paquito';
 
@@ -25,8 +27,6 @@ describe('UserController', () => {
           createdAt: new Date(Date.now()),
           avatarX: 0,
           avatarY: 0,
-          password: null,
-          avatarId: null,
           ...testUserDto,
           username,
         });
