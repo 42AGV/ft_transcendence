@@ -5,7 +5,7 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { lastValueFrom } from 'rxjs';
 import { OAuth42Config } from '../auth/oauth42-config.interface';
-import { UserDto } from './dto/user.dto';
+import { CreateSocialUserDto } from './dto/create-social-user.dto';
 
 @Injectable()
 export class Api42Service {
@@ -34,8 +34,10 @@ export class Api42Service {
     );
   }
 
-  private static async validate42ApiResponse(user: UserDto): Promise<UserDto> {
-    const validatedUser = plainToClass(UserDto, user);
+  private static async validate42ApiResponse(
+    user: CreateSocialUserDto,
+  ): Promise<CreateSocialUserDto> {
+    const validatedUser = plainToClass(CreateSocialUserDto, user);
     const errors = await validate(validatedUser, {
       skipMissingProperties: false,
       forbidUnknownValues: true,
@@ -48,16 +50,16 @@ export class Api42Service {
     return validatedUser;
   }
 
-  async get42UserData(
-    accessToken: string,
-  ): Promise<{ userDto: UserDto; avatarUrl: string; providerId: string }> {
+  async get42UserData(accessToken: string): Promise<{
+    userDto: CreateSocialUserDto;
+    avatarUrl: string;
+    providerId: string;
+  }> {
     const data = await this.fetch42UserData(accessToken);
-    const userDto: UserDto = {
+    const userDto: CreateSocialUserDto = {
       username: data.login,
       email: data.email,
       fullName: data.usual_full_name,
-      password: null,
-      avatarId: null,
     };
 
     await Api42Service.validate42ApiResponse(userDto);

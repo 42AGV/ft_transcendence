@@ -6,7 +6,7 @@ import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Api42Service } from '../user/api42.service';
 import { AVATARS_PATH } from '../user/constants';
-import { UserDto } from '../user/dto/user.dto';
+import { CreateSocialUserDto } from '../user/dto/create-social-user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
 import {
@@ -73,7 +73,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
 
   private async createUser(
     fileDto: LocalFileDto,
-    userDto: UserDto,
+    userDto: CreateSocialUserDto,
   ): Promise<User | null> {
     const userWithUsernameExists =
       await this.userService.retrieveUserWithUserName(userDto.username);
@@ -84,7 +84,10 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       }
       userDto.username = username;
     }
-    const user = await this.userService.addAvatarAndUser(fileDto, userDto);
+    const user = await this.userService.addAvatarAndSocialUser(
+      fileDto,
+      userDto,
+    );
     if (!user) {
       this.localFileService.deleteFileData(fileDto.path);
     }

@@ -3,20 +3,9 @@ import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserModule } from '../../src/user/user.module';
-import { v4 as uuidv4 } from 'uuid';
 import { validate } from '../../src/config/env.validation';
 import { UserController } from '../../src/user/user.controller';
 import { AuthenticatedGuard } from '../../src/shared/guards/authenticated.guard';
-import { UserDto } from '../../src/user/dto/user.dto';
-
-const testUserDto: UserDto = {
-  username: 'user',
-  email: 'afgv@github.com',
-  fullName: 'user',
-  password: null,
-  avatarId: null,
-};
-const testUserId = uuidv4();
 
 describe('[Feature] User - /users', () => {
   let app: INestApplication;
@@ -53,33 +42,8 @@ describe('[Feature] User - /users', () => {
     await app.init();
   });
 
-  it('Creates a user [POST /]', async () => {
-    const server = await app.getHttpServer();
-    const response = await request(server)
-      .post('/users')
-      .send(testUserDto)
-      .expect(HttpStatus.CREATED);
-    await request(server)
-      .get(`/users/${response.body.username}`)
-      .expect(HttpStatus.OK);
-    await request(server)
-      .get(`/users/${testUserId}`)
-      .expect(HttpStatus.NOT_FOUND);
-  });
-
   it('Get all users [GET /]', async () => {
     const server = await app.getHttpServer();
-    for (let i = 0; i < 50; i++) {
-      await request(server)
-        .post('/users')
-        .send({
-          username: 'user' + i,
-          email: i + 'afgv@github.com',
-          fullName: 'user' + i,
-          password: null,
-          avatarId: null,
-        });
-    }
     const response = await request(server)
       .get('/users/?limit=20&offset=0&sort=true')
       .expect(HttpStatus.OK);

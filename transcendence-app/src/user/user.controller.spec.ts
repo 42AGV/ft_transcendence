@@ -1,19 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AvatarFileInterceptor, UserController } from './user.controller';
-import { UnprocessableEntityException } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './dto/user.dto';
+import { CreateSocialUserDto } from './dto/create-social-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
-const testUserDto: UserDto = {
+const testUserDto: CreateSocialUserDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
-  password: null,
-  avatarId: uuidv4(),
 };
-const testUserId = uuidv4();
 const testUsername = 'paquito';
 
 describe('UserController', () => {
@@ -25,30 +21,14 @@ describe('UserController', () => {
     mockUserService = {
       retrieveUserWithUserName: (username: string) => {
         return Promise.resolve({
-          id: testUserId,
+          id: uuidv4(),
           createdAt: new Date(Date.now()),
           avatarX: 0,
           avatarY: 0,
+          password: null,
+          avatarId: null,
           ...testUserDto,
           username,
-        });
-      },
-      retrieveUserWithId: (id: string) => {
-        return Promise.resolve({
-          id,
-          createdAt: new Date(Date.now()),
-          avatarX: 0,
-          avatarY: 0,
-          ...testUserDto,
-        });
-      },
-      addUser: (userDto: UserDto) => {
-        return Promise.resolve({
-          id: testUserId,
-          createdAt: new Date(Date.now()),
-          avatarX: 0,
-          avatarY: 0,
-          ...userDto,
         });
       },
     };
@@ -69,28 +49,6 @@ describe('UserController', () => {
     controller = module.get<UserController>(UserController);
   });
 
-  describe('addUser', () => {
-    describe('when it succeeds', () => {
-      it('should create a new user', async () => {
-        const user = await controller.addUser(testUserDto);
-        expect(user.id).toEqual(testUserId);
-        expect(user.username).toEqual(testUserDto.username);
-      });
-    });
-
-    describe('when it fails', () => {
-      it('should throw the "UnprocessableEntityException"', async () => {
-        mockUserService.addUser = () => Promise.resolve(null);
-        expect.assertions(1);
-        try {
-          await controller.addUser(testUserDto);
-        } catch (err) {
-          expect(err).toBeInstanceOf(UnprocessableEntityException);
-        }
-      });
-    });
-  });
-
   describe('getUserByUsername', () => {
     describe('when user with username exists', () => {
       it('should return the user object', async () => {
@@ -99,7 +57,7 @@ describe('UserController', () => {
       });
     });
 
-    describe('when user with ID does not exists', () => {
+    describe('when user with username does not exists', () => {
       it('should throw the "NotFoundException"', async () => {
         mockUserService.retrieveUserWithUserName = () => Promise.resolve(null);
         expect.assertions(1);
