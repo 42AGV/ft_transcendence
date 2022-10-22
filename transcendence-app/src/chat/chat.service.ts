@@ -4,15 +4,15 @@ import {
   StreamableFile,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { BooleanString } from 'src/shared/enums/boolean-string.enum';
-import { LocalFileService } from 'src/shared/local-file/local-file.service';
+import { BooleanString } from '../shared/enums/boolean-string.enum';
+import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Chat } from './chat.domain';
 import { ChatDto } from './dto/chat.dto';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { IChatRepository } from './infrastructure/db/chat.repository';
-import { LocalFileDto } from 'src/shared/local-file/local-file.dto';
+import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
-import { loadEsmModule } from 'src/shared/utils';
+import { loadEsmModule } from '../shared/utils';
 import {
   AVATAR_MIMETYPE_WHITELIST,
   MAX_ENTRIES_PER_PAGE,

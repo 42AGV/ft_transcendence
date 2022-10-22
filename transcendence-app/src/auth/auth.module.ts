@@ -11,7 +11,7 @@ import { HTTP_TIMEOUT_MILLISECONDS } from '../shared/constants';
 import { LocalStrategy } from './local.strategy';
 import { OAuth42Strategy } from './oauth42.strategy';
 import { SessionSerializer } from './session.serializer';
-import { ChatModule } from 'src/chat/chat.module';
+import { ChatModule } from '../chat/chat.module';
 
 @Module({
   imports: [

@@ -1,5 +1,5 @@
-import { UpdateChatDto } from 'src/chat/dto/update-chat.dto';
-import { ChatsPaginationQueryDto } from 'src/chat/dto/chat.pagination.dto';
+import { UpdateChatDto } from '../../../chat/dto/update-chat.dto';
+import { ChatsPaginationQueryDto } from '../../../chat/dto/chat.pagination.dto';
 import { LocalFile } from '../../../shared/local-file/local-file.domain';
 import { Chat } from '../../chat.domain';
 
