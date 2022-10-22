@@ -630,8 +630,10 @@ components:
           type: string
         password:
           type: string
+          nullable: true
         confirmationPassword:
           type: string
+          nullable: true
         owner:
           type: string
       required:

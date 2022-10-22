@@ -10,12 +10,12 @@ export class CreateChatDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  password!: string;
+  password!: string | null;
 
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  confirmationPassword!: string;
+  confirmationPassword!: string | null;
 
   @IsString()
   @IsNotEmpty()

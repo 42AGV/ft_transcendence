@@ -14,11 +14,11 @@ import {
 import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useNavigate } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import './CreateChatRoomPage.css';
 import { useEffect, useState } from 'react';
 import { chatsApi } from '../../shared/services/ApiService';
 import { CreateChatDto, ResponseError } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import './CreateChatRoomPage.css';
 
 type FormStatus = {
   type: 'success' | 'error' | 'pending';
@@ -33,8 +33,8 @@ const initialSubmitFormStatus: FormStatus = {
 export default function CreateChatRoomPage() {
   const initialFormValues: CreateChatDto = {
     chatName: '',
-    password: '',
-    confirmationPassword: '',
+    password: null,
+    confirmationPassword: null,
     owner: '',
   };
   const navigate = useNavigate();
@@ -96,6 +96,7 @@ export default function CreateChatRoomPage() {
         navigate(CHAT_URL);
       }, 2000);
     } catch (error) {
+      console.log(formValues);
       if (error instanceof ResponseError) {
         setStatus({ type: 'error', message: `${error.response.statusText}` });
       } else if (error instanceof Error) {
@@ -152,7 +153,7 @@ export default function CreateChatRoomPage() {
             variant={InputVariant.LIGHT}
             label="Password"
             placeholder="password"
-            value={formValues.password}
+            value={formValues.password ? formValues.password : ''}
             name="password"
             type="password"
             onChange={handleInputChange}
@@ -160,7 +161,11 @@ export default function CreateChatRoomPage() {
           <Input
             variant={InputVariant.LIGHT}
             placeholder="repeat password"
-            value={formValues.confirmationPassword}
+            value={
+              formValues.confirmationPassword
+                ? formValues.confirmationPassword
+                : ''
+            }
             name="confirmationPassword"
             type="password"
             onChange={handleInputChange}

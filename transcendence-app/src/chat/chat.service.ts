@@ -73,23 +73,33 @@ export class ChatService {
   }
 
   async createChat(chat: CreateChatDto) {
-    if (chat.password !== chat.confirmationPassword) {
-      throw new BadRequestException(
-        'Password and Confirmation Password must match',
-      );
-    }
-
-    const salt = randomBytes(this.saltLength).toString('hex');
-    const hash = (await scrypt(chat.password, salt, this.hashLength)) as Buffer;
-    const result = salt + '.' + hash.toString('hex');
     const { confirmationPassword: _, ...newChat } = chat;
-    return this.addChat({
-      ...newChat,
-      avatarId: null,
-      password: result,
-    });
-  }
+    if (chat.password) {
+      if (chat.password !== chat.confirmationPassword) {
+        throw new BadRequestException(
+          'Password and Confirmation Password must match',
+        );
+      }
 
+      const salt = randomBytes(this.saltLength).toString('hex');
+      const hash = (await scrypt(
+        chat.password,
+        salt,
+        this.hashLength,
+      )) as Buffer;
+      const result = salt + '.' + hash.toString('hex');
+      return this.addChat({
+        ...newChat,
+        avatarId: null,
+        password: result,
+      });
+    } else {
+      return this.addChat({
+        ...newChat,
+        avatarId: null,
+      });
+    }
+  }
   async addAvatarAndChat(
     fileDto: LocalFileDto,
     chatDto: ChatDto,

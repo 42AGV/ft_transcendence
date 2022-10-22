@@ -30,13 +30,13 @@ export interface CreateChatDto {
      * @type {string}
      * @memberof CreateChatDto
      */
-    password: string;
+    password: string | null;
     /**
      * 
      * @type {string}
      * @memberof CreateChatDto
      */
-    confirmationPassword: string;
+    confirmationPassword: string | null;
     /**
      * 
      * @type {string}

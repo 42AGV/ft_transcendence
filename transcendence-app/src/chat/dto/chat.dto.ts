@@ -9,15 +9,12 @@ export class ChatDto {
 
   @IsString()
   @IsNotEmpty()
-  @ValidateIf((object, value) => value !== null)
   password!: string | null;
 
   @IsUUID()
-  @ValidateIf((object, value) => value !== null)
   avatarId!: string | null;
 
   @IsString()
   @IsNotEmpty()
-  @ValidateIf((object, value) => value !== null)
   owner!: string;
 }

@@ -78,7 +78,6 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async addChat(@Body() chatDto: ChatDto): Promise<Chat> {
-    console.log(chatDto);
     const chat = await this.chatService.addChat(chatDto);
     if (!chat) {
       throw new UnprocessableEntityException();
