@@ -16,24 +16,17 @@
 import * as runtime from '../runtime';
 import type {
   Chat,
-  ChatDto,
   CreateChatDto,
   UpdateChatDto,
 } from '../models';
 import {
     ChatFromJSON,
     ChatToJSON,
-    ChatDtoFromJSON,
-    ChatDtoToJSON,
     CreateChatDtoFromJSON,
     CreateChatDtoToJSON,
     UpdateChatDtoFromJSON,
     UpdateChatDtoToJSON,
 } from '../models';
-
-export interface ChatControllerAddChatRequest {
-    chatDto: ChatDto;
-}
 
 export interface ChatControllerCreateChatRequest {
     createChatDto: CreateChatDto;
@@ -69,37 +62,6 @@ export class ChatsApi extends runtime.BaseAPI {
 
     /**
      */
-    async chatControllerAddChatRaw(requestParameters: ChatControllerAddChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Chat>> {
-        if (requestParameters.chatDto === null || requestParameters.chatDto === undefined) {
-            throw new runtime.RequiredError('chatDto','Required parameter requestParameters.chatDto was null or undefined when calling chatControllerAddChat.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/v1/Chats`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ChatDtoToJSON(requestParameters.chatDto),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ChatFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async chatControllerAddChat(requestParameters: ChatControllerAddChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Chat> {
-        const response = await this.chatControllerAddChatRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
     async chatControllerCreateChatRaw(requestParameters: ChatControllerCreateChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Chat>> {
         if (requestParameters.createChatDto === null || requestParameters.createChatDto === undefined) {
             throw new runtime.RequiredError('createChatDto','Required parameter requestParameters.createChatDto was null or undefined when calling chatControllerCreateChat.');
@@ -112,7 +74,7 @@ export class ChatsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/v1/Chats/createchat`,
+            path: `/api/v1/Chats`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,

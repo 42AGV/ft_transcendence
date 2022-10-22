@@ -37,12 +37,6 @@ export interface CreateChatDto {
      * @memberof CreateChatDto
      */
     confirmationPassword: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CreateChatDto
-     */
-    owner: string;
 }
 
 /**
@@ -53,7 +47,6 @@ export function instanceOfCreateChatDto(value: object): boolean {
     isInstance = isInstance && "chatName" in value;
     isInstance = isInstance && "password" in value;
     isInstance = isInstance && "confirmationPassword" in value;
-    isInstance = isInstance && "owner" in value;
 
     return isInstance;
 }
@@ -71,7 +64,6 @@ export function CreateChatDtoFromJSONTyped(json: any, ignoreDiscriminator: boole
         'chatName': json['chatName'],
         'password': json['password'],
         'confirmationPassword': json['confirmationPassword'],
-        'owner': json['owner'],
     };
 }
 
@@ -87,7 +79,6 @@ export function CreateChatDtoToJSON(value?: CreateChatDto | null): any {
         'chatName': value.chatName,
         'password': value.password,
         'confirmationPassword': value.confirmationPassword,
-        'owner': value.owner,
     };
 }
 

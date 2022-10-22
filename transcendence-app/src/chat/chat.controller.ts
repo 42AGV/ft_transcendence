@@ -31,7 +31,6 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { Chat as GetChat } from './decorators/chat.decorator';
 import { Chat } from './chat.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
@@ -46,6 +45,7 @@ import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { User } from '../user/user.domain';
 import { User as GetUser } from '../user/decorators/user.decorator';
+import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -115,9 +115,9 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChats(
-    @Query() ChatsPaginationQueryDto: ChatsPaginationQueryDto,
+    @Query() chatsPaginationQueryDto: ChatsPaginationQueryDto,
   ): Promise<Chat[]> {
-    const Chats = await this.chatService.retrieveChats(ChatsPaginationQueryDto);
+    const Chats = await this.chatService.retrieveChats(chatsPaginationQueryDto);
     if (!Chats) {
       throw new ServiceUnavailableException();
     }

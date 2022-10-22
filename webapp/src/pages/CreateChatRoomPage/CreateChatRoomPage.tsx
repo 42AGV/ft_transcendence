@@ -17,7 +17,6 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useEffect, useState } from 'react';
 import { chatsApi } from '../../shared/services/ApiService';
 import { CreateChatDto, ResponseError } from '../../shared/generated';
-import { useAuth } from '../../shared/hooks/UseAuth';
 import './CreateChatRoomPage.css';
 
 type FormStatus = {
@@ -33,9 +32,8 @@ const initialSubmitFormStatus: FormStatus = {
 export default function CreateChatRoomPage() {
   const initialFormValues: CreateChatDto = {
     chatName: '',
-    password: null,
-    confirmationPassword: null,
-    owner: '',
+    password: '',
+    confirmationPassword: '',
   };
   const navigate = useNavigate();
   const { goBack } = useNavigation();
@@ -51,10 +49,6 @@ export default function CreateChatRoomPage() {
     }, 5000);
     return () => clearTimeout(timer);
   }, [status]);
-  const { authUser } = useAuth();
-  if (authUser) {
-    formValues.owner = authUser.id;
-  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -86,7 +80,11 @@ export default function CreateChatRoomPage() {
     try {
       console.log(formValues);
       await chatsApi.chatControllerCreateChat({
-        createChatDto: formValues,
+        createChatDto: {
+          ...formValues,
+          password: formValues.password || null,
+          confirmationPassword: formValues.confirmationPassword || null,
+        },
       });
       setStatus({
         type: 'success',
