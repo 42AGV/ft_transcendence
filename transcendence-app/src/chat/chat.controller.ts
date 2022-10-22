@@ -44,7 +44,8 @@ import {
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { ChatDto } from './dto/chat.dto';
+import { User } from '../user/user.domain';
+import { User as GetUser } from '../user/decorators/user.decorator';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -77,8 +78,12 @@ export class ChatController {
   @ApiCreatedResponse({ description: 'Create a chat', type: Chat })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addChat(@Body() chatDto: ChatDto): Promise<Chat> {
-    const chat = await this.chatService.addChat(chatDto);
+  async createChat(
+    @GetUser() user: User,
+    @Body() createChatDto: CreateChatDto,
+  ) {
+    const chat = await this.chatService.createChat(user.id, createChatDto);
+
     if (!chat) {
       throw new UnprocessableEntityException();
     }
@@ -117,18 +122,6 @@ export class ChatController {
       throw new ServiceUnavailableException();
     }
     return Chats;
-  }
-
-  @Post('/createchat')
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
-  async createChat(@Body() createChatDto: CreateChatDto) {
-    const chat = await this.chatService.createChat(createChatDto);
-
-    if (!chat) {
-      throw new UnprocessableEntityException();
-    }
-    return chat;
   }
 
   @Get('avatars/:avatarId')

@@ -72,7 +72,7 @@ export class ChatService {
     return chat ? new Chat(chat) : null;
   }
 
-  async createChat(chat: CreateChatDto) {
+  async createChat(ownerId: string, chat: CreateChatDto) {
     const { confirmationPassword: _, ...newChat } = chat;
     if (chat.password) {
       if (chat.password !== chat.confirmationPassword) {
@@ -92,11 +92,13 @@ export class ChatService {
         ...newChat,
         avatarId: null,
         password: result,
+        owner: ownerId,
       });
     } else {
       return this.addChat({
         ...newChat,
         avatarId: null,
+        owner: ownerId,
       });
     }
   }
