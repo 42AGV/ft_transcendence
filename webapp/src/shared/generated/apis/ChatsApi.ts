@@ -17,27 +17,16 @@ import * as runtime from '../runtime';
 import type {
   Chat,
   CreateChatDto,
-  UpdateChatDto,
 } from '../models';
 import {
     ChatFromJSON,
     ChatToJSON,
     CreateChatDtoFromJSON,
     CreateChatDtoToJSON,
-    UpdateChatDtoFromJSON,
-    UpdateChatDtoToJSON,
 } from '../models';
 
 export interface ChatControllerCreateChatRequest {
     createChatDto: CreateChatDto;
-}
-
-export interface ChatControllerGetAvatarByAvatarIdRequest {
-    avatarId: string;
-}
-
-export interface ChatControllerGetChatByIdRequest {
-    chatId: string;
 }
 
 export interface ChatControllerGetChatsRequest {
@@ -45,14 +34,6 @@ export interface ChatControllerGetChatsRequest {
     offset?: number;
     sort?: ChatControllerGetChatsSortEnum;
     search?: string;
-}
-
-export interface ChatControllerUpdateCurrentChatRequest {
-    updateChatDto: UpdateChatDto;
-}
-
-export interface ChatControllerUploadAvatarRequest {
-    file?: Blob;
 }
 
 /**
@@ -93,62 +74,6 @@ export class ChatsApi extends runtime.BaseAPI {
 
     /**
      */
-    async chatControllerGetAvatarByAvatarIdRaw(requestParameters: ChatControllerGetAvatarByAvatarIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        if (requestParameters.avatarId === null || requestParameters.avatarId === undefined) {
-            throw new runtime.RequiredError('avatarId','Required parameter requestParameters.avatarId was null or undefined when calling chatControllerGetAvatarByAvatarId.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/Chats/avatars/{avatarId}`.replace(`{${"avatarId"}}`, encodeURIComponent(String(requestParameters.avatarId))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.TextApiResponse(response) as any;
-    }
-
-    /**
-     */
-    async chatControllerGetAvatarByAvatarId(requestParameters: ChatControllerGetAvatarByAvatarIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.chatControllerGetAvatarByAvatarIdRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async chatControllerGetChatByIdRaw(requestParameters: ChatControllerGetChatByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Chat>> {
-        if (requestParameters.chatId === null || requestParameters.chatId === undefined) {
-            throw new runtime.RequiredError('chatId','Required parameter requestParameters.chatId was null or undefined when calling chatControllerGetChatById.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/Chats/{chatId}`.replace(`{${"chatId"}}`, encodeURIComponent(String(requestParameters.chatId))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ChatFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async chatControllerGetChatById(requestParameters: ChatControllerGetChatByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Chat> {
-        const response = await this.chatControllerGetChatByIdRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
     async chatControllerGetChatsRaw(requestParameters: ChatControllerGetChatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Chat>>> {
         const queryParameters: any = {};
 
@@ -184,82 +109,6 @@ export class ChatsApi extends runtime.BaseAPI {
      */
     async chatControllerGetChats(requestParameters: ChatControllerGetChatsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Chat>> {
         const response = await this.chatControllerGetChatsRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async chatControllerUpdateCurrentChatRaw(requestParameters: ChatControllerUpdateCurrentChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Chat>> {
-        if (requestParameters.updateChatDto === null || requestParameters.updateChatDto === undefined) {
-            throw new runtime.RequiredError('updateChatDto','Required parameter requestParameters.updateChatDto was null or undefined when calling chatControllerUpdateCurrentChat.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/api/v1/Chats`,
-            method: 'PATCH',
-            headers: headerParameters,
-            query: queryParameters,
-            body: UpdateChatDtoToJSON(requestParameters.updateChatDto),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ChatFromJSON(jsonValue));
-    }
-
-    /**
-     */
-    async chatControllerUpdateCurrentChat(requestParameters: ChatControllerUpdateCurrentChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Chat> {
-        const response = await this.chatControllerUpdateCurrentChatRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     */
-    async chatControllerUploadAvatarRaw(requestParameters: ChatControllerUploadAvatarRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const consumes: runtime.Consume[] = [
-            { contentType: 'multipart/form-data' },
-        ];
-        // @ts-ignore: canConsumeForm may be unused
-        const canConsumeForm = runtime.canConsumeForm(consumes);
-
-        let formParams: { append(param: string, value: any): any };
-        let useForm = false;
-        // use FormData to transmit files using content-type "multipart/form-data"
-        useForm = canConsumeForm;
-        if (useForm) {
-            formParams = new FormData();
-        } else {
-            formParams = new URLSearchParams();
-        }
-
-        if (requestParameters.file !== undefined) {
-            formParams.append('file', requestParameters.file as any);
-        }
-
-        const response = await this.request({
-            path: `/api/v1/Chats/avatar`,
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: formParams,
-        }, initOverrides);
-
-        return new runtime.TextApiResponse(response) as any;
-    }
-
-    /**
-     */
-    async chatControllerUploadAvatar(requestParameters: ChatControllerUploadAvatarRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.chatControllerUploadAvatarRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

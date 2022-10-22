@@ -278,28 +278,6 @@ paths:
       tags:
         &a5
         - Chats
-    patch:
-      operationId: ChatController_updateCurrentChat
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateChatDto"
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Chat"
-        "400":
-          description: Bad Request
-        "403": *a4
-        "422":
-          description: Unprocessable Entity
-      tags: *a5
     get:
       operationId: ChatController_getChats
       parameters:
@@ -344,81 +322,6 @@ paths:
         "403": *a4
         "503":
           description: Service unavailable
-      tags: *a5
-  "/api/v1/Chats/avatars/{avatarId}":
-    get:
-      operationId: ChatController_getAvatarByAvatarId
-      parameters:
-        - name: avatarId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            image/jpeg:
-              schema:
-                type: file
-                format: binary
-        "400":
-          description: Bad Request
-        "403": *a4
-        "404":
-          description: Not Found
-      tags: *a5
-  "/api/v1/Chats/{chatId}":
-    get:
-      operationId: ChatController_getChatById
-      parameters:
-        - name: chatId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Get a chat
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Chat"
-        "400":
-          description: Bad Request
-        "403": *a4
-        "404":
-          description: Not Found
-      tags: *a5
-  /api/v1/Chats/avatar:
-    put:
-      operationId: ChatController_uploadAvatar
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-      responses:
-        "200":
-          description: ""
-          content:
-            image/jpeg:
-              schema:
-                type: file
-                format: binary
-        "403": *a4
-        "413":
-          description: Payload Too Large
-        "422":
-          description: Unprocessable Entity
-        "503":
-          description: Service Unavailable
       tags: *a5
 info:
   title: transcendence-app
@@ -588,12 +491,3 @@ components:
         - avatarY
         - createdAt
         - owner
-    UpdateChatDto:
-      type: object
-      properties:
-        chatName:
-          type: string
-        avatarX:
-          type: number
-        avatarY:
-          type: number

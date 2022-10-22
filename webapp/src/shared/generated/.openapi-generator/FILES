@@ -7,7 +7,6 @@ models/Chat.ts
 models/CreateChatDto.ts
 models/LoginUserDto.ts
 models/RegisterUserDto.ts
-models/UpdateChatDto.ts
 models/UpdateUserDto.ts
 models/User.ts
 models/UserAvatarDto.ts
