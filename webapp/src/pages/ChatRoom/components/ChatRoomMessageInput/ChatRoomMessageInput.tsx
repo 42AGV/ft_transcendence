@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import socket from '../../../../shared/socket';
 import './ChatRoomMessageInput.css';
 
@@ -8,15 +8,13 @@ type ChatRoomMessageInputProps = {
 
 const ChatRoomMessageInput = ({ to }: ChatRoomMessageInputProps) => {
   const [value, setValue] = useState('');
-  const myFormRef = useRef<HTMLFormElement>(null);
 
   const onEnterPress = (e: React.KeyboardEvent) => {
     if (e.code === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (myFormRef.current !== null && value !== '') {
+      value !== '' &&
         socket.emit('chatRoomMessage', { chatRoomId: to, content: value });
-        setValue('');
-      }
+      setValue('');
     }
   };
 
@@ -25,7 +23,7 @@ const ChatRoomMessageInput = ({ to }: ChatRoomMessageInputProps) => {
   };
 
   return (
-    <form className="chat-room-message-input-form" ref={myFormRef}>
+    <form className="chat-room-message-input-form">
       <div
         className="chat-room-message-input-grow-wrap paragraph-regular"
         data-replicated-value={value}
