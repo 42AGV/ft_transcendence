@@ -13,6 +13,8 @@ import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
 import { LocalFileService } from 'src/shared/local-file/local-file.service';
+import { Stream } from 'stream';
+import { AVATARS_PATH } from '../user/constants';
 
 const scrypt = promisify(_scrypt);
 
@@ -68,18 +70,25 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
 
     const { confirmationPassword: _, ...newUser } = user;
-    console.log(typeof generateAvatar);
     const newAvatar = generateAvatar({
       blocks: 6,
       width: 100,
     });
 
-    console.dir(newAvatar);
-
-    return this.userService.addUser({
+    const prefix = 'data:image/svg+xml;base64,';
+    const base64Encoded = newAvatar.base64.slice(prefix.length);
+    const buff = Buffer.from(base64Encoded, 'base64');
+    const avatarDto = await this.localFileService.saveFileDataFromBuffer(
+      buff,
+      AVATARS_PATH,
+      'image/svg+xml',
+    );
+    const userDto = {
       ...newUser,
       avatarId: null,
       password: result,
-    });
+    };
+
+    return this.userService.addAvatarAndUser(avatarDto, userDto);
   }
 }

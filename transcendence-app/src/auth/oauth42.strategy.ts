@@ -42,7 +42,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       accessToken,
       avatarUrl,
     );
-    return this.localFileService.saveFileData(
+    return this.localFileService.saveFileDataFromStream(
       response.data,
       AVATARS_PATH,
       response.headers['content-type'],

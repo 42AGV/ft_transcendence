@@ -26,7 +26,7 @@ export class LocalFileService {
     });
   }
 
-  async saveFileData(
+  async saveFileDataFromStream(
     data: ReadStream,
     path: string,
     mimetype: string,
@@ -40,6 +40,35 @@ export class LocalFileService {
     const finalPath = join(directory, filename);
     const outStream = createWriteStream(finalPath);
     data.pipe(outStream);
+
+    return new Promise((resolve, reject) => {
+      outStream.on('finish', () =>
+        resolve({
+          filename,
+          mimetype,
+          path: finalPath,
+          size: outStream.bytesWritten,
+        }),
+      );
+      outStream.on('error', reject);
+    });
+  }
+
+  async saveFileDataFromBuffer(
+    data: Buffer,
+    path: string,
+    mimetype: string,
+  ): Promise<LocalFileDto> {
+    const filesPath = this.configService.get(
+      'TRANSCENDENCE_APP_DATA',
+    ) as string;
+    const filename = randomBytes(16).toString('hex');
+    const directory = join(filesPath, path);
+    this.createDirectory(directory);
+    const finalPath = join(directory, filename);
+    const outStream = createWriteStream(finalPath);
+    outStream.write(data);
+    outStream.end();
 
     return new Promise((resolve, reject) => {
       outStream.on('finish', () =>
