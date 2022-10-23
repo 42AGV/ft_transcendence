@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Button, ButtonVariant } from '../../../../shared/components';
+import React, { useRef, useState } from 'react';
 import socket from '../../../../shared/socket';
 import './ChatRoomMessageInput.css';
 
@@ -9,11 +8,16 @@ type ChatRoomMessageInputProps = {
 
 const ChatRoomMessageInput = ({ to }: ChatRoomMessageInputProps) => {
   const [value, setValue] = useState('');
+  const myFormRef = useRef<HTMLFormElement>(null);
 
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    socket.emit('chatRoomMessage', { chatRoomId: to, content: value });
-    setValue('');
+  const onEnterPress = (e: React.KeyboardEvent) => {
+    if (e.code === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (myFormRef.current !== null && value !== '') {
+        socket.emit('chatRoomMessage', { chatRoomId: to, content: value });
+        setValue('');
+      }
+    }
   };
 
   const handleOnInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
@@ -21,7 +25,7 @@ const ChatRoomMessageInput = ({ to }: ChatRoomMessageInputProps) => {
   };
 
   return (
-    <form className="chat-room-message-input-form" onSubmit={handleOnSubmit}>
+    <form className="chat-room-message-input-form" ref={myFormRef}>
       <div
         className="chat-room-message-input-grow-wrap paragraph-regular"
         data-replicated-value={value}
@@ -32,9 +36,9 @@ const ChatRoomMessageInput = ({ to }: ChatRoomMessageInputProps) => {
           value={value}
           rows={1}
           onInput={handleOnInput}
+          onKeyDown={onEnterPress}
         />
       </div>
-      <Button variant={ButtonVariant.SUBMIT}>Send</Button>
     </form>
   );
 };

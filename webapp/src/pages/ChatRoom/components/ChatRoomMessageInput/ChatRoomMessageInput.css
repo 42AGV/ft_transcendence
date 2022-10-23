@@ -55,13 +55,6 @@
   grid-area: 1 / 1 / 2 / 2;
 }
 
-.chat-room-message-input-form .button {
-  grid-area: submit-button;
-  justify-self: center;
-  align-self: end;
-  margin: 0;
-}
-
 @media (min-width: 768px) {
   .chat-room-message-input-form {
     grid-template-columns: 1fr auto;
