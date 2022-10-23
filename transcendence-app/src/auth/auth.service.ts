@@ -6,10 +6,13 @@ import {
 } from '@nestjs/common';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+// TODO investigate why this works
+import generateAvatar = require('github-like-avatar-generator');
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
+import { LocalFileService } from 'src/shared/local-file/local-file.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -18,7 +21,10 @@ export class AuthService {
   readonly saltLength = 8;
   readonly hashLength = 32;
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly localFileService: LocalFileService,
+  ) {}
 
   async validateUser(user: LoginUserDto): Promise<User> {
     const foundUser = await this.userService.retrieveUserWithUserName(
@@ -62,6 +68,14 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
 
     const { confirmationPassword: _, ...newUser } = user;
+    console.log(typeof generateAvatar);
+    const newAvatar = generateAvatar({
+      blocks: 6,
+      width: 100,
+    });
+
+    console.dir(newAvatar);
+
     return this.userService.addUser({
       ...newUser,
       avatarId: null,
