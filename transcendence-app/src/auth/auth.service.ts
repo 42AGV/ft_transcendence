@@ -10,7 +10,7 @@ import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
-import { LocalFileService } from 'src/shared/local-file/local-file.service';
+import { LocalFileService } from '../shared/local-file/local-file.service';
 
 const scrypt = promisify(_scrypt);
 
