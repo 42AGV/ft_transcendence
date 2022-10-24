@@ -109,7 +109,7 @@ export default function CreateChatRoomPage() {
 
   return (
     <div className="create-chat-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
         add chat
       </Header>
       <div className="create-chat-page-avatar-properties">
