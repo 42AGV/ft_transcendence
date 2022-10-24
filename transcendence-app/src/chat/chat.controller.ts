@@ -26,15 +26,15 @@ import { User } from '../user/user.domain';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 
-@Controller('Chats')
+@Controller('chatroom')
 @UseGuards(AuthenticatedGuard)
-@ApiTags('Chats')
+@ApiTags('chatroom')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class ChatController {
   constructor(private chatService: ChatService) {}
 
   @Post()
-  @ApiCreatedResponse({ description: 'Create a chat', type: Chat })
+  @ApiCreatedResponse({ description: 'Create a chatroom', type: Chat })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async createChat(
@@ -51,7 +51,7 @@ export class ChatController {
 
   @Get()
   @ApiOkResponse({
-    description: `Lists all Chats (max ${MAX_ENTRIES_PER_PAGE})`,
+    description: `Lists all chatrooms (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [Chat],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })

@@ -251,7 +251,7 @@ paths:
         "503":
           description: Service Unavailable
       tags: *a3
-  /api/v1/Chats:
+  /api/v1/chatroom:
     post:
       operationId: ChatController_createChat
       parameters: []
@@ -263,7 +263,7 @@ paths:
               $ref: "#/components/schemas/CreateChatDto"
       responses:
         "201":
-          description: Create a chat
+          description: Create a chatroom
           content:
             application/json:
               schema:
@@ -277,7 +277,7 @@ paths:
           description: Unprocessable entity
       tags:
         &a5
-        - Chats
+        - chatroom
     get:
       operationId: ChatController_getChats
       parameters:
@@ -310,7 +310,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Lists all Chats (max 20)
+          description: Lists all chatrooms (max 20)
           content:
             application/json:
               schema:
@@ -447,7 +447,7 @@ components:
     CreateChatDto:
       type: object
       properties:
-        chatName:
+        name:
           type: string
         password:
           type: string
@@ -456,7 +456,7 @@ components:
           type: string
           nullable: true
       required:
-        - chatName
+        - name
         - password
         - confirmationPassword
     Chat:
@@ -464,7 +464,7 @@ components:
       properties:
         id:
           type: string
-        chatName:
+        name:
           type: string
         password:
           type: object
@@ -480,14 +480,14 @@ components:
         createdAt:
           format: date-time
           type: string
-        owner:
+        ownerId:
           type: string
       required:
         - id
-        - chatName
+        - name
         - password
         - avatarId
         - avatarX
         - avatarY
         - createdAt
-        - owner
+        - ownerId

@@ -24,7 +24,7 @@ export interface CreateChatDto {
      * @type {string}
      * @memberof CreateChatDto
      */
-    chatName: string;
+    name: string;
     /**
      * 
      * @type {string}
@@ -44,7 +44,7 @@ export interface CreateChatDto {
  */
 export function instanceOfCreateChatDto(value: object): boolean {
     let isInstance = true;
-    isInstance = isInstance && "chatName" in value;
+    isInstance = isInstance && "name" in value;
     isInstance = isInstance && "password" in value;
     isInstance = isInstance && "confirmationPassword" in value;
 
@@ -61,7 +61,7 @@ export function CreateChatDtoFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'chatName': json['chatName'],
+        'name': json['name'],
         'password': json['password'],
         'confirmationPassword': json['confirmationPassword'],
     };
@@ -76,7 +76,7 @@ export function CreateChatDtoToJSON(value?: CreateChatDto | null): any {
     }
     return {
         
-        'chatName': value.chatName,
+        'name': value.name,
         'password': value.password,
         'confirmationPassword': value.confirmationPassword,
     };

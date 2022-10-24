@@ -28,12 +28,12 @@ export class ChatPostgresRepository
   }
 
   async getByChatName(chatName: string): Promise<ChatEntity | null> {
-    const chats = await this.getByKey(chatKeys.CHATNAME, chatName);
+    const chats = await this.getByKey(chatKeys.NAME, chatName);
     return chats && chats.length ? chats[0] : null;
   }
 
   async deleteByChatName(chatName: string): Promise<ChatEntity | null> {
-    const chats = await this.deleteByKey(chatKeys.CHATNAME, chatName);
+    const chats = await this.deleteByKey(chatKeys.NAME, chatName);
     return chats && chats.length ? chats[0] : null;
   }
 
@@ -49,12 +49,11 @@ export class ChatPostgresRepository
     paginationDto: Required<ChatsPaginationQueryDto>,
   ): Promise<ChatEntity[] | null> {
     const { limit, offset, sort, search } = paginationDto;
-    const orderBy =
-      sort === BooleanString.True ? chatKeys.CHATNAME : chatKeys.ID;
+    const orderBy = sort === BooleanString.True ? chatKeys.NAME : chatKeys.ID;
     return makeQuery<ChatEntity>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
-      WHERE ${chatKeys.CHATNAME} ILIKE $1
+      WHERE ${chatKeys.NAME} ILIKE $1
       ORDER BY ${orderBy}
       LIMIT $2
       OFFSET $3;`,

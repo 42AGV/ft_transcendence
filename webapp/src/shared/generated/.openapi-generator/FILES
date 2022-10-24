@@ -1,5 +1,5 @@
 apis/AuthApi.ts
-apis/ChatsApi.ts
+apis/ChatroomApi.ts
 apis/UsersApi.ts
 apis/index.ts
 index.ts

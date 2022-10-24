@@ -2,7 +2,7 @@ export enum table {
   USERS = 'Users',
   LOCAL_FILE = 'LocalFile',
   AUTH_PROVIDER = 'AuthProvider',
-  CHATS = 'Chats',
+  CHATS = 'ChatRoom',
 }
 
 export interface Query {

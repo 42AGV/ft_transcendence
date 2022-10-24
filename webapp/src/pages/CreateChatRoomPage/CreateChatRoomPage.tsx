@@ -15,9 +15,9 @@ import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useNavigate } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useEffect, useState } from 'react';
-import { chatsApi } from '../../shared/services/ApiService';
 import { CreateChatDto, ResponseError } from '../../shared/generated';
 import './CreateChatRoomPage.css';
+import { chatroomApi } from '../../shared/services/ApiService';
 
 type FormStatus = {
   type: 'success' | 'error' | 'pending';
@@ -31,7 +31,7 @@ const initialSubmitFormStatus: FormStatus = {
 
 export default function CreateChatRoomPage() {
   const initialFormValues: CreateChatDto = {
-    chatName: '',
+    name: '',
     password: '',
     confirmationPassword: '',
   };
@@ -58,10 +58,10 @@ export default function CreateChatRoomPage() {
   };
 
   function hasValidFormValues() {
-    if (formValues.chatName === '') {
+    if (formValues.name === '') {
       setStatus({
         type: 'error',
-        message: 'ChatName can not be empty',
+        message: 'Chat room name can not be empty',
       });
       return false;
     } else if (formValues.password !== formValues.confirmationPassword) {
@@ -79,7 +79,7 @@ export default function CreateChatRoomPage() {
     }
     try {
       console.log(formValues);
-      await chatsApi.chatControllerCreateChat({
+      await chatroomApi.chatControllerCreateChat({
         createChatDto: {
           ...formValues,
           password: formValues.password || null,
@@ -122,7 +122,7 @@ export default function CreateChatRoomPage() {
             color={TextColor.LIGHT}
             weight={TextWeight.REGULAR}
           >
-            {formValues.chatName ? formValues.chatName : 'chat name'}
+            {formValues.name ? formValues.name : 'chat room name'}
           </Text>
           <Text
             variant={TextVariant.PARAGRAPH}
@@ -141,10 +141,10 @@ export default function CreateChatRoomPage() {
         <div className="create-chat-page-form-inputs-container">
           <Input
             variant={InputVariant.LIGHT}
-            label="ChatName"
-            placeholder="chat name"
-            value={formValues.chatName}
-            name="chatName"
+            label="Chat Room Name"
+            placeholder="chat room name"
+            value={formValues.name}
+            name="name"
             onChange={handleInputChange}
           />
           <Input

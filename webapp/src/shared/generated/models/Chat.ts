@@ -30,7 +30,7 @@ export interface Chat {
      * @type {string}
      * @memberof Chat
      */
-    chatName: string;
+    name: string;
     /**
      * 
      * @type {object}
@@ -66,7 +66,7 @@ export interface Chat {
      * @type {string}
      * @memberof Chat
      */
-    owner: string;
+    ownerId: string;
 }
 
 /**
@@ -75,13 +75,13 @@ export interface Chat {
 export function instanceOfChat(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
-    isInstance = isInstance && "chatName" in value;
+    isInstance = isInstance && "name" in value;
     isInstance = isInstance && "password" in value;
     isInstance = isInstance && "avatarId" in value;
     isInstance = isInstance && "avatarX" in value;
     isInstance = isInstance && "avatarY" in value;
     isInstance = isInstance && "createdAt" in value;
-    isInstance = isInstance && "owner" in value;
+    isInstance = isInstance && "ownerId" in value;
 
     return isInstance;
 }
@@ -97,13 +97,13 @@ export function ChatFromJSONTyped(json: any, ignoreDiscriminator: boolean): Chat
     return {
         
         'id': json['id'],
-        'chatName': json['chatName'],
+        'name': json['name'],
         'password': json['password'],
         'avatarId': json['avatarId'],
         'avatarX': json['avatarX'],
         'avatarY': json['avatarY'],
         'createdAt': (new Date(json['createdAt'])),
-        'owner': json['owner'],
+        'ownerId': json['ownerId'],
     };
 }
 
@@ -117,13 +117,13 @@ export function ChatToJSON(value?: Chat | null): any {
     return {
         
         'id': value.id,
-        'chatName': value.chatName,
+        'name': value.name,
         'password': value.password,
         'avatarId': value.avatarId,
         'avatarX': value.avatarX,
         'avatarY': value.avatarY,
         'createdAt': (value.createdAt.toISOString()),
-        'owner': value.owner,
+        'ownerId': value.ownerId,
     };
 }
 

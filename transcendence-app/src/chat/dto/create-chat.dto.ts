@@ -5,7 +5,7 @@ export class CreateChatDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  chatName!: string;
+  name!: string;
 
   @IsString()
   @IsNotEmpty()

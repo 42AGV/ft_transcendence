@@ -6,7 +6,7 @@ export class UpdateChatDto {
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsOptional()
-  chatName?: string;
+  name?: string;
 
   @IsInt()
   @IsOptional()

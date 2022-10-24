@@ -5,10 +5,10 @@ import { Chat } from '../../chat.domain';
 
 export abstract class IChatRepository {
   abstract getById(id: string): Promise<Chat | null>;
-  abstract getByChatName(chatName: string): Promise<Chat | null>;
-  abstract deleteByChatName(chatName: string): Promise<Chat | null>;
+  abstract getByChatName(name: string): Promise<Chat | null>;
+  abstract deleteByChatName(name: string): Promise<Chat | null>;
   abstract updateById(
-    chatName: string,
+    name: string,
     updateChatDto: UpdateChatDto,
   ): Promise<Chat | null>;
   abstract add(chat: Chat): Promise<Chat | null>;

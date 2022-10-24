@@ -5,7 +5,7 @@ export class ChatDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  chatName!: string;
+  name!: string;
 
   @IsString()
   @IsNotEmpty()
@@ -16,5 +16,5 @@ export class ChatDto {
   avatarId!: string | null;
 
   @IsUUID()
-  owner!: string;
+  ownerId!: string;
 }

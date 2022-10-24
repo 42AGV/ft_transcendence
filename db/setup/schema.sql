@@ -32,13 +32,13 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  IF NOT EXISTS Chats(
+  IF NOT EXISTS ChatRoom(
     "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    "chatName" VARCHAR(100) NOT NULL UNIQUE,
+    "name" VARCHAR(100) NOT NULL UNIQUE,
     "password" TEXT,
     "avatarId" UUID REFERENCES LocalFile(id) UNIQUE,
     "avatarX" SMALLINT DEFAULT 0,
     "avatarY" SMALLINT DEFAULT 0,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    "owner" UUID REFERENCES Users(id)
+    "ownerId" UUID REFERENCES Users(id)
   );

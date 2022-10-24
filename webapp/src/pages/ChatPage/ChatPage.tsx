@@ -14,9 +14,9 @@ import {
 import { Chat, ChatControllerGetChatsRequest } from '../../shared/generated';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { chatsApi } from '../../shared/services/ApiService';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
 import './ChatPage.css';
+import { chatroomApi } from '../../shared/services/ApiService';
 
 const ENTRIES_LIMIT = 15;
 const mapChatToRow = (chat: Chat): RowItem => {
@@ -28,8 +28,8 @@ const mapChatToRow = (chat: Chat): RowItem => {
         : WILDCARD_AVATAR_URL,
       status: 'offline',
     },
-    url: `${CHATROOM_URL}/${chat.chatName}`,
-    title: chat.chatName,
+    url: `${CHATROOM_URL}/${chat.name}`,
+    title: chat.name,
     subtitle: 'last message',
     key: chat.id,
   };
@@ -38,7 +38,7 @@ const mapChatToRow = (chat: Chat): RowItem => {
 export default function ChatPage() {
   const getChats = useCallback(
     (requestParameters: ChatControllerGetChatsRequest) =>
-      chatsApi.chatControllerGetChats(requestParameters),
+      chatroomApi.chatControllerGetChats(requestParameters),
     [],
   );
   const navigate = useNavigate();

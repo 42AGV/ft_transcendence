@@ -70,13 +70,13 @@ export class ChatService {
         ...newChat,
         avatarId: null,
         password: result,
-        owner: ownerId,
+        ownerId: ownerId,
       });
     } else {
       return this.addChat({
         ...newChat,
         avatarId: null,
-        owner: ownerId,
+        ownerId: ownerId,
       });
     }
   }

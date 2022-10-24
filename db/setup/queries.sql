@@ -81,7 +81,7 @@ VALUES
   );
 
 INSERT INTO
-  Chats ("chatName", "owner")
+  ChatRoom ("name", "ownerId")
 VALUES
   (
     'Hablemos del tiempo',
@@ -89,7 +89,7 @@ VALUES
   );
 
 INSERT INTO
-  Chats ("chatName", "owner")
+  ChatRoom ("name", "ownerId")
 VALUES
   (
     'Pong Games',
