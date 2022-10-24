@@ -15,6 +15,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "strict": true,
+    // TODO: Remove this
     "noImplicitAny": false
   }
 }
