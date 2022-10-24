@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-oauth2';
+import { v4 as uuidv4 } from 'uuid';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Api42Service } from '../user/api42.service';
@@ -72,7 +73,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
   }
 
   private async createUser(
-    fileDto: LocalFileDto,
+    avatarDto: LocalFileDto,
     userDto: UserDto,
   ): Promise<User | null> {
     const userWithUsernameExists =
@@ -84,9 +85,14 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
       }
       userDto.username = username;
     }
-    const user = await this.userService.addAvatarAndUser(fileDto, userDto);
+    const avatarId = uuidv4();
+    const user = await this.userService.addAvatarAndUser(
+      avatarId,
+      avatarDto,
+      userDto,
+    );
     if (!user) {
-      this.localFileService.deleteFileData(fileDto.path);
+      this.localFileService.deleteFileData(avatarDto.path);
     }
     return user;
   }

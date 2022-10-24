@@ -110,7 +110,7 @@ export class LocalFileService {
 
   // default values as suggested in lib example
   async createRandomSVGFile(blocks = 6, width = 100) {
-    const newAvatar = generateAvatar({
+    const newAvatar: GenerateAvatarReturnType = generateAvatar({
       blocks: blocks,
       width: width,
     });

@@ -61,11 +61,12 @@ export class UserService {
   }
 
   async addAvatarAndUser(
-    fileDto: LocalFileDto,
+    avatarId: string,
+    avatarDto: LocalFileDto,
     userDto: UserDto,
   ): Promise<User | null> {
     const user = await this.userRepository.addAvatarAndAddUser(
-      { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
+      { id: avatarId, createdAt: new Date(Date.now()), ...avatarDto },
       {
         id: uuidv4(),
         createdAt: new Date(Date.now()),

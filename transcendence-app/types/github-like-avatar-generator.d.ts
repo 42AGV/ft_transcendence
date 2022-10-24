@@ -1,12 +1,12 @@
 type GenerateAvatarParams = {
   blocks: number;
   width: number;
-  fromPixels?: Array<string>;
+  fromPixels?: string[];
 };
 
 type GenerateAvatarReturnType = {
   base64: string;
-  pixels: Array<string>;
+  pixels: string[];
 };
 
 declare module 'github-like-avatar-generator' {

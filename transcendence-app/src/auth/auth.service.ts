@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { v4 as uuidv4 } from 'uuid';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/user.domain';
@@ -68,12 +69,13 @@ export class AuthService {
     const { confirmationPassword: _, ...newUser } = user;
 
     const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
+    const avatarId = uuidv4();
     const userDto = {
       ...newUser,
-      avatarId: null,
+      avatarId,
       password: result,
     };
 
-    return this.userService.addAvatarAndUser(avatarDto, userDto);
+    return this.userService.addAvatarAndUser(avatarId, avatarDto, userDto);
   }
 }
