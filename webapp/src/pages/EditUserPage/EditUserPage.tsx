@@ -28,7 +28,7 @@ export default function EditUserPage() {
     </div>
   ) : (
     <div className="edit-user-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
         edit profile
       </Header>
       <div className="edit-user-avatar">
