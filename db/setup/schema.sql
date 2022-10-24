@@ -15,7 +15,7 @@ CREATE TABLE
     "email" VARCHAR(50) NOT NULL,
     "fullName" VARCHAR(255) NOT NULL,
     "password" TEXT,
-    "avatarId" UUID UNIQUE REFERENCES LocalFile (id) ON DELETE SET NULL,
+    "avatarId" UUID UNIQUE REFERENCES LocalFile (id) NOT NULL,
     "avatarX" SMALLINT NOT NULL DEFAULT 0,
     "avatarY" SMALLINT NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW ()
