@@ -13,7 +13,7 @@ export default function NotFoundPage() {
 
   return (
     <div className="not-found-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
         Oops...
       </Header>
       <div className="not-found-page__message">

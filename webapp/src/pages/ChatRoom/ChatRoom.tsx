@@ -29,7 +29,7 @@ function ChatRoom() {
   return (
     <div className="chat-room">
       <div className="chat-room-header">
-        <Header icon={IconVariant.ARROW_BACK} onClick={goBack()}>
+        <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
           {chatRoomId}
         </Header>
       </div>
