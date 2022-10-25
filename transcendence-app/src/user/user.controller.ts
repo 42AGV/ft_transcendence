@@ -222,4 +222,23 @@ export class UserController {
       throw new UnprocessableEntityException();
     }
   }
+
+  @Get('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Check if a user is blocked by the authenticated user',
+  })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getBlock(
+    @GetUser() user: User,
+    @Param('userId') blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.relationshipService.getBlock(
+      user.id,
+      blockedUserId,
+    );
+    if (!block) {
+      throw new NotFoundException();
+    }
+  }
 }

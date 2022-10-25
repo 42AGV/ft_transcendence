@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { table } from '../../../db/models';
 import { BasePostgresRepository } from '../../../db/postgres/postgres.repository';
 import { PostgresPool } from '../../../db/postgres/postgresConnection.provider';
-import { BlockEntity } from '../block.entity';
+import { makeQuery } from '../../../db/postgres/utils';
+import { BlockEntity, BlockKeys } from '../block.entity';
 import { IBlockRepository } from '../block.repository';
 
 @Injectable()
@@ -16,5 +17,18 @@ export class BlockPostgresRepository
 
   addBlock(block: BlockEntity): Promise<BlockEntity | null> {
     return this.add(block);
+  }
+
+  async getBlock(
+    blockerId: string,
+    blockedId: string,
+  ): Promise<BlockEntity | null> {
+    const block = await makeQuery<BlockEntity>(this.pool, {
+      text: `SELECT *
+      FROM ${this.table}
+      WHERE ${BlockKeys.BLOCKER_ID} = $1 AND ${BlockKeys.BLOCKED_ID} = $2;`,
+      values: [blockerId, blockedId],
+    });
+    return block && block.length ? block[0] : null;
   }
 }

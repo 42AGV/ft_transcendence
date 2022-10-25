@@ -267,6 +267,21 @@ paths:
         "422":
           description: Unprocessable Entity
       tags: *a3
+    get:
+      operationId: UserController_getBlock
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Check if a user is blocked by the authenticated user
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
 info:
   title: transcendence-app
   description: The transcendence-app API description
