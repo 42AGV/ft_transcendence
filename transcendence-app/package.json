@@ -38,6 +38,7 @@
     "connect-memcached": "^2.0.0",
     "express-session": "^1.17.3",
     "file-type": "^17.1.6",
+    "github-like-avatar-generator": "^1.1.10",
     "knex": "^2.2.0",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
