@@ -61,6 +61,6 @@ export class Api42Service {
     };
 
     await Api42Service.validate42ApiResponse(userDto);
-    return { userDto, avatarUrl: data.image_url, providerId: data.id };
+    return { userDto, avatarUrl: data.image.link, providerId: data.id };
   }
 }
