@@ -6,8 +6,8 @@ import { ILocalFileRepository } from '../local-file/infrastructure/db/local-file
 import { LocalFilePostgresRepository } from '../local-file/infrastructure/db/postgres/local-file.postgres.repository';
 import { AuthProviderPostgresRepository } from '../../auth/auth-provider/infrastructure/db/postgres/auth-provider.postgres.repository';
 import { IAuthProviderRepository } from '../../auth/auth-provider/infrastructure/db/auth-provider.repository';
-import { IBlockRepository } from '../block/infrastructure/block.repository';
-import { BlockPostgresRepository } from '../block/infrastructure/db/block.postgres.repository';
+import { IBlockRepository } from '../relationship/infrastructure/block.repository';
+import { BlockPostgresRepository } from '../relationship/infrastructure/db/block.postgres.repository';
 
 @Module({
   providers: [
