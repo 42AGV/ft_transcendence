@@ -12,6 +12,7 @@ import { AuthService } from '../../src/auth/auth.service';
 import { UserModule } from '../../src/user/user.module';
 import { setupApp } from '../../src/setup-app';
 import { SocketModule } from '../../src/socket/socket.module';
+import { LocalFileModule } from '../../src/shared/local-file/local-file.module';
 
 describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
@@ -29,6 +30,7 @@ describe('[Feature] Auth - /auth', () => {
         AuthModule,
         UserModule,
         SocketModule,
+        LocalFileModule,
       ],
       providers: [AuthService],
       controllers: [AuthController],
