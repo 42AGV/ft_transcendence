@@ -323,6 +323,28 @@ paths:
         "503":
           description: Service unavailable
       tags: *a5
+  "/api/v1/chatroom/{chatId}":
+    post:
+      operationId: ChatController_createChatRoomMember
+      parameters:
+        - name: chatId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Add a member to a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "422":
+          description: Unprocessable entity
+      tags: *a5
 info:
   title: transcendence-app
   description: The transcendence-app API description

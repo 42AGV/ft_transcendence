@@ -8,7 +8,7 @@ export class ChatMemberService {
   constructor(private chatMemberRepository: IChatMemberRepository) {}
   async addChatmember(
     createChatMemberDto: CreateChatMemberDto,
-    isAdminByDefault: boolean = false,
+    isAdminByDefault = false,
   ): Promise<ChatMember | null> {
     const chatmember = {
       joinedAt: new Date(Date.now()),
