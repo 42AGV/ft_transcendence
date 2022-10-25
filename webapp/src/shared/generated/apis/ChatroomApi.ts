@@ -29,6 +29,10 @@ export interface ChatControllerCreateChatRequest {
     createChatDto: CreateChatDto;
 }
 
+export interface ChatControllerCreateChatRoomMemberRequest {
+    chatId: string;
+}
+
 export interface ChatControllerGetChatsRequest {
     limit?: number;
     offset?: number;
@@ -69,6 +73,34 @@ export class ChatroomApi extends runtime.BaseAPI {
      */
     async chatControllerCreateChat(requestParameters: ChatControllerCreateChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Chat> {
         const response = await this.chatControllerCreateChatRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async chatControllerCreateChatRoomMemberRaw(requestParameters: ChatControllerCreateChatRoomMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Chat>> {
+        if (requestParameters.chatId === null || requestParameters.chatId === undefined) {
+            throw new runtime.RequiredError('chatId','Required parameter requestParameters.chatId was null or undefined when calling chatControllerCreateChatRoomMember.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/chatroom/{chatId}`.replace(`{${"chatId"}}`, encodeURIComponent(String(requestParameters.chatId))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ChatFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async chatControllerCreateChatRoomMember(requestParameters: ChatControllerCreateChatRoomMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Chat> {
+        const response = await this.chatControllerCreateChatRoomMemberRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
