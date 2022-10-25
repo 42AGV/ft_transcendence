@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { table } from '../../../db/models';
-import { BasePostgresRepository } from '../../../db/postgres/postgres.repository';
-import { PostgresPool } from '../../../db/postgres/postgresConnection.provider';
-import { makeQuery } from '../../../db/postgres/utils';
+import { table } from '../../../../shared/db/models';
+import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
+import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
+import { makeQuery } from '../../../../shared/db/postgres/utils';
 import { BlockEntity, BlockKeys } from '../block.entity';
 import { IBlockRepository } from '../block.repository';
 
