@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -209,10 +210,11 @@ export class UserController {
   @Post('block/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Block a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async blockUser(
     @GetUser() user: User,
-    @Param('userId') blockedUserId: string,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
     const block = await this.relationshipService.addBlock(
       user.id,
@@ -228,12 +230,33 @@ export class UserController {
   @ApiNoContentResponse({
     description: 'Check if a user is blocked by the authenticated user',
   })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getBlock(
     @GetUser() user: User,
-    @Param('userId') blockedUserId: string,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
     const block = await this.relationshipService.getBlock(
+      user.id,
+      blockedUserId,
+    );
+    if (!block) {
+      throw new NotFoundException();
+    }
+  }
+
+  @Delete('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Unblock a user',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async unblockUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.relationshipService.deleteBlock(
       user.id,
       blockedUserId,
     );

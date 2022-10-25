@@ -263,6 +263,8 @@ paths:
       responses:
         "204":
           description: Block a user
+        "400":
+          description: Bad Request
         "403": *a2
         "422":
           description: Unprocessable Entity
@@ -278,6 +280,25 @@ paths:
       responses:
         "204":
           description: Check if a user is blocked by the authenticated user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+    delete:
+      operationId: UserController_unblockUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Unblock a user
+        "400":
+          description: Bad Request
         "403": *a2
         "404":
           description: Not Found

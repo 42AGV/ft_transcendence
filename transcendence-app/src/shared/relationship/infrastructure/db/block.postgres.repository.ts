@@ -31,4 +31,18 @@ export class BlockPostgresRepository
     });
     return block && block.length ? block[0] : null;
   }
+
+  async deleteBlock(
+    blockerId: string,
+    blockedId: string,
+  ): Promise<BlockEntity | null> {
+    const block = await makeQuery<BlockEntity>(this.pool, {
+      text: `DELETE
+      FROM ${this.table}
+      WHERE ${BlockKeys.BLOCKER_ID} = $1 AND ${BlockKeys.BLOCKED_ID} = $2
+      RETURNING *;`,
+      values: [blockerId, blockedId],
+    });
+    return block && block.length ? block[0] : null;
+  }
 }

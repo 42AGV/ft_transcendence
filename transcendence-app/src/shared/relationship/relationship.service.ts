@@ -12,4 +12,8 @@ export class RelationshipService {
   getBlock(blockerId: string, blockedId: string) {
     return this.blockRepository.getBlock(blockerId, blockedId);
   }
+
+  deleteBlock(blockerId: string, blockedId: string) {
+    return this.blockRepository.deleteBlock(blockerId, blockedId);
+  }
 }
