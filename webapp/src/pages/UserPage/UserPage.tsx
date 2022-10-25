@@ -18,7 +18,7 @@ import {
   AVATAR_EP_URL,
 } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
@@ -43,6 +43,41 @@ const UserComponentTemplate = ({
 }: UserComponentTemplateProps) => {
   const { goBack } = useNavigation();
   const { logout } = useAuth();
+  const [isBlocked, setIsBlocked] = useState(false);
+  const getBlockStatus = useCallback(
+    () => usersApi.userControllerGetBlock({ userId: user ? user.id : '' }),
+    [user],
+  );
+  const { isLoading: isBlockStatusLoading, error: blockStatusError } =
+    useData(getBlockStatus);
+
+  useEffect(() => {
+    if (!isBlockStatusLoading) {
+      setIsBlocked(blockStatusError === null);
+    }
+  }, [isBlockStatusLoading, blockStatusError]);
+
+  const blockUser = async () => {
+    if (!isAuthUser && user) {
+      try {
+        await usersApi.userControllerBlockUser({ userId: user.id });
+        setIsBlocked(true);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const unblockUser = () => {
+    if (!isAuthUser && user) {
+      try {
+        usersApi.userControllerUnblockUser({ userId: user.id });
+        setIsBlocked(false);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -107,6 +142,14 @@ const UserComponentTemplate = ({
           onClick={logout}
         >
           Logout
+        </Button>
+      )}
+      {!isAuthUser && !isBlockStatusLoading && (
+        <Button
+          variant={isBlocked ? ButtonVariant.SUBMIT : ButtonVariant.WARNING}
+          onClick={isBlocked ? unblockUser : blockUser}
+        >
+          {isBlocked ? 'Unblock' : 'Block'}
         </Button>
       )}
     </div>
