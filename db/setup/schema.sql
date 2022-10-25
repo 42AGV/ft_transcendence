@@ -35,6 +35,6 @@ CREATE TABLE
   IF NOT EXISTS Block (
     "blockerId" UUID REFERENCES Users (id) ON DELETE CASCADE,
     "blockedId" UUID REFERENCES Users (id) ON DELETE CASCADE,
-    CHECK ("blockerId" <> "blockedId"),
+    CHECK ("blockerId" != "blockedId"),
     PRIMARY KEY ("blockerId", "blockedId")
   );
