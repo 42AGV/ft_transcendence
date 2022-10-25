@@ -50,7 +50,7 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
-import { BlockService } from '../shared/block/block.service';
+import { RelationshipService } from '../shared/relationship/relationship.service';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -79,7 +79,7 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 export class UserController {
   constructor(
     private userService: UserService,
-    private blockService: BlockService,
+    private relationshipService: RelationshipService,
   ) {}
 
   @Post()
@@ -214,7 +214,10 @@ export class UserController {
     @GetUser() user: User,
     @Param('userId') blockedUserId: string,
   ): Promise<void> {
-    const block = await this.blockService.addBlock(user.id, blockedUserId);
+    const block = await this.relationshipService.addBlock(
+      user.id,
+      blockedUserId,
+    );
     if (!block) {
       throw new UnprocessableEntityException();
     }

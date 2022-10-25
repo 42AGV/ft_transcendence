@@ -3,10 +3,10 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { DbModule } from '../shared/db/db.module';
 import { LocalFileModule } from '../shared/local-file/local-file.module';
-import { BlockModule } from '../shared/block/block.module';
+import { RelationshipModule } from '../shared/relationship/relationship.module';
 
 @Module({
-  imports: [DbModule, LocalFileModule, BlockModule],
+  imports: [DbModule, LocalFileModule, RelationshipModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
