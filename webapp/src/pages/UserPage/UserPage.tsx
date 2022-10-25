@@ -60,7 +60,7 @@ const UserComponentTemplate = ({
     <div className="user-page">
       <Header
         icon={IconVariant.ARROW_BACK}
-        onClick={goBack()}
+        onClick={goBack}
         statusVariant="online"
       >
         {user.username}
