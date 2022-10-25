@@ -8,7 +8,7 @@ import { validate } from '../../src/config/env.validation';
 import { UserController } from '../../src/user/user.controller';
 import { AuthenticatedGuard } from '../../src/shared/guards/authenticated.guard';
 import { UserDto } from '../../src/user/dto/user.dto';
-import { BlockModule } from '../../src/shared/block/block.module';
+import { RelationshipModule } from '../../src/shared/relationship/relationship.module';
 
 const testUserDto: UserDto = {
   username: 'user',
@@ -33,7 +33,7 @@ describe('[Feature] User - /users', () => {
           cache: true,
           validate,
         }),
-        BlockModule,
+        RelationshipModule,
       ],
       controllers: [UserController],
     })
