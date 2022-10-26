@@ -338,7 +338,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Chat"
+                $ref: "#/components/schemas/ChatMember"
         "400":
           description: Bad Request
         "403": *a4
@@ -513,3 +513,29 @@ components:
         - avatarY
         - createdAt
         - ownerId
+    ChatMember:
+      type: object
+      properties:
+        chatId:
+          type: string
+        userId:
+          type: string
+        joinedAt:
+          format: date-time
+          type: string
+        admin:
+          type: object
+          default: false
+        muted:
+          type: object
+          default: false
+        banned:
+          type: object
+          default: false
+      required:
+        - chatId
+        - userId
+        - joinedAt
+        - admin
+        - muted
+        - banned

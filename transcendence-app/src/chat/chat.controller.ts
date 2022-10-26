@@ -28,6 +28,7 @@ import { User } from '../user/user.domain';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { ChatMemberService } from './chatmember.service';
+import { ChatMember } from './chatmember.domain';
 
 @Controller('chatroom')
 @UseGuards(AuthenticatedGuard)
@@ -56,7 +57,10 @@ export class ChatController {
   }
 
   @Post(':chatId/members')
-  @ApiCreatedResponse({ description: 'Add a member to a chatroom', type: Chat })
+  @ApiCreatedResponse({
+    description: 'Add a member to a chatroom',
+    type: ChatMember,
+  })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async createChatRoomMember(
