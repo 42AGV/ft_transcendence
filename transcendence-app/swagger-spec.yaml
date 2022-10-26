@@ -251,9 +251,9 @@ paths:
         "503":
           description: Service Unavailable
       tags: *a3
-  /api/v1/chatroom:
+  /api/v1/chat/room:
     post:
-      operationId: ChatController_createChat
+      operationId: ChatController_createChatRoom
       parameters: []
       requestBody:
         required: true
@@ -267,7 +267,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Chat"
+                $ref: "#/components/schemas/ChatRoom"
         "400":
           description: Bad Request
         "403":
@@ -277,9 +277,9 @@ paths:
           description: Unprocessable entity
       tags:
         &a5
-        - chatroom
+        - chat
     get:
-      operationId: ChatController_getChats
+      operationId: ChatController_getChatRooms
       parameters:
         - name: limit
           required: false
@@ -316,7 +316,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Chat"
+                  $ref: "#/components/schemas/ChatRoom"
         "400":
           description: Bad Request
         "403": *a4
@@ -459,7 +459,7 @@ components:
         - name
         - password
         - confirmationPassword
-    Chat:
+    ChatRoom:
       type: object
       properties:
         id:

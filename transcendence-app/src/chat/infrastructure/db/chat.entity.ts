@@ -9,7 +9,7 @@ export enum chatKeys {
   OWNERID = '"ownerId',
 }
 
-export class ChatEntity {
+export class ChatRoomEntity {
   constructor(
     public id: string,
     public name: string,
