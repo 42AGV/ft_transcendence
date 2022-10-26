@@ -524,13 +524,13 @@ components:
           format: date-time
           type: string
         admin:
-          type: object
+          type: boolean
           default: false
         muted:
-          type: object
+          type: boolean
           default: false
         banned:
-          type: object
+          type: boolean
           default: false
       required:
         - chatId
