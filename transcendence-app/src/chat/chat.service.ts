@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
-import { LocalFileService } from '../shared/local-file/local-file.service';
 import { ChatRoom } from './chat.domain';
 import { ChatDto } from './dto/chat.dto';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
