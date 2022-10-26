@@ -18,12 +18,12 @@ import {
   AVATAR_EP_URL,
 } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { User } from '../../shared/generated';
+import { ResponseError, User } from '../../shared/generated';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 type UserPageProps = {
@@ -32,30 +32,40 @@ type UserPageProps = {
 
 type UserComponentTemplateProps = {
   user: User | null;
-  isAuthUser: boolean;
+  displayAsAuthUser: boolean;
   isLoading: boolean;
 };
 
 const UserComponentTemplate = ({
   user,
-  isAuthUser,
+  displayAsAuthUser,
   isLoading,
 }: UserComponentTemplateProps) => {
   const { goBack } = useNavigation();
-  const { logout } = useAuth();
+  const { logout, authUser } = useAuth();
+  const isAuthUser =
+    authUser !== null && user !== null && authUser.id === user.id;
   const [isBlocked, setIsBlocked] = useState(false);
   const getBlockStatus = useCallback(
-    () => usersApi.userControllerGetBlock({ userId: user ? user.id : '' }),
-    [user],
+    () =>
+      isAuthUser || user === null
+        ? Promise.resolve()
+        : usersApi
+            .userControllerGetBlock({ userId: user.id })
+            .then(() => setIsBlocked(true))
+            .catch((error) => {
+              if (
+                error instanceof ResponseError &&
+                error.response.status === 404
+              ) {
+                setIsBlocked(false);
+              } else {
+                throw error;
+              }
+            }),
+    [isAuthUser, user],
   );
-  const { isLoading: isBlockStatusLoading, error: blockStatusError } =
-    useData(getBlockStatus);
-
-  useEffect(() => {
-    if (!isBlockStatusLoading) {
-      setIsBlocked(blockStatusError === null);
-    }
-  }, [isBlockStatusLoading, blockStatusError]);
+  const { isLoading: isBlockStatusLoading } = useData(getBlockStatus);
 
   const blockUser = async () => {
     if (!isAuthUser && user) {
@@ -63,18 +73,26 @@ const UserComponentTemplate = ({
         await usersApi.userControllerBlockUser({ userId: user.id });
         setIsBlocked(true);
       } catch (error) {
-        console.error(error);
+        if (error instanceof ResponseError && error.response.status === 422) {
+          setIsBlocked(true);
+        } else {
+          console.error(error);
+        }
       }
     }
   };
 
-  const unblockUser = () => {
+  const unblockUser = async () => {
     if (!isAuthUser && user) {
       try {
-        usersApi.userControllerUnblockUser({ userId: user.id });
+        await usersApi.userControllerUnblockUser({ userId: user.id });
         setIsBlocked(false);
       } catch (error) {
-        console.error(error);
+        if (error instanceof ResponseError && error.response.status === 404) {
+          setIsBlocked(false);
+        } else {
+          console.error(error);
+        }
       }
     }
   };
@@ -127,7 +145,7 @@ const UserComponentTemplate = ({
             {user.email}
           </Text>
         </div>
-        {isAuthUser && (
+        {displayAsAuthUser && (
           <Row
             iconVariant={IconVariant.USERS}
             url={EDIT_USER_URL}
@@ -135,7 +153,7 @@ const UserComponentTemplate = ({
           />
         )}
       </div>
-      {isAuthUser && (
+      {displayAsAuthUser && (
         <Button
           variant={ButtonVariant.WARNING}
           iconVariant={IconVariant.LOGOUT}
@@ -161,7 +179,7 @@ const AuthUserComponent = () => {
 
   return UserComponentTemplate({
     user: authUser,
-    isAuthUser: true,
+    displayAsAuthUser: true,
     isLoading,
   });
 };
@@ -175,7 +193,7 @@ const UserComponent = () => {
   );
   const { data: user, isLoading } = useData(getUserByUserName);
 
-  return UserComponentTemplate({ user, isAuthUser: false, isLoading });
+  return UserComponentTemplate({ user, displayAsAuthUser: false, isLoading });
 };
 
 export default function UserPage({ displayAsAuthUser = false }: UserPageProps) {
