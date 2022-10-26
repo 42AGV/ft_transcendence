@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { IChatMemberRepository } from './infrastructure/db/chatmember.repository';
-import { CreateChatMemberDto } from './dto/create-chatmember.dto';
 import { ChatMember } from './chatmember.domain';
 
 @Injectable()
 export class ChatMemberService {
   constructor(private chatMemberRepository: IChatMemberRepository) {}
+
   async addChatmember(
-    createChatMemberDto: CreateChatMemberDto,
+    chatId: string,
+    userId: string,
     isAdminByDefault: boolean = false,
   ): Promise<ChatMember | null> {
     const chatmember = {
       joinedAt: new Date(Date.now()),
-      ...createChatMemberDto,
+      chatId: chatId,
+      userId: userId,
       admin: isAdminByDefault,
       muted: false,
       banned: false,
