@@ -51,7 +51,6 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
-import { RelationshipService } from '../shared/relationship/relationship.service';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -78,10 +77,7 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {
-  constructor(
-    private userService: UserService,
-    private relationshipService: RelationshipService,
-  ) {}
+  constructor(private userService: UserService) {}
 
   @Post()
   @ApiCreatedResponse({ description: 'Create a user', type: User })
@@ -216,10 +212,7 @@ export class UserController {
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
-    const block = await this.relationshipService.addBlock(
-      user.id,
-      blockedUserId,
-    );
+    const block = await this.userService.addBlock(user.id, blockedUserId);
     if (!block) {
       throw new UnprocessableEntityException();
     }
@@ -236,10 +229,7 @@ export class UserController {
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
-    const block = await this.relationshipService.getBlock(
-      user.id,
-      blockedUserId,
-    );
+    const block = await this.userService.getBlock(user.id, blockedUserId);
     if (!block) {
       throw new NotFoundException();
     }
@@ -256,10 +246,7 @@ export class UserController {
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
-    const block = await this.relationshipService.deleteBlock(
-      user.id,
-      blockedUserId,
-    );
+    const block = await this.userService.deleteBlock(user.id, blockedUserId);
     if (!block) {
       throw new NotFoundException();
     }

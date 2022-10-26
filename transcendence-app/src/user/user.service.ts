@@ -16,12 +16,14 @@ import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { UserAvatarDto } from './dto/user.avatar.dto';
+import { IBlockRepository } from './infrastructure/db/block.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: IUserRepository,
     private localFileService: LocalFileService,
+    private blockRepository: IBlockRepository,
   ) {}
 
   async retrieveUserWithId(id: string): Promise<User | null> {
@@ -180,5 +182,17 @@ export class UserService {
       providerId,
     );
     return user ? new User(user) : null;
+  }
+
+  addBlock(blockerId: string, blockedId: string) {
+    return this.blockRepository.addBlock({ blockerId, blockedId });
+  }
+
+  getBlock(blockerId: string, blockedId: string) {
+    return this.blockRepository.getBlock(blockerId, blockedId);
+  }
+
+  deleteBlock(blockerId: string, blockedId: string) {
+    return this.blockRepository.deleteBlock(blockerId, blockedId);
   }
 }
