@@ -55,7 +55,7 @@ export class ChatController {
     return chat;
   }
 
-  @Post(':chatId')
+  @Post(':chatId/members')
   @ApiCreatedResponse({ description: 'Add a member to a chatroom', type: Chat })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })

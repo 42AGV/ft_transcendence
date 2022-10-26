@@ -323,7 +323,7 @@ paths:
         "503":
           description: Service unavailable
       tags: *a5
-  "/api/v1/chatroom/{chatId}":
+  "/api/v1/chatroom/{chatId}/members":
     post:
       operationId: ChatController_createChatRoomMember
       parameters:

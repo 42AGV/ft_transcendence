@@ -88,7 +88,7 @@ export class ChatroomApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/chatroom/{chatId}`.replace(`{${"chatId"}}`, encodeURIComponent(String(requestParameters.chatId))),
+            path: `/api/v1/chatroom/{chatId}/members`.replace(`{${"chatId"}}`, encodeURIComponent(String(requestParameters.chatId))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
