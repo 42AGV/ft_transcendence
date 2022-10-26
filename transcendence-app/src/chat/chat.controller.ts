@@ -59,7 +59,7 @@ export class ChatController {
     return chatRoom;
   }
 
-  @Post(':chatId/members')
+  @Post('room/:Id/members')
   @ApiCreatedResponse({
     description: 'Add a member to a chatroom',
     type: ChatMember,
@@ -68,9 +68,9 @@ export class ChatController {
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async createChatRoomMember(
     @GetUser() user: User,
-    @Param('chatId', ParseUUIDPipe) chatId: string,
+    @Param('Id', ParseUUIDPipe) chatRoomId: string,
   ) {
-    const ret = await this.chatMemberService.addChatmember(chatId, user.id);
+    const ret = await this.chatMemberService.addChatmember(chatRoomId, user.id);
 
     if (!ret) {
       throw new UnprocessableEntityException();
