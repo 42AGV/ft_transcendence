@@ -63,10 +63,7 @@ export class ChatController {
     @GetUser() user: User,
     @Param('chatId', ParseUUIDPipe) chatId: string,
   ) {
-    const ret = await this.chatMemberService.addChatmember({
-      chatId: chatId,
-      userId: user.id,
-    });
+    const ret = await this.chatMemberService.addChatmember(chatId, user.id);
 
     if (!ret) {
       throw new UnprocessableEntityException();
