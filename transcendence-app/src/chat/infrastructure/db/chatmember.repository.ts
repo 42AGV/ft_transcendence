@@ -1,4 +1,4 @@
-import { ChatMember } from '../../chat.domain';
+import { ChatMember } from '../../chatmember.domain';
 // import { UpdateChatMemberDto } from '../../dto/update-chatmember.dto';
 
 export abstract class IChatMemberRepository {

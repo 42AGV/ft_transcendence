@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ChatMember } from './chat.domain';
 import { IChatMemberRepository } from './infrastructure/db/chatmember.repository';
 import { CreateChatMemberDto } from './dto/create-chatmember.dto';
+import { ChatMember } from './chatmember.domain';
 
 @Injectable()
 export class ChatMemberService {
