@@ -16,63 +16,63 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface Chat
+ * @interface ChatRoom
  */
-export interface Chat {
+export interface ChatRoom {
     /**
      * 
      * @type {string}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     id: string;
     /**
      * 
      * @type {string}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     name: string;
     /**
      * 
      * @type {object}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     password: object;
     /**
      * 
      * @type {string}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     avatarId: string | null;
     /**
      * 
      * @type {number}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     avatarX: number;
     /**
      * 
      * @type {number}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     avatarY: number;
     /**
      * 
      * @type {Date}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     createdAt: Date;
     /**
      * 
      * @type {string}
-     * @memberof Chat
+     * @memberof ChatRoom
      */
     ownerId: string;
 }
 
 /**
- * Check if a given object implements the Chat interface.
+ * Check if a given object implements the ChatRoom interface.
  */
-export function instanceOfChat(value: object): boolean {
+export function instanceOfChatRoom(value: object): boolean {
     let isInstance = true;
     isInstance = isInstance && "id" in value;
     isInstance = isInstance && "name" in value;
@@ -86,11 +86,11 @@ export function instanceOfChat(value: object): boolean {
     return isInstance;
 }
 
-export function ChatFromJSON(json: any): Chat {
-    return ChatFromJSONTyped(json, false);
+export function ChatRoomFromJSON(json: any): ChatRoom {
+    return ChatRoomFromJSONTyped(json, false);
 }
 
-export function ChatFromJSONTyped(json: any, ignoreDiscriminator: boolean): Chat {
+export function ChatRoomFromJSONTyped(json: any, ignoreDiscriminator: boolean): ChatRoom {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -107,7 +107,7 @@ export function ChatFromJSONTyped(json: any, ignoreDiscriminator: boolean): Chat
     };
 }
 
-export function ChatToJSON(value?: Chat | null): any {
+export function ChatRoomToJSON(value?: ChatRoom | null): any {
     if (value === undefined) {
         return undefined;
     }

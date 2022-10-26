@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './Chat';
+export * from './ChatRoom';
 export * from './CreateChatDto';
 export * from './LoginUserDto';
 export * from './RegisterUserDto';

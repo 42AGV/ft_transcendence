@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Exclude } from 'class-transformer';
-import { ChatEntity } from './infrastructure/db/chat.entity';
+import { ChatRoomEntity } from './infrastructure/db/chat.entity';
 
-export class Chat {
+export class ChatRoom {
   id!: string;
   name!: string;
   @Exclude()
@@ -13,7 +13,7 @@ export class Chat {
   createdAt!: Date;
   ownerId!: string;
 
-  constructor(entity: ChatEntity) {
+  constructor(entity: ChatRoomEntity) {
     Object.assign(this, entity);
   }
 }
