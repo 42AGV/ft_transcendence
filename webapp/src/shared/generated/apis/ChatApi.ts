@@ -15,37 +15,37 @@
 
 import * as runtime from '../runtime';
 import type {
-  Chat,
+  ChatRoom,
   CreateChatDto,
 } from '../models';
 import {
-    ChatFromJSON,
-    ChatToJSON,
+    ChatRoomFromJSON,
+    ChatRoomToJSON,
     CreateChatDtoFromJSON,
     CreateChatDtoToJSON,
 } from '../models';
 
-export interface ChatControllerCreateChatRequest {
+export interface ChatControllerCreateChatRoomRequest {
     createChatDto: CreateChatDto;
 }
 
-export interface ChatControllerGetChatsRequest {
+export interface ChatControllerGetChatRoomsRequest {
     limit?: number;
     offset?: number;
-    sort?: ChatControllerGetChatsSortEnum;
+    sort?: ChatControllerGetChatRoomsSortEnum;
     search?: string;
 }
 
 /**
  * 
  */
-export class ChatsApi extends runtime.BaseAPI {
+export class ChatApi extends runtime.BaseAPI {
 
     /**
      */
-    async chatControllerCreateChatRaw(requestParameters: ChatControllerCreateChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Chat>> {
+    async chatControllerCreateChatRoomRaw(requestParameters: ChatControllerCreateChatRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChatRoom>> {
         if (requestParameters.createChatDto === null || requestParameters.createChatDto === undefined) {
-            throw new runtime.RequiredError('createChatDto','Required parameter requestParameters.createChatDto was null or undefined when calling chatControllerCreateChat.');
+            throw new runtime.RequiredError('createChatDto','Required parameter requestParameters.createChatDto was null or undefined when calling chatControllerCreateChatRoom.');
         }
 
         const queryParameters: any = {};
@@ -55,26 +55,26 @@ export class ChatsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/v1/Chats`,
+            path: `/api/v1/chat/room`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: CreateChatDtoToJSON(requestParameters.createChatDto),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ChatFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => ChatRoomFromJSON(jsonValue));
     }
 
     /**
      */
-    async chatControllerCreateChat(requestParameters: ChatControllerCreateChatRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Chat> {
-        const response = await this.chatControllerCreateChatRaw(requestParameters, initOverrides);
+    async chatControllerCreateChatRoom(requestParameters: ChatControllerCreateChatRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ChatRoom> {
+        const response = await this.chatControllerCreateChatRoomRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async chatControllerGetChatsRaw(requestParameters: ChatControllerGetChatsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Chat>>> {
+    async chatControllerGetChatRoomsRaw(requestParameters: ChatControllerGetChatRoomsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ChatRoom>>> {
         const queryParameters: any = {};
 
         if (requestParameters.limit !== undefined) {
@@ -96,19 +96,19 @@ export class ChatsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/v1/Chats`,
+            path: `/api/v1/chat/room`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ChatFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ChatRoomFromJSON));
     }
 
     /**
      */
-    async chatControllerGetChats(requestParameters: ChatControllerGetChatsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Chat>> {
-        const response = await this.chatControllerGetChatsRaw(requestParameters, initOverrides);
+    async chatControllerGetChatRooms(requestParameters: ChatControllerGetChatRoomsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ChatRoom>> {
+        const response = await this.chatControllerGetChatRoomsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -117,8 +117,8 @@ export class ChatsApi extends runtime.BaseAPI {
 /**
  * @export
  */
-export const ChatControllerGetChatsSortEnum = {
+export const ChatControllerGetChatRoomsSortEnum = {
     True: 'true',
     False: 'false'
 } as const;
-export type ChatControllerGetChatsSortEnum = typeof ChatControllerGetChatsSortEnum[keyof typeof ChatControllerGetChatsSortEnum];
+export type ChatControllerGetChatRoomsSortEnum = typeof ChatControllerGetChatRoomsSortEnum[keyof typeof ChatControllerGetChatRoomsSortEnum];

@@ -6,10 +6,12 @@ import {
 } from '@nestjs/common';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { v4 as uuidv4 } from 'uuid';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
+import { LocalFileService } from '../shared/local-file/local-file.service';
 
 const scrypt = promisify(_scrypt);
 
@@ -18,7 +20,10 @@ export class AuthService {
   readonly saltLength = 8;
   readonly hashLength = 32;
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly localFileService: LocalFileService,
+  ) {}
 
   async validateUser(user: LoginUserDto): Promise<User> {
     const foundUser = await this.userService.retrieveUserWithUserName(
@@ -62,10 +67,15 @@ export class AuthService {
     const result = salt + '.' + hash.toString('hex');
 
     const { confirmationPassword: _, ...newUser } = user;
-    return this.userService.addUser({
+
+    const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
+    const avatarId = uuidv4();
+    const userDto = {
       ...newUser,
-      avatarId: null,
+      avatarId,
       password: result,
-    });
+    };
+
+    return this.userService.addAvatarAndUser(avatarId, avatarDto, userDto);
   }
 }

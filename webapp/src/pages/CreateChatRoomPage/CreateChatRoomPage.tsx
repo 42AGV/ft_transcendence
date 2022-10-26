@@ -17,7 +17,7 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useEffect, useState } from 'react';
 import { CreateChatDto, ResponseError } from '../../shared/generated';
 import './CreateChatRoomPage.css';
-import { chatroomApi } from '../../shared/services/ApiService';
+import { chatApi } from '../../shared/services/ApiService';
 
 type FormStatus = {
   type: 'success' | 'error' | 'pending';
@@ -78,8 +78,7 @@ export default function CreateChatRoomPage() {
       return;
     }
     try {
-      console.log(formValues);
-      await chatroomApi.chatControllerCreateChat({
+      await chatApi.chatControllerCreateChatRoom({
         createChatDto: {
           ...formValues,
           password: formValues.password || null,
@@ -94,7 +93,6 @@ export default function CreateChatRoomPage() {
         navigate(CHAT_URL);
       }, 2000);
     } catch (error) {
-      console.log(formValues);
       if (error instanceof ResponseError) {
         setStatus({ type: 'error', message: `${error.response.statusText}` });
       } else if (error instanceof Error) {

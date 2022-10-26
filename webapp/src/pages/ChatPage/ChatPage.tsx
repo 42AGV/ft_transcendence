@@ -11,34 +11,37 @@ import {
   CREATE_CHATROOM_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { Chat, ChatControllerGetChatsRequest } from '../../shared/generated';
+import {
+  ChatControllerGetChatRoomsRequest,
+  ChatRoom,
+} from '../../shared/generated';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
 import './ChatPage.css';
-import { chatroomApi } from '../../shared/services/ApiService';
+import { chatApi } from '../../shared/services/ApiService';
 
 const ENTRIES_LIMIT = 15;
-const mapChatToRow = (chat: Chat): RowItem => {
+const mapChatToRow = (chatRoom: ChatRoom): RowItem => {
   return {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: {
-      url: chat.avatarId
-        ? `${AVATAR_EP_URL}/${chat.avatarId}`
+      url: chatRoom.avatarId
+        ? `${AVATAR_EP_URL}/${chatRoom.avatarId}`
         : WILDCARD_AVATAR_URL,
       status: 'offline',
     },
-    url: `${CHATROOM_URL}/${chat.name}`,
-    title: chat.name,
+    url: `${CHATROOM_URL}/${chatRoom.name}`,
+    title: chatRoom.name,
     subtitle: 'last message',
-    key: chat.id,
+    key: chatRoom.id,
   };
 };
 
 export default function ChatPage() {
   const getChats = useCallback(
-    (requestParameters: ChatControllerGetChatsRequest) =>
-      chatroomApi.chatControllerGetChats(requestParameters),
+    (requestParameters: ChatControllerGetChatRoomsRequest) =>
+      chatApi.chatControllerGetChatRooms(requestParameters),
     [],
   );
   const navigate = useNavigate();
@@ -56,7 +59,7 @@ export default function ChatPage() {
           onClick={() => navigate(CREATE_CHATROOM_URL)}
           iconVariant={IconVariant.ADD}
         >
-          add chat
+          add chatroom
         </Button>
       </div>
     </div>

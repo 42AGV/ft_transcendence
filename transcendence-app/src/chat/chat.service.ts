@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
-import { LocalFileService } from '../shared/local-file/local-file.service';
-import { Chat } from './chat.domain';
+import { ChatRoom } from './chat.domain';
 import { ChatDto } from './dto/chat.dto';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { IChatRepository } from './infrastructure/db/chat.repository';
@@ -18,42 +17,40 @@ export class ChatService {
   readonly saltLength = 8;
   readonly hashLength = 32;
 
-  constructor(
-    private chatRepository: IChatRepository,
-    private localFileService: LocalFileService,
-  ) {}
+  constructor(private chatRepository: IChatRepository) {}
 
-  async retrieveChats({
+  async retrieveChatRooms({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: ChatsPaginationQueryDto): Promise<Chat[] | null> {
-    const chats = await this.chatRepository.getPaginatedChats({
+  }: ChatsPaginationQueryDto): Promise<ChatRoom[] | null> {
+    const chatRooms = await this.chatRepository.getPaginatedChatRooms({
       limit,
       offset,
       sort,
       search,
     });
-    return chats ? chats.map((chat) => new Chat(chat)) : null;
+    return chatRooms
+      ? chatRooms.map((chatRoom) => new ChatRoom(chatRoom))
+      : null;
   }
 
-  async addChat(chatDto: ChatDto): Promise<Chat | null> {
-    const chatcompl = {
+  private async addChatRoom(chatDto: ChatDto): Promise<ChatRoom | null> {
+    const chatRoom = await this.chatRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
       ...chatDto,
-    };
-    const chat = await this.chatRepository.add(chatcompl);
-    return chat ? new Chat(chat) : null;
+    });
+    return chatRoom ? new ChatRoom(chatRoom) : null;
   }
 
-  async createChat(ownerId: string, chat: CreateChatDto) {
-    const { confirmationPassword: _, ...newChat } = chat;
-    if (chat.password) {
-      if (chat.password !== chat.confirmationPassword) {
+  async createChatRoom(ownerId: string, chatRoom: CreateChatDto) {
+    const { confirmationPassword: _, ...newChat } = chatRoom;
+    if (chatRoom.password) {
+      if (chatRoom.password !== chatRoom.confirmationPassword) {
         throw new BadRequestException(
           'Password and Confirmation Password must match',
         );
@@ -61,19 +58,19 @@ export class ChatService {
 
       const salt = randomBytes(this.saltLength).toString('hex');
       const hash = (await scrypt(
-        chat.password,
+        chatRoom.password,
         salt,
         this.hashLength,
       )) as Buffer;
       const result = salt + '.' + hash.toString('hex');
-      return this.addChat({
+      return this.addChatRoom({
         ...newChat,
         avatarId: null,
         password: result,
         ownerId: ownerId,
       });
     } else {
-      return this.addChat({
+      return this.addChatRoom({
         ...newChat,
         avatarId: null,
         ownerId: ownerId,
