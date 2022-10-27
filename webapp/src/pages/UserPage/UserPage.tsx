@@ -19,13 +19,14 @@ import {
   AVATAR_EP_URL,
 } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { ResponseError, User } from '../../shared/generated';
+import { User } from '../../shared/generated';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
+import { useBlock } from '../../shared/hooks/UseBlock';
 
 type UserPageProps = {
   displayAsAuthUser?: boolean;
@@ -46,57 +47,12 @@ const UserComponentTemplate = ({
   const { logout, authUser } = useAuth();
   const isAuthUser =
     authUser !== null && user !== null && authUser.id === user.id;
-  const [isBlocked, setIsBlocked] = useState(false);
-  const getBlockStatus = useCallback(
-    () =>
-      isAuthUser || user === null
-        ? Promise.resolve()
-        : usersApi
-            .userControllerGetBlock({ userId: user.id })
-            .then(() => setIsBlocked(true))
-            .catch((error) => {
-              if (
-                error instanceof ResponseError &&
-                error.response.status === 404
-              ) {
-                setIsBlocked(false);
-              } else {
-                throw error;
-              }
-            }),
-    [isAuthUser, user],
-  );
-  const { isLoading: isBlockStatusLoading } = useData(getBlockStatus);
-
-  const blockUser = async () => {
-    if (!isAuthUser && user) {
-      try {
-        await usersApi.userControllerBlockUser({ userId: user.id });
-        setIsBlocked(true);
-      } catch (error) {
-        if (error instanceof ResponseError && error.response.status === 422) {
-          setIsBlocked(true);
-        } else {
-          console.error(error);
-        }
-      }
-    }
-  };
-
-  const unblockUser = async () => {
-    if (!isAuthUser && user) {
-      try {
-        await usersApi.userControllerUnblockUser({ userId: user.id });
-        setIsBlocked(false);
-      } catch (error) {
-        if (error instanceof ResponseError && error.response.status === 404) {
-          setIsBlocked(false);
-        } else {
-          console.error(error);
-        }
-      }
-    }
-  };
+  const {
+    isBlocked,
+    isLoading: isBlockStatusLoading,
+    unblockUser,
+    blockUser,
+  } = useBlock(user);
 
   if (isLoading) {
     return (
