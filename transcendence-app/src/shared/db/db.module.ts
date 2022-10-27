@@ -8,12 +8,15 @@ import { AuthProviderPostgresRepository } from '../../auth/auth-provider/infrast
 import { IAuthProviderRepository } from '../../auth/auth-provider/infrastructure/db/auth-provider.repository';
 import { IBlockRepository } from '../relationship/infrastructure/block.repository';
 import { BlockPostgresRepository } from '../relationship/infrastructure/db/block.postgres.repository';
+import { IChatRepository } from '../../chat/infrastructure/db/chat.repository';
+import { ChatPostgresRepository } from '../../chat/infrastructure/db/postgres/chatPostgres.repository';
 
 @Module({
   providers: [
     PostgresPool,
     { provide: IUserRepository, useClass: UserPostgresRepository },
     { provide: ILocalFileRepository, useClass: LocalFilePostgresRepository },
+    { provide: IChatRepository, useClass: ChatPostgresRepository },
     {
       provide: IAuthProviderRepository,
       useClass: AuthProviderPostgresRepository,
@@ -28,6 +31,7 @@ import { BlockPostgresRepository } from '../relationship/infrastructure/db/block
     ILocalFileRepository,
     IAuthProviderRepository,
     IBlockRepository,
+    IChatRepository,
   ],
 })
 export class DbModule {}
