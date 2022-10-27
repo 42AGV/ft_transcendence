@@ -28,7 +28,7 @@ type ChatRoomId = string;
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
-export class ChatRoomGateway {
+export class ChatGateway {
   @WebSocketServer() server!: Server;
   chatRooms = new Map<ChatRoomId, Set<ChatRoomMessage>>();
 
