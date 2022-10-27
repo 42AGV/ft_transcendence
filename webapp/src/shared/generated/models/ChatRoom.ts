@@ -33,10 +33,10 @@ export interface ChatRoom {
     name: string;
     /**
      * 
-     * @type {object}
+     * @type {string}
      * @memberof ChatRoom
      */
-    password: object;
+    password: string | null;
     /**
      * 
      * @type {string}
