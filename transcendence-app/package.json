@@ -22,6 +22,9 @@
     "pretest:e2e": "docker-compose -f docker-compose.test.yml up -d && cross-env NODE_ENV=test npx knex seed:run",
     "test:e2e": "jest --config ./test/jest-e2e.json; ret=$?; npm run post:test:e2e; exit $ret",
     "swagger:e2e": "jest --config ./test/jest-e2e.json --verbose --testNamePattern='^\\[Feature\\] User - /users should generate swagger spec$' --runTestsByPath ./test/swagger/swaggerdoc.e2e-spec.ts; ret=$?; npm run post:test:e2e; exit $ret",
+    "preswagger:test": "npm run pretest:e2e",
+    "swagger:test": "nest start -c ./swagger.nest-cli.json",
+    "postswagger:test": "npm run post:test:e2e",
     "post:test:e2e": "docker-compose -f docker-compose.test.yml down -v"
   },
   "dependencies": {

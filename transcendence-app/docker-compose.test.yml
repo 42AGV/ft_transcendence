@@ -17,3 +17,8 @@ services:
     restart: always
     ports:
       - "11212:11211"
+  swagger-generator:
+    image: nestjs/cli
+    volumes:
+      - ./:/workspace
+    command: ./swagger-gen-entrypoint.sh
