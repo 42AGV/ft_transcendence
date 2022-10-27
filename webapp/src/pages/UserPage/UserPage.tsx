@@ -11,6 +11,7 @@ import {
   TextColor,
   TextVariant,
   TextWeight,
+  ToggleSwitch,
 } from '../../shared/components';
 import {
   EDIT_USER_URL,
@@ -107,21 +108,6 @@ const UserComponentTemplate = ({
     );
   }
 
-  const unblockUserButton = (
-    <Button variant={ButtonVariant.SUBMIT} onClick={unblockUser}>
-      Unblock
-    </Button>
-  );
-
-  const blockUserButton = (
-    <Button variant={ButtonVariant.WARNING} onClick={blockUser}>
-      Block
-    </Button>
-  );
-
-  const changeBlockStatusButton = () =>
-    isBlocked ? unblockUserButton : blockUserButton;
-
   return user === null ? (
     <NotFoundPage />
   ) : (
@@ -160,6 +146,15 @@ const UserComponentTemplate = ({
             {user.email}
           </Text>
         </div>
+        <div className="user-block-status-toggle">
+          {!isAuthUser && !isBlockStatusLoading && (
+            <ToggleSwitch
+              label={isBlocked ? 'Unblock' : 'Block'}
+              isToggled={isBlocked}
+              onToggle={isBlocked ? unblockUser : blockUser}
+            />
+          )}
+        </div>
         {displayAsAuthUser && (
           <Row
             iconVariant={IconVariant.USERS}
@@ -177,7 +172,6 @@ const UserComponentTemplate = ({
           Logout
         </Button>
       )}
-      {!isAuthUser && !isBlockStatusLoading && changeBlockStatusButton()}
     </div>
   );
 };

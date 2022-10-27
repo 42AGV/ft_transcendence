@@ -37,7 +37,8 @@
   margin: 0;
 }
 
-.user-text {
+.user-text,
+.user-block-status-toggle {
   margin-left: 1rem;
 }
 
@@ -84,7 +85,8 @@
     justify-content: space-around;
   }
 
-  .user-wrapper .row {
+  .user-wrapper .row,
+  .user-block-status-toggle {
     grid-column: 6 / 10;
     grid-row: 2 / 3;
   }
@@ -107,7 +109,8 @@
     grid-column: 1 / 4;
   }
 
-  .user-wrapper .user-text {
+  .user-wrapper .user-text,
+  .user-block-status-toggle {
     grid-column: 5 / 10;
   }
 
