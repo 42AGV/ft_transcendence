@@ -10,16 +10,38 @@ export enum userKeys {
   AVATAR_Y = '"avatarY"',
 }
 
+type UserEntityData = {
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  password: string | null;
+  avatarId: string | null;
+  avatarX: number;
+  avatarY: number;
+  createdAt: Date;
+};
+
 export class UserEntity {
-  constructor(
-    public username: string,
-    public email: string,
-    public fullName: string,
-    public password: string | null,
-    public avatarId: string | null,
-    public avatarX: number = 0,
-    public avatarY: number = 0,
-    public id: string,
-    public createdAt: Date,
-  ) {}
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  password: string | null;
+  avatarId: string | null;
+  avatarX: number;
+  avatarY: number;
+  createdAt: Date;
+
+  constructor(userData: UserEntityData) {
+    this.id = userData.id;
+    this.username = userData.username;
+    this.email = userData.email;
+    this.fullName = userData.fullName;
+    this.password = userData.password;
+    this.avatarId = userData.avatarId;
+    this.avatarX = userData.avatarX;
+    this.avatarY = userData.avatarY;
+    this.createdAt = userData.createdAt;
+  }
 }
