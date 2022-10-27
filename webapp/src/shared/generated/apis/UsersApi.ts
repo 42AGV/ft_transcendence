@@ -32,10 +32,6 @@ export interface UserControllerBlockUserRequest {
     userId: string;
 }
 
-export interface UserControllerBlockUserRequest {
-    userId: string;
-}
-
 export interface UserControllerGetAvatarByAvatarIdRequest {
     avatarId: string;
 }
@@ -71,33 +67,6 @@ export interface UserControllerUploadAvatarRequest {
  * 
  */
 export class UsersApi extends runtime.BaseAPI {
-
-    /**
-     */
-    async userControllerBlockUserRaw(requestParameters: UserControllerBlockUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.userId === null || requestParameters.userId === undefined) {
-            throw new runtime.RequiredError('userId','Required parameter requestParameters.userId was null or undefined when calling userControllerBlockUser.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/api/v1/users/block/{userId}`.replace(`{${"userId"}}`, encodeURIComponent(String(requestParameters.userId))),
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     */
-    async userControllerBlockUser(requestParameters: UserControllerBlockUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.userControllerBlockUserRaw(requestParameters, initOverrides);
-    }
 
     /**
      */
