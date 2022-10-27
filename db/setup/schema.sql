@@ -50,3 +50,14 @@ CREATE TABLE
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW (),
     "ownerId" UUID REFERENCES Users (id)
   );
+
+CREATE TABLE
+    IF NOT EXISTS ChatRoomMembers (
+    "chatId" UUID REFERENCES ChatRoom (id) ON DELETE CASCADE,
+    "userId" UUID REFERENCES Users (id) ON DELETE CASCADE,
+    "joinedAt"  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "admin" BOOLEAN DEFAULT false,
+    "muted" BOOLEAN DEFAULT false,
+    "banned" BOOLEAN DEFAULT false,
+    PRIMARY KEY ("chatId", "userId")
+  );

@@ -4,6 +4,7 @@ export enum table {
   AUTH_PROVIDER = 'AuthProvider',
   BLOCK = 'Block',
   CHATS = 'ChatRoom',
+  CHATMEMBERS = 'ChatRoomMembers',
 }
 
 export interface Query {
