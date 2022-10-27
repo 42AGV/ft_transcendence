@@ -6,4 +6,8 @@ export abstract class IBlockRepository {
     blockerId: string,
     blockedId: string,
   ): Promise<BlockEntity | null>;
+  abstract deleteBlock(
+    blockerId: string,
+    blockedId: string,
+  ): Promise<BlockEntity | null>;
 }
