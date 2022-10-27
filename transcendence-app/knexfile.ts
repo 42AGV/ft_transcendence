@@ -2,7 +2,7 @@ import type { Knex } from 'knex';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 
-config();
+config({ path: `.env.${process.env.NODE_ENV}` });
 
 const configService = new ConfigService();
 

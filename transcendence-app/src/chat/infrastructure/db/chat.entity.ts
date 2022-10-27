@@ -13,7 +13,7 @@ export class ChatRoomEntity {
   constructor(
     public id: string,
     public name: string,
-    public password: string | null | undefined,
+    public password: string | null,
     public avatarId: string | null,
     public avatarX: number = 0,
     public avatarY: number = 0,

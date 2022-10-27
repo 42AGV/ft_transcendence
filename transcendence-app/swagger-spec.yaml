@@ -71,32 +71,6 @@ paths:
           description: Forbidden
       tags: *a1
   /api/v1/users:
-    post:
-      operationId: UserController_addUser
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserDto"
-      responses:
-        "201":
-          description: Create a user
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "400":
-          description: Bad Request
-        "403":
-          &a2
-          description: Forbidden
-        "422":
-          description: Unprocessable entity
-      tags:
-        &a3
-        - users
     patch:
       operationId: UserController_updateCurrentUser
       parameters: []
@@ -115,10 +89,14 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: Bad Request
-        "403": *a2
+        "403":
+          &a2
+          description: Forbidden
         "422":
           description: Unprocessable Entity
-      tags: *a3
+      tags:
+        &a3
+        - users
     get:
       operationId: UserController_getUsers
       parameters:
@@ -375,6 +353,28 @@ paths:
         "503":
           description: Service unavailable
       tags: *a5
+  "/api/v1/chat/room/{Id}/members":
+    post:
+      operationId: ChatController_createChatRoomMember
+      parameters:
+        - name: Id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Add a member to a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatMember"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "422":
+          description: Unprocessable entity
+      tags: *a5
 info:
   title: transcendence-app
   description: The transcendence-app API description
@@ -449,27 +449,6 @@ components:
       required:
         - username
         - password
-    UserDto:
-      type: object
-      properties:
-        username:
-          type: string
-        email:
-          type: string
-        fullName:
-          type: string
-        password:
-          type: string
-          nullable: true
-        avatarId:
-          type: string
-          nullable: true
-      required:
-        - username
-        - email
-        - fullName
-        - password
-        - avatarId
     UpdateUserDto:
       type: object
       properties:
@@ -519,7 +498,8 @@ components:
         name:
           type: string
         password:
-          type: object
+          type: string
+          nullable: true
         avatarId:
           type: string
           nullable: true
@@ -543,3 +523,29 @@ components:
         - avatarY
         - createdAt
         - ownerId
+    ChatMember:
+      type: object
+      properties:
+        chatId:
+          type: string
+        userId:
+          type: string
+        joinedAt:
+          format: date-time
+          type: string
+        admin:
+          type: boolean
+          default: false
+        muted:
+          type: boolean
+          default: false
+        banned:
+          type: boolean
+          default: false
+      required:
+        - chatId
+        - userId
+        - joinedAt
+        - admin
+        - muted
+        - banned
