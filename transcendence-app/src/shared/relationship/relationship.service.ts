@@ -8,4 +8,8 @@ export class RelationshipService {
   addBlock(blockerId: string, blockedId: string) {
     return this.blockRepository.addBlock({ blockerId, blockedId });
   }
+
+  getBlock(blockerId: string, blockedId: string) {
+    return this.blockRepository.getBlock(blockerId, blockedId);
+  }
 }

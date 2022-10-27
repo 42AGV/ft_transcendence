@@ -1,6 +1,6 @@
 export enum BlockKeys {
   BLOCKER_ID = '"blockerId"',
-  BLOCKED_IT = '"blockedId"',
+  BLOCKED_ID = '"blockedId"',
 }
 
 export class BlockEntity {
