@@ -15,6 +15,7 @@ import {
   RegisterPage,
   ChatRoom,
   CreateChatRoomPage,
+  EditChatRoomPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -116,6 +117,14 @@ root.render(
             element={
               <RequireAuth>
                 <ChatRoom />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path={`${CHATROOM_URL}/:chatRoomId/edit`}
+            element={
+              <RequireAuth>
+                <EditChatRoomPage />
               </RequireAuth>
             }
           />
