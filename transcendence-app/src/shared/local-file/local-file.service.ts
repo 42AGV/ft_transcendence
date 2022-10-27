@@ -8,7 +8,7 @@ import { LocalFileConfig } from './local-file.config.interface';
 import { LocalFile } from './local-file.domain';
 import { ILocalFileRepository } from './infrastructure/db/local-file.repository';
 import generateAvatar = require('github-like-avatar-generator');
-import { AVATARS_PATH } from '../../user/constants';
+import { AVATARS_PATH } from '../constants';
 
 @Injectable()
 export class LocalFileService {

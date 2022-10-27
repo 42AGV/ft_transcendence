@@ -1,3 +1,4 @@
+export { ReactComponent as Add } from './add.svg';
 export { ReactComponent as ArrowBack } from './arrow-back.svg';
 export { ReactComponent as ArrowForward } from './arrow-forward.svg';
 export { ReactComponent as Chat } from './chat.svg';

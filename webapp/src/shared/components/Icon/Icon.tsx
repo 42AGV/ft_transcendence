@@ -1,5 +1,6 @@
 import { Color } from '../../types';
 import {
+  Add,
   ArrowBack,
   ArrowForward,
   Chat,
@@ -13,6 +14,7 @@ import {
 } from './assets/icons';
 
 export enum IconVariant {
+  ADD = 'ADD',
   ARROW_BACK = 'ARROW_BACK',
   ARROW_FORWARD = 'ARROW_FORWARD',
   CHAT = 'CHAT',
@@ -32,6 +34,7 @@ type SVGProps = React.SVGProps<SVGSVGElement> & {
 type SVGComponent = React.FunctionComponent<SVGProps>;
 
 const Icons: { [key in IconVariant]: SVGComponent } = {
+  ADD: Add,
   ARROW_BACK: ArrowBack,
   ARROW_FORWARD: ArrowForward,
   CHAT: Chat,
