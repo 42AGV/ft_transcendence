@@ -1,9 +1,9 @@
-.openapi-generator-ignore
 apis/AuthApi.ts
 apis/ChatApi.ts
 apis/UsersApi.ts
 apis/index.ts
 index.ts
+models/ChatMember.ts
 models/ChatRoom.ts
 models/CreateChatDto.ts
 models/LoginUserDto.ts
@@ -11,6 +11,5 @@ models/RegisterUserDto.ts
 models/UpdateUserDto.ts
 models/User.ts
 models/UserAvatarDto.ts
-models/UserDto.ts
 models/index.ts
 runtime.ts
