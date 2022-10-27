@@ -20,12 +20,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './dto/user.dto';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
-  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -76,18 +74,6 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {
   constructor(private userService: UserService) {}
-
-  @Post()
-  @ApiCreatedResponse({ description: 'Create a user', type: User })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addUser(@Body() userDto: UserDto): Promise<User> {
-    const user = await this.userService.addUser(userDto);
-    if (!user) {
-      throw new UnprocessableEntityException();
-    }
-    return user;
-  }
 
   @Patch()
   @ApiBadRequestResponse({ description: 'Bad Request' })
