@@ -2,6 +2,7 @@ export enum table {
   USERS = 'Users',
   LOCAL_FILE = 'LocalFile',
   AUTH_PROVIDER = 'AuthProvider',
+  BLOCK = 'Block',
   CHATS = 'ChatRoom',
   CHATMEMBERS = 'ChatRoomMembers',
 }

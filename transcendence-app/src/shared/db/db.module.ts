@@ -6,6 +6,8 @@ import { ILocalFileRepository } from '../local-file/infrastructure/db/local-file
 import { LocalFilePostgresRepository } from '../local-file/infrastructure/db/postgres/local-file.postgres.repository';
 import { AuthProviderPostgresRepository } from '../../auth/auth-provider/infrastructure/db/postgres/auth-provider.postgres.repository';
 import { IAuthProviderRepository } from '../../auth/auth-provider/infrastructure/db/auth-provider.repository';
+import { IBlockRepository } from '../relationship/infrastructure/block.repository';
+import { BlockPostgresRepository } from '../relationship/infrastructure/db/block.postgres.repository';
 import { IChatRepository } from '../../chat/infrastructure/db/chat.repository';
 import { ChatPostgresRepository } from '../../chat/infrastructure/db/postgres/chatPostgres.repository';
 import { IChatMemberRepository } from '../../chat/infrastructure/db/chatmember.repository';
@@ -21,12 +23,17 @@ import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postg
       provide: IAuthProviderRepository,
       useClass: AuthProviderPostgresRepository,
     },
+    {
+      provide: IBlockRepository,
+      useClass: BlockPostgresRepository,
+    },
     { provide: IChatMemberRepository, useClass: ChatMemberPostgresRepository },
   ],
   exports: [
     IUserRepository,
     ILocalFileRepository,
     IAuthProviderRepository,
+    IBlockRepository,
     IChatRepository,
     IChatMemberRepository,
   ],
