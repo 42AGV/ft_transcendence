@@ -9,13 +9,12 @@ export class ChatMemberService {
   async addChatmember(
     chatId: string,
     userId: string,
-    isAdminByDefault: boolean = false,
   ): Promise<ChatMember | null> {
     const chatmember = {
       joinedAt: new Date(Date.now()),
       chatId: chatId,
       userId: userId,
-      admin: isAdminByDefault,
+      admin: false,
       muted: false,
       banned: false,
     };

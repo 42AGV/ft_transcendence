@@ -15,10 +15,13 @@
 
 import * as runtime from '../runtime';
 import type {
+  ChatMember,
   ChatRoom,
   CreateChatDto,
 } from '../models';
 import {
+    ChatMemberFromJSON,
+    ChatMemberToJSON,
     ChatRoomFromJSON,
     ChatRoomToJSON,
     CreateChatDtoFromJSON,
@@ -27,6 +30,10 @@ import {
 
 export interface ChatControllerCreateChatRoomRequest {
     createChatDto: CreateChatDto;
+}
+
+export interface ChatControllerCreateChatRoomMemberRequest {
+    id: string;
 }
 
 export interface ChatControllerGetChatRoomsRequest {
@@ -69,6 +76,34 @@ export class ChatApi extends runtime.BaseAPI {
      */
     async chatControllerCreateChatRoom(requestParameters: ChatControllerCreateChatRoomRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ChatRoom> {
         const response = await this.chatControllerCreateChatRoomRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async chatControllerCreateChatRoomMemberRaw(requestParameters: ChatControllerCreateChatRoomMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ChatMember>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling chatControllerCreateChatRoomMember.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/chat/room/{Id}/members`.replace(`{${"Id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ChatMemberFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async chatControllerCreateChatRoomMember(requestParameters: ChatControllerCreateChatRoomMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ChatMember> {
+        const response = await this.chatControllerCreateChatRoomMemberRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
