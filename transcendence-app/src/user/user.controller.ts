@@ -36,10 +36,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import {
-  MAX_USER_ENTRIES_PER_PAGE,
-  UsersPaginationQueryDto,
-} from './dto/user.pagination.dto';
+import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
 import { User } from './user.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
@@ -47,7 +44,8 @@ import {
   AVATARS_PATH,
   AVATAR_MAX_SIZE,
   AVATAR_MIMETYPE_WHITELIST,
-} from './constants';
+  MAX_ENTRIES_PER_PAGE,
+} from '../shared/constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
@@ -116,7 +114,7 @@ export class UserController {
 
   @Get()
   @ApiOkResponse({
-    description: `Lists all users (max ${MAX_USER_ENTRIES_PER_PAGE})`,
+    description: `Lists all users (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [User],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })

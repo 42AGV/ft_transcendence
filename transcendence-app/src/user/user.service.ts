@@ -1,17 +1,17 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  MAX_USER_ENTRIES_PER_PAGE,
-  UsersPaginationQueryDto,
-} from './dto/user.pagination.dto';
+import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
 import { User } from './user.domain';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
-import { AVATAR_MIMETYPE_WHITELIST } from './constants';
+import {
+  AVATAR_MIMETYPE_WHITELIST,
+  MAX_ENTRIES_PER_PAGE,
+} from '../shared/constants';
 import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
@@ -32,7 +32,7 @@ export class UserService {
   }
 
   async retrieveUsers({
-    limit = MAX_USER_ENTRIES_PER_PAGE,
+    limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
@@ -63,11 +63,12 @@ export class UserService {
   }
 
   async addAvatarAndUser(
-    fileDto: LocalFileDto,
+    avatarId: string,
+    avatarDto: LocalFileDto,
     userDto: UserDto,
   ): Promise<User | null> {
     const user = await this.userRepository.addAvatarAndAddUser(
-      { id: uuidv4(), createdAt: new Date(Date.now()), ...fileDto },
+      { id: avatarId, createdAt: new Date(Date.now()), ...avatarDto },
       {
         id: uuidv4(),
         createdAt: new Date(Date.now()),
