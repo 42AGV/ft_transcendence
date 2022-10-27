@@ -52,12 +52,21 @@ CREATE TABLE
   );
 
 CREATE TABLE
-    IF NOT EXISTS ChatRoomMembers (
+  IF NOT EXISTS ChatRoomMembers (
     "chatId" UUID REFERENCES ChatRoom (id) ON DELETE CASCADE,
     "userId" UUID REFERENCES Users (id) ON DELETE CASCADE,
-    "joinedAt"  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "joinedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW (),
     "admin" BOOLEAN DEFAULT false,
     "muted" BOOLEAN DEFAULT false,
     "banned" BOOLEAN DEFAULT false,
     PRIMARY KEY ("chatId", "userId")
+  );
+
+CREATE TABLE
+  IF NOT EXISTS ChatRoomMessage (
+    "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
+    "chatId" UUID REFERENCES ChatRoom (id) ON DELETE CASCADE,
+    "userId" UUID REFERENCES Users (id) ON DELETE CASCADE,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW ()
   );
