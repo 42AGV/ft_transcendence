@@ -8,7 +8,6 @@ import * as yaml from 'yaml';
 import { setupApp } from './setup-app';
 
 async function bootstrap() {
-  process.title = 'myApp';
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enable('trust proxy');
   app.setGlobalPrefix('api');
@@ -24,9 +23,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   const yamlString: string = yaml.stringify(document, {});
-  // console.log(process.env.L_PID);
-  // console.log(yamlString);
-  // process.kill(process.ppid, 'SIGKILL');
   writeFileSync('./swagger-spec.yaml', yamlString);
   SwaggerModule.setup('api', app, document);
   await app.listen(3000);
