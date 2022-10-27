@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseUUIDPipe,
@@ -21,6 +24,7 @@ import {
   ApiBadRequestResponse,
   ApiConsumes,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiPayloadTooLargeResponse,
@@ -29,10 +33,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import {
-  MAX_USER_ENTRIES_PER_PAGE,
-  UsersPaginationQueryDto,
-} from './dto/user.pagination.dto';
+import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
 import { User } from './user.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
@@ -40,7 +41,8 @@ import {
   AVATARS_PATH,
   AVATAR_MAX_SIZE,
   AVATAR_MIMETYPE_WHITELIST,
-} from './constants';
+  MAX_ENTRIES_PER_PAGE,
+} from '../shared/constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
@@ -86,7 +88,7 @@ export class UserController {
     if (!updatedUser) {
       throw new UnprocessableEntityException();
     }
-    return user;
+    return updatedUser;
   }
 
   @Get('me')
@@ -97,7 +99,7 @@ export class UserController {
 
   @Get()
   @ApiOkResponse({
-    description: `Lists all users (max ${MAX_USER_ENTRIES_PER_PAGE})`,
+    description: `Lists all users (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [User],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
@@ -182,5 +184,54 @@ export class UserController {
       throw new ServiceUnavailableException();
     }
     return avatar;
+  }
+
+  @Post('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Block a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  async blockUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.userService.addBlock(user.id, blockedUserId);
+    if (!block) {
+      throw new UnprocessableEntityException();
+    }
+  }
+
+  @Get('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Check if a user is blocked by the authenticated user',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getBlock(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.userService.getBlock(user.id, blockedUserId);
+    if (!block) {
+      throw new NotFoundException();
+    }
+  }
+
+  @Delete('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Unblock a user',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async unblockUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.userService.deleteBlock(user.id, blockedUserId);
+    if (!block) {
+      throw new NotFoundException();
+    }
   }
 }

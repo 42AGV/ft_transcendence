@@ -1,17 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { MAX_ENTRIES_PER_PAGE } from '../../shared/constants';
 import { BooleanString } from '../../shared/enums/boolean-string.enum';
-
-export const MAX_USER_ENTRIES_PER_PAGE = 20;
 
 export class UsersPaginationQueryDto {
   @ApiPropertyOptional({
-    description: `The number of results (max ${MAX_USER_ENTRIES_PER_PAGE})`,
+    description: `The number of results (max ${MAX_ENTRIES_PER_PAGE})`,
   })
   @IsOptional()
   @IsInt()
   @Min(0)
-  @Max(MAX_USER_ENTRIES_PER_PAGE)
+  @Max(MAX_ENTRIES_PER_PAGE)
   limit?: number;
 
   @IsOptional()

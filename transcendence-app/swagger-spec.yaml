@@ -229,6 +229,130 @@ paths:
         "503":
           description: Service Unavailable
       tags: *a3
+  "/api/v1/users/block/{userId}":
+    post:
+      operationId: UserController_blockUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Block a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "422":
+          description: Unprocessable Entity
+      tags: *a3
+    get:
+      operationId: UserController_getBlock
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Check if a user is blocked by the authenticated user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+    delete:
+      operationId: UserController_unblockUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Unblock a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+  /api/v1/chat/room:
+    post:
+      operationId: ChatController_createChatRoom
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChatDto"
+      responses:
+        "201":
+          description: Create a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatRoom"
+        "400":
+          description: Bad Request
+        "403":
+          &a4
+          description: Forbidden
+        "422":
+          description: Unprocessable entity
+      tags:
+        &a5
+        - chat
+    get:
+      operationId: ChatController_getChatRooms
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lists all chatrooms (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatRoom"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "503":
+          description: Service unavailable
+      tags: *a5
 info:
   title: transcendence-app
   description: The transcendence-app API description
@@ -329,3 +453,50 @@ components:
       required:
         - avatarId
         - file
+    CreateChatDto:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+          nullable: true
+        confirmationPassword:
+          type: string
+          nullable: true
+      required:
+        - name
+        - password
+        - confirmationPassword
+    ChatRoom:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        password:
+          type: object
+        avatarId:
+          type: string
+          nullable: true
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        ownerId:
+          type: string
+      required:
+        - id
+        - name
+        - password
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - ownerId
