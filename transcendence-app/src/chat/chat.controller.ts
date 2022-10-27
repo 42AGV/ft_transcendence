@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseUUIDPipe,
   Post,
   Query,
   ServiceUnavailableException,
@@ -25,13 +27,18 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { User } from '../user/user.domain';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
+import { ChatMemberService } from './chatmember.service';
+import { ChatMember } from './chatmember.domain';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
 @ApiTags('chat')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class ChatController {
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private chatMemberService: ChatMemberService,
+  ) {}
 
   @Post('room')
   @ApiCreatedResponse({ description: 'Create a chatroom', type: ChatRoom })
@@ -50,6 +57,25 @@ export class ChatController {
       throw new UnprocessableEntityException();
     }
     return chatRoom;
+  }
+
+  @Post('room/:Id/members')
+  @ApiCreatedResponse({
+    description: 'Add a member to a chatroom',
+    type: ChatMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async createChatRoomMember(
+    @GetUser() user: User,
+    @Param('Id', ParseUUIDPipe) chatRoomId: string,
+  ) {
+    const ret = await this.chatMemberService.addChatmember(chatRoomId, user.id);
+
+    if (!ret) {
+      throw new UnprocessableEntityException();
+    }
+    return ret;
   }
 
   @Get('room')
