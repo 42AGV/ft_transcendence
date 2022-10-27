@@ -5,3 +5,5 @@ export const AVATAR_MIMETYPE_WHITELIST = [
   'image/png',
   'image/webp',
 ];
+export const MAX_ENTRIES_PER_PAGE = 20;
+export const HTTP_TIMEOUT_MILLISECONDS = 5000;
