@@ -107,6 +107,21 @@ const UserComponentTemplate = ({
     );
   }
 
+  const unblockUserButton = (
+    <Button variant={ButtonVariant.SUBMIT} onClick={unblockUser}>
+      Unblock
+    </Button>
+  );
+
+  const blockUserButton = (
+    <Button variant={ButtonVariant.WARNING} onClick={blockUser}>
+      Block
+    </Button>
+  );
+
+  const changeBlockStatusButton = () =>
+    isBlocked ? unblockUserButton : blockUserButton;
+
   return user === null ? (
     <NotFoundPage />
   ) : (
@@ -162,14 +177,7 @@ const UserComponentTemplate = ({
           Logout
         </Button>
       )}
-      {!isAuthUser && !isBlockStatusLoading && (
-        <Button
-          variant={isBlocked ? ButtonVariant.SUBMIT : ButtonVariant.WARNING}
-          onClick={isBlocked ? unblockUser : blockUser}
-        >
-          {isBlocked ? 'Unblock' : 'Block'}
-        </Button>
-      )}
+      {!isAuthUser && !isBlockStatusLoading && changeBlockStatusButton()}
     </div>
   );
 };
