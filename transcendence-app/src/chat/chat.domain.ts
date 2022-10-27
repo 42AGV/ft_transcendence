@@ -6,7 +6,7 @@ export class ChatRoom {
   id!: string;
   name!: string;
   @Exclude()
-  password: string | null | undefined;
+  password!: string | null;
   avatarId!: string | null;
   avatarX: number = 0;
   avatarY: number = 0;

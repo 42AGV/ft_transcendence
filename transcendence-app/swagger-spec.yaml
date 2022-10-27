@@ -498,7 +498,8 @@ components:
         name:
           type: string
         password:
-          type: object
+          type: string
+          nullable: true
         avatarId:
           type: string
           nullable: true
