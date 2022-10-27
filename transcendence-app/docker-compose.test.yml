@@ -18,7 +18,7 @@ services:
     ports:
       - "11212:11211"
   swagger-generator:
-    image: nestjs/cli
+    image: node:16.16.0-alpine3.16
     volumes:
-      - ./:/workspace
-    command: ./swagger-gen-entrypoint.sh
+      - ./:/home
+    command: /home/swagger-gen-entrypoint.sh

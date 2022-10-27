@@ -33,3 +33,17 @@ USER node
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["node", "dist/main"]
+
+FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS swagger
+ARG TRANSCENDENCE_APP_DATA
+ENV TRANSCENDENCE_APP_DATA=${TRANSCENDENCE_APP_DATA}
+ENV NODE_ENV=test
+RUN mkdir -p ${TRANSCENDENCE_APP_DATA} \
+  && chown -R node:node ${TRANSCENDENCE_APP_DATA}
+WORKDIR  /transcendence-app
+COPY ["package.json", "package-lock.json","swagger-gen-entrypoint.sh", "./"]
+COPY --from=development --chown=node:node /transcendence-app/dist ./dist
+COPY . .
+RUN npm install --location=global @nestjs/cli
+VOLUME ${TRANSCENDENCE_APP_DATA}
+ENTRYPOINT ["./swagger-gen-entrypoint.sh"]
