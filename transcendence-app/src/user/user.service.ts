@@ -1,5 +1,5 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
+import { UserRequestDto } from './dto/user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
@@ -17,6 +17,7 @@ import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { UserAvatarDto } from './dto/user.avatar.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -46,12 +47,22 @@ export class UserService {
     return users ? users.map((user) => new User(user)) : null;
   }
 
-  async retrieveUserWithUserName(username: string): Promise<User | null> {
+  async retrieveUserWithUserName(
+    username: string,
+    userMe?: User,
+  ): Promise<UserDto | null> {
     const user = await this.userRepository.getByUsername(username);
-    return user ? new User(user) : null;
+
+    if (user && userMe) {
+      return {
+        ...user,
+        isBlocked: await this.isUserBlockedByMe(userMe, user.id),
+      };
+    }
+    return null;
   }
 
-  async addUser(userDto: UserDto): Promise<User | null> {
+  async addUser(userDto: UserRequestDto): Promise<User | null> {
     const user = await this.userRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
@@ -65,7 +76,7 @@ export class UserService {
   async addAvatarAndUser(
     avatarId: string,
     avatarDto: LocalFileDto,
-    userDto: UserDto,
+    userDto: UserRequestDto,
   ): Promise<User | null> {
     const user = await this.userRepository.addAvatarAndAddUser(
       { id: avatarId, createdAt: new Date(Date.now()), ...avatarDto },
@@ -105,6 +116,18 @@ export class UserService {
       return null;
     }
     return this.streamAvatarData(file);
+  }
+
+  private async isUserBlockedByMe(
+    userMe: User,
+    userId: string,
+  ): Promise<boolean | null> {
+    if (userMe.id === userId) {
+      return null;
+    }
+
+    const block = await this.blockRepository.getBlock(userMe.id, userId);
+    return block?.blockedId === userId ?? false;
   }
 
   private async addAvatarAndUpdateUser(

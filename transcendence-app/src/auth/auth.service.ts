@@ -11,6 +11,7 @@ import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
+import { IUserRepository } from 'src/user/infrastructure/db/user.repository';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 
 const scrypt = promisify(_scrypt);
@@ -21,14 +22,13 @@ export class AuthService {
   readonly hashLength = 32;
 
   constructor(
+    private userRepository: IUserRepository,
     private readonly userService: UserService,
     private readonly localFileService: LocalFileService,
   ) {}
 
   async validateUser(user: LoginUserDto): Promise<User> {
-    const foundUser = await this.userService.retrieveUserWithUserName(
-      user.username,
-    );
+    const foundUser = await this.userRepository.getByUsername(user.username);
     const incorrectCredentialsException = new ForbiddenException(
       'Incorrect username or password',
     );
@@ -48,9 +48,7 @@ export class AuthService {
   }
 
   async registerLocalUser(user: RegisterUserDto): Promise<User | null> {
-    const existingUser = await this.userService.retrieveUserWithUserName(
-      user.username,
-    );
+    const existingUser = await this.userRepository.getByUsername(user.username);
 
     if (existingUser) {
       throw new UnprocessableEntityException('Username already exists');

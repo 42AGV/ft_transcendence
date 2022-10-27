@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AvatarFileInterceptor, UserController } from './user.controller';
 import { UserService } from './user.service';
-import { UserDto } from './dto/user.dto';
+import { UserRequestDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
-const testUserDto: UserDto = {
+const testUserDto: UserRequestDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
