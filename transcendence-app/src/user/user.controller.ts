@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -48,7 +49,6 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
-import { RelationshipService } from '../shared/relationship/relationship.service';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -75,10 +75,7 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {
-  constructor(
-    private userService: UserService,
-    private relationshipService: RelationshipService,
-  ) {}
+  constructor(private userService: UserService) {}
 
   @Post()
   @ApiCreatedResponse({ description: 'Create a user', type: User })
@@ -207,17 +204,49 @@ export class UserController {
   @Post('block/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Block a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async blockUser(
     @GetUser() user: User,
-    @Param('userId') blockedUserId: string,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
-    const block = await this.relationshipService.addBlock(
-      user.id,
-      blockedUserId,
-    );
+    const block = await this.userService.addBlock(user.id, blockedUserId);
     if (!block) {
       throw new UnprocessableEntityException();
+    }
+  }
+
+  @Get('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Check if a user is blocked by the authenticated user',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getBlock(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.userService.getBlock(user.id, blockedUserId);
+    if (!block) {
+      throw new NotFoundException();
+    }
+  }
+
+  @Delete('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Unblock a user',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async unblockUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.userService.deleteBlock(user.id, blockedUserId);
+    if (!block) {
+      throw new NotFoundException();
     }
   }
 }
