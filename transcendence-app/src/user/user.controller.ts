@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseUUIDPipe,
@@ -24,6 +26,7 @@ import {
   ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiPayloadTooLargeResponse,
@@ -45,6 +48,7 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
+import { RelationshipService } from '../shared/relationship/relationship.service';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -71,7 +75,10 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private relationshipService: RelationshipService,
+  ) {}
 
   @Post()
   @ApiCreatedResponse({ description: 'Create a user', type: User })
@@ -99,7 +106,7 @@ export class UserController {
     if (!updatedUser) {
       throw new UnprocessableEntityException();
     }
-    return user;
+    return updatedUser;
   }
 
   @Get('me')
@@ -195,5 +202,22 @@ export class UserController {
       throw new ServiceUnavailableException();
     }
     return avatar;
+  }
+
+  @Post('block/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Block a user' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  async blockUser(
+    @GetUser() user: User,
+    @Param('userId') blockedUserId: string,
+  ): Promise<void> {
+    const block = await this.relationshipService.addBlock(
+      user.id,
+      blockedUserId,
+    );
+    if (!block) {
+      throw new UnprocessableEntityException();
+    }
   }
 }
