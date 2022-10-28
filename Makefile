@@ -1,7 +1,12 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT := $(dir $(MKFILE_PATH))
-TRANSCENDENCE_DEPS := $(shell find $(PROJECT_ROOT)/transcendence-app/ -type f -name "*.ts" | grep -v "node_module\|dist\|test")
+TRANSCENDENCE_DEPS := $(shell find ./transcendence-app/ -type f -name "*.ts" \
+                              | grep -v "node_module\|dist\|test" \
+                              | grep -i "controller\|dto\|domain\|entity")
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
+ifeq ($(SEED),)
+SEED := seed
+endif
 
 .PHONY: all
 all: gen
@@ -40,3 +45,10 @@ log-db:
 .PHONY: get-ip
 get-ip:
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ft_transcendence-webapp-1
+
+transcendence-app/seeds/$(SEED).ts:
+	cd transcendence-app && npx knex seed:make $(SEED)
+
+PHONY: seed
+seed:
+	make transcendence-app/seeds/$(SEED).ts

@@ -2,7 +2,9 @@ import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { writeFileSync } from 'fs';
 import { AppModule } from './app.module';
+import * as yaml from 'yaml';
 import { setupApp } from './setup-app';
 
 async function bootstrap() {
@@ -21,6 +23,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
+  const yamlString: string = yaml.stringify(document, {});
+  writeFileSync('./swagger-spec.yaml', yamlString);
   await app.listen(3000);
 }
 bootstrap();
