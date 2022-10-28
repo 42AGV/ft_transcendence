@@ -19,11 +19,6 @@ services:
       - POSTGRES_USER={POSTGRES_USER:?required}
       - POSTGRES_PASSWORD={POSTGRES_PASSWORD:?required}
 
-  swagger:
-    build:
-      context: ./transcendence-app
-      target: swagger
-
   db:
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?required}
