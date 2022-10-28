@@ -11,7 +11,7 @@ ME="$(whoami)"
 DOCKER_COMPOSE="$("${PROJECT_ROOT}"/scripts/get-docker-compose.sh)"
 cd "${PROJECT_ROOT}" && touch "${SWAGGER_SPEC_FILE}"
 { { cd "${SCRIPT_DIR}" || exit ; } &&
-${DOCKER_COMPOSE} run --rm swagger ; } ||
+${DOCKER_COMPOSE} run --rm swagger && ${DOCKER_COMPOSE} down -v ; } ||
   rm "${SWAGGER_SPEC_FILE}"
 docker run --rm -e MY_USER="${ME}" \
   -v ${PROJECT_ROOT}:/local openapitools/openapi-generator-cli:v6.2.0 /local/scripts/generate-cmd.sh
