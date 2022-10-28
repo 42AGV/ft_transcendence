@@ -1,6 +1,6 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT := $(dir $(MKFILE_PATH))
-TRANSCENDENCE_DEPS := $(shell find transcendence-app/ -type f -name "*.ts" | grep -v "node_module\|dist\|test")
+TRANSCENDENCE_DEPS := $(shell find $(PROJECT_ROOT)/transcendence-app/ -type f -name "*.ts" | grep -v "node_module\|dist\|test")
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 
 .PHONY: all
