@@ -11,7 +11,7 @@ if [ ${NO_HYPHEN} -ne '0' ]; then
    echo "docker-compose"
 fi )"
 cd "${PROJECT_ROOT}" && touch transcendence-app/swagger-spec.yaml
-${DOCKER_COMPOSE} run --rm -t swagger
+${DOCKER_COMPOSE} run --rm swagger
 docker run --rm \
   -v ${PROJECT_ROOT}:/local openapitools/openapi-generator-cli:v6.2.0 generate \
   -i /local/transcendence-app/swagger-spec.yaml \
