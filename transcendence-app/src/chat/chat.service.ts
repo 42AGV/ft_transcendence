@@ -77,4 +77,9 @@ export class ChatService {
       });
     }
   }
+
+  async getChatRoomById(chatRoomId: string): Promise<ChatRoom | null> {
+    const chatRoom = await this.chatRepository.getById(chatRoomId);
+    return chatRoom ? new ChatRoom(chatRoom) : null;
+  }
 }

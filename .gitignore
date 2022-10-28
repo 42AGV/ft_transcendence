@@ -25,6 +25,7 @@ webapp/src/shared/generated/*
 .env.production.local
 nocommit/*
 *.nocommit
+.env
 
 # Logs
 logs
