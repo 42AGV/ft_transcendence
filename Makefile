@@ -8,7 +8,7 @@ all: gen
 	$(DOCKER_COMPOSE) up --build -d
 
 transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
-	./scripts/generate-openapi.sh
+	$(PROJECT_ROOT)/scripts/generate-openapi.sh
 
 .PHONY: gen
 gen:
