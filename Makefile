@@ -16,8 +16,8 @@ gen:
 
 .PHONY: clean
 clean:
-	rm -rf webapp/src/shared/generated || true
-	rm transcendence-app/swagger-spec.yaml || true
+	rm -rf $(PROJECT_ROOT)/webapp/src/shared/generated || true
+	rm $(PROJECT_ROOT)/transcendence-app/swagger-spec.yaml || true
 	$(DOCKER_COMPOSE) down -v
 
 .PHONY: re
