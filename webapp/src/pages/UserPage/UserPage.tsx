@@ -11,6 +11,7 @@ import {
   TextColor,
   TextVariant,
   TextWeight,
+  ToggleSwitch,
 } from '../../shared/components';
 import {
   EDIT_USER_URL,
@@ -25,6 +26,7 @@ import { usersApi } from '../../shared/services/ApiService';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { User } from '../../shared/generated';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
+import { useBlock } from '../../shared/hooks/UseBlock';
 
 type UserPageProps = {
   displayAsAuthUser?: boolean;
@@ -32,17 +34,25 @@ type UserPageProps = {
 
 type UserComponentTemplateProps = {
   user: User | null;
-  isAuthUser: boolean;
+  displayAsAuthUser: boolean;
   isLoading: boolean;
 };
 
 const UserComponentTemplate = ({
   user,
-  isAuthUser,
+  displayAsAuthUser,
   isLoading,
 }: UserComponentTemplateProps) => {
   const { goBack } = useNavigation();
-  const { logout } = useAuth();
+  const { logout, authUser } = useAuth();
+  const isAuthUser =
+    authUser !== null && user !== null && authUser.id === user.id;
+  const {
+    isBlocked,
+    isLoading: isBlockStatusLoading,
+    unblockUser,
+    blockUser,
+  } = useBlock(user);
 
   if (isLoading) {
     return (
@@ -92,7 +102,16 @@ const UserComponentTemplate = ({
             {user.email}
           </Text>
         </div>
-        {isAuthUser && (
+        <div className="user-block-status-toggle">
+          {!isAuthUser && !isBlockStatusLoading && (
+            <ToggleSwitch
+              label={isBlocked ? 'Unblock' : 'Block'}
+              isToggled={isBlocked}
+              onToggle={isBlocked ? unblockUser : blockUser}
+            />
+          )}
+        </div>
+        {displayAsAuthUser && (
           <Row
             iconVariant={IconVariant.USERS}
             url={EDIT_USER_URL}
@@ -100,7 +119,7 @@ const UserComponentTemplate = ({
           />
         )}
       </div>
-      {isAuthUser && (
+      {displayAsAuthUser && (
         <Button
           variant={ButtonVariant.WARNING}
           iconVariant={IconVariant.LOGOUT}
@@ -118,7 +137,7 @@ const AuthUserComponent = () => {
 
   return UserComponentTemplate({
     user: authUser,
-    isAuthUser: true,
+    displayAsAuthUser: true,
     isLoading,
   });
 };
@@ -132,7 +151,7 @@ const UserComponent = () => {
   );
   const { data: user, isLoading } = useData(getUserByUserName);
 
-  return UserComponentTemplate({ user, isAuthUser: false, isLoading });
+  return UserComponentTemplate({ user, displayAsAuthUser: false, isLoading });
 };
 
 export default function UserPage({ displayAsAuthUser = false }: UserPageProps) {
