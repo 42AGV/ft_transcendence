@@ -375,6 +375,34 @@ paths:
         "422":
           description: Unprocessable entity
       tags: *a5
+  "/api/v1/chat/room/{id}":
+    get:
+      operationId: ChatController_getChatRoomById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatRoom"
+        "201":
+          description: get a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatRoom"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "422":
+          description: Unprocessable entity
+      tags: *a5
 info:
   title: transcendence-app
   description: The transcendence-app API description
