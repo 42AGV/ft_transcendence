@@ -26,7 +26,7 @@ import { ChatService } from '../../src/chat/chat.service';
 import { ChatMemberService } from '../../src/chat/chatmember.service';
 import { DbModule } from '../../src/shared/db/db.module';
 
-describe('[Feature] User - /users', () => {
+describe('[Feature] Swagger works', () => {
   let app: INestApplication;
   const canActivate = jest.fn(() => true);
 
