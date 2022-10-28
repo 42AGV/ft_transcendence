@@ -21,8 +21,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ChatController } from '../../src/chat/chat.controller';
 import { AuthController } from '../../src/auth/auth.controller';
 import { AuthService } from '../../src/auth/auth.service';
-import { SocketService } from '../../src/socket/socket.service';
-import { LocalFileService } from '../../src/shared/local-file/local-file.service';
 import { LocalFileModule } from '../../src/shared/local-file/local-file.module';
 import { ChatService } from '../../src/chat/chat.service';
 import { ChatMemberService } from '../../src/chat/chatmember.service';

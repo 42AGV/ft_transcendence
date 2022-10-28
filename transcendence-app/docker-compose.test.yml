@@ -17,8 +17,3 @@ services:
     restart: always
     ports:
       - "11212:11211"
-  swagger-generator:
-    image: node:16.16.0-alpine3.16
-    volumes:
-      - ./:/home
-    command: /home/swagger-gen-entrypoint.sh
