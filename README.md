@@ -103,8 +103,9 @@ make gen
 ```
 or
 ```shell
-./scripts/generate-openapi.sh
+./scripts/generate-openapi.sh [options]
 ```
+> **_NOTE:_**  You can see a help panel for this script if you pass to it a `--help` or `-h` option.
 
 Start the application using `Docker`
 
@@ -181,11 +182,12 @@ We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generat
 
 Please don't modify these files manually.
 
-If you change code that impacts the swagger specs in transcendence-app, you will have to regenerate the generated files. The file `swagger-spec.yaml` will update itself when you save (on hot reload) if your server is running. To run the script, from the root directory, run:
+If you change code that impacts the swagger specs in transcendence-app, you will have to regenerate the generated files. The file `swagger-spec.yaml` will update itself when modified, since our server runs on hot reload, if the app is running. To run the script, from the root directory, run:
 ```shell
 ./scripts/generate-openapi.sh [options]
 ```
-By default, `./scripts/generate-openapi.sh` is analogous to running `make gen` as it creates both yaml file and generated webapp files, but it is not if you intend to separately build either webapp api generated files, or the swagger-spec.yaml file. To not build the yaml spec file pass the `--no-spec` or `--ns` option to the script. To not generate Api files in webapp, pass the `--no-gen` or `-ng` option to the script. You can also see a help panel with `--help` or `-h`.
+
+By default, `./scripts/generate-openapi.sh` is analogous to running `make gen` as it creates both yaml file and generated webapp files, but it is not if you intend to separately build either webapp api generated files, or the swagger-spec.yaml file. To not build the yaml spec file pass the `--no-spec` or `--ns` option to the script. To not generate Api files in webapp, pass the `--no-gen` or `-ng` option to the script.
 
 ### Seed the database
 
