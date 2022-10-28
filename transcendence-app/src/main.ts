@@ -22,9 +22,9 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
   const yamlString: string = yaml.stringify(document, {});
   writeFileSync('./swagger-spec.yaml', yamlString);
+  SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
 bootstrap();
