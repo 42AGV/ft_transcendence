@@ -17,7 +17,7 @@ NO_SPEC="false"
 NO_GEN="false"
 
 print_usage() {
-  echo "usage: ./generate_openapi_script.sh [options]"
+  echo "usage: ./generate_openapi.sh [options]"
   echo "  -h --help       print this usage and exit"
   echo "  -ns --no-spec   run this script without creating swagger spec file"
   echo "  -ng --no-gen    run this script without generating files"
@@ -31,11 +31,11 @@ do
 	elif [ "$1" = "--no-gen" ] || [ "$1" = "-ng" ]; then
   	NO_GEN="true"
   elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    echo "generate_openapi_script.sh:"
+    echo "generate_openapi.sh:"
   	print_usage
   	exit 0
   else
-    echo "generate_openapi_script.sh: invalid option -- '${1}'"
+    echo "generate_openapi.sh: invalid option -- '${1}'"
     print_usage
   	exit 1
   fi
