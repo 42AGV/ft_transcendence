@@ -187,7 +187,7 @@ If you change code that impacts the swagger specs in transcendence-app, you will
 ./scripts/generate-openapi.sh [options]
 ```
 
-By default, `./scripts/generate-openapi.sh` is analogous to running `make gen` as it creates both yaml file and generated webapp files. If you intend to separately build either webapp api generated files you can run `make gen-webapp` , or the swagger-spec.yaml file you can run `make spec`. To generate only webapp generated files pass the `--no-spec` or `--ns` option to the script or run `make gen-webapp`. To generate only swagger spec pass the `--no-gen` or `-ng` option to the script or run `make spec`.
+By default, `./scripts/generate-openapi.sh` is analogous to running `make gen` as it creates both yaml file and generated webapp files. If you intend to separately build either webapp api generated files or the swagger-spec.yaml you have different options: To generate only webapp generated files pass the `--no-spec` or `--ns` option to the script or run `make gen-webapp`. To generate only swagger spec pass the `--no-gen` or `-ng` option to the script or run `make spec`.
 
 ### Seed the database
 
