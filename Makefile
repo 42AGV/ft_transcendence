@@ -10,7 +10,7 @@ endif
 all: gen
 	$(DOCKER_COMPOSE) up --build -d
 
-$(PROJECT_ROOT)/transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
+transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
 	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-gen
 
 .PHONY: gen-webapp
