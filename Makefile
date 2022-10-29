@@ -1,5 +1,5 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
-PROJECT_ROOT := $(dir $(MKFILE_PATH))
+PROJECT_ROOT := $(realpath $(dir $(MKFILE_PATH)))
 TRANSCENDENCE_DEPS := $(shell ./scripts/get-swagger-spec-dependencies.sh)
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 ifeq ($(SEED),)
@@ -57,6 +57,10 @@ get-ip:
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.transcendence.app.1" )
 	@echo "db:"
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.db.1" )
+
+.PHONY: dbg
+dbg:
+	@echo $(PROJECT_ROOT)
 
 transcendence-app/seeds/$(SEED).ts:
 	cd transcendence-app && npx knex seed:make $(SEED)
