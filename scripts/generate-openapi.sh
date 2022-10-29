@@ -8,7 +8,7 @@ SCRIPT_DIR="$(
 )"
 
 PROJECT_ROOT="$(
-{ cd -- "${SCRIPT_DIR}" >/dev/null 2>&1 && cd .. ; } || exit
+{ cd -- "${SCRIPT_DIR}" >/dev/null 2>&1 && cd .. >/dev/null 2>&1 ; } || exit
   pwd -P
 )"
 
