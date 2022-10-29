@@ -2,7 +2,16 @@
 
 set -x
 
-. get-paths.sh
+SCRIPT_DIR="$(
+  cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit
+  pwd -P
+)"
+
+PROJECT_ROOT="$(
+{ cd -- "${SCRIPT_DIR}" >/dev/null 2>&1 && cd .. ; } || exit
+  pwd -P
+)"
+
 SWAGGER_SPEC_FILE="${PROJECT_ROOT}/transcendence-app/swagger-spec.yaml"
 DOCKER_COMPOSE="$("${PROJECT_ROOT}"/scripts/get-docker-compose.sh)"
 NO_SPEC="false"
