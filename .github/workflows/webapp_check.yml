@@ -21,6 +21,8 @@ jobs:
             webapp/package-lock.json
       - name: Install dependencies
         run: npm install --prefix webapp
+      - name: Generate code
+        run: make gen
       - name: Compile
         run: npm run build --prefix webapp
       - name: Check style
