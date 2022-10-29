@@ -33,7 +33,7 @@ do
 done
 
 create_swagger_spec() {
-  if [ "${NO_SPEC}" = "true" ]; then return 1
+  if [ "${NO_SPEC}" = "true" ]; then return 0
   fi
   cd "${PROJECT_ROOT}" && touch "${SWAGGER_SPEC_FILE}"
   { { cd "${SCRIPT_DIR}" || exit ; } && \
@@ -42,7 +42,7 @@ create_swagger_spec() {
 }
 
 generate_files() {
-  if [ "${NO_GEN}" = "true" ]; then return 1
+  if [ "${NO_GEN}" = "true" ]; then return 0
   fi
   mkdir -p "${PROJECT_ROOT}"/webapp/src/shared/generated
   docker run --rm -e MY_USER="${USER}" \
