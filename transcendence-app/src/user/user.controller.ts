@@ -47,6 +47,7 @@ import {
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
+import { UserDto } from './dto/user.dto';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -137,11 +138,17 @@ export class UserController {
   }
 
   @Get(':userName')
-  @ApiOkResponse({ description: 'Get a user', type: User })
+  @ApiOkResponse({ description: 'Get a user', type: UserDto })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  async getUserByUserName(@Param('userName') userName: string): Promise<User> {
-    const user = await this.userService.retrieveUserWithUserName(userName);
+  async getUserByUserName(
+    @GetUser() userMe: User,
+    @Param('userName') userName: string,
+  ): Promise<UserDto> {
+    const user = await this.userService.retrieveUserWithUserName(
+      userName,
+      userMe,
+    );
     if (user === null) {
       throw new NotFoundException();
     }
@@ -199,23 +206,6 @@ export class UserController {
     const block = await this.userService.addBlock(user.id, blockedUserId);
     if (!block) {
       throw new UnprocessableEntityException();
-    }
-  }
-
-  @Get('block/:userId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse({
-    description: 'Check if a user is blocked by the authenticated user',
-  })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  async getBlock(
-    @GetUser() user: User,
-    @Param('userId', ParseUUIDPipe) blockedUserId: string,
-  ): Promise<void> {
-    const block = await this.userService.getBlock(user.id, blockedUserId);
-    if (!block) {
-      throw new NotFoundException();
     }
   }
 
