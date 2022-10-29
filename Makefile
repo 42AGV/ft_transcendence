@@ -1,6 +1,6 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT := $(realpath $(dir $(MKFILE_PATH)))
-TRANSCENDENCE_DEPS := $(shell ./scripts/get-swagger-spec-dependencies.sh)
+TRANSCENDENCE_DEPS := $(shell $(PROJECT_ROOT)/scripts/get-swagger-spec-dependencies.sh)
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 ifeq ($(SEED),)
 SEED := seed
@@ -10,7 +10,7 @@ endif
 all: gen
 	$(DOCKER_COMPOSE) up --build -d
 
-transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
+$(PROJECT_ROOT)/transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
 	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-gen
 
 .PHONY: gen-webapp
@@ -35,7 +35,7 @@ clean:
 .PHONY: re
 re:
 	make clean
-	make
+	make all
 
 .PHONY: log-tr
 log-tr:
