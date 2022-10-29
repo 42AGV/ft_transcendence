@@ -1,8 +1,6 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT := $(dir $(MKFILE_PATH))
-TRANSCENDENCE_DEPS := $(shell find ./transcendence-app/ -type f -name "*.ts" \
-                              | grep -v "node_module\|dist\|test" \
-                              | grep -i "controller\|dto\|domain\|entity")
+TRANSCENDENCE_DEPS := $(shell ./scripts/get-swagger-spec-dependencies.sh)
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 ifeq ($(SEED),)
 SEED := seed
@@ -13,11 +11,20 @@ all: gen
 	$(DOCKER_COMPOSE) up --build -d
 
 transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
-	$(PROJECT_ROOT)/scripts/generate-openapi.sh
+	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-gen
+
+.PHONY: gen-webapp
+gen-webapp:
+	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-spec
+
+.PHONY: spec
+spec:
+	make transcendence-app/swagger-spec.yaml
 
 .PHONY: gen
 gen:
-	make transcendence-app/swagger-spec.yaml
+	make spec
+	make gen-webapp
 
 .PHONY: clean
 clean:
@@ -44,7 +51,12 @@ log-db:
 
 .PHONY: get-ip
 get-ip:
-	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ft_transcendence-webapp-1
+	@echo "webapp:"
+	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.webapp.1" )
+	@echo "transcendence-app:"
+	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.transcendence.app.1" )
+	@echo "db:"
+	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.db.1" )
 
 transcendence-app/seeds/$(SEED).ts:
 	cd transcendence-app && npx knex seed:make $(SEED)

@@ -44,10 +44,10 @@ create_swagger_spec() {
 generate_files() {
   if [ "${NO_GEN}" = "true" ]; then return 1
   fi
+  mkdir -p "${PROJECT_ROOT}"/webapp/src/shared/generated
   docker run --rm -e MY_USER="${USER}" \
     -v "${PROJECT_ROOT}":/local openapitools/openapi-generator-cli:v6.2.0 /local/scripts/generate-cmd.sh
 }
 
-mkdir -p "${PROJECT_ROOT}"/webapp/src/shared/generated
 create_swagger_spec
 generate_files
