@@ -8,7 +8,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-export class UserRequestDto {
+export class CreateUserRequestDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())

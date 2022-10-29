@@ -1,11 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AvatarFileInterceptor, UserController } from './user.controller';
 import { UserService } from './user.service';
-import { UserRequestDto } from './dto/user.dto';
+import { CreateUserRequestDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { User } from './user.domain';
+import { UserEntity } from './infrastructure/db/user.entity';
 
-const testUserDto: UserRequestDto = {
+const testUserMe = new User(
+  new UserEntity(
+    'test',
+    'test@test.com',
+    'test',
+    null,
+    null,
+    0,
+    0,
+    uuidv4(),
+    new Date(Date.now()),
+  ),
+);
+const testUserDto: CreateUserRequestDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
@@ -52,7 +67,10 @@ describe('UserController', () => {
   describe('getUserByUsername', () => {
     describe('when user with username exists', () => {
       it('should return the user object', async () => {
-        const user = await controller.getUserByUserName(testUsername);
+        const user = await controller.getUserByUserName(
+          testUserMe,
+          testUsername,
+        );
         expect(user.username).toEqual(testUsername);
       });
     });
@@ -62,7 +80,7 @@ describe('UserController', () => {
         mockUserService.retrieveUserWithUserName = () => Promise.resolve(null);
         expect.assertions(1);
         try {
-          await controller.getUserByUserName(testUsername);
+          await controller.getUserByUserName(testUserMe, testUsername);
         } catch (err) {
           expect(err).toBeInstanceOf(NotFoundException);
         }

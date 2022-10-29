@@ -1,5 +1,5 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
-import { UserRequestDto } from './dto/user.dto';
+import { CreateUserRequestDto } from './dto/user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
@@ -62,7 +62,7 @@ export class UserService {
     return null;
   }
 
-  async addUser(userDto: UserRequestDto): Promise<User | null> {
+  async addUser(userDto: CreateUserRequestDto): Promise<User | null> {
     const user = await this.userRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
@@ -76,7 +76,7 @@ export class UserService {
   async addAvatarAndUser(
     avatarId: string,
     avatarDto: LocalFileDto,
-    userDto: UserRequestDto,
+    userDto: CreateUserRequestDto,
   ): Promise<User | null> {
     const user = await this.userRepository.addAvatarAndAddUser(
       { id: avatarId, createdAt: new Date(Date.now()), ...avatarDto },

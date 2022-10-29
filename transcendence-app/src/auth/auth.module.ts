@@ -4,7 +4,7 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { Api42Service } from '../user/api42.service';
 import { UserModule } from '../user/user.module';
-import { DbModule } from 'src/shared/db/db.module';
+import { DbModule } from '../shared/db/db.module';
 import { AuthProviderModule } from './auth-provider/auth-provider.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
