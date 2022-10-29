@@ -54,10 +54,11 @@ export class UserService {
     const user = await this.userRepository.getByUsername(username);
 
     if (user && userMe) {
-      return {
+      const userDto = {
         ...user,
         isBlocked: await this.isUserBlockedByMe(userMe, user.id),
       };
+      return new UserDto(userDto);
     }
     return null;
   }

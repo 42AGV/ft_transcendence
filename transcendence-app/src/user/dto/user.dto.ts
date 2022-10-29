@@ -42,4 +42,8 @@ export class UserDto {
   id!: string;
   createdAt!: Date;
   isBlocked?: boolean | null;
+
+  constructor(user: UserDto) {
+    Object.assign(this, user);
+  }
 }
