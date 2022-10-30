@@ -1,5 +1,9 @@
-import { ChatMember } from '../../chatmember.domain';
+import { ChatMemberEntity } from './chatmember.entity';
 
 export abstract class IChatMemberRepository {
-  abstract add(chatMember: ChatMember): Promise<ChatMember | null>;
+  abstract add(chatMember: ChatMemberEntity): Promise<ChatMemberEntity | null>;
+  abstract getById(
+    chatId: string,
+    userId: string,
+  ): Promise<ChatMemberEntity | null>;
 }
