@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -17,6 +18,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiServiceUnavailableResponse,
   ApiTags,
@@ -30,6 +32,8 @@ import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { ChatMemberService } from './chatmember.service';
 import { ChatMember } from './chatmember.domain';
+import { ChatRoomMessage } from './chat-room-message.domain';
+import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -111,5 +115,37 @@ export class ChatController {
       throw new NotFoundException();
     }
     return chatroom;
+  }
+
+  @Get('chat/room/:chatRoomId/messages')
+  @ApiOkResponse({
+    description: `Lists all messages in a chatroom (max ${MAX_ENTRIES_PER_PAGE})`,
+    type: [ChatRoomMessage],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getChatRoomMessages(
+    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+    @GetUser() user: User,
+  ): Promise<ChatRoomMessageWithUser | null> {
+    const chatRoom = await this.chatService.getChatRoomById(chatRoomId);
+    if (!chatRoom) {
+      throw new NotFoundException();
+    }
+    const isChatMember = await this.chatMemberService.getById(
+      chatRoomId,
+      user.id,
+    );
+    if (!isChatMember) {
+      throw new ForbiddenException();
+    }
+    const messages = await this.chatService.getChatRoomMessagesWithUser(
+      chatRoomId,
+    );
+    if (!messages) {
+      throw new ServiceUnavailableException();
+    }
+    return messages;
   }
 }
