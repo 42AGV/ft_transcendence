@@ -37,7 +37,8 @@ export class ChatMemberPostgresRepository
                     LEFT JOIN ${table.CHATS} c
                               ON c."id" = cm."chatId"
                                 AND u."id" = c."ownerId"
-             WHERE cm."chatId" = $1`,
+             WHERE cm."chatId" = $1
+               AND cm."joinedAt" IS NOT NULL`,
       values: [chatRoomId],
     });
     return users && users.length
