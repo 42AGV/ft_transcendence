@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { table } from '../../../../shared/db/models';
-import { UserEntity, userKeys } from '../../db/user.entity';
+import { UserEntity, userKeys } from '../user.entity';
 import { IUserRepository } from '../user.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import { UsersPaginationQueryDto } from '../../../dto/user.pagination.dto';
