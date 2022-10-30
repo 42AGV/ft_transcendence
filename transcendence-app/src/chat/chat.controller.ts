@@ -32,7 +32,6 @@ import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { ChatMemberService } from './chatmember.service';
 import { ChatMember } from './chatmember.domain';
-import { ChatRoomMessage } from './chat-room-message.domain';
 import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
 
 @Controller('chat')
@@ -120,7 +119,7 @@ export class ChatController {
   @Get('chat/room/:chatRoomId/messages')
   @ApiOkResponse({
     description: `Lists all messages in a chatroom (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [ChatRoomMessage],
+    type: [ChatRoomMessageWithUser],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
