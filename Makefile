@@ -1,6 +1,6 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
-PROJECT_ROOT := $(dir $(MKFILE_PATH))
-TRANSCENDENCE_DEPS := $(shell ./scripts/get-swagger-spec-dependencies.sh)
+PROJECT_ROOT := $(realpath $(dir $(MKFILE_PATH)))
+TRANSCENDENCE_DEPS := $(shell $(PROJECT_ROOT)/scripts/get-swagger-spec-dependencies.sh)
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 ifeq ($(SEED),)
 SEED := seed
@@ -35,7 +35,7 @@ clean:
 .PHONY: re
 re:
 	make clean
-	make
+	make all
 
 .PHONY: log-tr
 log-tr:
