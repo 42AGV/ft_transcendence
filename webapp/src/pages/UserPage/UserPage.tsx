@@ -24,7 +24,7 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { User } from '../../shared/generated';
+import { UserDto } from '../../shared/generated';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { useBlock } from '../../shared/hooks/UseBlock';
 
@@ -33,7 +33,7 @@ type UserPageProps = {
 };
 
 type UserComponentTemplateProps = {
-  user: User | null;
+  user: UserDto | null;
   displayAsAuthUser: boolean;
   isLoading: boolean;
 };
@@ -44,15 +44,8 @@ const UserComponentTemplate = ({
   isLoading,
 }: UserComponentTemplateProps) => {
   const { goBack } = useNavigation();
-  const { logout, authUser } = useAuth();
-  const isAuthUser =
-    authUser !== null && user !== null && authUser.id === user.id;
-  const {
-    isBlocked,
-    isLoading: isBlockStatusLoading,
-    unblockUser,
-    blockUser,
-  } = useBlock(user);
+  const { logout } = useAuth();
+  const { isBlocked, unblockUser, blockUser } = useBlock(user);
 
   if (isLoading) {
     return (
@@ -103,10 +96,10 @@ const UserComponentTemplate = ({
           </Text>
         </div>
         <div className="user-block-status-toggle">
-          {!isAuthUser && !isBlockStatusLoading && (
+          {isBlocked !== null && (
             <ToggleSwitch
               label={isBlocked ? 'Unblock' : 'Block'}
-              isToggled={isBlocked}
+              isToggled={isBlocked ?? false}
               onToggle={isBlocked ? unblockUser : blockUser}
             />
           )}

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -95,5 +96,20 @@ export class ChatController {
       throw new ServiceUnavailableException();
     }
     return chatRooms;
+  }
+
+  @Get('room/:id')
+  @ApiCreatedResponse({
+    description: 'get a chatroom',
+    type: ChatRoom,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async getChatRoomById(@Param('id', ParseUUIDPipe) chatRoomId: string) {
+    const chatroom = await this.chatService.getChatRoomById(chatRoomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    return chatroom;
   }
 }

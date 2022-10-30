@@ -13,6 +13,7 @@ import { UserModule } from '../../src/user/user.module';
 import { setupApp } from '../../src/setup-app';
 import { SocketModule } from '../../src/socket/socket.module';
 import { LocalFileModule } from '../../src/shared/local-file/local-file.module';
+import { DbModule } from '../../src/shared/db/db.module';
 
 describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
@@ -27,6 +28,7 @@ describe('[Feature] Auth - /auth', () => {
           cache: true,
           validate,
         }),
+        DbModule,
         AuthModule,
         UserModule,
         SocketModule,

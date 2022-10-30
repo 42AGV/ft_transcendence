@@ -193,7 +193,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserDto"
         "400":
           description: Bad Request
         "403": *a2
@@ -246,23 +246,6 @@ paths:
         "403": *a2
         "422":
           description: Unprocessable Entity
-      tags: *a3
-    get:
-      operationId: UserController_getBlock
-      parameters:
-        - name: userId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "204":
-          description: Check if a user is blocked by the authenticated user
-        "400":
-          description: Bad Request
-        "403": *a2
-        "404":
-          description: Not Found
       tags: *a3
     delete:
       operationId: UserController_unblockUser
@@ -462,6 +445,39 @@ components:
           type: number
         avatarY:
           type: number
+    UserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        avatarId:
+          type: string
+          nullable: true
+        avatarX:
+          type: number
+        avatarY:
+          type: number
+        id:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        isBlocked:
+          type: boolean
+          nullable: true
+      required:
+        - username
+        - email
+        - fullName
+        - avatarId
+        - avatarX
+        - avatarY
+        - id
+        - createdAt
     StreamableFile:
       type: object
       properties: {}
