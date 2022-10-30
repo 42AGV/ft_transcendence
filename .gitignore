@@ -15,7 +15,7 @@ dist
 
 # generated code
 transcendence-app/swagger-spec.yaml
-webapp/src/shared/generated/*
+webapp/src/shared/generated
 
 # misc
 .DS_Store
