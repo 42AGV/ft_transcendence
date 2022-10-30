@@ -8,17 +8,17 @@ import { User } from './user.domain';
 import { UserEntity } from './infrastructure/db/user.entity';
 
 const testUserMe = new User(
-  new UserEntity(
-    'test',
-    'test@test.com',
-    'test',
-    null,
-    null,
-    0,
-    0,
-    uuidv4(),
-    new Date(Date.now()),
-  ),
+  new UserEntity({
+    username: 'test',
+    email: 'test@test.com',
+    fullName: 'test',
+    password: null,
+    avatarId: null,
+    avatarX: 0,
+    avatarY: 0,
+    id: uuidv4(),
+    createdAt: new Date(Date.now()),
+  }),
 );
 const testUserDto: CreateUserRequestDto = {
   username: 'user',
