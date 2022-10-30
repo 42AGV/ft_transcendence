@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -x
 
 SCRIPT_DIR="$(
@@ -7,27 +6,38 @@ SCRIPT_DIR="$(
   pwd -P
 )"
 
-PROJECT_ROOT="${SCRIPT_DIR}"/..
+PROJECT_ROOT="$(
+{ cd -- "${SCRIPT_DIR}" >/dev/null 2>&1 && cd .. >/dev/null 2>&1 ; } || exit
+  pwd -P
+)"
+
 SWAGGER_SPEC_FILE="${PROJECT_ROOT}/transcendence-app/swagger-spec.yaml"
 DOCKER_COMPOSE="$("${PROJECT_ROOT}"/scripts/get-docker-compose.sh)"
 NO_SPEC="false"
 NO_GEN="false"
 
+print_usage() {
+  echo "usage: ./generate_openapi.sh [options]"
+  echo "  -h --help       print this usage and exit"
+  echo "  -ns --no-spec   run this script without creating swagger spec file"
+  echo "  -ng --no-gen    run this script without generating files"
+  exit 0
+}
+
 until [ -z "$1" ]
 do
 	if [ "$1" = "--no-spec" ] || [ "$1" = "-ns" ]; then
 		NO_SPEC="true"
-	fi
-	if [ "$1" = "--no-gen" ] || [ "$1" = "-ng" ]; then
+	elif [ "$1" = "--no-gen" ] || [ "$1" = "-ng" ]; then
   	NO_GEN="true"
-  fi
-	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-  	echo "generate_openapi_script.sh:"
-  	echo "usage: ./generate_openapi_script.sh [options]"
-  	echo "  -h --help       print this usage and exit"
-  	echo "  -ns --no-spec   run this script without creating swagger spec file"
-  	echo "  -ng --no-gen    run this script without generating files"
+  elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "generate_openapi.sh:"
+  	print_usage
   	exit 0
+  else
+    echo "generate_openapi.sh: invalid option -- '${1}'"
+    print_usage
+  	exit 1
   fi
 	shift
 done
