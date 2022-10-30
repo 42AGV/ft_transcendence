@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import {
-  ChatMemberEntity,
+  ChatroomMemberEntity,
+  // cambiar
   ChatMemberWithUserEntity,
-} from './infrastructure/db/chatmember.entity';
+} from './infrastructure/chatroom-member.entity';
 
-export class ChatMember {
+export class ChatroomMember {
   chatId!: string;
   userId!: string;
   joinedAt!: Date;
   admin: boolean = false;
   muted: boolean = false;
   banned: boolean = false;
-
-  constructor(entity: ChatMemberEntity) {
+  constructor(entity: ChatroomMemberEntity) {
     Object.assign(this, entity);
   }
 }

@@ -6,7 +6,7 @@ export enum ChatRoomMessageKeys {
   CREATED_AT = '"createdAt"',
 }
 
-export interface ChatRoomMessageEntityData {
+export interface ChatroomMessageEntityData {
   id: string;
   chatId: string;
   userId: string;
@@ -14,14 +14,14 @@ export interface ChatRoomMessageEntityData {
   createdAt: Date;
 }
 
-export class ChatRoomMessageEntity {
+export class ChatroomMessageEntity {
   id!: string;
   chatId!: string;
   userId!: string;
   content!: string;
   createdAt!: Date;
 
-  constructor(data: ChatRoomMessageEntityData) {
+  constructor(data: ChatroomMessageEntityData) {
     this.id = data.id;
     this.userId = data.userId;
     this.chatId = data.chatId;

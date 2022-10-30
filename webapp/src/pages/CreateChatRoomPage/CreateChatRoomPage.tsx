@@ -15,7 +15,7 @@ import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useNavigate } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useEffect, useState } from 'react';
-import { CreateChatDto, ResponseError } from '../../shared/generated';
+import { CreateChatroomDto, ResponseError } from '../../shared/generated';
 import './CreateChatRoomPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 
@@ -30,7 +30,7 @@ const initialSubmitFormStatus: FormStatus = {
 };
 
 export default function CreateChatRoomPage() {
-  const initialFormValues: CreateChatDto = {
+  const initialFormValues: CreateChatroomDto = {
     name: '',
     password: '',
     confirmationPassword: '',
@@ -38,7 +38,7 @@ export default function CreateChatRoomPage() {
   const navigate = useNavigate();
   const { goBack } = useNavigation();
   const [formValues, setFormValues] =
-    useState<CreateChatDto>(initialFormValues);
+    useState<CreateChatroomDto>(initialFormValues);
   const [status, setStatus] = useState<FormStatus>({
     type: 'pending',
     message: '',
@@ -79,7 +79,7 @@ export default function CreateChatRoomPage() {
     }
     try {
       await chatApi.chatControllerCreateChatRoom({
-        createChatDto: {
+        createChatroomDto: {
           ...formValues,
           password: formValues.password || null,
           confirmationPassword: formValues.confirmationPassword || null,

@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
-import { table } from '../../../../shared/db/models';
-import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
-import { IChatMemberRepository } from '../chatmember.repository';
-import {
-  ChatMemberEntity,
-  ChatMemberWithUserEntity,
-} from '../chatmember.entity';
-import { makeQuery } from '../../../../shared/db/postgres/utils';
-import { ChatMemberWithUser } from '../../../chatmember.domain';
+import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
+import { table } from '../../../../../shared/db/models';
+import { makeQuery } from '../../../../../shared/db/postgres/utils';
+import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
+import { IChatroomMemberRepository } from '../chatroom-member.repository';
+import { ChatroomMemberEntity } from '../chatroom-member.entity';
+import { ChatMemberWithUser } from '../../chatroom-member.domain';
+import { ChatMemberWithUserEntity } from '../chatroom-member.entity';
 
 @Injectable()
-export class ChatMemberPostgresRepository
-  extends BasePostgresRepository<ChatMemberEntity>
-  implements IChatMemberRepository
+export class ChatroomMemberPostgresRepository
+  extends BasePostgresRepository<ChatroomMemberEntity>
+  implements IChatroomMemberRepository
 {
   constructor(protected pool: PostgresPool) {
     super(pool, table.CHATMEMBERS);

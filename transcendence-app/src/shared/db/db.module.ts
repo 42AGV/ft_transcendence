@@ -8,17 +8,17 @@ import { AuthProviderPostgresRepository } from '../../auth/auth-provider/infrast
 import { IAuthProviderRepository } from '../../auth/auth-provider/infrastructure/db/auth-provider.repository';
 import { IBlockRepository } from '../../user/infrastructure/db/block.repository';
 import { BlockPostgresRepository } from '../../user/infrastructure/db/postgres/block.postgres.repository';
-import { IChatRepository } from '../../chat/infrastructure/db/chat.repository';
-import { ChatPostgresRepository } from '../../chat/infrastructure/db/postgres/chat.postgres.repository';
-import { IChatMemberRepository } from '../../chat/infrastructure/db/chatmember.repository';
-import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postgres/chatmember.postgres.repository';
+import { IChatroomRepository } from '../../chat/chatroom/infrastructure/chatroom.repository';
+import { ChatroomPostgresRepository } from '../../chat/chatroom/chatroom-message/infrastructure/postgres/chatroom.postgres.repository';
+import { IChatroomMemberRepository } from '../../chat/chatroom/chatroom-member/infrastructure/chatroom-member.repository';
+import { ChatroomMemberPostgresRepository } from '../../chat/chatroom/chatroom-member/infrastructure/postgres/chatroom-member.postgres.repository';
 
 @Module({
   providers: [
     PostgresPool,
     { provide: IUserRepository, useClass: UserPostgresRepository },
     { provide: ILocalFileRepository, useClass: LocalFilePostgresRepository },
-    { provide: IChatRepository, useClass: ChatPostgresRepository },
+    { provide: IChatroomRepository, useClass: ChatroomPostgresRepository },
     {
       provide: IAuthProviderRepository,
       useClass: AuthProviderPostgresRepository,
@@ -27,15 +27,18 @@ import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postg
       provide: IBlockRepository,
       useClass: BlockPostgresRepository,
     },
-    { provide: IChatMemberRepository, useClass: ChatMemberPostgresRepository },
+    {
+      provide: IChatroomMemberRepository,
+      useClass: ChatroomMemberPostgresRepository,
+    },
   ],
   exports: [
     IUserRepository,
     ILocalFileRepository,
     IAuthProviderRepository,
     IBlockRepository,
-    IChatRepository,
-    IChatMemberRepository,
+    IChatroomRepository,
+    IChatroomMemberRepository,
   ],
 })
 export class DbModule {}

@@ -1,4 +1,4 @@
-export enum chatKeys {
+export enum ChatroomKeys {
   ID = '"id"',
   NAME = '"name"',
   PASSWORD = '"password"',
@@ -9,7 +9,7 @@ export enum chatKeys {
   OWNERID = '"ownerId',
 }
 
-export class ChatRoomEntity {
+export class ChatroomEntity {
   constructor(
     public id: string,
     public name: string,

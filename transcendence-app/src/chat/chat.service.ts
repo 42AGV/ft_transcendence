@@ -1,24 +1,27 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
-import { ChatRoom } from './chat.domain';
-import { ChatDto } from './dto/chat.dto';
-import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
-import { IChatRepository } from './infrastructure/db/chat.repository';
+import { Chatroom } from './chatroom/chatroom.domain';
+import { ChatroomDto } from './chatroom/dto/chatroom.dto';
+import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
+import { IChatroomRepository } from './chatroom/infrastructure/chatroom.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
 import { Password } from '../shared/password';
 
 @Injectable()
 export class ChatService {
-  constructor(private chatRepository: IChatRepository) {}
+  readonly saltLength = 8;
+  readonly hashLength = 32;
+
+  constructor(private chatRepository: IChatroomRepository) {}
 
   async retrieveChatRooms({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: ChatsPaginationQueryDto): Promise<ChatRoom[] | null> {
+  }: ChatroomPaginationQueryDto): Promise<Chatroom[] | null> {
     const chatRooms = await this.chatRepository.getPaginatedChatRooms({
       limit,
       offset,
@@ -26,11 +29,11 @@ export class ChatService {
       search,
     });
     return chatRooms
-      ? chatRooms.map((chatRoom) => new ChatRoom(chatRoom))
+      ? chatRooms.map((chatRoom) => new Chatroom(chatRoom))
       : null;
   }
 
-  private async addChatRoom(chatDto: ChatDto): Promise<ChatRoom | null> {
+  private async addChatRoom(chatDto: ChatroomDto): Promise<Chatroom | null> {
     const chatRoom = await this.chatRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
@@ -38,10 +41,10 @@ export class ChatService {
       avatarY: 0,
       ...chatDto,
     });
-    return chatRoom ? new ChatRoom(chatRoom) : null;
+    return chatRoom ? new Chatroom(chatRoom) : null;
   }
 
-  async createChatRoom(ownerId: string, chatRoom: CreateChatDto) {
+  async createChatRoom(ownerId: string, chatRoom: CreateChatroomDto) {
     const { confirmationPassword: _, ...newChat } = chatRoom;
     if (chatRoom.password) {
       if (chatRoom.password !== chatRoom.confirmationPassword) {
@@ -66,8 +69,8 @@ export class ChatService {
     }
   }
 
-  async getChatRoomById(chatRoomId: string): Promise<ChatRoom | null> {
+  async getChatRoomById(chatRoomId: string): Promise<Chatroom | null> {
     const chatRoom = await this.chatRepository.getById(chatRoomId);
-    return chatRoom ? new ChatRoom(chatRoom) : null;
+    return chatRoom ? new Chatroom(chatRoom) : null;
   }
 }

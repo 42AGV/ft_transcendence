@@ -1,14 +1,14 @@
-import { User } from '../user/user.domain';
-import { ChatRoomMessageWithUserEntity } from './infrastructure/db/chat-room-message-with-user.entity';
+import { User } from '../../../user/user.domain';
+import { ChatroomMessageWithUserEntity } from './infrastructure/chatroom-message-with-user.entity';
 
-export class ChatRoomMessageWithUser {
+export class ChatroomMessageWithUser {
   id: string;
   user: User;
   chatId: string;
   content: string;
   createdAt: Date;
 
-  constructor(entity: ChatRoomMessageWithUserEntity) {
+  constructor(entity: ChatroomMessageWithUserEntity) {
     this.id = entity.id;
     this.user = new User(entity.user);
     this.chatId = entity.chatId;

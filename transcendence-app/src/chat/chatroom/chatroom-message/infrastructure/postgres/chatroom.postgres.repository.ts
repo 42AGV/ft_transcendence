@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { BasePostgresRepository } from './../../../../shared/db/postgres/postgres.repository';
-import { table } from './../../../../shared/db/models';
-import { PostgresPool } from './../../../../shared/db/postgres/postgresConnection.provider';
-import { ChatroomPaginationQueryDto } from '../../../chatroom/dto/chatroom.pagination.dto';
+import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
+import { table } from '../../../../../shared/db/models';
+import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
+import { ChatroomPaginationQueryDto } from '../../../dto/chatroom.pagination.dto';
 import {
   entityQueryMapper,
   makeQuery,
-} from './../../../../shared/db/postgres/utils';
-import { BooleanString } from './../../../../shared/enums/boolean-string.enum';
-import { LocalFileEntity } from './../../../../shared/local-file/infrastructure/db/local-file.entity';
+} from '../../../../../shared/db/postgres/utils';
+import { BooleanString } from '../../../../../shared/enums/boolean-string.enum';
+import { LocalFileEntity } from '../../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { PoolClient } from 'pg';
 import {
   ChatroomEntity,
   ChatroomKeys,
-} from '../../../chatroom/infrastructure/chatroom.entity';
-import { IChatroomRepository } from '../../../chatroom/infrastructure/chatroom.repository';
-import { UpdateChatroomDto } from '../../../chatroom/dto/update-chatroom.dto';
+} from '../../../infrastructure/chatroom.entity';
+import { IChatroomRepository } from '../../../infrastructure/chatroom.repository';
+import { UpdateChatroomDto } from '../../../dto/update-chatroom.dto';
 
 @Injectable()
 export class ChatroomPostgresRepository

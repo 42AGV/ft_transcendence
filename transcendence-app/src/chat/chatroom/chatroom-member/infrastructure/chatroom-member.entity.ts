@@ -1,4 +1,4 @@
-export enum chatMembersKeys {
+export enum ChatroomMemberKeys {
   CHATID = '"chatId"',
   USERID = '"userId"',
   JOINED_AT = '"joinedAt"',
@@ -7,7 +7,7 @@ export enum chatMembersKeys {
   BANNED = '"banned"',
 }
 
-export class ChatMemberEntity {
+export class ChatroomMemberEntity {
   constructor(
     public chatId: string,
     public userId: string,

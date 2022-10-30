@@ -12,7 +12,7 @@ import {
 } from '../../shared/urls';
 import {
   ChatControllerGetChatRoomsRequest,
-  ChatRoom,
+  Chatroom,
 } from '../../shared/generated';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +21,7 @@ import './ChatPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 
 const ENTRIES_LIMIT = 15;
-const mapChatToRow = (chatRoom: ChatRoom): RowItem => {
+const mapChatToRow = (chatRoom: Chatroom): RowItem => {
   return {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: {

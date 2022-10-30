@@ -1,7 +1,7 @@
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, ValidateIf } from 'class-validator';
 
-export class CreateChatDto {
+export class ChatroomDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
@@ -12,8 +12,9 @@ export class CreateChatDto {
   @ValidateIf((object, value) => value !== null)
   password!: string | null;
 
-  @IsString()
-  @IsNotEmpty()
-  @ValidateIf((object, value) => value !== null)
-  confirmationPassword!: string | null;
+  @IsUUID()
+  avatarId!: string | null;
+
+  @IsUUID()
+  ownerId!: string;
 }

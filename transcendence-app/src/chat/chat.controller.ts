@@ -23,14 +23,14 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { ChatRoom } from './chat.domain';
+import { Chatroom } from './chatroom/chatroom.domain';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
-import { CreateChatDto } from './dto/create-chat.dto';
+import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
 import { User } from '../user/user.domain';
 import { User as GetUser } from '../user/decorators/user.decorator';
-import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
-import { ChatMemberService } from './chatmember.service';
-import { ChatMember } from './chatmember.domain';
+import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
+import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { ChatroomMember } from './chatroom/chatroom-member/chatroom-member.domain';
 import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
 
 @Controller('chat')
@@ -40,16 +40,16 @@ import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
 export class ChatController {
   constructor(
     private chatService: ChatService,
-    private chatMemberService: ChatMemberService,
+    private chatMemberService: ChatroomMemberService,
   ) {}
 
   @Post('room')
-  @ApiCreatedResponse({ description: 'Create a chatroom', type: ChatRoom })
+  @ApiCreatedResponse({ description: 'Create a chatroom', type: Chatroom })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async createChatRoom(
     @GetUser() user: User,
-    @Body() createChatDto: CreateChatDto,
+    @Body() createChatDto: CreateChatroomDto,
   ) {
     const chatRoom = await this.chatService.createChatRoom(
       user.id,
@@ -65,7 +65,7 @@ export class ChatController {
   @Post('room/:chatRoomId/members')
   @ApiCreatedResponse({
     description: 'Add a member to a chatroom',
-    type: ChatMember,
+    type: ChatroomMember,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
@@ -84,13 +84,13 @@ export class ChatController {
   @Get('room')
   @ApiOkResponse({
     description: `Lists all chatrooms (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [ChatRoom],
+    type: [Chatroom],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatRooms(
-    @Query() chatsPaginationQueryDto: ChatsPaginationQueryDto,
-  ): Promise<ChatRoom[]> {
+    @Query() chatsPaginationQueryDto: ChatroomPaginationQueryDto,
+  ): Promise<Chatroom[]> {
     const chatRooms = await this.chatService.retrieveChatRooms(
       chatsPaginationQueryDto,
     );
@@ -125,7 +125,7 @@ export class ChatController {
   @Get('room/:id')
   @ApiCreatedResponse({
     description: 'get a chatroom',
-    type: ChatRoom,
+    type: Chatroom,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })

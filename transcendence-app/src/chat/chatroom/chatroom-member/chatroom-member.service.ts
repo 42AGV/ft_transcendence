@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { IChatMemberRepository } from './infrastructure/db/chatmember.repository';
-import { ChatMember } from './chatmember.domain';
-import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
+
+import { ChatmemberAsUserResponseDto } from '../../dto/chatmember.dto';
+import { IChatroomMemberRepository } from './infrastructure/chatroom-member.repository';
+import { ChatroomMember } from './chatroom-member.domain';
 
 @Injectable()
-export class ChatMemberService {
-  constructor(private chatMemberRepository: IChatMemberRepository) {}
+export class ChatroomMemberService {
+  constructor(private chatMemberRepository: IChatroomMemberRepository) {}
 
   async addChatMember(
     chatId: string,
     userId: string,
-  ): Promise<ChatMember | null> {
-    const chatMember = {
+  ): Promise<ChatroomMember | null> {
+    const chatmember = {
       joinedAt: new Date(Date.now()),
       chatId: chatId,
       userId: userId,
@@ -19,8 +20,8 @@ export class ChatMemberService {
       muted: false,
       banned: false,
     };
-    const ret = await this.chatMemberRepository.add(chatMember);
-    return ret ? new ChatMember(ret) : null;
+    const ret = await this.chatMemberRepository.add(chatmember);
+    return ret ? new ChatroomMember(ret) : null;
   }
 
   async retrieveChatRoomMembers(
