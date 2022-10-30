@@ -30,6 +30,7 @@ import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { ChatMemberService } from './chatmember.service';
 import { ChatMember } from './chatmember.domain';
+import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -71,7 +72,7 @@ export class ChatController {
     @GetUser() user: User,
     @Param('Id', ParseUUIDPipe) chatRoomId: string,
   ) {
-    const ret = await this.chatMemberService.addChatmember(chatRoomId, user.id);
+    const ret = await this.chatMemberService.addChatMember(chatRoomId, user.id);
 
     if (!ret) {
       throw new UnprocessableEntityException();
@@ -94,6 +95,25 @@ export class ChatController {
     );
     if (!chatRooms) {
       throw new ServiceUnavailableException();
+    }
+    return chatRooms;
+  }
+
+  @Get('room/:chatRoomId/members')
+  @ApiOkResponse({
+    description: `Lists all chat members for a given room (max ${MAX_ENTRIES_PER_PAGE})`,
+    type: [ChatmemberAsUserResponseDto],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async retrieveChatRoomMembers(
+    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+  ): Promise<ChatmemberAsUserResponseDto[]> {
+    const chatRooms = await this.chatMemberService.retrieveChatRoomMembers(
+      chatRoomId,
+    );
+    if (!chatRooms) {
+      throw new NotFoundException();
     }
     return chatRooms;
   }

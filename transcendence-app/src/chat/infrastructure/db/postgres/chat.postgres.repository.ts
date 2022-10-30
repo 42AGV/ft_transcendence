@@ -12,7 +12,7 @@ import { LocalFileEntity } from '../../../../shared/local-file/infrastructure/db
 import { PoolClient } from 'pg';
 import { ChatRoomEntity, chatKeys } from '../chat.entity';
 import { IChatRepository } from '../chat.repository';
-import { UpdateChatDto } from '../../../../chat/dto/update-chat.dto';
+import { UpdateChatDto } from '../../../dto/update-chat.dto';
 
 @Injectable()
 export class ChatPostgresRepository
