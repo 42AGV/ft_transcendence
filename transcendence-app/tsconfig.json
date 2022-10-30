@@ -15,7 +15,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "strict": true,
-    // TODO: Remove this
-    "noImplicitAny": false
+    "typeRoots": ["./node_modules/@types", "./types"]
   }
 }
