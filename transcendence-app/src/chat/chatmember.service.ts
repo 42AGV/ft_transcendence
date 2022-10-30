@@ -21,4 +21,9 @@ export class ChatMemberService {
     const ret = await this.chatMemberRepository.add(chatmember);
     return ret ? new ChatMember(ret) : null;
   }
+
+  async getById(chatId: string, userId: string): Promise<ChatMember | null> {
+    const chatMember = await this.chatMemberRepository.getById(chatId, userId);
+    return chatMember && !chatMember.banned ? new ChatMember(chatMember) : null;
+  }
 }
