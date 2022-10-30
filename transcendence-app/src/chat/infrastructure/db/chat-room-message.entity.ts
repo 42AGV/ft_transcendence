@@ -1,7 +1,7 @@
 export enum ChatRoomMessageKeys {
   ID = '"id"',
   USER_ID = '"userId"',
-  CHAT_ROOM_ID = '"chatRoomId"',
+  CHAT_ROOM_ID = '"chatId"',
   CONTENT = '"content"',
   CREATED_AT = '"createdAt"',
 }

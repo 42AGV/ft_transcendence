@@ -9,6 +9,8 @@ import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
+import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
+import { IChatRoomMessageRepository } from './infrastructure/db/chat-room-message.repository';
 
 const scrypt = promisify(_scrypt);
 
@@ -17,7 +19,10 @@ export class ChatService {
   readonly saltLength = 8;
   readonly hashLength = 32;
 
-  constructor(private chatRepository: IChatRepository) {}
+  constructor(
+    private chatRepository: IChatRepository,
+    private chatRoomMessageRepository: IChatRoomMessageRepository,
+  ) {}
 
   async retrieveChatRooms({
     limit = MAX_ENTRIES_PER_PAGE,
@@ -81,5 +86,16 @@ export class ChatService {
   async getChatRoomById(chatRoomId: string): Promise<ChatRoom | null> {
     const chatRoom = await this.chatRepository.getById(chatRoomId);
     return chatRoom ? new ChatRoom(chatRoom) : null;
+  }
+
+  async getChatRoomMessagesWithUser(
+    chatRoomId: string,
+  ): Promise<ChatRoomMessageWithUser[] | null> {
+    const messages = await this.chatRoomMessageRepository.getWithUser(
+      chatRoomId,
+    );
+    return messages
+      ? messages.map((message) => new ChatRoomMessageWithUser(message))
+      : null;
   }
 }

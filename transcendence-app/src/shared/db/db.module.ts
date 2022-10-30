@@ -12,6 +12,8 @@ import { IChatRepository } from '../../chat/infrastructure/db/chat.repository';
 import { ChatPostgresRepository } from '../../chat/infrastructure/db/postgres/chatPostgres.repository';
 import { IChatMemberRepository } from '../../chat/infrastructure/db/chatmember.repository';
 import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postgres/chatmember.postgres.repository';
+import { IChatRoomMessageRepository } from '../../chat/infrastructure/db/chat-room-message.repository';
+import { ChatRoomMessagePostgresRepository } from '../../chat/infrastructure/db/postgres/chat-room-message.repository';
 
 @Module({
   providers: [
@@ -28,6 +30,10 @@ import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postg
       useClass: BlockPostgresRepository,
     },
     { provide: IChatMemberRepository, useClass: ChatMemberPostgresRepository },
+    {
+      provide: IChatRoomMessageRepository,
+      useClass: ChatRoomMessagePostgresRepository,
+    },
   ],
   exports: [
     IUserRepository,
@@ -36,6 +42,7 @@ import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postg
     IBlockRepository,
     IChatRepository,
     IChatMemberRepository,
+    IChatRoomMessageRepository,
   ],
 })
 export class DbModule {}

@@ -128,7 +128,7 @@ export class ChatController {
   async getChatRoomMessages(
     @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
     @GetUser() user: User,
-  ): Promise<ChatRoomMessageWithUser | null> {
+  ): Promise<ChatRoomMessageWithUser[] | null> {
     const chatRoom = await this.chatService.getChatRoomById(chatRoomId);
     if (!chatRoom) {
       throw new NotFoundException();
