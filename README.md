@@ -48,6 +48,10 @@ What things do you need to install the software, and how to install them.
 
 [node](https://nodejs.dev/learn/how-to-install-nodejs)
 
+[make](https://www.gnu.org/software/make/)
+
+> **_NOTE:_**  make is optional, but you may find that having it greatly simplifies your life.
+
 ### Installing
 
 A step-by-step series of examples that tell you how to get a development environment running.
@@ -92,13 +96,29 @@ Change the working directory to the root directory
 cd ..
 ```
 
+Generate the generated files, that are not a part of the repository:
+
+```shell
+make gen
+```
+or
+```shell
+./scripts/generate-openapi.sh [options]
+```
+> **_NOTE:_**  You can see a help panel for this script if you pass to it a `--help` or `-h` option.
+
 Start the application using `Docker`
 
 ```
 docker compose up -d --build
 ```
-
 > **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
+
+or
+```shell
+make all
+```
+> **_NOTE:_**  `make all` will dispatch to the right docker-compose executable, and will also generate the files for you if you haven't run `make gen` in the previous step
 
 You can now access the web application at http://localhost:3000 and the Swagger documentation for the API at http://localhost:3000/api
 
@@ -119,6 +139,12 @@ docker compose logs -f webapp
 docker compose logs -f transcendence-app
 docker compose logs -f db
 ```
+or their make counterparts:
+```shell
+make log-wa
+make log-tr
+make log-db
+```
 
 > **_NOTE:_**  The logs of the transcendence-app don't include the version in the routes
 
@@ -129,6 +155,10 @@ Inspect the container using the container name or ID
 ```
 docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ft_transcendence-webapp-1
 ```
+or its make counterpart
+```shell
+make get-ip
+```
 
 Access using the Docker container IP and the service port
 
@@ -137,16 +167,27 @@ After a config file change, please run the following command to recreate the ima
 ```
 docker compose up --build -d -V
 ```
+or its make counterpart
+```shell
+make re
+```
 
 ### OpenAPI
 
-We use Swagger to autogenerate the OpenAPI specification `transcendence-app/swagger-spec.yaml` file. This file is generated automatically by the transcendence-app at startup whenever the OpenAPI spec changes.
+We use Swagger to autogenerate the OpenAPI specification `transcendence-app/swagger-spec.yaml` file. This file is generated automatically by the transcendence-app at startup whenever the OpenAPI spec changes, or manually upon running the `./scripts/generate-openapi.sh` script or equivalent `make` rules as described below.
+
+#### generate-openapi
 
 We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the `swagger-spec.yaml`.
 
 Please don't modify these files manually.
 
-After updating the OpenAPI specification of the transcendence-app, you can execute the `generate-openapi.sh` script to generate code for the webapp.
+If you change code that impacts the swagger specs in transcendence-app, you will have to regenerate the generated files. The file `swagger-spec.yaml` will update itself when modified, since our server runs on hot reload, if the app is running. To run the script, from the root directory, run:
+```shell
+./scripts/generate-openapi.sh [options]
+```
+
+By default, `./scripts/generate-openapi.sh` is analogous to running `make gen` as it creates both yaml file and generated webapp files. If you intend to separately build either webapp api generated files or the swagger-spec.yaml you have different options: To generate only webapp generated files pass the `--no-spec` or `--ns` option to the script or run `make gen-webapp`. To generate only swagger spec pass the `--no-gen` or `-ng` option to the script or run `make spec`.
 
 ### Seed the database
 
@@ -156,6 +197,10 @@ To create a seed file, run the following command from the transcendence-app dire
 
 ```
 npx knex seed:make seed_name
+```
+or its make counterpart, from the root directory
+```shell
+SEED=<your_seed> && make seed
 ```
 
 To run seed files, run the following command from the root directory:

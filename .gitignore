@@ -13,6 +13,10 @@ coverage
 build
 dist
 
+# generated code
+transcendence-app/swagger-spec.yaml
+webapp/src/shared/generated/*
+
 # misc
 .DS_Store
 .env.local
@@ -21,6 +25,7 @@ dist
 .env.production.local
 nocommit/*
 *.nocommit
+.env
 
 # Logs
 logs
