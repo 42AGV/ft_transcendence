@@ -61,7 +61,7 @@ export class ChatController {
     return chatRoom;
   }
 
-  @Post('room/:Id/members')
+  @Post('room/:chatRoomId/members')
   @ApiCreatedResponse({
     description: 'Add a member to a chatroom',
     type: ChatMember,
@@ -70,7 +70,7 @@ export class ChatController {
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async createChatRoomMember(
     @GetUser() user: User,
-    @Param('Id', ParseUUIDPipe) chatRoomId: string,
+    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
   ) {
     const ret = await this.chatMemberService.addChatMember(chatRoomId, user.id);
 
@@ -101,7 +101,7 @@ export class ChatController {
 
   @Get('room/:chatRoomId/members')
   @ApiOkResponse({
-    description: `Lists all chat members for a given room (max ${MAX_ENTRIES_PER_PAGE})`,
+    description: `Lists all chat members for a given room)`,
     type: [ChatmemberAsUserResponseDto],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
@@ -109,13 +109,13 @@ export class ChatController {
   async retrieveChatRoomMembers(
     @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
   ): Promise<ChatmemberAsUserResponseDto[]> {
-    const chatRooms = await this.chatMemberService.retrieveChatRoomMembers(
+    const chatRoomsMembers = await this.chatMemberService.retrieveChatRoomMembers(
       chatRoomId,
     );
-    if (!chatRooms) {
+    if (!chatRoomsMembers) {
       throw new NotFoundException();
     }
-    return chatRooms;
+    return chatRoomsMembers;
   }
 
   @Get('room/:id')
