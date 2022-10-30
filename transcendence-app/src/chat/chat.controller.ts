@@ -109,9 +109,8 @@ export class ChatController {
   async retrieveChatRoomMembers(
     @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
   ): Promise<ChatmemberAsUserResponseDto[]> {
-    const chatRoomsMembers = await this.chatMemberService.retrieveChatRoomMembers(
-      chatRoomId,
-    );
+    const chatRoomsMembers =
+      await this.chatMemberService.retrieveChatRoomMembers(chatRoomId);
     if (!chatRoomsMembers) {
       throw new NotFoundException();
     }
