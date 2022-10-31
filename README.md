@@ -200,13 +200,19 @@ npx knex seed:make seed_name
 ```
 or its make counterpart, from the root directory
 ```shell
-SEED=<your_seed> && make seed
+SEED=<your_seed> && make seed-make
 ```
 
 To run seed files, run the following command from the root directory:
 
 ```
 docker compose exec -it transcendence-app npx knex seed:run
+```
+
+or its make counterpart, from the root directory
+
+```shell
+make seed-run
 ```
 
 ## 🔧 Running the tests <a name = "tests"></a>
