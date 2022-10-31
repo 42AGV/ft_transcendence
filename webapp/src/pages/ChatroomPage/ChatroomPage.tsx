@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
 import { Header, IconVariant } from '../../shared/components';
 import socket from '../../shared/socket';
-import './Chatroom.css';
+import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 function Chatroom() {
