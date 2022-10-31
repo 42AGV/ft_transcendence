@@ -109,14 +109,14 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async getChatRoomById(@Param('id', ParseUUIDPipe) chatRoomId: string) {
-    const chatroom = await this.chatService.getChatRoomById(chatRoomId);
+    const chatroom = await this.chatService.getChatroomById(chatRoomId);
     if (!chatroom) {
       throw new NotFoundException();
     }
     return chatroom;
   }
 
-  @Get('chat/room/:chatRoomId/messages')
+  @Get('chat/room/:chatroomId/messages')
   @ApiOkResponse({
     description: `Lists all messages in a chatroom (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [ChatRoomMessageWithUser],
@@ -124,23 +124,23 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async getChatRoomMessages(
-    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+  async getChatroomMessages(
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
   ): Promise<ChatRoomMessageWithUser[] | null> {
-    const chatRoom = await this.chatService.getChatRoomById(chatRoomId);
-    if (!chatRoom) {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!chatroom) {
       throw new NotFoundException();
     }
     const isChatMember = await this.chatMemberService.getById(
-      chatRoomId,
+      chatroomId,
       user.id,
     );
     if (!isChatMember) {
       throw new ForbiddenException();
     }
-    const messages = await this.chatService.getChatRoomMessagesWithUser(
-      chatRoomId,
+    const messages = await this.chatService.getChatroomMessagesWithUser(
+      chatroomId,
     );
     if (!messages) {
       throw new ServiceUnavailableException();

@@ -12,8 +12,8 @@ import { IChatRepository } from '../../chat/infrastructure/db/chat.repository';
 import { ChatPostgresRepository } from '../../chat/infrastructure/db/postgres/chatPostgres.repository';
 import { IChatMemberRepository } from '../../chat/infrastructure/db/chatmember.repository';
 import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postgres/chatmember.postgres.repository';
-import { IChatRoomMessageRepository } from '../../chat/infrastructure/db/chat-room-message.repository';
-import { ChatRoomMessagePostgresRepository } from '../../chat/infrastructure/db/postgres/chat-room-message.repository';
+import { IChatroomMessageRepository } from '../../chat/infrastructure/db/chatroom-message.repository';
+import { ChatroomMessagePostgresRepository } from '../../chat/infrastructure/db/postgres/chatroom-message.repository';
 
 @Module({
   providers: [
@@ -31,8 +31,8 @@ import { ChatRoomMessagePostgresRepository } from '../../chat/infrastructure/db/
     },
     { provide: IChatMemberRepository, useClass: ChatMemberPostgresRepository },
     {
-      provide: IChatRoomMessageRepository,
-      useClass: ChatRoomMessagePostgresRepository,
+      provide: IChatroomMessageRepository,
+      useClass: ChatroomMessagePostgresRepository,
     },
   ],
   exports: [
@@ -42,7 +42,7 @@ import { ChatRoomMessagePostgresRepository } from '../../chat/infrastructure/db/
     IBlockRepository,
     IChatRepository,
     IChatMemberRepository,
-    IChatRoomMessageRepository,
+    IChatroomMessageRepository,
   ],
 })
 export class DbModule {}

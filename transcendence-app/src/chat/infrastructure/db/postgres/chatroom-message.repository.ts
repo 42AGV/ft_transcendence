@@ -16,12 +16,12 @@ import {
   ChatRoomMessageEntity,
   ChatRoomMessageKeys,
 } from '../chat-room-message.entity';
-import { IChatRoomMessageRepository } from '../chat-room-message.repository';
+import { IChatroomMessageRepository } from '../chatroom-message.repository';
 
 @Injectable()
-export class ChatRoomMessagePostgresRepository
+export class ChatroomMessagePostgresRepository
   extends BasePostgresRepository<ChatRoomMessageEntity>
-  implements IChatRoomMessageRepository
+  implements IChatroomMessageRepository
 {
   constructor(protected pool: PostgresPool) {
     super(pool, table.CHAT_ROOM_MESSAGE);

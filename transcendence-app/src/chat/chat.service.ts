@@ -10,7 +10,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
-import { IChatRoomMessageRepository } from './infrastructure/db/chat-room-message.repository';
+import { IChatroomMessageRepository } from './infrastructure/db/chatroom-message.repository';
 
 const scrypt = promisify(_scrypt);
 
@@ -21,7 +21,7 @@ export class ChatService {
 
   constructor(
     private chatRepository: IChatRepository,
-    private chatRoomMessageRepository: IChatRoomMessageRepository,
+    private chatRoomMessageRepository: IChatroomMessageRepository,
   ) {}
 
   async retrieveChatRooms({
@@ -83,16 +83,16 @@ export class ChatService {
     }
   }
 
-  async getChatRoomById(chatRoomId: string): Promise<ChatRoom | null> {
-    const chatRoom = await this.chatRepository.getById(chatRoomId);
-    return chatRoom ? new ChatRoom(chatRoom) : null;
+  async getChatroomById(chatroomId: string): Promise<ChatRoom | null> {
+    const chatroom = await this.chatRepository.getById(chatroomId);
+    return chatroom ? new ChatRoom(chatroom) : null;
   }
 
-  async getChatRoomMessagesWithUser(
-    chatRoomId: string,
+  async getChatroomMessagesWithUser(
+    chatroomId: string,
   ): Promise<ChatRoomMessageWithUser[] | null> {
     const messages = await this.chatRoomMessageRepository.getWithUser(
-      chatRoomId,
+      chatroomId,
     );
     return messages
       ? messages.map((message) => new ChatRoomMessageWithUser(message))
