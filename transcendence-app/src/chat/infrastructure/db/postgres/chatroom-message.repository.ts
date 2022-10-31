@@ -45,9 +45,8 @@ export class ChatroomMessagePostgresRepository
 
   async getWithUser(
     chatRoomId: string,
-    paginationQueryDto: Required<PaginationQueryDto>,
+    { limit, offset }: Required<PaginationQueryDto>,
   ): Promise<ChatRoomMessageWithUserEntity[] | null> {
-    const { limit, offset } = paginationQueryDto;
     const messagesData = await makeQuery<ChatRoomMessageWithUserEntityData>(
       this.pool,
       {

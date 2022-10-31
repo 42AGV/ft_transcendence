@@ -22,7 +22,9 @@ export class ChatMemberPostgresRepository
     const members = await makeQuery<ChatMemberEntity>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
-      WHERE ${chatMembersKeys.CHATID} = $1 AND ${chatMembersKeys.USERID} = $2 AND ${chatMembersKeys.JOINED_AT} IS NOT NULL`,
+      WHERE ${chatMembersKeys.CHATID} = $1
+        AND ${chatMembersKeys.USERID} = $2
+        AND ${chatMembersKeys.JOINED_AT} IS NOT NULL`,
       values: [chatId, userId],
     });
     return members ? members[0] : null;
