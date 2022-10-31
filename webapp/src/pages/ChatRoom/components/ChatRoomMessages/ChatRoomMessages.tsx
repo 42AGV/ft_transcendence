@@ -3,7 +3,7 @@ import { ChatBubble, ChatBubbleVariant } from '../../../../shared/components';
 import { User } from '../../../../shared/generated';
 import { useAuth } from '../../../../shared/hooks/UseAuth';
 import socket from '../../../../shared/socket';
-import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../../../shared/urls';
+import { AVATAR_EP_URL } from '../../../../shared/urls';
 import './ChatRoomMessages.css';
 
 type ChatRoomMessageType = {
@@ -64,9 +64,7 @@ function ChatRoomMessages({ from }: ChatRoomMessagesProps) {
               name={message.user.username}
               text={message.content}
               avatar={{
-                url: message.user.avatarId
-                  ? `${AVATAR_EP_URL}/${message.user.avatarId}`
-                  : WILDCARD_AVATAR_URL,
+                url: `${AVATAR_EP_URL}/${message.user.avatarId}`,
               }}
               isConsecutive={isConsecutive}
               isFirst={isFirst}

@@ -1,9 +1,5 @@
 import { IconVariant, RowItem } from '../../shared/components';
-import {
-  AVATAR_EP_URL,
-  USER_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { AVATAR_EP_URL, USER_URL } from '../../shared/urls';
 import { User, UserControllerGetUsersRequest } from '../../shared/generated';
 import { RowsTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
@@ -16,9 +12,7 @@ const mapUserToRow = (user: User): RowItem => {
   return {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: {
-      url: user.avatarId
-        ? `${AVATAR_EP_URL}/${user.avatarId}`
-        : WILDCARD_AVATAR_URL,
+      url: `${AVATAR_EP_URL}/${user.avatarId}`,
       status: 'offline',
       XCoordinate: user.avatarX,
       YCoordinate: user.avatarY,
