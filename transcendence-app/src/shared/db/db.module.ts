@@ -8,10 +8,10 @@ import { AuthProviderPostgresRepository } from '../../auth/auth-provider/infrast
 import { IAuthProviderRepository } from '../../auth/auth-provider/infrastructure/db/auth-provider.repository';
 import { IBlockRepository } from '../../user/infrastructure/db/block.repository';
 import { BlockPostgresRepository } from '../../user/infrastructure/db/postgres/block.postgres.repository';
-import { IChatroomRepository } from '../../chat/chatroom/infrastructure/chatroom.repository';
-import { ChatroomPostgresRepository } from '../../chat/chatroom/chatroom-message/infrastructure/postgres/chatroom.postgres.repository';
-import { IChatroomMemberRepository } from '../../chat/chatroom/chatroom-member/infrastructure/chatroom-member.repository';
-import { ChatroomMemberPostgresRepository } from '../../chat/chatroom/chatroom-member/infrastructure/postgres/chatroom-member.postgres.repository';
+import { IChatroomRepository } from '../../chat/chatroom/infrastructure/db/chatroom.repository';
+import { ChatroomPostgresRepository } from '../../chat/chatroom/chatroom-message/infrastructure/db/postgres/chatroom.postgres.repository';
+import { IChatroomMemberRepository } from '../../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
+import { ChatroomMemberPostgresRepository } from '../../chat/chatroom/chatroom-member/infrastructure/db/postgres/chatroom-member.postgres.repository';
 
 @Module({
   providers: [

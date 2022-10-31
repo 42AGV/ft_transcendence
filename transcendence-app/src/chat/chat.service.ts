@@ -4,7 +4,7 @@ import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { Chatroom } from './chatroom/chatroom.domain';
 import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
-import { IChatroomRepository } from './chatroom/infrastructure/chatroom.repository';
+import { IChatroomRepository } from './chatroom/infrastructure/db/chatroom.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
 import { Password } from '../shared/password';

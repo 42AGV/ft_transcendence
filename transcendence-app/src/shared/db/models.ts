@@ -3,9 +3,9 @@ export enum table {
   LOCAL_FILE = 'LocalFile',
   AUTH_PROVIDER = 'AuthProvider',
   BLOCK = 'Block',
-  CHATS = 'Chatroom',
-  CHATMEMBERS = 'ChatroomMembers',
-  CHAT_ROOM_MESSAGE = 'ChatroomMessage',
+  CHATROOM = 'Chatroom',
+  CHATROOM_MEMBERS = 'ChatroomMembers',
+  CHATROOM_MESSAGE = 'ChatroomMessage',
 }
 
 export interface Query {

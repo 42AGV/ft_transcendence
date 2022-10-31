@@ -1,4 +1,4 @@
-import { ChatroomMessageEntity } from './infrastructure/chatroom-message.entity';
+import { ChatroomMessageEntity } from './infrastructure/db/chatroom-message.entity';
 
 export class ChatroomMessage {
   id: string;

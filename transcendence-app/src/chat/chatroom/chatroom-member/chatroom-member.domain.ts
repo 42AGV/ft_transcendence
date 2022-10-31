@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import {
   ChatroomMemberEntity,
-  // cambiar
   ChatMemberWithUserEntity,
-} from './infrastructure/chatroom-member.entity';
+} from './infrastructure/db/chatroom-member.entity';
 
 export class ChatroomMember {
   chatId!: string;

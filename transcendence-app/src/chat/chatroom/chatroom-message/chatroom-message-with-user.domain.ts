@@ -1,5 +1,5 @@
 import { User } from '../../../user/user.domain';
-import { ChatroomMessageWithUserEntity } from './infrastructure/chatroom-message-with-user.entity';
+import { ChatroomMessageWithUserEntity } from './infrastructure/db/chatroom-message-with-user.entity';
 
 export class ChatroomMessageWithUser {
   id: string;

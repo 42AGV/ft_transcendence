@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Exclude } from 'class-transformer';
-import { ChatroomEntity } from './infrastructure/chatroom.entity';
+import { ChatroomEntity } from './infrastructure/db/chatroom.entity';
 
 export class Chatroom {
   id!: string;

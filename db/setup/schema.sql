@@ -65,7 +65,7 @@ CREATE TABLE
 CREATE TABLE
   IF NOT EXISTS ChatroomMessage (
     "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
-    "chatId" UUID NOT NULL REFERENCES Chatroom (id) ON DELETE CASCADE,
+    "chatroomId" UUID NOT NULL REFERENCES Chatroom (id) ON DELETE CASCADE,
     "userId" UUID NOT NULL REFERENCES Users (id) ON DELETE CASCADE,
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW ()

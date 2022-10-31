@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
-import { table } from '../../../../../shared/db/models';
-import { makeQuery } from '../../../../../shared/db/postgres/utils';
-import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
+import { BasePostgresRepository } from '../../../../../../shared/db/postgres/postgres.repository';
+import { table } from '../../../../../../shared/db/models';
+import { makeQuery } from '../../../../../../shared/db/postgres/utils';
+import { PostgresPool } from '../../../../../../shared/db/postgres/postgresConnection.provider';
 import { IChatroomMemberRepository } from '../chatroom-member.repository';
 import { ChatroomMemberEntity } from '../chatroom-member.entity';
-import { ChatMemberWithUser } from '../../chatroom-member.domain';
+import { ChatMemberWithUser } from '../../../chatroom-member.domain';
 import { ChatMemberWithUserEntity } from '../chatroom-member.entity';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ChatroomMemberPostgresRepository
   implements IChatroomMemberRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.CHATMEMBERS);
+    super(pool, table.CHATROOM_MEMBERS);
   }
 
   async retrieveChatRoomMembers(
@@ -32,7 +32,7 @@ export class ChatroomMemberPostgresRepository
              FROM ${table.USERS} u
                     INNER JOIN ${this.table} cm
                                ON cm."userId" = u."id"
-                    LEFT JOIN ${table.CHATS} c
+                    LEFT JOIN ${table.CHATROOM} c
                               ON c."id" = cm."chatId"
                                 AND u."id" = c."ownerId"
              WHERE cm."chatId" = $1

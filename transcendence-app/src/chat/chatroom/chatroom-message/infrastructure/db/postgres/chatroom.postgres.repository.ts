@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
-import { table } from '../../../../../shared/db/models';
-import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
-import { ChatroomPaginationQueryDto } from '../../../dto/chatroom.pagination.dto';
+import { BasePostgresRepository } from '../../../../../../shared/db/postgres/postgres.repository';
+import { table } from '../../../../../../shared/db/models';
+import { PostgresPool } from '../../../../../../shared/db/postgres/postgresConnection.provider';
+import { ChatroomPaginationQueryDto } from '../../../../dto/chatroom.pagination.dto';
 import {
   entityQueryMapper,
   makeQuery,
-} from '../../../../../shared/db/postgres/utils';
-import { BooleanString } from '../../../../../shared/enums/boolean-string.enum';
-import { LocalFileEntity } from '../../../../../shared/local-file/infrastructure/db/local-file.entity';
+} from '../../../../../../shared/db/postgres/utils';
+import { BooleanString } from '../../../../../../shared/enums/boolean-string.enum';
+import { LocalFileEntity } from '../../../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { PoolClient } from 'pg';
 import {
   ChatroomEntity,
   ChatroomKeys,
-} from '../../../infrastructure/chatroom.entity';
-import { IChatroomRepository } from '../../../infrastructure/chatroom.repository';
-import { UpdateChatroomDto } from '../../../dto/update-chatroom.dto';
+} from '../../../../infrastructure/db/chatroom.entity';
+import { IChatroomRepository } from '../../../../infrastructure/db/chatroom.repository';
+import { UpdateChatroomDto } from '../../../../dto/update-chatroom.dto';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -23,7 +23,7 @@ export class ChatroomPostgresRepository
   implements IChatroomRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.CHATS);
+    super(pool, table.CHATROOM);
   }
   async getById(id: string): Promise<ChatroomEntity | null> {
     const chats = await this.getByKey(ChatroomKeys.ID, id);
@@ -99,7 +99,7 @@ export class ChatroomPostgresRepository
         avatar,
       );
       const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
-      const chatRes = await this.insertWithClient(client, table.CHATS, {
+      const chatRes = await this.insertWithClient(client, table.CHATROOM, {
         ...chatroom,
         avatarId,
       });

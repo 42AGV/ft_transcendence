@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-
 import { ChatmemberAsUserResponseDto } from '../../dto/chatmember.dto';
-import { IChatroomMemberRepository } from './infrastructure/chatroom-member.repository';
+import { IChatroomMemberRepository } from './infrastructure/db/chatroom-member.repository';
 import { ChatroomMember } from './chatroom-member.domain';
 
 @Injectable()

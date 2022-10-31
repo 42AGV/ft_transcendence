@@ -13,8 +13,8 @@ import { PoolClient } from 'pg';
 import {
   ChatroomEntity,
   ChatroomKeys,
-} from '../../../chatroom/infrastructure/chatroom.entity';
-import { IChatroomRepository } from '../../../chatroom/infrastructure/chatroom.repository';
+} from '../../../chatroom/infrastructure/db/chatroom.entity';
+import { IChatroomRepository } from '../../../chatroom/infrastructure/db/chatroom.repository';
 import { UpdateChatroomDto } from '../../../chatroom/dto/update-chatroom.dto';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class ChatroomPostgresRepository
   implements IChatroomRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.CHATS);
+    super(pool, table.CHATROOM);
   }
   async getById(id: string): Promise<ChatroomEntity | null> {
     const chats = await this.getByKey(ChatroomKeys.ID, id);
@@ -76,7 +76,7 @@ export class ChatroomPostgresRepository
         avatar,
       );
       const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
-      const chatRes = await this.insertWithClient(client, table.CHATS, {
+      const chatRes = await this.insertWithClient(client, table.CHATROOM, {
         ...chatRoom,
         avatarId,
       });

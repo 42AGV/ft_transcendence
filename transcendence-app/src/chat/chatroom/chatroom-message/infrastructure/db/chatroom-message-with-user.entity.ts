@@ -1,4 +1,4 @@
-import { UserEntity } from '../../../../user/infrastructure/db/user.entity';
+import { UserEntity } from '../../../../../user/infrastructure/db/user.entity';
 import {
   ChatroomMessageEntity,
   ChatroomMessageEntityData,
