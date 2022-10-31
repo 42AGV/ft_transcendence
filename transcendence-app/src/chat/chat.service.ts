@@ -7,16 +7,10 @@ import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { IChatRepository } from './infrastructure/db/chat.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { randomBytes, scrypt as _scrypt } from 'crypto';
-import { promisify } from 'util';
-
-const scrypt = promisify(_scrypt);
+import { Password } from '../shared/password';
 
 @Injectable()
 export class ChatService {
-  readonly saltLength = 8;
-  readonly hashLength = 32;
-
   constructor(private chatRepository: IChatRepository) {}
 
   async retrieveChatRooms({
@@ -56,17 +50,11 @@ export class ChatService {
         );
       }
 
-      const salt = randomBytes(this.saltLength).toString('hex');
-      const hash = (await scrypt(
-        chatRoom.password,
-        salt,
-        this.hashLength,
-      )) as Buffer;
-      const result = salt + '.' + hash.toString('hex');
+      const hashedPassword = await Password.toHash(chatRoom.password);
       return this.addChatRoom({
         ...newChat,
         avatarId: null,
-        password: result,
+        password: hashedPassword,
         ownerId: ownerId,
       });
     } else {
