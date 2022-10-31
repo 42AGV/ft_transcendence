@@ -6,9 +6,15 @@ ifeq ($(SEED),)
 SEED := seed
 endif
 
+# all runs in development mode
 .PHONY: all
 all: gen
 	$(DOCKER_COMPOSE) up --build -d
+	make seed
+
+.PHONY: prod
+prod: gen
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d 
 
 transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
 	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-gen
@@ -58,9 +64,6 @@ get-ip:
 	@echo "db:"
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.db.1" )
 
-transcendence-app/seeds/$(SEED).ts:
-	cd transcendence-app && npx knex seed:make $(SEED)
-
 PHONY: seed
 seed:
-	make transcendence-app/seeds/$(SEED).ts
+	$(DOCKER_COMPOSE) exec -it transcendence-app npx knex seed:run
