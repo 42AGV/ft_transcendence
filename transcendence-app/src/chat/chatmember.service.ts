@@ -34,10 +34,10 @@ export class ChatMemberService {
       ret?.map(
         (chatMember) =>
           new ChatmemberAsUserResponseDto({
-              username: chatMember.username,
-              avatarId: chatMember.avatarId,
-              avatarX: chatMember.avatarX,
-              avatarY: chatMember.avatarY,
+            username: chatMember.username,
+            avatarId: chatMember.avatarId,
+            avatarX: chatMember.avatarX,
+            avatarY: chatMember.avatarY,
           }),
       ) ?? null
     );
