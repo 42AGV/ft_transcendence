@@ -11,6 +11,7 @@ import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
 import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
 import { IChatroomMessageRepository } from './infrastructure/db/chatroom-message.repository';
+import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 
 const scrypt = promisify(_scrypt);
 
@@ -90,9 +91,11 @@ export class ChatService {
 
   async getChatroomMessagesWithUser(
     chatroomId: string,
+    { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
   ): Promise<ChatRoomMessageWithUser[] | null> {
     const messages = await this.chatRoomMessageRepository.getWithUser(
       chatroomId,
+      { limit, offset },
     );
     return messages
       ? messages.map((message) => new ChatRoomMessageWithUser(message))

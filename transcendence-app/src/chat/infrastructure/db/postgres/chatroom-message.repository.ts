@@ -3,6 +3,7 @@ import { table } from '../../../../shared/db/models';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
+import { PaginationQueryDto } from '../../../../shared/dtos/pagination-query.dto';
 import {
   capitalizeFirstLetter,
   removeDoubleQuotes,
@@ -44,7 +45,9 @@ export class ChatroomMessagePostgresRepository
 
   async getWithUser(
     chatRoomId: string,
+    paginationQueryDto: Required<PaginationQueryDto>,
   ): Promise<ChatRoomMessageWithUserEntity[] | null> {
+    const { limit, offset } = paginationQueryDto;
     const messagesData = await makeQuery<ChatRoomMessageWithUserEntityData>(
       this.pool,
       {
@@ -55,8 +58,10 @@ export class ChatroomMessagePostgresRepository
         ON (${this.table}.${ChatRoomMessageKeys.USER_ID} =
             ${table.USERS}.${userKeys.ID})
       WHERE ${ChatRoomMessageKeys.CHAT_ROOM_ID} = $1
-      ORDER BY ${ChatRoomMessageKeys.CREATED_AT} ASC`,
-        values: [chatRoomId],
+      ORDER BY ${ChatRoomMessageKeys.CREATED_AT} DESC
+      LIMIT $2
+      OFFSET $3;`,
+        values: [chatRoomId, limit, offset],
       },
     );
     return messagesData

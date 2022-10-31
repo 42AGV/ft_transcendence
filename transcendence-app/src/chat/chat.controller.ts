@@ -33,6 +33,7 @@ import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { ChatMemberService } from './chatmember.service';
 import { ChatMember } from './chatmember.domain';
 import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
+import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -125,8 +126,9 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatroomMessages(
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Query() paginationQueryDto: PaginationQueryDto,
   ): Promise<ChatRoomMessageWithUser[] | null> {
     const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
@@ -141,6 +143,7 @@ export class ChatController {
     }
     const messages = await this.chatService.getChatroomMessagesWithUser(
       chatroomId,
+      paginationQueryDto,
     );
     if (!messages) {
       throw new ServiceUnavailableException();
