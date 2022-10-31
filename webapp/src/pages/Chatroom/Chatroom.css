@@ -1,4 +1,4 @@
-.chat-room {
+.chatroom {
   padding: var(--padding-top-bottom) var(--padding-sides);
   height: 100vh;
   background-color: var(--color-background);
@@ -13,11 +13,11 @@
   grid-template-columns: 1fr;
 }
 
-.chat-room-header {
+.chatroom-header {
   grid-area: header;
 }
 
-.chat-room-messages {
+.chatroom-messages {
   grid-area: messages;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -27,6 +27,6 @@
   flex-direction: column-reverse;
 }
 
-.chat-room-message-input {
+.chatroom-message-input {
   grid-area: message-input;
 }

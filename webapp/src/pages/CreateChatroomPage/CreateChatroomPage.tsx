@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useEffect, useState } from 'react';
 import { CreateChatroomDto, ResponseError } from '../../shared/generated';
-import './CreateChatRoomPage.css';
+import './CreateChatroomPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 
 type FormStatus = {
@@ -29,7 +29,7 @@ const initialSubmitFormStatus: FormStatus = {
   message: '',
 };
 
-export default function CreateChatRoomPage() {
+export default function CreateChatroomPage() {
   const initialFormValues: CreateChatroomDto = {
     name: '',
     password: '',
@@ -78,7 +78,7 @@ export default function CreateChatRoomPage() {
       return;
     }
     try {
-      await chatApi.chatControllerCreateChatRoom({
+      await chatApi.chatControllerCreateChatroom({
         createChatroomDto: {
           ...formValues,
           password: formValues.password || null,

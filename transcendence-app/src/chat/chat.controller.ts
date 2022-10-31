@@ -47,31 +47,31 @@ export class ChatController {
   @ApiCreatedResponse({ description: 'Create a chatroom', type: Chatroom })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async createChatRoom(
+  async createChatroom(
     @GetUser() user: User,
     @Body() createChatDto: CreateChatroomDto,
   ) {
-    const chatRoom = await this.chatService.createChatRoom(
+    const chatroom = await this.chatService.createChatroom(
       user.id,
       createChatDto,
     );
 
-    if (!chatRoom) {
+    if (!chatroom) {
       throw new UnprocessableEntityException();
     }
-    return chatRoom;
+    return chatroom;
   }
 
-  @Post('room/:chatRoomId/members')
+  @Post('room/:chatroomId/members')
   @ApiCreatedResponse({
     description: 'Add a member to a chatroom',
     type: ChatroomMember,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async createChatRoomMember(
+  async createChatroomMember(
     @GetUser() user: User,
-    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+    @Param('chatroomId', ParseUUIDPipe) chatRoomId: string,
   ) {
     const ret = await this.chatMemberService.addChatMember(chatRoomId, user.id);
 
@@ -88,16 +88,16 @@ export class ChatController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async getChatRooms(
+  async getChatrooms(
     @Query() chatsPaginationQueryDto: ChatroomPaginationQueryDto,
   ): Promise<Chatroom[]> {
-    const chatRooms = await this.chatService.retrieveChatRooms(
+    const chatrooms = await this.chatService.retrieveChatrooms(
       chatsPaginationQueryDto,
     );
-    if (!chatRooms) {
+    if (!chatrooms) {
       throw new ServiceUnavailableException();
     }
-    return chatRooms;
+    return chatrooms;
   }
 
   @Get('room/:chatRoomId/members')
@@ -129,8 +129,8 @@ export class ChatController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async getChatRoomById(@Param('id', ParseUUIDPipe) chatRoomId: string) {
-    const chatroom = await this.chatService.getChatRoomById(chatRoomId);
+  async getChatroomById(@Param('id', ParseUUIDPipe) chatroomId: string) {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
     }

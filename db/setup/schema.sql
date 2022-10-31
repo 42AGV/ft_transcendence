@@ -40,7 +40,7 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  IF NOT EXISTS ChatRoom (
+  IF NOT EXISTS Chatroom (
     "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
     "name" VARCHAR(100) NOT NULL UNIQUE,
     "password" TEXT,
@@ -52,8 +52,8 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  IF NOT EXISTS ChatRoomMembers (
-    "chatId" UUID REFERENCES ChatRoom (id) ON DELETE CASCADE,
+  IF NOT EXISTS ChatroomMembers (
+    "chatId" UUID REFERENCES Chatroom (id) ON DELETE CASCADE,
     "userId" UUID REFERENCES Users (id) ON DELETE CASCADE,
     "joinedAt" TIMESTAMPTZ DEFAULT NOW (),
     "admin" BOOLEAN DEFAULT false,
@@ -63,9 +63,9 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  IF NOT EXISTS ChatRoomMessage (
+  IF NOT EXISTS ChatroomMessage (
     "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
-    "chatId" UUID NOT NULL REFERENCES ChatRoom (id) ON DELETE CASCADE,
+    "chatId" UUID NOT NULL REFERENCES Chatroom (id) ON DELETE CASCADE,
     "userId" UUID NOT NULL REFERENCES Users (id) ON DELETE CASCADE,
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW ()

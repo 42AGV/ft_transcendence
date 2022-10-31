@@ -15,71 +15,71 @@ import { v4 as uuidv4 } from 'uuid';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { User } from '../user/user.domain';
 
-type ChatRoomMessage = {
+type ChatroomMessage = {
   id: string;
   user: User;
   content: string;
   createdAt: number;
-  chatRoomId: string;
+  chatroomId: string;
 };
 
-type ChatRoomId = string;
+type ChatroomId = string;
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class ChatGateway {
   @WebSocketServer() server!: Server;
-  chatRooms = new Map<ChatRoomId, Set<ChatRoomMessage>>();
+  chatrooms = new Map<ChatroomId, Set<ChatroomMessage>>();
 
-  @SubscribeMessage('chatRoomMessage')
+  @SubscribeMessage('chatroomMessage')
   handleMessage(
-    @MessageBody() data: { chatRoomId: ChatRoomId; content: string },
+    @MessageBody() data: { chatroomId: ChatroomId; content: string },
     @ConnectedSocket() client: Socket,
   ) {
     const user = client.request.user;
-    const { chatRoomId, content } = data;
-    const chatRoom = this.chatRooms.get(chatRoomId);
-    if (user && chatRoom) {
-      const message: ChatRoomMessage = {
+    const { chatroomId, content } = data;
+    const chatroom = this.chatrooms.get(chatroomId);
+    if (user && chatroom) {
+      const message: ChatroomMessage = {
         id: uuidv4(),
         user: user,
         content: content,
         createdAt: Date.now(),
-        chatRoomId: chatRoomId,
+        chatroomId: chatroomId,
       };
-      chatRoom.add(message);
-      this.server.to(chatRoomId).emit('chatRoomMessage', message);
+      chatroom.add(message);
+      this.server.to(chatroomId).emit('chatroomMessage', message);
     }
   }
 
-  @SubscribeMessage('getChatRoomMessages')
+  @SubscribeMessage('getChatroomMessages')
   handleGetMessages(
-    @MessageBody() chatRoomId: ChatRoomId,
+    @MessageBody() chatroomId: ChatroomId,
     @ConnectedSocket() client: Socket,
   ) {
-    const messages = this.chatRooms.get(chatRoomId);
+    const messages = this.chatrooms.get(chatroomId);
     if (messages) {
-      client.emit('chatRoomMessages', [...messages]);
+      client.emit('chatroomMessages', [...messages]);
     }
   }
 
-  @SubscribeMessage('joinChatRoom')
+  @SubscribeMessage('joinChatroom')
   handleJoinRoom(
-    @MessageBody() chatRoomId: ChatRoomId,
+    @MessageBody() chatroomId: ChatroomId,
     @ConnectedSocket() client: Socket,
   ) {
-    client.join(chatRoomId);
-    if (!this.chatRooms.has(chatRoomId)) {
-      this.chatRooms.set(chatRoomId, new Set<ChatRoomMessage>());
+    client.join(chatroomId);
+    if (!this.chatrooms.has(chatroomId)) {
+      this.chatrooms.set(chatroomId, new Set<ChatroomMessage>());
     }
   }
 
-  @SubscribeMessage('leaveChatRoom')
+  @SubscribeMessage('leaveChatroom')
   handleLeaveRoom(
-    @MessageBody() chatRoomId: ChatRoomId,
+    @MessageBody() chatroomId: ChatroomId,
     @ConnectedSocket() client: Socket,
   ) {
-    client.leave(chatRoomId);
+    client.leave(chatroomId);
   }
 }

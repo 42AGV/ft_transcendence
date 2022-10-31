@@ -5,22 +5,22 @@ import { Chatroom } from '../chatroom.domain';
 
 export abstract class IChatroomRepository {
   abstract getById(id: string): Promise<Chatroom | null>;
-  abstract getByChatRoomName(name: string): Promise<Chatroom | null>;
-  abstract deleteByChatRoomName(name: string): Promise<Chatroom | null>;
+  abstract getByChatroomName(name: string): Promise<Chatroom | null>;
+  abstract deleteByChatroomName(name: string): Promise<Chatroom | null>;
   abstract updateById(
     name: string,
     updateChatDto: UpdateChatroomDto,
   ): Promise<Chatroom | null>;
-  abstract add(chatRoom: Chatroom): Promise<Chatroom | null>;
-  abstract getPaginatedChatRooms(
+  abstract add(chatroom: Chatroom): Promise<Chatroom | null>;
+  abstract getPaginatedChatrooms(
     queryDto: Required<ChatroomPaginationQueryDto>,
   ): Promise<Chatroom[] | null>;
-  abstract addAvatarAndAddChatRoom(
+  abstract addAvatarAndAddChatroom(
     avatar: LocalFile,
-    chatRoom: Chatroom,
+    chatroom: Chatroom,
   ): Promise<Chatroom | null>;
-  abstract addAvatarAndUpdateChatRoom(
+  abstract addAvatarAndUpdateChatroom(
     avatar: LocalFile,
-    chatRoom: Chatroom,
+    chatroom: Chatroom,
   ): Promise<Chatroom | null>;
 }

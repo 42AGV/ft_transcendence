@@ -16,52 +16,52 @@ export class ChatService {
 
   constructor(private chatRepository: IChatroomRepository) {}
 
-  async retrieveChatRooms({
+  async retrieveChatrooms({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
   }: ChatroomPaginationQueryDto): Promise<Chatroom[] | null> {
-    const chatRooms = await this.chatRepository.getPaginatedChatRooms({
+    const chatrooms = await this.chatRepository.getPaginatedChatrooms({
       limit,
       offset,
       sort,
       search,
     });
-    return chatRooms
-      ? chatRooms.map((chatRoom) => new Chatroom(chatRoom))
+    return chatrooms
+      ? chatrooms.map((chatroom) => new Chatroom(chatroom))
       : null;
   }
 
-  private async addChatRoom(chatDto: ChatroomDto): Promise<Chatroom | null> {
-    const chatRoom = await this.chatRepository.add({
+  private async addChatroom(chatDto: ChatroomDto): Promise<Chatroom | null> {
+    const chatroom = await this.chatRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
       ...chatDto,
     });
-    return chatRoom ? new Chatroom(chatRoom) : null;
+    return chatroom ? new Chatroom(chatroom) : null;
   }
 
-  async createChatRoom(ownerId: string, chatRoom: CreateChatroomDto) {
-    const { confirmationPassword: _, ...newChat } = chatRoom;
-    if (chatRoom.password) {
-      if (chatRoom.password !== chatRoom.confirmationPassword) {
+  async createChatroom(ownerId: string, chatroom: CreateChatroomDto) {
+    const { confirmationPassword: _, ...newChat } = chatroom;
+    if (chatroom.password) {
+      if (chatroom.password !== chatroom.confirmationPassword) {
         throw new BadRequestException(
           'Password and Confirmation Password must match',
         );
       }
 
-      const hashedPassword = await Password.toHash(chatRoom.password);
-      return this.addChatRoom({
+      const hashedPassword = await Password.toHash(chatroom.password);
+      return this.addChatroom({
         ...newChat,
         avatarId: null,
         password: hashedPassword,
         ownerId: ownerId,
       });
     } else {
-      return this.addChatRoom({
+      return this.addChatroom({
         ...newChat,
         avatarId: null,
         ownerId: ownerId,
@@ -69,8 +69,8 @@ export class ChatService {
     }
   }
 
-  async getChatRoomById(chatRoomId: string): Promise<Chatroom | null> {
-    const chatRoom = await this.chatRepository.getById(chatRoomId);
-    return chatRoom ? new Chatroom(chatRoom) : null;
+  async getChatroomById(chatroomId: string): Promise<Chatroom | null> {
+    const chatroom = await this.chatRepository.getById(chatroomId);
+    return chatroom ? new Chatroom(chatroom) : null;
   }
 }

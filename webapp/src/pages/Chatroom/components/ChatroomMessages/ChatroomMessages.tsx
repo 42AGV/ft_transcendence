@@ -4,48 +4,48 @@ import { User } from '../../../../shared/generated';
 import { useAuth } from '../../../../shared/hooks/UseAuth';
 import socket from '../../../../shared/socket';
 import { AVATAR_EP_URL } from '../../../../shared/urls';
-import './ChatRoomMessages.css';
+import './ChatroomMessages.css';
 
-type ChatRoomMessageType = {
+type ChatroomMessageType = {
   id: string;
   user: User;
   content: string;
   createdAt: number;
-  chatRoomId: string;
+  chatroomId: string;
 };
 
-type ChatRoomMessagesProps = {
+type ChatroomMessagesProps = {
   from: string;
 };
 
-function ChatRoomMessages({ from }: ChatRoomMessagesProps) {
-  const [messages, setMessages] = useState<ChatRoomMessageType[]>([]);
+function ChatroomMessages({ from }: ChatroomMessagesProps) {
+  const [messages, setMessages] = useState<ChatroomMessageType[]>([]);
   const { authUser: me } = useAuth();
 
   useEffect(() => {
-    const messagesListener = (messages: ChatRoomMessageType[]) => {
+    const messagesListener = (messages: ChatroomMessageType[]) => {
       setMessages(messages);
     };
 
-    const messageListener = (message: ChatRoomMessageType) => {
+    const messageListener = (message: ChatroomMessageType) => {
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages, message];
         return newMessages;
       });
     };
 
-    socket.on('chatRoomMessage', messageListener);
-    socket.on('chatRoomMessages', messagesListener);
-    socket.emit('getChatRoomMessages', from);
+    socket.on('chatroomMessage', messageListener);
+    socket.on('chatroomMessages', messagesListener);
+    socket.emit('getChatroomMessages', from);
 
     return () => {
-      socket.off('chatRoomMessage');
-      socket.off('chatRoomMessages');
+      socket.off('chatroomMessage');
+      socket.off('chatroomMessages');
     };
   }, [from]);
 
   return (
-    <ul className="chat-room-messages-list">
+    <ul className="chatroom-messages-list">
       {messages.map((message, index) => {
         const isConsecutive =
           index !== messages.length - 1 &&
@@ -54,7 +54,7 @@ function ChatRoomMessages({ from }: ChatRoomMessagesProps) {
           index === 0 ||
           messages[index].user.id !== messages[index - 1].user.id;
         return (
-          <li key={message.id} className="chat-room-messages-list-item">
+          <li key={message.id} className="chatroom-messages-list-item">
             <ChatBubble
               variant={
                 me && me.id === message.user.id
@@ -76,4 +76,4 @@ function ChatRoomMessages({ from }: ChatRoomMessagesProps) {
   );
 }
 
-export default ChatRoomMessages;
+export default ChatroomMessages;

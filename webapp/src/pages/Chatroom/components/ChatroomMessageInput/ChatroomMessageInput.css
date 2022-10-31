@@ -1,4 +1,4 @@
-.chat-room-message-input-form {
+.chatroom-message-input-form {
   width: 100%;
   display: grid;
   gap: 0.5rem;
@@ -7,13 +7,13 @@
   grid-template-areas: 'message-input';
 }
 
-.chat-room-message-input-grow-wrap {
+.chatroom-message-input-grow-wrap {
   grid-area: message-input;
   /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
   display: grid;
 }
 
-.chat-room-message-input-grow-wrap::after {
+.chatroom-message-input-grow-wrap::after {
   /* Note the weird space! Needed to preventy jumpy behavior */
   content: attr(data-replicated-value) ' ';
 
@@ -24,18 +24,18 @@
   visibility: hidden;
 }
 
-.chat-room-message-input-text {
+.chatroom-message-input-text {
   /* You could leave this, but after a user resizes, then it ruins the auto sizing */
   resize: none;
 }
 
-.chat-room-message-input-text::placeholder {
+.chatroom-message-input-text::placeholder {
   color: var(--color-light);
   opacity: 1;
 }
 
-.chat-room-message-input-grow-wrap::after,
-.chat-room-message-input-text {
+.chatroom-message-input-grow-wrap::after,
+.chatroom-message-input-text {
   /* Identical styling required!! */
   outline: none;
   border: none;
