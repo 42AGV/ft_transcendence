@@ -27,7 +27,7 @@ export class ChatMemberPostgresRepository
                     u."avatarId",
                     u."avatarX",
                     u."avatarY",
-                    c."ownerId",
+                    c."ownerId" IS NOT NULL as owner,
                     cm."admin",
                     cm."muted",
                     cm."banned"

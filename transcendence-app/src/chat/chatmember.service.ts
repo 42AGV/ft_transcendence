@@ -30,16 +30,16 @@ export class ChatMemberService {
       chatRoomId,
     );
 
-    return ret
-      ? ret.map(
-          (chatMember) =>
-            new ChatmemberAsUserResponseDto({
+    return (
+      ret?.map(
+        (chatMember) =>
+          new ChatmemberAsUserResponseDto({
               username: chatMember.username,
               avatarId: chatMember.avatarId,
               avatarX: chatMember.avatarX,
               avatarY: chatMember.avatarY,
-            }),
-        )
-      : null;
+          }),
+      ) ?? null
+    );
   }
 }

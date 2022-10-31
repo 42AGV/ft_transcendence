@@ -23,7 +23,7 @@ export class ChatMemberWithUserEntity {
   avatarId!: string | null;
   avatarX: number = 0;
   avatarY: number = 0;
-  ownerId!: string | null;
+  owner!: boolean;
   admin!: boolean;
   muted!: boolean;
   banned!: boolean;

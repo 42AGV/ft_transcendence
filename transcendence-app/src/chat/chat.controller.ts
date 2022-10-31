@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -108,11 +109,15 @@ export class ChatController {
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async retrieveChatRoomMembers(
     @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+    @GetUser() user: User,
   ): Promise<ChatmemberAsUserResponseDto[]> {
     const chatRoomsMembers =
       await this.chatMemberService.retrieveChatRoomMembers(chatRoomId);
     if (!chatRoomsMembers) {
-      throw new NotFoundException();
+      throw new ServiceUnavailableException();
+    }
+    if (!chatRoomsMembers.some((x) => x.username === user.username)) {
+      throw new ForbiddenException();
     }
     return chatRoomsMembers;
   }

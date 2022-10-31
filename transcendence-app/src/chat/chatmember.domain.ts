@@ -11,6 +11,7 @@ export class ChatMember {
   admin: boolean = false;
   muted: boolean = false;
   banned: boolean = false;
+
   constructor(entity: ChatMemberEntity) {
     Object.assign(this, entity);
   }
@@ -29,7 +30,6 @@ export class ChatMemberWithUser {
   constructor(chatMember: ChatMemberWithUserEntity) {
     Object.assign(this, {
       ...chatMember,
-      owner: !!chatMember.ownerId,
     });
   }
 }
