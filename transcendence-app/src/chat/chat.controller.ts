@@ -32,6 +32,7 @@ import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { ChatMemberService } from './chatmember.service';
 import { ChatMember } from './chatmember.domain';
+import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
 import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 
@@ -64,7 +65,7 @@ export class ChatController {
     return chatRoom;
   }
 
-  @Post('room/:Id/members')
+  @Post('room/:chatRoomId/members')
   @ApiCreatedResponse({
     description: 'Add a member to a chatroom',
     type: ChatMember,
@@ -73,9 +74,9 @@ export class ChatController {
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async createChatRoomMember(
     @GetUser() user: User,
-    @Param('Id', ParseUUIDPipe) chatRoomId: string,
+    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
   ) {
-    const ret = await this.chatMemberService.addChatmember(chatRoomId, user.id);
+    const ret = await this.chatMemberService.addChatMember(chatRoomId, user.id);
 
     if (!ret) {
       throw new UnprocessableEntityException();
@@ -100,6 +101,28 @@ export class ChatController {
       throw new ServiceUnavailableException();
     }
     return chatRooms;
+  }
+
+  @Get('room/:chatRoomId/members')
+  @ApiOkResponse({
+    description: `Lists all chat members for a given room)`,
+    type: [ChatmemberAsUserResponseDto],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async retrieveChatRoomMembers(
+    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+    @GetUser() user: User,
+  ): Promise<ChatmemberAsUserResponseDto[]> {
+    const chatRoomsMembers =
+      await this.chatMemberService.retrieveChatRoomMembers(chatRoomId);
+    if (!chatRoomsMembers) {
+      throw new ServiceUnavailableException();
+    }
+    if (!chatRoomsMembers.some((x) => x.username === user.username)) {
+      throw new ForbiddenException();
+    }
+    return chatRoomsMembers;
   }
 
   @Get('room/:id')

@@ -17,3 +17,14 @@ export class ChatMemberEntity {
     public banned: boolean = false,
   ) {}
 }
+
+export class ChatMemberWithUserEntity {
+  username!: string;
+  avatarId!: string | null;
+  avatarX: number = 0;
+  avatarY: number = 0;
+  owner!: boolean;
+  admin!: boolean;
+  muted!: boolean;
+  banned!: boolean;
+}

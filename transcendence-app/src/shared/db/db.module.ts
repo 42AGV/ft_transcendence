@@ -9,7 +9,7 @@ import { IAuthProviderRepository } from '../../auth/auth-provider/infrastructure
 import { IBlockRepository } from '../../user/infrastructure/db/block.repository';
 import { BlockPostgresRepository } from '../../user/infrastructure/db/postgres/block.postgres.repository';
 import { IChatRepository } from '../../chat/infrastructure/db/chat.repository';
-import { ChatPostgresRepository } from '../../chat/infrastructure/db/postgres/chatPostgres.repository';
+import { ChatPostgresRepository } from '../../chat/infrastructure/db/postgres/chat.postgres.repository';
 import { IChatMemberRepository } from '../../chat/infrastructure/db/chatmember.repository';
 import { ChatMemberPostgresRepository } from '../../chat/infrastructure/db/postgres/chatmember.postgres.repository';
 import { IChatroomMessageRepository } from '../../chat/infrastructure/db/chatroom-message.repository';
