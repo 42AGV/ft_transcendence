@@ -5,31 +5,31 @@ import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import Status, { StatusVariant } from '../Status/Status';
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './Header.css';
-import React from 'react';
 
 type HeaderCommon = {
   statusVariant?: StatusVariant;
   children: string;
+  titleNavigationUrl?: string;
 };
 
 type IconHeader = HeaderCommon & {
   icon: IconVariant;
   avatar?: never;
-  navigationUrl?: never;
+  iconNavigationUrl?: never;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 type AvatarHeader = HeaderCommon & {
   icon?: never;
   avatar: AvatarProps;
-  navigationUrl: string;
+  iconNavigationUrl: string;
   onClick?: never;
 };
 
 type NoFigureHeader = HeaderCommon & {
   icon?: never;
   avatar?: never;
-  navigationUrl?: never;
+  iconNavigationUrl?: never;
   onClick?: never;
 };
 
@@ -38,9 +38,10 @@ type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
 export default function Header({
   icon,
   avatar,
-  navigationUrl,
+  iconNavigationUrl,
   onClick,
   statusVariant,
+  titleNavigationUrl,
   children,
 }: HeaderProps) {
   const lNavFigure = (
@@ -52,21 +53,28 @@ export default function Header({
       )}
     </>
   );
+  const headerTitle = (
+    <Text
+      variant={TextVariant.HEADING}
+      color={TextColor.LIGHT}
+      weight={TextWeight.BOLD}
+    >
+      {children}
+    </Text>
+  );
   return (
     <header className="header">
       <div className="header-navigation">
-        {(navigationUrl && <Link to={navigationUrl}>{lNavFigure}</Link>) || (
-          <button onClick={onClick}>{lNavFigure}</button>
-        )}
+        {(iconNavigationUrl && (
+          <Link to={iconNavigationUrl}>{lNavFigure}</Link>
+        )) || <button onClick={onClick}>{lNavFigure}</button>}
       </div>
       <div className="header-text">
-        <Text
-          variant={TextVariant.HEADING}
-          color={TextColor.LIGHT}
-          weight={TextWeight.BOLD}
-        >
-          {children}
-        </Text>
+        {titleNavigationUrl ? (
+          <Link to={titleNavigationUrl}>{headerTitle}</Link>
+        ) : (
+          <div className="header-text">{headerTitle}</div>
+        )}
       </div>
       <div className="header-status">
         {statusVariant && <Status variant={statusVariant} />}
