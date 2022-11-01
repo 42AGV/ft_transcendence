@@ -1,11 +1,9 @@
 import { Knex } from 'knex';
 import { faker } from '@faker-js/faker';
-import { join } from 'path';
 import { rmSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
-import { AVATARS_PATH } from '../src/shared/constants';
 import { LocalFileService } from '../src/shared/local-file/local-file.service';
 import { EnvironmentVariables } from '../src/config/env.validation';
 import { ILocalFileRepository } from '../src/shared/local-file/infrastructure/db/local-file.repository';
@@ -46,13 +44,20 @@ const createRandomUser = (avatarId: string) => {
 };
 
 export async function seed(knex: Knex): Promise<void> {
+  // Save avatar data to delete later
+  const avatarsData = await knex
+    .select('localfile.id', 'localfile.path')
+    .from('users')
+    .innerJoin('localfile', 'users.avatarId', 'localfile.id');
   // Deletes ALL existing entries and local files
   await knex('users').del();
-  await knex('localfile').del();
-  rmSync(join(process.env.TRANSCENDENCE_APP_DATA as string, AVATARS_PATH), {
-    recursive: true,
-    force: true,
-  });
+  for (let i = 0; i < avatarsData.length; i++) {
+    await knex('localfile').where('id', avatarsData[i].id).del();
+    rmSync(avatarsData[i].path, {
+      recursive: true,
+      force: true,
+    });
+  }
 
   const avatars = await Promise.all(
     Array.from({ length: USERS_NUMBER }, createRandomAvatar),
