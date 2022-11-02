@@ -6,4 +6,5 @@ export const AVATAR_MIMETYPE_WHITELIST = [
   'image/webp',
 ];
 export const MAX_ENTRIES_PER_PAGE = 20;
+export const MAX_MESSAGES_PER_CHAT = 20;
 export const HTTP_TIMEOUT_MILLISECONDS = 5000;

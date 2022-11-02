@@ -3,7 +3,6 @@ export enum table {
   LOCAL_FILE = 'LocalFile',
   AUTH_PROVIDER = 'AuthProvider',
   BLOCK = 'Block',
-  CHAT = 'Chat',
   CHAT_MESSAGE = 'ChatMessage',
   CHATROOM = 'Chatroom',
   CHATROOM_MEMBERS = 'ChatroomMembers',

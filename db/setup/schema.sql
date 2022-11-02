@@ -72,18 +72,12 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  IF NOT EXISTS Chat (
+    IF NOT EXISTS ChatMessage (
     "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
+    "authorId" UUID REFERENCES Users (id) ON DELETE CASCADE,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW (),
     "user1Id" UUID REFERENCES Users (id) ON DELETE CASCADE,
     "user2Id" UUID REFERENCES Users (id) ON DELETE CASCADE,
     CHECK ("user1Id" < "user2Id")
-  );
-
-CREATE TABLE
-    IF NOT EXISTS ChatMessage (
-    "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
-    "chatId" UUID REFERENCES Chat (id) ON DELETE CASCADE,
-    "userId" UUID REFERENCES Users (id) ON DELETE CASCADE,
-    "content" TEXT NOT NULL,
-    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW ()
   );

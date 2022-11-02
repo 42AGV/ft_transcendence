@@ -1,16 +1,19 @@
 export enum chatMessageKeys {
   ID = '"id"',
-  USER_ID = '"userId"',
-  CHAT_ID = '"chatId"',
-  CONTENT = '"content"',
+  AUTHOR_ID = '"authorId"',
+  CONTENT = '"chatId"',
   CREATED_AT = '"createdAt"',
+  AUTHOR_1_ID = '"author1Id"',
+  AUTHOR_2_ID = '"author2Id"',
 }
 
 export class ChatMessageEntity {
   constructor(
-    public senderId: string,
-    public recipientId: string,
-    public sendedAt: Date,
-    public message: string,
+    public id: string,
+    public authorId: string,
+    public content: string,
+    public createdAt: Date,
+    public author1Id: string,
+    public author2Id: string,
   ) {}
 }
