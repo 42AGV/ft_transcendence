@@ -24,10 +24,6 @@ import { ChatMessagePostgresRepository } from '../../chat/chat/infrastructure/db
     { provide: ILocalFileRepository, useClass: LocalFilePostgresRepository },
     { provide: IChatroomRepository, useClass: ChatroomPostgresRepository },
     {
-      provide: IChatMessageRepository,
-      useClass: ChatMessagePostgresRepository,
-    },
-    {
       provide: IAuthProviderRepository,
       useClass: AuthProviderPostgresRepository,
     },
@@ -43,6 +39,10 @@ import { ChatMessagePostgresRepository } from '../../chat/chat/infrastructure/db
       provide: IChatroomMessageRepository,
       useClass: ChatroomMessagePostgresRepository,
     },
+    {
+      provide: IChatMessageRepository,
+      useClass: ChatMessagePostgresRepository,
+    },
   ],
   exports: [
     IUserRepository,
@@ -52,6 +52,7 @@ import { ChatMessagePostgresRepository } from '../../chat/chat/infrastructure/db
     IChatroomRepository,
     IChatroomMemberRepository,
     IChatroomMessageRepository,
+    IChatMessageRepository,
   ],
 })
 export class DbModule {}

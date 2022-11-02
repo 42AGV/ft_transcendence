@@ -5,8 +5,8 @@ import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnecti
 import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
 import { ChatMessageEntity } from '../chat-message.entity';
 import { IChatMessageRepository } from '../chat-message.repository';
-import { ChatMessagePaginationQueryDto } from '../../../../dto/chat-message.pagination.dto';
-import { ChatMessageQueryDto } from '../../../../dto/chat-message.dto';
+import { ChatMessagePaginationQueryDto } from '../../../../dto/chat-message.pagination.query.dto';
+import { ChatMessageQueryDto } from '../../../../dto/chat-message.query.dto';
 import { makeQuery } from '../../../../../shared/db/postgres/utils';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class ChatMessagePostgresRepository
   }
 
   async addMessageSet(
-    queryDto: Required<ChatMessageQueryDto>,
+    queryDto: ChatMessageQueryDto,
   ): Promise<ChatMessageEntity | null> {
     const { authorId, content, user1Id, user2Id } = queryDto;
 
@@ -39,8 +39,7 @@ export class ChatMessagePostgresRepository
     const { limit, offset, user1Id, user2Id } = queryDto;
 
     return makeQuery<ChatMessageEntity>(this.pool, {
-      text: `SELECT "authorId" "content" "createdAt"
-      FROM ${this.table}
+      text: `SELECT * FROM ${this.table}
       WHERE "user1Id" = LEAST($3, $4)::uuid
         AND  "user2Id" = GREATEST($3, $4)::uuid
       LIMIT $1

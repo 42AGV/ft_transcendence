@@ -3,8 +3,8 @@ export enum chatMessageKeys {
   AUTHOR_ID = '"authorId"',
   CONTENT = '"chatId"',
   CREATED_AT = '"createdAt"',
-  AUTHOR_1_ID = '"author1Id"',
-  AUTHOR_2_ID = '"author2Id"',
+  USER_1_ID = '"user1Id"',
+  USER_2_ID = '"user2Id"',
 }
 
 export class ChatMessageEntity {
@@ -13,7 +13,7 @@ export class ChatMessageEntity {
     public authorId: string,
     public content: string,
     public createdAt: Date,
-    public author1Id: string,
-    public author2Id: string,
+    public user1Id: string,
+    public user2Id: string,
   ) {}
 }

@@ -37,6 +37,8 @@ import {
 } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
+import { ChatMessagePaginationRequestDto } from './dto/chat-message-paginated.request.dto';
+import { ChatMessage } from './chat/chat-message.domain';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -179,6 +181,29 @@ export class ChatController {
     );
     if (!messages) {
       throw new ServiceUnavailableException();
+    }
+    return messages;
+  }
+
+  @Get(':userId/messages')
+  @ApiOkResponse({
+    description: `Get chat messages in a one to one conversation(max ${MAX_ENTRIES_PER_PAGE})`,
+    type: [ChatMessage],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async getChatMessages(
+    @GetUser() userMe: User,
+    @Param('userId', ParseUUIDPipe) recipientId: string,
+    @Query() requestDto: ChatMessagePaginationRequestDto,
+  ) {
+    const messages = await this.chatService.getOneToOneChatMessages(
+      userMe.id,
+      recipientId,
+      requestDto,
+    );
+    if (!messages) {
+      throw new UnprocessableEntityException();
     }
     return messages;
   }

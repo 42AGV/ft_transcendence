@@ -1,6 +1,6 @@
 import { ChatMessageEntity } from './chat-message.entity';
-import { ChatMessagePaginationQueryDto } from '../../../dto/chat-message.pagination.dto';
-import { ChatMessageQueryDto } from '../../../dto/chat-message.dto';
+import { ChatMessagePaginationQueryDto } from '../../../dto/chat-message.pagination.query.dto';
+import { ChatMessageQueryDto } from '../../../dto/chat-message.query.dto';
 
 export abstract class IChatMessageRepository {
   abstract addMessageSet(

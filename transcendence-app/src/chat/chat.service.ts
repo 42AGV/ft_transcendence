@@ -10,21 +10,26 @@ import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastruct
 import { IChatroomMessageRepository } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.repository';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { Password } from '../shared/password';
+import { ChatMessageQueryDto } from './dto/chat-message.query.dto';
+import { IChatMessageRepository } from './chat/infrastructure/db/chat-message.repository';
+import { ChatMessagePaginationRequestDto } from './dto/chat-message-paginated.request.dto';
+import { ChatMessage } from './chat/chat-message.domain';
 
 @Injectable()
 export class ChatService {
   constructor(
-    private chatRepository: IChatroomRepository,
-    private chatRoomMessageRepository: IChatroomMessageRepository,
+    private chatMessageRepository: IChatMessageRepository,
+    private chatroomRepository: IChatroomRepository,
+    private chatroomMessageRepository: IChatroomMessageRepository,
   ) {}
 
-  retrieveChatrooms({
+  async retrieveChatrooms({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
   }: ChatroomPaginationQueryDto): Promise<Chatroom[] | null> {
-    return this.chatRepository.getPaginatedChatrooms({
+    return this.chatroomRepository.getPaginatedChatrooms({
       limit,
       offset,
       sort,
@@ -32,8 +37,10 @@ export class ChatService {
     });
   }
 
-  private addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null> {
-    return this.chatRepository.add({
+  private async addChatroom(
+    chatroom: Partial<Chatroom>,
+  ): Promise<Chatroom | null> {
+    return this.chatroomRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
@@ -68,16 +75,37 @@ export class ChatService {
   }
 
   getChatroomById(chatroomId: string): Promise<Chatroom | null> {
-    return this.chatRepository.getById(chatroomId);
+    return this.chatroomRepository.getById(chatroomId);
   }
 
   getChatroomMessagesWithUser(
     chatroomId: string,
     { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
   ): Promise<ChatroomMessageWithUser[] | null> {
-    return this.chatRoomMessageRepository.getWithUser(chatroomId, {
+    return this.chatroomMessageRepository.getWithUser(chatroomId, {
       limit,
       offset,
     });
+  }
+
+  async saveOneToOneChatMessage(
+    message: ChatMessageQueryDto,
+  ): Promise<ChatMessage | null> {
+    const msgEntity = await this.chatMessageRepository.addMessageSet(message);
+    return msgEntity ? new ChatMessage(msgEntity) : null;
+  }
+
+  async getOneToOneChatMessages(
+    meId: string,
+    recipientId: string,
+    request: ChatMessagePaginationRequestDto,
+  ): Promise<ChatMessage[] | null> {
+    const msgEntities = await this.chatMessageRepository.getPaginatedMessages({
+      limit: request.limit ?? MAX_ENTRIES_PER_PAGE,
+      offset: request.offset ?? 0,
+      user1Id: meId,
+      user2Id: recipientId,
+    });
+    return msgEntities ? msgEntities.map((e) => new ChatMessage(e)) : null;
   }
 }
