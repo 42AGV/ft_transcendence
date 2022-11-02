@@ -24,7 +24,7 @@
   justify-content: center;
 }
 
-.header-text > * {
+.header-text a > * {
   margin: 0;
   text-align: center;
 }
