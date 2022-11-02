@@ -112,6 +112,7 @@ export default function CreateChatRoomPage() {
       </Header>
       <div className="create-chat-page-avatar-properties">
         <div className="create-chat-page-avatar">
+          {/* TODO: make chatroom avatar not null*/}
           <MediumAvatar url={WILDCARD_AVATAR_URL} />
         </div>
         <div className="create-chat-page-properties">

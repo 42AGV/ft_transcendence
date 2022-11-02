@@ -10,8 +10,6 @@ type GenerateAvatarReturnType = {
 };
 
 declare module 'github-like-avatar-generator' {
-  import generateAvatar = require('github-like-avatar-generator');
-
   function generateAvatar(
     params: GenerateAvatarParams,
   ): GenerateAvatarReturnType;

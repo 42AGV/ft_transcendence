@@ -2,13 +2,16 @@ MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT := $(realpath $(dir $(MKFILE_PATH)))
 TRANSCENDENCE_DEPS := $(shell $(PROJECT_ROOT)/scripts/get-swagger-spec-dependencies.sh)
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
-ifeq ($(SEED),)
-SEED := seed
-endif
 
+# all runs in development mode
 .PHONY: all
 all: gen
 	$(DOCKER_COMPOSE) up --build -d
+	make seed-run
+
+.PHONY: prod
+prod: gen
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 
 transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
 	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-gen
@@ -58,9 +61,9 @@ get-ip:
 	@echo "db:"
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.db.1" )
 
-transcendence-app/seeds/$(SEED).ts:
-	cd transcendence-app && npx knex seed:make $(SEED)
+transcendence-app/seeds/$(SEED_FILE).ts:
+	cd transcendence-app && npx knex seed:make $(SEED_FILE)
 
 PHONY: seed
-seed:
-	make transcendence-app/seeds/$(SEED).ts
+seed-run:
+	$(DOCKER_COMPOSE) exec -it transcendence-app npx knex seed:run
