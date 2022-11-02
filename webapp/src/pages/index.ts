@@ -8,5 +8,5 @@ export { default as ComponentsBookPage } from './ComponentsBookPage/ComponentsBo
 export { default as EditAvatarPage } from './EditAvatarPage/EditAvatarPage';
 export { default as LoginPage } from './LoginPage/LoginPage';
 export { default as RegisterPage } from './RegisterPage/RegisterPage';
-export { default as ChatRoom } from './ChatRoom/ChatRoom';
-export { default as CreateChatRoomPage } from './CreateChatRoomPage/CreateChatRoomPage';
+export { default as ChatroomPage } from './ChatroomPage/ChatroomPage';
+export { default as CreateChatroomPage } from './CreateChatroomPage/CreateChatroomPage';

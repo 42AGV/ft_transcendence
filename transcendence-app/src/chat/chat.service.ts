@@ -1,70 +1,70 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
-import { ChatRoom } from './chat.domain';
-import { ChatDto } from './dto/chat.dto';
-import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
-import { IChatRepository } from './infrastructure/db/chat.repository';
+import { Chatroom } from './chatroom/chatroom.domain';
+import { ChatroomDto } from './chatroom/dto/chatroom.dto';
+import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
+import { IChatroomRepository } from './chatroom/infrastructure/db/chatroom.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
-import { IChatroomMessageRepository } from './infrastructure/db/chatroom-message.repository';
+import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
+import { ChatroomMessageWithUser } from './chatroom/chatroom-message/chatroom-message-with-user.domain';
+import { IChatroomMessageRepository } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.repository';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { Password } from '../shared/password';
 
 @Injectable()
 export class ChatService {
   constructor(
-    private chatRepository: IChatRepository,
+    private chatRepository: IChatroomRepository,
     private chatRoomMessageRepository: IChatroomMessageRepository,
   ) {}
 
-  async retrieveChatRooms({
+  async retrieveChatrooms({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: ChatsPaginationQueryDto): Promise<ChatRoom[] | null> {
-    const chatRooms = await this.chatRepository.getPaginatedChatRooms({
+  }: ChatroomPaginationQueryDto): Promise<Chatroom[] | null> {
+    const chatrooms = await this.chatRepository.getPaginatedChatrooms({
       limit,
       offset,
       sort,
       search,
     });
-    return chatRooms
-      ? chatRooms.map((chatRoom) => new ChatRoom(chatRoom))
+    return chatrooms
+      ? chatrooms.map((chatroom) => new Chatroom(chatroom))
       : null;
   }
 
-  private async addChatRoom(chatDto: ChatDto): Promise<ChatRoom | null> {
-    const chatRoom = await this.chatRepository.add({
+  private async addChatroom(chatDto: ChatroomDto): Promise<Chatroom | null> {
+    const chatroom = await this.chatRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
       ...chatDto,
     });
-    return chatRoom ? new ChatRoom(chatRoom) : null;
+    return chatroom ? new Chatroom(chatroom) : null;
   }
 
-  async createChatRoom(ownerId: string, chatRoom: CreateChatDto) {
-    const { confirmationPassword: _, ...newChat } = chatRoom;
-    if (chatRoom.password) {
-      if (chatRoom.password !== chatRoom.confirmationPassword) {
+  async createChatroom(ownerId: string, chatroom: CreateChatroomDto) {
+    const { confirmationPassword: _, ...newChat } = chatroom;
+    if (chatroom.password) {
+      if (chatroom.password !== chatroom.confirmationPassword) {
         throw new BadRequestException(
           'Password and Confirmation Password must match',
         );
       }
 
-      const hashedPassword = await Password.toHash(chatRoom.password);
-      return this.addChatRoom({
+      const hashedPassword = await Password.toHash(chatroom.password);
+      return this.addChatroom({
         ...newChat,
         avatarId: null,
         password: hashedPassword,
         ownerId: ownerId,
       });
     } else {
-      return this.addChatRoom({
+      return this.addChatroom({
         ...newChat,
         avatarId: null,
         ownerId: ownerId,
@@ -72,21 +72,21 @@ export class ChatService {
     }
   }
 
-  async getChatroomById(chatroomId: string): Promise<ChatRoom | null> {
+  async getChatroomById(chatroomId: string): Promise<Chatroom | null> {
     const chatroom = await this.chatRepository.getById(chatroomId);
-    return chatroom ? new ChatRoom(chatroom) : null;
+    return chatroom ? new Chatroom(chatroom) : null;
   }
 
   async getChatroomMessagesWithUser(
     chatroomId: string,
     { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
-  ): Promise<ChatRoomMessageWithUser[] | null> {
+  ): Promise<ChatroomMessageWithUser[] | null> {
     const messages = await this.chatRoomMessageRepository.getWithUser(
       chatroomId,
       { limit, offset },
     );
     return messages
-      ? messages.map((message) => new ChatRoomMessageWithUser(message))
+      ? messages.map((message) => new ChatroomMessageWithUser(message))
       : null;
   }
 }
