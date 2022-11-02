@@ -23,7 +23,7 @@ import { AuthController } from '../../src/auth/auth.controller';
 import { AuthService } from '../../src/auth/auth.service';
 import { LocalFileModule } from '../../src/shared/local-file/local-file.module';
 import { ChatService } from '../../src/chat/chat.service';
-import { ChatMemberService } from '../../src/chat/chatmember.service';
+import { ChatroomMemberService } from '../../src/chat/chatroom/chatroom-member/chatroom-member.service';
 import { DbModule } from '../../src/shared/db/db.module';
 
 describe('[Feature] Swagger works', () => {
@@ -53,7 +53,7 @@ describe('[Feature] Swagger works', () => {
         },
         AuthService,
         ChatService,
-        ChatMemberService,
+        ChatroomMemberService,
       ],
       controllers: [AuthController, UserController, ChatController],
     })

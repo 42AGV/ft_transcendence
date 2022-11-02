@@ -11,7 +11,7 @@ import {
   TextColor,
   Row,
 } from '../../shared/components';
-import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { AVATAR_EP_URL } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -142,11 +142,7 @@ export default function EditAvatarPage() {
         onChange={changeHandler}
       />
       <EditableAvatar
-        url={
-          authUser.avatarId
-            ? imgData.imgSrc || `${AVATAR_EP_URL}/${authUser.avatarId}`
-            : WILDCARD_AVATAR_URL
-        }
+        url={imgData.imgSrc || `${AVATAR_EP_URL}/${authUser.avatarId}`}
         XCoordinate={picturePosition.x}
         YCoordinate={picturePosition.y}
         handleDown={handleDown}

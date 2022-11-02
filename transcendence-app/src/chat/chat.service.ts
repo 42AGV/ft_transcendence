@@ -1,31 +1,30 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
-import { ChatDto } from './dto/chat.dto';
-import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
-import { IChatRepository } from './infrastructure/db/chat.repository';
+import { Chatroom } from './chatroom/infrastructure/db/chatroom.entity';
+import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
+import { IChatroomRepository } from './chatroom/infrastructure/db/chatroom.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { IChatroomMessageRepository } from './infrastructure/db/chatroom-message.repository';
+import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
+import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
+import { IChatroomMessageRepository } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.repository';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { Password } from '../shared/password';
-import { ChatRoom } from './infrastructure/db/chat.entity';
-import { ChatRoomMessageWithUser } from './infrastructure/db/chat-room-message-with-user.entity';
 
 @Injectable()
 export class ChatService {
   constructor(
-    private chatRepository: IChatRepository,
+    private chatRepository: IChatroomRepository,
     private chatRoomMessageRepository: IChatroomMessageRepository,
   ) {}
 
-  retrieveChatRooms({
+  retrieveChatrooms({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: ChatsPaginationQueryDto): Promise<ChatRoom[] | null> {
-    return this.chatRepository.getPaginatedChatRooms({
+  }: ChatroomPaginationQueryDto): Promise<Chatroom[] | null> {
+    return this.chatRepository.getPaginatedChatrooms({
       limit,
       offset,
       sort,
@@ -33,34 +32,34 @@ export class ChatService {
     });
   }
 
-  private addChatRoom(chatDto: ChatDto): Promise<ChatRoom | null> {
+  private addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null> {
     return this.chatRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
-      ...chatDto,
+      ...chatroom,
     });
   }
 
-  async createChatRoom(ownerId: string, chatRoom: CreateChatDto) {
-    const { confirmationPassword: _, ...newChat } = chatRoom;
-    if (chatRoom.password) {
-      if (chatRoom.password !== chatRoom.confirmationPassword) {
+  async createChatroom(ownerId: string, chatroom: CreateChatroomDto) {
+    const { confirmationPassword: _, ...newChat } = chatroom;
+    if (chatroom.password) {
+      if (chatroom.password !== chatroom.confirmationPassword) {
         throw new BadRequestException(
           'Password and Confirmation Password must match',
         );
       }
 
-      const hashedPassword = await Password.toHash(chatRoom.password);
-      return this.addChatRoom({
+      const hashedPassword = await Password.toHash(chatroom.password);
+      return this.addChatroom({
         ...newChat,
         avatarId: null,
         password: hashedPassword,
         ownerId: ownerId,
       });
     } else {
-      return this.addChatRoom({
+      return this.addChatroom({
         ...newChat,
         avatarId: null,
         ownerId: ownerId,
@@ -68,14 +67,14 @@ export class ChatService {
     }
   }
 
-  getChatroomById(chatroomId: string): Promise<ChatRoom | null> {
+  getChatroomById(chatroomId: string): Promise<Chatroom | null> {
     return this.chatRepository.getById(chatroomId);
   }
 
   getChatroomMessagesWithUser(
     chatroomId: string,
     { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
-  ): Promise<ChatRoomMessageWithUser[] | null> {
+  ): Promise<ChatroomMessageWithUser[] | null> {
     return this.chatRoomMessageRepository.getWithUser(chatroomId, {
       limit,
       offset,

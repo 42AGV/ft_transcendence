@@ -10,7 +10,7 @@ import {
   TextWeight,
   ToggleSwitch,
 } from '../../shared/components';
-import { WILDCARD_AVATAR_URL, AVATAR_EP_URL } from '../../shared/urls';
+import { AVATAR_EP_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
@@ -52,11 +52,7 @@ export default function UserPage() {
       </Header>
       <div className="user-wrapper">
         <LargeAvatar
-          url={
-            user.avatarId
-              ? `${AVATAR_EP_URL}/${user.avatarId}`
-              : WILDCARD_AVATAR_URL
-          }
+          url={`${AVATAR_EP_URL}/${user.avatarId}`}
           caption="level 4"
           XCoordinate={user.avatarX}
           YCoordinate={user.avatarY}

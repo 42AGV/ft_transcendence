@@ -14,11 +14,7 @@ import {
 } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import {
-  AVATAR_EP_URL,
-  EDIT_USER_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { AVATAR_EP_URL, EDIT_USER_URL } from '../../shared/urls';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 export default function AuthUserPage() {
@@ -48,11 +44,7 @@ export default function AuthUserPage() {
       </Header>
       <div className="auth-user-wrapper">
         <LargeAvatar
-          url={
-            authUser.avatarId
-              ? `${AVATAR_EP_URL}/${authUser.avatarId}`
-              : WILDCARD_AVATAR_URL
-          }
+          url={`${AVATAR_EP_URL}/${authUser.avatarId}`}
           caption="level 4"
           XCoordinate={authUser.avatarX}
           YCoordinate={authUser.avatarY}

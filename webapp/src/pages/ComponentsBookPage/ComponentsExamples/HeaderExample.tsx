@@ -1,4 +1,5 @@
 import { Header, IconVariant } from '../../../shared/components';
+import { HOST_URL } from '../../../shared/urls';
 import { BookSection } from '../BookSection';
 
 const randomAvatar = 'https://i.pravatar.cc/1000';
@@ -12,16 +13,22 @@ export const HeaderExample = () => (
       icon={IconVariant.ARROW_BACK}
       onClick={buttonAction}
       statusVariant="online"
+      titleNavigationUrl={HOST_URL}
     >
       {placeholderTitle}
     </Header>
-    <Header avatar={avProps} navigationUrl="/" statusVariant="playing">
+    <Header
+      avatar={avProps}
+      iconNavigationUrl="/"
+      statusVariant="playing"
+      titleNavigationUrl={HOST_URL}
+    >
       {placeholderTitle}
     </Header>
     <Header icon={IconVariant.ARROW_BACK} onClick={buttonAction}>
       {placeholderTitle}
     </Header>
-    <Header avatar={avProps} navigationUrl="/" statusVariant="playing">
+    <Header avatar={avProps} iconNavigationUrl="/" statusVariant="playing">
       {placeholderTitle}
     </Header>
   </BookSection>
