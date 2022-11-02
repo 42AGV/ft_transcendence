@@ -6,11 +6,7 @@ import {
   LargeAvatar,
   Loading,
 } from '../../shared/components';
-import {
-  EDIT_AVATAR_URL,
-  AVATAR_EP_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { EDIT_AVATAR_URL, AVATAR_EP_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
@@ -33,11 +29,7 @@ export default function EditUserPage() {
       </Header>
       <div className="edit-user-avatar">
         <LargeAvatar
-          url={
-            authUser.avatarId
-              ? `${AVATAR_EP_URL}/${authUser.avatarId}`
-              : WILDCARD_AVATAR_URL
-          }
+          url={`${AVATAR_EP_URL}/${authUser.avatarId}`}
           editUrl={EDIT_AVATAR_URL}
           XCoordinate={authUser.avatarX}
           YCoordinate={authUser.avatarY}

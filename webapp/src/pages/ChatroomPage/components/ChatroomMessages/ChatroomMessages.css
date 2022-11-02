@@ -1,0 +1,9 @@
+.chatroom-messages-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.chatroom-messages-list-item:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
