@@ -5,10 +5,10 @@ import { randomBytes } from 'crypto';
 import { join } from 'path';
 import { createWriteStream, mkdir, ReadStream, unlink } from 'fs';
 import { LocalFileConfig } from './local-file.config.interface';
-import { LocalFile } from './local-file.domain';
 import { ILocalFileRepository } from './infrastructure/db/local-file.repository';
 import generateAvatar = require('github-like-avatar-generator');
 import { AVATARS_PATH } from '../constants';
+import { LocalFile } from './infrastructure/db/local-file.entity';
 
 @Injectable()
 export class LocalFileService {

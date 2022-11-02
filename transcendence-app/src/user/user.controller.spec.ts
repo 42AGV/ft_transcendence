@@ -5,10 +5,10 @@ import { CreateUserRequestDto } from './dto/user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './user.domain';
-import { UserEntity } from './infrastructure/db/user.entity';
+import { User } from './infrastructure/db/user.entity';
 
 const testUserMe = new User(
-  new UserEntity({
+  new User({
     username: 'test',
     email: 'test@test.com',
     fullName: 'test',

@@ -10,22 +10,22 @@ import {
 } from '../../../../shared/utils';
 import { userKeys } from '../../../../user/infrastructure/db/user.entity';
 import {
-  ChatRoomMessageWithUserEntity,
-  ChatRoomMessageWithUserEntityData,
+  ChatRoomMessageWithUser,
+  ChatRoomMessageWithUserData,
 } from '../chat-room-message-with-user.entity';
 import {
-  ChatRoomMessageEntity,
+  ChatRoomMessage,
   ChatRoomMessageKeys,
 } from '../chat-room-message.entity';
 import { IChatroomMessageRepository } from '../chatroom-message.repository';
 
 @Injectable()
 export class ChatroomMessagePostgresRepository
-  extends BasePostgresRepository<ChatRoomMessageEntity>
+  extends BasePostgresRepository<ChatRoomMessage>
   implements IChatroomMessageRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.CHAT_ROOM_MESSAGE);
+    super(pool, table.CHAT_ROOM_MESSAGE, ChatRoomMessage);
   }
 
   private renameWithPrefix(
@@ -46,8 +46,8 @@ export class ChatroomMessagePostgresRepository
   async getWithUser(
     chatRoomId: string,
     { limit, offset }: Required<PaginationQueryDto>,
-  ): Promise<ChatRoomMessageWithUserEntity[] | null> {
-    const messagesData = await makeQuery<ChatRoomMessageWithUserEntityData>(
+  ): Promise<ChatRoomMessageWithUser[] | null> {
+    const messagesData = await makeQuery<ChatRoomMessageWithUserData>(
       this.pool,
       {
         text: `SELECT ${this.table}.*,
@@ -65,7 +65,7 @@ export class ChatroomMessagePostgresRepository
     );
     return messagesData
       ? messagesData.map(
-          (messageData) => new ChatRoomMessageWithUserEntity(messageData),
+          (messageData) => new ChatRoomMessageWithUser(messageData),
         )
       : null;
   }

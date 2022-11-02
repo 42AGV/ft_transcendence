@@ -36,7 +36,6 @@ import {
 } from '@nestjs/swagger';
 import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
-import { User } from './user.domain';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
 import {
   AVATARS_PATH,
@@ -48,6 +47,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarDto } from './dto/user.avatar.dto';
 import { UserDto } from './dto/user.dto';
+import { User } from './infrastructure/db/user.entity';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',

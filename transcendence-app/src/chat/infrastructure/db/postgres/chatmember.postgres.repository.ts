@@ -4,27 +4,23 @@ import { table } from '../../../../shared/db/models';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import { IChatMemberRepository } from '../chatmember.repository';
 import {
-  ChatMemberEntity,
+  ChatMember,
   chatMembersKeys,
-  ChatMemberWithUserEntity,
+  ChatMemberWithUser,
 } from '../chatmember.entity';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
-import { ChatMemberWithUser } from '../../../chatmember.domain';
 
 @Injectable()
 export class ChatMemberPostgresRepository
-  extends BasePostgresRepository<ChatMemberEntity>
+  extends BasePostgresRepository<ChatMember>
   implements IChatMemberRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.CHATMEMBERS);
+    super(pool, table.CHATMEMBERS, ChatMember);
   }
 
-  async getById(
-    chatId: string,
-    userId: string,
-  ): Promise<ChatMemberEntity | null> {
-    const members = await makeQuery<ChatMemberEntity>(this.pool, {
+  async getById(chatId: string, userId: string): Promise<ChatMember | null> {
+    const membersData = await makeQuery<ChatMember>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
       WHERE ${chatMembersKeys.CHATID} = $1
@@ -32,13 +28,13 @@ export class ChatMemberPostgresRepository
         AND ${chatMembersKeys.JOINED_AT} IS NOT NULL`,
       values: [chatId, userId],
     });
-    return members ? members[0] : null;
+    return membersData ? new this.ctor(membersData[0]) : null;
   }
 
   async retrieveChatRoomMembers(
     chatRoomId: string,
   ): Promise<ChatMemberWithUser[] | null> {
-    const users = await makeQuery<ChatMemberWithUserEntity>(this.pool, {
+    const usersData = await makeQuery<ChatMemberWithUser>(this.pool, {
       text: `SELECT u."username",
                     u."avatarId",
                     u."avatarX",
@@ -57,8 +53,8 @@ export class ChatMemberPostgresRepository
                AND cm."joinedAt" IS NOT NULL`,
       values: [chatRoomId],
     });
-    return users && users.length
-      ? users.map((user) => new ChatMemberWithUser(user))
+    return usersData && usersData.length
+      ? usersData.map((data) => new ChatMemberWithUser(data))
       : null;
   }
 }

@@ -1,3 +1,5 @@
+import { Exclude } from 'class-transformer';
+
 export enum userKeys {
   ID = '"id"',
   USERNAME = '"username"',
@@ -10,7 +12,7 @@ export enum userKeys {
   AVATAR_Y = '"avatarY"',
 }
 
-type UserEntityData = {
+interface UserData {
   id: string;
   username: string;
   email: string;
@@ -20,20 +22,21 @@ type UserEntityData = {
   avatarX: number;
   avatarY: number;
   createdAt: Date;
-};
+}
 
-export class UserEntity {
+export class User {
   id: string;
   username: string;
   email: string;
   fullName: string;
+  @Exclude()
   password: string | null;
   avatarId: string | null;
   avatarX: number;
   avatarY: number;
   createdAt: Date;
 
-  constructor(userData: UserEntityData) {
+  constructor(userData: UserData) {
     this.id = userData.id;
     this.username = userData.username;
     this.email = userData.email;

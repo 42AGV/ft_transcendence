@@ -7,24 +7,62 @@ export enum chatMembersKeys {
   BANNED = '"banned"',
 }
 
-export class ChatMemberEntity {
-  constructor(
-    public chatId: string,
-    public userId: string,
-    public joinedAt: Date,
-    public admin: boolean = false,
-    public muted: boolean = false,
-    public banned: boolean = false,
-  ) {}
+export interface ChatMemberData {
+  chatId: string;
+  userId: string;
+  joinedAt: Date;
+  admin: boolean;
+  muted: boolean;
+  banned: boolean;
 }
 
-export class ChatMemberWithUserEntity {
-  username!: string;
-  avatarId!: string | null;
-  avatarX: number = 0;
-  avatarY: number = 0;
-  owner!: boolean;
-  admin!: boolean;
-  muted!: boolean;
-  banned!: boolean;
+export class ChatMember {
+  chatId: string;
+  userId: string;
+  joinedAt: Date;
+  admin: boolean;
+  muted: boolean;
+  banned: boolean;
+
+  constructor(chatMemberData: ChatMemberData) {
+    this.chatId = chatMemberData.chatId;
+    this.userId = chatMemberData.userId;
+    this.joinedAt = chatMemberData.joinedAt;
+    this.admin = chatMemberData.admin;
+    this.muted = chatMemberData.muted;
+    this.banned = chatMemberData.banned;
+  }
+}
+
+export interface ChatMemberWithUserData {
+  username: string;
+  avatarId: string | null;
+  avatarX: number;
+  avatarY: number;
+  owner: boolean;
+  admin: boolean;
+  muted: boolean;
+  banned: boolean;
+}
+
+export class ChatMemberWithUser {
+  username: string;
+  avatarId: string | null;
+  avatarX: number;
+  avatarY: number;
+  owner: boolean;
+  admin: boolean;
+  muted: boolean;
+  banned: boolean;
+
+  constructor(chatMemberWithUserData: ChatMemberWithUserData) {
+    this.username = chatMemberWithUserData.username;
+    this.avatarId = chatMemberWithUserData.avatarId;
+    this.avatarX = chatMemberWithUserData.avatarX;
+    this.avatarY = chatMemberWithUserData.avatarY;
+    this.owner = chatMemberWithUserData.owner;
+    this.admin = chatMemberWithUserData.admin;
+    this.muted = chatMemberWithUserData.muted;
+    this.banned = chatMemberWithUserData.banned;
+  }
 }

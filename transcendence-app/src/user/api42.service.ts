@@ -5,7 +5,7 @@ import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { lastValueFrom } from 'rxjs';
 import { OAuth42Config } from '../auth/oauth42-config.interface';
-import { CreateUserRequestDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class Api42Service {
@@ -35,9 +35,9 @@ export class Api42Service {
   }
 
   private static async validate42ApiResponse(
-    user: CreateUserRequestDto,
-  ): Promise<CreateUserRequestDto> {
-    const validatedUser = plainToClass(CreateUserRequestDto, user);
+    user: CreateUserDto,
+  ): Promise<CreateUserDto> {
+    const validatedUser = plainToClass(CreateUserDto, user);
     const errors = await validate(validatedUser, {
       skipMissingProperties: false,
       forbidUnknownValues: true,
@@ -51,12 +51,12 @@ export class Api42Service {
   }
 
   async get42UserData(accessToken: string): Promise<{
-    userDto: CreateUserRequestDto;
+    userDto: CreateUserDto;
     avatarUrl: string;
     providerId: string;
   }> {
     const data = await this.fetch42UserData(accessToken);
-    const userDto: CreateUserRequestDto = {
+    const userDto: CreateUserDto = {
       username: data.login,
       email: data.email,
       fullName: data.usual_full_name,

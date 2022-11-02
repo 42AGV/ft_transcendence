@@ -10,3 +10,4 @@ export { default as LoginPage } from './LoginPage/LoginPage';
 export { default as RegisterPage } from './RegisterPage/RegisterPage';
 export { default as ChatRoom } from './ChatRoom/ChatRoom';
 export { default as CreateChatRoomPage } from './CreateChatRoomPage/CreateChatRoomPage';
+export { default as AuthUserPage } from './AuthUserPage/AuthUserPage';

@@ -8,31 +8,34 @@ import {
   makeQuery,
 } from '../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
-import { LocalFileEntity } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
+import {
+  LocalFile,
+  LocalFileData,
+} from '../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { PoolClient } from 'pg';
-import { ChatRoomEntity, chatKeys } from '../chat.entity';
+import { ChatRoom, chatKeys, ChatRoomData } from '../chat.entity';
 import { IChatRepository } from '../chat.repository';
 import { UpdateChatDto } from '../../../dto/update-chat.dto';
 
 @Injectable()
 export class ChatPostgresRepository
-  extends BasePostgresRepository<ChatRoomEntity>
+  extends BasePostgresRepository<ChatRoom>
   implements IChatRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.CHATS);
+    super(pool, table.CHATS, ChatRoom);
   }
-  async getById(id: string): Promise<ChatRoomEntity | null> {
+  async getById(id: string): Promise<ChatRoom | null> {
     const chats = await this.getByKey(chatKeys.ID, id);
     return chats && chats.length ? chats[0] : null;
   }
 
-  async getByChatRoomName(chatName: string): Promise<ChatRoomEntity | null> {
+  async getByChatRoomName(chatName: string): Promise<ChatRoom | null> {
     const chats = await this.getByKey(chatKeys.NAME, chatName);
     return chats && chats.length ? chats[0] : null;
   }
 
-  async deleteByChatRoomName(chatName: string): Promise<ChatRoomEntity | null> {
+  async deleteByChatRoomName(chatName: string): Promise<ChatRoom | null> {
     const chats = await this.deleteByKey(chatKeys.NAME, chatName);
     return chats && chats.length ? chats[0] : null;
   }
@@ -40,17 +43,17 @@ export class ChatPostgresRepository
   async updateById(
     id: string,
     updateChatDto: UpdateChatDto,
-  ): Promise<ChatRoomEntity | null> {
+  ): Promise<ChatRoom | null> {
     const chats = await this.updateByKey(chatKeys.ID, id, updateChatDto);
     return chats && chats.length ? chats[0] : null;
   }
 
-  getPaginatedChatRooms(
+  async getPaginatedChatRooms(
     paginationDto: Required<ChatsPaginationQueryDto>,
-  ): Promise<ChatRoomEntity[] | null> {
+  ): Promise<ChatRoom[] | null> {
     const { limit, offset, sort, search } = paginationDto;
     const orderBy = sort === BooleanString.True ? chatKeys.NAME : chatKeys.ID;
-    return makeQuery<ChatRoomEntity>(this.pool, {
+    const chatroomsData = await makeQuery<ChatRoom>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
       WHERE ${chatKeys.NAME} ILIKE $1
@@ -59,14 +62,17 @@ export class ChatPostgresRepository
       OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
+    return chatroomsData
+      ? chatroomsData.map((chatroom) => new this.ctor(chatroom))
+      : null;
   }
 
   private insertWithClient(
     client: PoolClient,
     table: table,
-    entity: ChatRoomEntity | LocalFileEntity,
+    entityData: ChatRoomData | LocalFileData,
   ) {
-    const { cols, params, values } = entityQueryMapper(entity);
+    const { cols, params, values } = entityQueryMapper(entityData);
     const text = `INSERT INTO ${table}(${cols.join(
       ', ',
     )}) VALUES (${params.join(',')}) RETURNING *;`;
@@ -76,7 +82,7 @@ export class ChatPostgresRepository
   private updateUserByIdWithClient(
     client: PoolClient,
     id: string,
-    ChatRoomEntity: Partial<ChatRoomEntity>,
+    ChatRoomEntity: Partial<ChatRoom>,
   ) {
     const { cols, values } = entityQueryMapper(ChatRoomEntity);
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
@@ -85,16 +91,16 @@ export class ChatPostgresRepository
   }
 
   async addAvatarAndAddChatRoom(
-    avatar: LocalFileEntity,
-    chatRoom: ChatRoomEntity,
-  ): Promise<ChatRoomEntity | null> {
-    return this.pool.transaction<ChatRoomEntity>(async (client) => {
+    avatar: LocalFile,
+    chatRoom: ChatRoom,
+  ): Promise<ChatRoom | null> {
+    return this.pool.transaction<ChatRoom>(async (client) => {
       const avatarRes = await this.insertWithClient(
         client,
         table.LOCAL_FILE,
         avatar,
       );
-      const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
+      const avatarId = (avatarRes.rows[0] as LocalFile).id;
       const chatRes = await this.insertWithClient(client, table.CHATS, {
         ...chatRoom,
         avatarId,
@@ -104,16 +110,16 @@ export class ChatPostgresRepository
   }
 
   async addAvatarAndUpdateChatRoom(
-    avatar: LocalFileEntity,
-    chatRoom: ChatRoomEntity,
-  ): Promise<ChatRoomEntity | null> {
-    return this.pool.transaction<ChatRoomEntity>(async (client) => {
+    avatar: LocalFile,
+    chatRoom: ChatRoom,
+  ): Promise<ChatRoom | null> {
+    return this.pool.transaction<ChatRoom>(async (client) => {
       const avatarRes = await this.insertWithClient(
         client,
         table.LOCAL_FILE,
         avatar,
       );
-      const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
+      const avatarId = (avatarRes.rows[0] as LocalFile).id;
       const chatRes = await this.updateUserByIdWithClient(client, chatRoom.id, {
         avatarId,
       });

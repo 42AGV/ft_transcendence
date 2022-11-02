@@ -1,16 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
-import { ChatRoom } from './chat.domain';
 import { ChatDto } from './dto/chat.dto';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { IChatRepository } from './infrastructure/db/chat.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
 import { IChatroomMessageRepository } from './infrastructure/db/chatroom-message.repository';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { Password } from '../shared/password';
+import { ChatRoom } from './infrastructure/db/chat.entity';
+import { ChatRoomMessageWithUser } from './infrastructure/db/chat-room-message-with-user.entity';
 
 @Injectable()
 export class ChatService {
@@ -19,32 +19,28 @@ export class ChatService {
     private chatRoomMessageRepository: IChatroomMessageRepository,
   ) {}
 
-  async retrieveChatRooms({
+  retrieveChatRooms({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
   }: ChatsPaginationQueryDto): Promise<ChatRoom[] | null> {
-    const chatRooms = await this.chatRepository.getPaginatedChatRooms({
+    return this.chatRepository.getPaginatedChatRooms({
       limit,
       offset,
       sort,
       search,
     });
-    return chatRooms
-      ? chatRooms.map((chatRoom) => new ChatRoom(chatRoom))
-      : null;
   }
 
-  private async addChatRoom(chatDto: ChatDto): Promise<ChatRoom | null> {
-    const chatRoom = await this.chatRepository.add({
+  private addChatRoom(chatDto: ChatDto): Promise<ChatRoom | null> {
+    return this.chatRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
       ...chatDto,
     });
-    return chatRoom ? new ChatRoom(chatRoom) : null;
   }
 
   async createChatRoom(ownerId: string, chatRoom: CreateChatDto) {
@@ -72,21 +68,17 @@ export class ChatService {
     }
   }
 
-  async getChatroomById(chatroomId: string): Promise<ChatRoom | null> {
-    const chatroom = await this.chatRepository.getById(chatroomId);
-    return chatroom ? new ChatRoom(chatroom) : null;
+  getChatroomById(chatroomId: string): Promise<ChatRoom | null> {
+    return this.chatRepository.getById(chatroomId);
   }
 
-  async getChatroomMessagesWithUser(
+  getChatroomMessagesWithUser(
     chatroomId: string,
     { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
   ): Promise<ChatRoomMessageWithUser[] | null> {
-    const messages = await this.chatRoomMessageRepository.getWithUser(
-      chatroomId,
-      { limit, offset },
-    );
-    return messages
-      ? messages.map((message) => new ChatRoomMessageWithUser(message))
-      : null;
+    return this.chatRoomMessageRepository.getWithUser(chatroomId, {
+      limit,
+      offset,
+    });
   }
 }

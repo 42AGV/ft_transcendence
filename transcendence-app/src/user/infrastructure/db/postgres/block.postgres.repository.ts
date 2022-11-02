@@ -3,27 +3,24 @@ import { table } from '../../../../shared/db/models';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
-import { BlockEntity, BlockKeys } from '../block.entity';
+import { Block, BlockKeys } from '../block.entity';
 import { IBlockRepository } from '../block.repository';
 
 @Injectable()
 export class BlockPostgresRepository
-  extends BasePostgresRepository<BlockEntity>
+  extends BasePostgresRepository<Block>
   implements IBlockRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.BLOCK);
+    super(pool, table.BLOCK, Block);
   }
 
-  addBlock(block: BlockEntity): Promise<BlockEntity | null> {
+  addBlock(block: Block): Promise<Block | null> {
     return this.add(block);
   }
 
-  async getBlock(
-    blockerId: string,
-    blockedId: string,
-  ): Promise<BlockEntity | null> {
-    const block = await makeQuery<BlockEntity>(this.pool, {
+  async getBlock(blockerId: string, blockedId: string): Promise<Block | null> {
+    const block = await makeQuery<Block>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
       WHERE ${BlockKeys.BLOCKER_ID} = $1 AND ${BlockKeys.BLOCKED_ID} = $2;`,
@@ -35,8 +32,8 @@ export class BlockPostgresRepository
   async deleteBlock(
     blockerId: string,
     blockedId: string,
-  ): Promise<BlockEntity | null> {
-    const block = await makeQuery<BlockEntity>(this.pool, {
+  ): Promise<Block | null> {
+    const block = await makeQuery<Block>(this.pool, {
       text: `DELETE
       FROM ${this.table}
       WHERE ${BlockKeys.BLOCKER_ID} = $1 AND ${BlockKeys.BLOCKED_ID} = $2

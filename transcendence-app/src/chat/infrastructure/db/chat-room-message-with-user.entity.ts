@@ -1,11 +1,10 @@
-import { UserEntity } from '../../../user/infrastructure/db/user.entity';
+import { User } from '../../../user/infrastructure/db/user.entity';
 import {
-  ChatRoomMessageEntity,
-  ChatRoomMessageEntityData,
+  ChatRoomMessage,
+  ChatRoomMessageData,
 } from './chat-room-message.entity';
 
-export interface ChatRoomMessageWithUserEntityData
-  extends ChatRoomMessageEntityData {
+export interface ChatRoomMessageWithUserData extends ChatRoomMessageData {
   userUsername: string;
   userEmail: string;
   userFullName: string;
@@ -15,12 +14,12 @@ export interface ChatRoomMessageWithUserEntityData
   userAvatarY: number;
   userCreatedAt: Date;
 }
-export class ChatRoomMessageWithUserEntity extends ChatRoomMessageEntity {
-  user: UserEntity;
+export class ChatRoomMessageWithUser extends ChatRoomMessage {
+  user: User;
 
-  constructor(messageData: ChatRoomMessageWithUserEntityData) {
+  constructor(messageData: ChatRoomMessageWithUserData) {
     super(messageData);
-    this.user = new UserEntity({
+    this.user = new User({
       id: messageData.userId,
       username: messageData.userUsername,
       email: messageData.userEmail,

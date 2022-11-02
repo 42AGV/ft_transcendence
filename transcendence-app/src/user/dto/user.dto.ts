@@ -1,49 +1,10 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Transform, TransformFnParams } from 'class-transformer';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  IsUUID,
-  ValidateIf,
-} from 'class-validator';
+import { User } from '../infrastructure/db/user.entity';
 
-export class CreateUserRequestDto {
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }: TransformFnParams) => value?.trim())
-  username!: string;
+export class UserDto extends User {
+  isBlocked: boolean | null;
 
-  @IsEmail()
-  email!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }: TransformFnParams) => value?.trim())
-  fullName!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ValidateIf((object, value) => value !== null)
-  password!: string | null;
-
-  @IsUUID()
-  @ValidateIf((object, value) => value !== null)
-  avatarId!: string | null;
-}
-
-export class UserDto {
-  username!: string;
-  email!: string;
-  fullName!: string;
-  avatarId!: string | null;
-  avatarX!: number;
-  avatarY!: number;
-  id!: string;
-  createdAt!: Date;
-  isBlocked?: boolean | null;
-
-  constructor(user: UserDto) {
-    Object.assign(this, user);
+  constructor(userEntity: User, isBlocked: boolean | null) {
+    super(userEntity);
+    this.isBlocked = isBlocked;
   }
 }

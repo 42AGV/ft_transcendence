@@ -7,11 +7,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
-import { User } from '../user/user.domain';
 import { UserService } from '../user/user.service';
 import { IUserRepository } from '../user/infrastructure/db/user.repository';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Password } from '../shared/password';
+import { User } from '../user/infrastructure/db/user.entity';
 
 @Injectable()
 export class AuthService {

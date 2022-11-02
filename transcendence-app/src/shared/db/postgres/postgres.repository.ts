@@ -4,33 +4,48 @@ import { IBaseRepository } from '../base.repository';
 import { makeQuery } from './utils';
 import { PostgresPool } from './postgresConnection.provider';
 
+export interface EntityConstructor<T> {
+  new (...args: any[]): T;
+}
 export class BasePostgresRepository<T> implements IBaseRepository<T> {
-  constructor(protected pool: PostgresPool, protected table: table) {}
+  constructor(
+    protected pool: PostgresPool,
+    protected table: table,
+    protected ctor: EntityConstructor<T>,
+  ) {}
 
-  getByKey(key: string, value: any): Promise<T[] | null> {
-    return makeQuery<T>(this.pool, {
+  async getByKey(key: string, value: any): Promise<T[] | null> {
+    const entitiesData = await makeQuery<T>(this.pool, {
       text: `SELECT * FROM ${this.table} WHERE ${key} = $1;`,
       values: [value],
     });
+    return entitiesData
+      ? entitiesData.map((data) => new this.ctor(data))
+      : null;
   }
 
   async add(entity: Partial<T>): Promise<T | null> {
     const { cols, params, values } = entityQueryMapper(entity);
 
-    const data = await makeQuery<T>(this.pool, {
+    const entitiesData = await makeQuery<T>(this.pool, {
       text: `INSERT INTO ${this.table} (${cols.join(
         ',',
       )}) values (${params.join(',')}) RETURNING *;`,
       values,
     });
-    return data && data.length ? data[0] : null;
+    return entitiesData && entitiesData.length
+      ? new this.ctor(entitiesData[0])
+      : null;
   }
 
-  deleteByKey(key: string, value: any): Promise<T[] | null> {
-    return makeQuery<T>(this.pool, {
+  async deleteByKey(key: string, value: any): Promise<T[] | null> {
+    const entitiesData = await makeQuery<T>(this.pool, {
       text: `DELETE FROM ${this.table} WHERE ${key} = $1 RETURNING *;`,
       values: [value],
     });
+    return entitiesData
+      ? entitiesData.map((entity) => new this.ctor(entity))
+      : null;
   }
 
   async updateByKey(
@@ -41,9 +56,12 @@ export class BasePostgresRepository<T> implements IBaseRepository<T> {
     const { cols, values } = entityQueryMapper(entity);
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
 
-    return makeQuery<T>(this.pool, {
+    const entitiesData = await makeQuery<T>(this.pool, {
       text: `UPDATE ${this.table} SET ${colsToUpdate} WHERE ${key} = $1 RETURNING *;`,
       values: [value, ...values],
     });
+    return entitiesData
+      ? entitiesData.map((entity) => new this.ctor(entity))
+      : null;
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthProviderDto } from './auth-provider.dto';
-import { AuthProvider } from './auth-provider.domain';
+import { AuthProvider } from './infrastructure/db/auth-provider.entity';
 import { IAuthProviderRepository } from './infrastructure/db/auth-provider.repository';
 
 export enum AuthProviderType {

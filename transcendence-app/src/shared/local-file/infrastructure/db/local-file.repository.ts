@@ -1,4 +1,4 @@
-import { LocalFile } from '../../local-file.domain';
+import { LocalFile } from './local-file.entity';
 
 export abstract class ILocalFileRepository {
   abstract getById(id: string): Promise<LocalFile | null>;

@@ -24,17 +24,17 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { ChatRoom } from './chat.domain';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { User } from '../user/user.domain';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatsPaginationQueryDto } from './dto/chat.pagination.dto';
 import { ChatMemberService } from './chatmember.service';
-import { ChatMember } from './chatmember.domain';
 import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
-import { ChatRoomMessageWithUser } from './chat-room-message-with-user.domain';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
+import { ChatRoom } from './infrastructure/db/chat.entity';
+import { User } from '../user/infrastructure/db/user.entity';
+import { ChatMember } from './infrastructure/db/chatmember.entity';
+import { ChatRoomMessageWithUser } from './infrastructure/db/chat-room-message-with-user.entity';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)

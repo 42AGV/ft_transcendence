@@ -1,10 +1,9 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
-import { CreateUserRequestDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
-import { User } from './user.domain';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
@@ -18,6 +17,7 @@ import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { UserAvatarDto } from './dto/user.avatar.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserDto } from './dto/user.dto';
+import { User } from './infrastructure/db/user.entity';
 
 @Injectable()
 export class UserService {
@@ -27,24 +27,22 @@ export class UserService {
     private blockRepository: IBlockRepository,
   ) {}
 
-  async retrieveUserWithId(id: string): Promise<User | null> {
-    const user = await this.userRepository.getById(id);
-    return user ? new User(user) : null;
+  retrieveUserWithId(id: string): Promise<User | null> {
+    return this.userRepository.getById(id);
   }
 
-  async retrieveUsers({
+  retrieveUsers({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
   }: UsersPaginationQueryDto): Promise<User[] | null> {
-    const users = await this.userRepository.getPaginatedUsers({
+    return this.userRepository.getPaginatedUsers({
       limit,
       offset,
       sort,
       search,
     });
-    return users ? users.map((user) => new User(user)) : null;
   }
 
   async retrieveUserWithUserName(
@@ -54,32 +52,28 @@ export class UserService {
     const user = await this.userRepository.getByUsername(username);
 
     if (user && userMe) {
-      const userDto = {
-        ...user,
-        isBlocked: await this.isUserBlockedByMe(userMe, user.id),
-      };
-      return new UserDto(userDto);
+      const isBlocked = await this.isUserBlockedByMe(userMe, user.id);
+      return new UserDto(user, isBlocked);
     }
     return null;
   }
 
-  async addUser(userDto: CreateUserRequestDto): Promise<User | null> {
-    const user = await this.userRepository.add({
+  addUser(userDto: CreateUserDto): Promise<User | null> {
+    return this.userRepository.add({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
       avatarY: 0,
       ...userDto,
     });
-    return user ? new User(user) : null;
   }
 
-  async addAvatarAndUser(
+  addAvatarAndUser(
     avatarId: string,
     avatarDto: LocalFileDto,
-    userDto: CreateUserRequestDto,
+    userDto: CreateUserDto,
   ): Promise<User | null> {
-    const user = await this.userRepository.addAvatarAndAddUser(
+    return this.userRepository.addAvatarAndAddUser(
       { id: avatarId, createdAt: new Date(Date.now()), ...avatarDto },
       {
         id: uuidv4(),
@@ -89,15 +83,13 @@ export class UserService {
         ...userDto,
       },
     );
-    return user ? new User(user) : null;
   }
 
-  async updateUser(
+  updateUser(
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
-    const user = await this.userRepository.updateById(userId, updateUserDto);
-    return user ? new User(user) : null;
+    return this.userRepository.updateById(userId, updateUserDto);
   }
 
   async getAvatar(userId: string): Promise<StreamableFile | null> {
@@ -198,15 +190,11 @@ export class UserService {
     return isValid;
   }
 
-  async retrieveUserWithAuthProvider(
+  retrieveUserWithAuthProvider(
     provider: AuthProviderType,
     providerId: string,
   ): Promise<User | null> {
-    const user = await this.userRepository.getByAuthProvider(
-      provider,
-      providerId,
-    );
-    return user ? new User(user) : null;
+    return this.userRepository.getByAuthProvider(provider, providerId);
   }
 
   addBlock(blockerId: string, blockedId: string) {
