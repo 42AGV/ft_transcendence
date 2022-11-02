@@ -2,9 +2,6 @@ MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT := $(realpath $(dir $(MKFILE_PATH)))
 TRANSCENDENCE_DEPS := $(shell $(PROJECT_ROOT)/scripts/get-swagger-spec-dependencies.sh)
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
-ifeq ($(SEED),)
-SEED := seed
-endif
 
 # all runs in development mode
 .PHONY: all
@@ -64,12 +61,18 @@ get-ip:
 	@echo "db:"
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.db.1" )
 
-transcendence-app/seeds/$(SEED).ts:
-	cd transcendence-app && npx knex seed:make $(SEED)
+transcendence-app/seeds/$(SEED_FILE).ts:
+	cd transcendence-app && npx knex seed:make $(SEED_FILE)
 
 PHONY: seed-make
-seed-make:
-	make transcendence-app/seeds/$(SEED).ts
+seed-make: check-seed-file-env
+	make transcendence-app/seeds/$(SEED_FILE).ts
+
+PHONY: check-seed-file-env
+check-seed-file-env:
+ifndef SEED_FILE
+	$(error SEED_FILE is undefined)
+endif
 
 PHONY: seed-run
 seed-run:
