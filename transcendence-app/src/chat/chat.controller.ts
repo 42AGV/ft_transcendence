@@ -103,26 +103,30 @@ export class ChatController {
     return chatRooms;
   }
 
-  @Get('room/:chatRoomId/members')
+  @Get('room/:chatroomId/members')
   @ApiOkResponse({
     description: `Lists all chat members for a given room)`,
     type: [ChatmemberAsUserResponseDto],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async retrieveChatRoomMembers(
-    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+  async retrieveChatroomMembers(
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
   ): Promise<ChatmemberAsUserResponseDto[]> {
-    const chatRoomsMembers =
-      await this.chatMemberService.retrieveChatRoomMembers(chatRoomId);
-    if (!chatRoomsMembers) {
-      throw new ServiceUnavailableException();
-    }
-    if (!chatRoomsMembers.some((x) => x.username === user.username)) {
+    const isChatMember = await this.chatMemberService.getById(
+      chatroomId,
+      user.id,
+    );
+    if (!isChatMember) {
       throw new ForbiddenException();
     }
-    return chatRoomsMembers;
+    const chatroomsMembers =
+      await this.chatMemberService.retrieveChatRoomMembers(chatroomId);
+    if (!chatroomsMembers) {
+      throw new ServiceUnavailableException();
+    }
+    return chatroomsMembers;
   }
 
   @Get('room/:id')
