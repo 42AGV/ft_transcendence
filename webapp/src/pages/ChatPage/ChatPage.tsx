@@ -11,8 +11,8 @@ import {
   CREATE_CHATROOM_URL,
 } from '../../shared/urls';
 import {
-  ChatControllerGetChatRoomsRequest,
-  ChatRoom,
+  ChatControllerGetChatroomsRequest,
+  Chatroom,
 } from '../../shared/generated';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,24 +21,24 @@ import './ChatPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 
 const ENTRIES_LIMIT = 15;
-const mapChatToRow = (chatRoom: ChatRoom): RowItem => {
+const mapChatToRow = (chatroom: Chatroom): RowItem => {
   return {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: {
-      url: `${AVATAR_EP_URL}/${chatRoom.avatarId}`,
+      url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
       status: 'offline',
     },
-    url: `${CHATROOM_URL}/${chatRoom.name}`,
-    title: chatRoom.name,
+    url: `${CHATROOM_URL}/${chatroom.name}`,
+    title: chatroom.name,
     subtitle: 'last message',
-    key: chatRoom.id,
+    key: chatroom.id,
   };
 };
 
 export default function ChatPage() {
   const getChats = useCallback(
-    (requestParameters: ChatControllerGetChatRoomsRequest) =>
-      chatApi.chatControllerGetChatRooms(requestParameters),
+    (requestParameters: ChatControllerGetChatroomsRequest) =>
+      chatApi.chatControllerGetChatrooms(requestParameters),
     [],
   );
   const navigate = useNavigate();

@@ -4,12 +4,12 @@ import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { ChatGateway } from './chat.gateway';
-import { ChatMemberService } from './chatmember.service';
+import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 
 @Global()
 @Module({
   imports: [DbModule, LocalFileModule],
-  providers: [ChatGateway, ChatService, ChatMemberService],
+  providers: [ChatGateway, ChatService, ChatroomMemberService],
   controllers: [ChatController],
   exports: [ChatService],
 })
