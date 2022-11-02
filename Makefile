@@ -64,16 +64,6 @@ get-ip:
 transcendence-app/seeds/$(SEED_FILE).ts:
 	cd transcendence-app && npx knex seed:make $(SEED_FILE)
 
-PHONY: seed-make
-seed-make: check-seed-file-env
-	make transcendence-app/seeds/$(SEED_FILE).ts
-
-PHONY: check-seed-file-env
-check-seed-file-env:
-ifndef SEED_FILE
-	$(error SEED_FILE is undefined)
-endif
-
-PHONY: seed-run
+PHONY: seed
 seed-run:
 	$(DOCKER_COMPOSE) exec -it transcendence-app npx knex seed:run

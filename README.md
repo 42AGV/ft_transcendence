@@ -198,10 +198,6 @@ To create a seed file, run the following command from the transcendence-app dire
 ```
 npx knex seed:make seed_name
 ```
-or its make counterpart, from the root directory
-```shell
-SEED_FILE=<seed_name> make seed-make
-```
 
 To run seed files, run the following command from the root directory:
 
