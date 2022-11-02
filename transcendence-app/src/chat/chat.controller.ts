@@ -31,7 +31,7 @@ import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import { ChatroomMember } from './chatroom/chatroom-member/chatroom-member.domain';
-import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
+import { ChatroomMemberAsUserResponseDto } from './chatroom/chatroom-member/dto/chatroom-member.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -40,7 +40,7 @@ import { ChatmemberAsUserResponseDto } from './dto/chatmember.dto';
 export class ChatController {
   constructor(
     private chatService: ChatService,
-    private chatMemberService: ChatroomMemberService,
+    private chatroomMemberService: ChatroomMemberService,
   ) {}
 
   @Post('room')
@@ -71,9 +71,12 @@ export class ChatController {
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async createChatroomMember(
     @GetUser() user: User,
-    @Param('chatroomId', ParseUUIDPipe) chatRoomId: string,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
   ) {
-    const ret = await this.chatMemberService.addChatMember(chatRoomId, user.id);
+    const ret = await this.chatroomMemberService.addChatroomMember(
+      chatroomId,
+      user.id,
+    );
 
     if (!ret) {
       throw new UnprocessableEntityException();
@@ -100,26 +103,26 @@ export class ChatController {
     return chatrooms;
   }
 
-  @Get('room/:chatRoomId/members')
+  @Get('room/:chatroomId/members')
   @ApiOkResponse({
     description: `Lists all chat members for a given room)`,
-    type: [ChatmemberAsUserResponseDto],
+    type: [ChatroomMemberAsUserResponseDto],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async retrieveChatRoomMembers(
-    @Param('chatRoomId', ParseUUIDPipe) chatRoomId: string,
+  async retrieveChatroomMembers(
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
-  ): Promise<ChatmemberAsUserResponseDto[]> {
-    const chatRoomsMembers =
-      await this.chatMemberService.retrieveChatRoomMembers(chatRoomId);
-    if (!chatRoomsMembers) {
+  ): Promise<ChatroomMemberAsUserResponseDto[]> {
+    const chatroomsMembers =
+      await this.chatroomMemberService.retrieveChatroomMembers(chatroomId);
+    if (!chatroomsMembers) {
       throw new ServiceUnavailableException();
     }
-    if (!chatRoomsMembers.some((x) => x.username === user.username)) {
+    if (!chatroomsMembers.some((x) => x.username === user.username)) {
       throw new ForbiddenException();
     }
-    return chatRoomsMembers;
+    return chatroomsMembers;
   }
 
   @Get('room/:id')

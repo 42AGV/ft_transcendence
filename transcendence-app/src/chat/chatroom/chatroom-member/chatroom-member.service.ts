@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ChatmemberAsUserResponseDto } from '../../dto/chatmember.dto';
+import { ChatroomMemberAsUserResponseDto } from './dto/chatroom-member.dto';
 import { IChatroomMemberRepository } from './infrastructure/db/chatroom-member.repository';
 import { ChatroomMember } from './chatroom-member.domain';
 
 @Injectable()
 export class ChatroomMemberService {
-  constructor(private chatMemberRepository: IChatroomMemberRepository) {}
+  constructor(private chatroomMemberRepository: IChatroomMemberRepository) {}
 
-  async addChatMember(
+  async addChatroomMember(
     chatId: string,
     userId: string,
   ): Promise<ChatroomMember | null> {
@@ -19,25 +19,25 @@ export class ChatroomMemberService {
       muted: false,
       banned: false,
     };
-    const ret = await this.chatMemberRepository.add(chatmember);
+    const ret = await this.chatroomMemberRepository.add(chatmember);
     return ret ? new ChatroomMember(ret) : null;
   }
 
-  async retrieveChatRoomMembers(
-    chatRoomId: string,
-  ): Promise<ChatmemberAsUserResponseDto[] | null> {
-    const ret = await this.chatMemberRepository.retrieveChatRoomMembers(
-      chatRoomId,
+  async retrieveChatroomMembers(
+    chatroomId: string,
+  ): Promise<ChatroomMemberAsUserResponseDto[] | null> {
+    const ret = await this.chatroomMemberRepository.retrieveChatroomMembers(
+      chatroomId,
     );
 
     return (
       ret?.map(
-        (chatMember) =>
-          new ChatmemberAsUserResponseDto({
-            username: chatMember.username,
-            avatarId: chatMember.avatarId,
-            avatarX: chatMember.avatarX,
-            avatarY: chatMember.avatarY,
+        (chatroomMember) =>
+          new ChatroomMemberAsUserResponseDto({
+            username: chatroomMember.username,
+            avatarId: chatroomMember.avatarId,
+            avatarX: chatroomMember.avatarX,
+            avatarY: chatroomMember.avatarY,
           }),
       ) ?? null
     );

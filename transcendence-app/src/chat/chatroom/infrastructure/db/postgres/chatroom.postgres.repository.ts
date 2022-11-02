@@ -1,21 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { BasePostgresRepository } from './../../../../shared/db/postgres/postgres.repository';
-import { table } from './../../../../shared/db/models';
-import { PostgresPool } from './../../../../shared/db/postgres/postgresConnection.provider';
-import { ChatroomPaginationQueryDto } from '../../../chatroom/dto/chatroom.pagination.dto';
+import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
+import { table } from '../../../../../shared/db/models';
+import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
+import { ChatroomPaginationQueryDto } from '../../../dto/chatroom.pagination.dto';
 import {
   entityQueryMapper,
   makeQuery,
-} from './../../../../shared/db/postgres/utils';
-import { BooleanString } from './../../../../shared/enums/boolean-string.enum';
-import { LocalFileEntity } from './../../../../shared/local-file/infrastructure/db/local-file.entity';
+} from '../../../../../shared/db/postgres/utils';
+import { BooleanString } from '../../../../../shared/enums/boolean-string.enum';
+import { LocalFileEntity } from '../../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { PoolClient } from 'pg';
-import {
-  ChatroomEntity,
-  ChatroomKeys,
-} from '../../../chatroom/infrastructure/db/chatroom.entity';
-import { IChatroomRepository } from '../../../chatroom/infrastructure/db/chatroom.repository';
-import { UpdateChatroomDto } from '../../../chatroom/dto/update-chatroom.dto';
+import { ChatroomEntity, ChatroomKeys } from '../chatroom.entity';
+import { IChatroomRepository } from '../chatroom.repository';
+import { UpdateChatroomDto } from '../../../dto/update-chatroom.dto';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -67,7 +64,7 @@ export class ChatroomPostgresRepository
 
   async addAvatarAndAddChatroom(
     avatar: LocalFileEntity,
-    chatRoom: ChatroomEntity,
+    chatroom: ChatroomEntity,
   ): Promise<ChatroomEntity | null> {
     return this.pool.transaction<ChatroomEntity>(async (client) => {
       const avatarRes = await this.insertWithClient(
@@ -77,7 +74,7 @@ export class ChatroomPostgresRepository
       );
       const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
       const chatRes = await this.insertWithClient(client, table.CHATROOM, {
-        ...chatRoom,
+        ...chatroom,
         avatarId,
       });
       return chatRes.rows[0];
@@ -86,7 +83,7 @@ export class ChatroomPostgresRepository
 
   async addAvatarAndUpdateChatroom(
     avatar: LocalFileEntity,
-    chatRoom: ChatroomEntity,
+    chatroom: ChatroomEntity,
   ): Promise<ChatroomEntity | null> {
     return this.pool.transaction<ChatroomEntity>(async (client) => {
       const avatarRes = await this.insertWithClient(
@@ -95,7 +92,7 @@ export class ChatroomPostgresRepository
         avatar,
       );
       const avatarId = (avatarRes.rows[0] as LocalFileEntity).id;
-      const chatRes = await this.updateUserByIdWithClient(client, chatRoom.id, {
+      const chatRes = await this.updateUserByIdWithClient(client, chatroom.id, {
         avatarId,
       });
       return chatRes.rows[0];
@@ -117,9 +114,9 @@ export class ChatroomPostgresRepository
   private updateUserByIdWithClient(
     client: PoolClient,
     id: string,
-    ChatRoomEntity: Partial<ChatroomEntity>,
+    ChatroomEntity: Partial<ChatroomEntity>,
   ) {
-    const { cols, values } = entityQueryMapper(ChatRoomEntity);
+    const { cols, values } = entityQueryMapper(ChatroomEntity);
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
     const text = `UPDATE ${this.table} SET ${colsToUpdate} WHERE "id"=$1 RETURNING *;`;
     return client.query(text, [id, ...values]);

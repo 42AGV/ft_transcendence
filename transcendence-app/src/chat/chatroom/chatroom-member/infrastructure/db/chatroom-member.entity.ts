@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 export enum ChatroomMemberKeys {
   CHATID = '"chatId"',
   USERID = '"userId"',
@@ -18,11 +19,11 @@ export class ChatroomMemberEntity {
   ) {}
 }
 
-export class ChatMemberWithUserEntity {
+export class ChatroomMemberWithUserEntity {
   username!: string;
   avatarId!: string | null;
-  avatarX = 0;
-  avatarY = 0;
+  avatarX: number = 0;
+  avatarY: number = 0;
   owner!: boolean;
   admin!: boolean;
   muted!: boolean;

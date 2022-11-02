@@ -5,8 +5,8 @@ import { makeQuery } from '../../../../../../shared/db/postgres/utils';
 import { PostgresPool } from '../../../../../../shared/db/postgres/postgresConnection.provider';
 import { IChatroomMemberRepository } from '../chatroom-member.repository';
 import { ChatroomMemberEntity } from '../chatroom-member.entity';
-import { ChatMemberWithUser } from '../../../chatroom-member.domain';
-import { ChatMemberWithUserEntity } from '../chatroom-member.entity';
+import { ChatroomMemberWithUser } from '../../../chatroom-member.domain';
+import { ChatroomMemberWithUserEntity } from '../chatroom-member.entity';
 
 @Injectable()
 export class ChatroomMemberPostgresRepository
@@ -17,10 +17,10 @@ export class ChatroomMemberPostgresRepository
     super(pool, table.CHATROOM_MEMBERS);
   }
 
-  async retrieveChatRoomMembers(
-    chatRoomId: string,
-  ): Promise<ChatMemberWithUser[] | null> {
-    const users = await makeQuery<ChatMemberWithUserEntity>(this.pool, {
+  async retrieveChatroomMembers(
+    chatroomId: string,
+  ): Promise<ChatroomMemberWithUser[] | null> {
+    const users = await makeQuery<ChatroomMemberWithUserEntity>(this.pool, {
       text: `SELECT u."username",
                     u."avatarId",
                     u."avatarX",
@@ -37,10 +37,10 @@ export class ChatroomMemberPostgresRepository
                                 AND u."id" = c."ownerId"
              WHERE cm."chatId" = $1
                AND cm."joinedAt" IS NOT NULL`,
-      values: [chatRoomId],
+      values: [chatroomId],
     });
     return users && users.length
-      ? users.map((user) => new ChatMemberWithUser(user))
+      ? users.map((user) => new ChatroomMemberWithUser(user))
       : null;
   }
 }

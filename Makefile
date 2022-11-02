@@ -7,7 +7,7 @@ DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 .PHONY: all
 all: gen
 	$(DOCKER_COMPOSE) up --build -d
-	make seed-run
+	make seed
 
 .PHONY: prod
 prod: gen
@@ -61,9 +61,6 @@ get-ip:
 	@echo "db:"
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.db.1" )
 
-transcendence-app/seeds/$(SEED_FILE).ts:
-	cd transcendence-app && npx knex seed:make $(SEED_FILE)
-
 PHONY: seed
-seed-run:
+seed:
 	$(DOCKER_COMPOSE) exec -it transcendence-app npx knex seed:run

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import {
   ChatroomMemberEntity,
-  ChatMemberWithUserEntity,
+  ChatroomMemberWithUserEntity,
 } from './infrastructure/db/chatroom-member.entity';
 
 export class ChatroomMember {
@@ -16,7 +16,7 @@ export class ChatroomMember {
   }
 }
 
-export class ChatMemberWithUser {
+export class ChatroomMemberWithUser {
   username!: string;
   avatarId!: string | null;
   avatarX: number = 0;
@@ -26,9 +26,9 @@ export class ChatMemberWithUser {
   muted!: boolean;
   banned!: boolean;
 
-  constructor(chatMember: ChatMemberWithUserEntity) {
+  constructor(chatroomMember: ChatroomMemberWithUserEntity) {
     Object.assign(this, {
-      ...chatMember,
+      ...chatroomMember,
     });
   }
 }

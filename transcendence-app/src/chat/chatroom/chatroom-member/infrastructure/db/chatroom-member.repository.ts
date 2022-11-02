@@ -1,9 +1,9 @@
 import { ChatroomMember } from '../../chatroom-member.domain';
-import { ChatMemberWithUser } from '../../chatroom-member.domain';
+import { ChatroomMemberWithUser } from '../../chatroom-member.domain';
 
 export abstract class IChatroomMemberRepository {
-  abstract add(chatMember: ChatroomMember): Promise<ChatroomMember | null>;
-  abstract retrieveChatRoomMembers(
-    chatRoomId: string,
-  ): Promise<ChatMemberWithUser[] | null>;
+  abstract add(chatroomMember: ChatroomMember): Promise<ChatroomMember | null>;
+  abstract retrieveChatroomMembers(
+    chatroomId: string,
+  ): Promise<ChatroomMemberWithUser[] | null>;
 }
