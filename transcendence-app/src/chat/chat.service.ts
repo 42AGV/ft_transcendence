@@ -7,14 +7,17 @@ import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.d
 import { IChatroomRepository } from './chatroom/infrastructure/db/chatroom.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
+import { ChatroomMessageWithUser } from './chatroom/chatroom-message/chatroom-message-with-user.domain';
+import { IChatroomMessageRepository } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.repository';
+import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { Password } from '../shared/password';
 
 @Injectable()
 export class ChatService {
-  readonly saltLength = 8;
-  readonly hashLength = 32;
-
-  constructor(private chatRepository: IChatroomRepository) {}
+  constructor(
+    private chatRepository: IChatroomRepository,
+    private chatRoomMessageRepository: IChatroomMessageRepository,
+  ) {}
 
   async retrieveChatrooms({
     limit = MAX_ENTRIES_PER_PAGE,
@@ -72,5 +75,18 @@ export class ChatService {
   async getChatroomById(chatroomId: string): Promise<Chatroom | null> {
     const chatroom = await this.chatRepository.getById(chatroomId);
     return chatroom ? new Chatroom(chatroom) : null;
+  }
+
+  async getChatroomMessagesWithUser(
+    chatroomId: string,
+    { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
+  ): Promise<ChatroomMessageWithUser[] | null> {
+    const messages = await this.chatRoomMessageRepository.getWithUser(
+      chatroomId,
+      { limit, offset },
+    );
+    return messages
+      ? messages.map((message) => new ChatroomMessageWithUser(message))
+      : null;
   }
 }

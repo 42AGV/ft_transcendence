@@ -4,7 +4,8 @@ import {
   ChatroomMessageEntityData,
 } from './chatroom-message.entity';
 
-interface ChatroomMessageWithUserEntityData extends ChatroomMessageEntityData {
+export interface ChatroomMessageWithUserEntityData
+  extends ChatroomMessageEntityData {
   userUsername: string;
   userEmail: string;
   userFullName: string;

@@ -23,6 +23,19 @@ export class ChatroomMemberService {
     return ret ? new ChatroomMember(ret) : null;
   }
 
+  async getById(
+    chatId: string,
+    userId: string,
+  ): Promise<ChatroomMember | null> {
+    const chatMember = await this.chatroomMemberRepository.getById(
+      chatId,
+      userId,
+    );
+    return chatMember && !chatMember.banned
+      ? new ChatroomMember(chatMember)
+      : null;
+  }
+
   async retrieveChatroomMembers(
     chatroomId: string,
   ): Promise<ChatroomMemberAsUserResponseDto[] | null> {

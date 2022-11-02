@@ -18,6 +18,7 @@ import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiServiceUnavailableResponse,
   ApiTags,
@@ -32,6 +33,8 @@ import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.d
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import { ChatroomMember } from './chatroom/chatroom-member/chatroom-member.domain';
 import { ChatroomMemberAsUserResponseDto } from './chatroom/chatroom-member/dto/chatroom-member.dto';
+import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
+import { ChatroomMessageWithUser } from './chatroom/chatroom-message/chatroom-message-with-user.domain';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -114,13 +117,17 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
   ): Promise<ChatroomMemberAsUserResponseDto[]> {
+    const isChatMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      user.id,
+    );
+    if (!isChatMember) {
+      throw new ForbiddenException();
+    }
     const chatroomsMembers =
       await this.chatroomMemberService.retrieveChatroomMembers(chatroomId);
     if (!chatroomsMembers) {
       throw new ServiceUnavailableException();
-    }
-    if (!chatroomsMembers.some((x) => x.username === user.username)) {
-      throw new ForbiddenException();
     }
     return chatroomsMembers;
   }
@@ -138,5 +145,39 @@ export class ChatController {
       throw new NotFoundException();
     }
     return chatroom;
+  }
+
+  @Get('chat/room/:chatroomId/messages')
+  @ApiOkResponse({
+    description: `Lists all messages in a chatroom (max ${MAX_ENTRIES_PER_PAGE})`,
+    type: [ChatroomMessageWithUser],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getChatroomMessages(
+    @GetUser() user: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Query() paginationQueryDto: PaginationQueryDto,
+  ): Promise<ChatroomMessageWithUser[] | null> {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    const isChatMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      user.id,
+    );
+    if (!isChatMember) {
+      throw new ForbiddenException();
+    }
+    const messages = await this.chatService.getChatroomMessagesWithUser(
+      chatroomId,
+      paginationQueryDto,
+    );
+    if (!messages) {
+      throw new ServiceUnavailableException();
+    }
+    return messages;
   }
 }

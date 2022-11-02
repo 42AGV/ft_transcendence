@@ -4,7 +4,10 @@ import { table } from '../../../../../../shared/db/models';
 import { makeQuery } from '../../../../../../shared/db/postgres/utils';
 import { PostgresPool } from '../../../../../../shared/db/postgres/postgresConnection.provider';
 import { IChatroomMemberRepository } from '../chatroom-member.repository';
-import { ChatroomMemberEntity } from '../chatroom-member.entity';
+import {
+  ChatroomMemberEntity,
+  ChatroomMemberKeys,
+} from '../chatroom-member.entity';
 import { ChatroomMemberWithUser } from '../../../chatroom-member.domain';
 import { ChatroomMemberWithUserEntity } from '../chatroom-member.entity';
 
@@ -15,6 +18,21 @@ export class ChatroomMemberPostgresRepository
 {
   constructor(protected pool: PostgresPool) {
     super(pool, table.CHATROOM_MEMBERS);
+  }
+
+  async getById(
+    chatId: string,
+    userId: string,
+  ): Promise<ChatroomMemberEntity | null> {
+    const members = await makeQuery<ChatroomMemberEntity>(this.pool, {
+      text: `SELECT *
+      FROM ${this.table}
+      WHERE ${ChatroomMemberKeys.CHATID} = $1
+        AND ${ChatroomMemberKeys.USERID} = $2
+        AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
+      values: [chatId, userId],
+    });
+    return members ? members[0] : null;
   }
 
   async retrieveChatroomMembers(
