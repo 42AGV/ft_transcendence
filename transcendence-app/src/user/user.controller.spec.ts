@@ -12,7 +12,7 @@ const testUserMe = new User(
     email: 'test@test.com',
     fullName: 'test',
     password: null,
-    avatarId: null,
+    avatarId: uuidv4(),
     avatarX: 0,
     avatarY: 0,
     id: uuidv4(),
@@ -24,7 +24,6 @@ const testUserDto: CreateUserDto = {
   email: 'afgv@github.com',
   fullName: 'user',
   password: null,
-  avatarId: uuidv4(),
 };
 const testUsername = 'paquito';
 
@@ -39,6 +38,7 @@ describe('UserController', () => {
         return Promise.resolve({
           id: uuidv4(),
           createdAt: new Date(Date.now()),
+          avatarId: uuidv4(),
           avatarX: 0,
           avatarY: 0,
           ...testUserDto,
