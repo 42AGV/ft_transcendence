@@ -12,6 +12,7 @@ import { IUserRepository } from '../user/infrastructure/db/user.repository';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Password } from '../shared/password';
 import { User } from '../user/infrastructure/db/user.entity';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -56,9 +57,8 @@ export class AuthService {
 
     const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
     const avatarId = uuidv4();
-    const userDto = {
+    const userDto: CreateUserDto = {
       ...newUser,
-      avatarId,
       password: hashedPassword,
     };
 

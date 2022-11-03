@@ -19,7 +19,7 @@ interface UserData {
   email: string;
   fullName: string;
   password: string | null;
-  avatarId: string | null;
+  avatarId: string;
   avatarX: number;
   avatarY: number;
   createdAt: Date;
@@ -32,7 +32,7 @@ export class User {
   fullName: string;
   @Exclude()
   password: string | null;
-  avatarId: string | null;
+  avatarId: string;
   avatarX: number = 0;
   avatarY: number = 0;
   createdAt: Date;

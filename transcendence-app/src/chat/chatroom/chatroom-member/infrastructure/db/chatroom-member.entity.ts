@@ -11,7 +11,7 @@ export enum ChatroomMemberKeys {
 export interface ChatroomMemberData {
   chatId: string;
   userId: string;
-  joinedAt: Date;
+  joinedAt: Date | null;
   admin: boolean;
   muted: boolean;
   banned: boolean;
@@ -20,7 +20,7 @@ export interface ChatroomMemberData {
 export class ChatroomMember {
   chatId: string;
   userId: string;
-  joinedAt: Date;
+  joinedAt: Date | null;
   admin: boolean = false;
   muted: boolean = false;
   banned: boolean = false;
@@ -37,7 +37,7 @@ export class ChatroomMember {
 
 export interface ChatroomMemberWithUserData {
   username: string;
-  avatarId: string | null;
+  avatarId: string;
   avatarX: number;
   avatarY: number;
   owner: boolean;
@@ -48,9 +48,9 @@ export interface ChatroomMemberWithUserData {
 
 export class ChatroomMemberWithUser {
   username: string;
-  avatarId: string | null;
-  avatarX: number;
-  avatarY: number;
+  avatarId: string;
+  avatarX: number = 0;
+  avatarY: number = 0;
   owner: boolean;
   admin: boolean = false;
   muted: boolean = false;

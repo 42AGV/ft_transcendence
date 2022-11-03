@@ -61,7 +61,6 @@ export class Api42Service {
       email: data.email,
       fullName: data.usual_full_name,
       password: null,
-      avatarId: null,
     };
 
     await Api42Service.validate42ApiResponse(userDto);

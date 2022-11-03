@@ -9,7 +9,7 @@ export interface ChatroomMessageWithUserData extends ChatroomMessageData {
   userEmail: string;
   userFullName: string;
   userPassword: string | null;
-  userAvatarId: string | null;
+  userAvatarId: string;
   userAvatarX: number;
   userAvatarY: number;
   userCreatedAt: Date;

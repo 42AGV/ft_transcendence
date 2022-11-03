@@ -58,16 +58,6 @@ export class UserService {
     return null;
   }
 
-  addUser(userDto: CreateUserDto): Promise<User | null> {
-    return this.userRepository.add({
-      id: uuidv4(),
-      createdAt: new Date(Date.now()),
-      avatarX: 0,
-      avatarY: 0,
-      ...userDto,
-    });
-  }
-
   addAvatarAndUser(
     avatarId: string,
     avatarDto: LocalFileDto,
@@ -78,6 +68,7 @@ export class UserService {
       {
         id: uuidv4(),
         createdAt: new Date(Date.now()),
+        avatarId,
         avatarX: 0,
         avatarY: 0,
         ...userDto,
