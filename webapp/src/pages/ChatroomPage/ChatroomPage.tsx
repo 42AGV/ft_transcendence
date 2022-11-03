@@ -12,12 +12,12 @@ function Chatroom() {
 
   useEffect(() => {
     if (chatroomId) {
-      socket.emit('joinChatroom', chatroomId);
+      socket.emit('joinChatroom', { chatroomId });
     }
 
     return () => {
       if (chatroomId) {
-        socket.emit('leaveChatroom', chatroomId);
+        socket.emit('leaveChatroom', { chatroomId });
       }
     };
   }, [chatroomId]);
