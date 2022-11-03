@@ -20,26 +20,26 @@ export class BlockPostgresRepository
   }
 
   async getBlock(blockerId: string, blockedId: string): Promise<Block | null> {
-    const block = await makeQuery<Block>(this.pool, {
+    const blockData = await makeQuery<Block>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
       WHERE ${BlockKeys.BLOCKER_ID} = $1 AND ${BlockKeys.BLOCKED_ID} = $2;`,
       values: [blockerId, blockedId],
     });
-    return block && block.length ? new this.ctor(block[0]) : null;
+    return blockData && blockData.length ? new this.ctor(blockData[0]) : null;
   }
 
   async deleteBlock(
     blockerId: string,
     blockedId: string,
   ): Promise<Block | null> {
-    const block = await makeQuery<Block>(this.pool, {
+    const blockData = await makeQuery<Block>(this.pool, {
       text: `DELETE
       FROM ${this.table}
       WHERE ${BlockKeys.BLOCKER_ID} = $1 AND ${BlockKeys.BLOCKED_ID} = $2
       RETURNING *;`,
       values: [blockerId, blockedId],
     });
-    return block && block.length ? new this.ctor(block[0]) : null;
+    return blockData && blockData.length ? new this.ctor(blockData[0]) : null;
   }
 }

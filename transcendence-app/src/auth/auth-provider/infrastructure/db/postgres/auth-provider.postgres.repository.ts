@@ -20,14 +20,14 @@ export class AuthProviderPostgresRepository
     provider: AuthProviderType,
     providerId: string,
   ): Promise<AuthProvider | null> {
-    const authProviders = await makeQuery<AuthProvider>(this.pool, {
+    const authProvidersData = await makeQuery<AuthProvider>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
       WHERE ${AuthProviderKeys.PROVIDER} =  $1 AND ${AuthProviderKeys.PROVIDER_ID} = $2;`,
       values: [provider, providerId],
     });
-    return authProviders && authProviders.length
-      ? new this.ctor(authProviders[0])
+    return authProvidersData && authProvidersData.length
+      ? new this.ctor(authProvidersData[0])
       : null;
   }
 

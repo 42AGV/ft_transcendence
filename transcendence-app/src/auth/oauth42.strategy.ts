@@ -8,13 +8,13 @@ import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Api42Service } from '../user/api42.service';
 import { AVATARS_PATH } from '../shared/constants';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { User } from '../user/infrastructure/db/user.entity';
 import { UserService } from '../user/user.service';
 import {
   AuthProviderService,
   AuthProviderType,
 } from './auth-provider/auth-provider.service';
 import { OAuth42Config } from './oauth42-config.interface';
-import { User } from '../user/infrastructure/db/user.entity';
 
 @Injectable()
 export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
