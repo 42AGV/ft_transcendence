@@ -4,7 +4,7 @@ import { ChatroomMessageEntity } from './chatroom-message.entity';
 
 export abstract class IChatroomMessageRepository {
   abstract add(
-    chatRoomMessage: ChatroomMessageEntity,
+    chatRoomMessage: Partial<ChatroomMessageEntity>,
   ): Promise<ChatroomMessageEntity | null>;
   abstract getWithUser(
     chatRoomId: string,

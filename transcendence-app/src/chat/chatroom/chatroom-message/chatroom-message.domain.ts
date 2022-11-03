@@ -10,7 +10,7 @@ export class ChatroomMessage {
   constructor(entity: ChatroomMessageEntity) {
     this.id = entity.id;
     this.userId = entity.userId;
-    this.chatId = entity.chatId;
+    this.chatId = entity.chatroomId;
     this.content = entity.content;
     this.createdAt = entity.createdAt;
   }

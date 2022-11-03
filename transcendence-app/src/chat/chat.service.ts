@@ -11,6 +11,7 @@ import { ChatroomMessageWithUser } from './chatroom/chatroom-message/chatroom-me
 import { IChatroomMessageRepository } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.repository';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { Password } from '../shared/password';
+import { ChatroomMessageEntity } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.entity';
 
 @Injectable()
 export class ChatService {
@@ -88,5 +89,9 @@ export class ChatService {
     return messages
       ? messages.map((message) => new ChatroomMessageWithUser(message))
       : null;
+  }
+
+  addChatroomMessage(chatroomMessage: Partial<ChatroomMessageEntity>) {
+    return this.chatRoomMessageRepository.add(chatroomMessage);
   }
 }
