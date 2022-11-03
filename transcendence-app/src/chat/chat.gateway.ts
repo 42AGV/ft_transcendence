@@ -39,9 +39,12 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
   ) {
     const { chatroomId, content } = createChatroomMessageDto;
-    const isChatroomMember = await this.isChatroomMember(client, chatroomId);
     const user = client.request.user;
-    if (!isChatroomMember || !user) {
+    const isChatroomMember = await this.chatroomMemberService.isChatroomMember(
+      user,
+      chatroomId,
+    );
+    if (!user || !isChatroomMember) {
       throw new WsException('Forbidden');
     }
     const message = await this.chatService.addChatroomMessage({
@@ -61,7 +64,10 @@ export class ChatGateway {
     @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const isChatroomMember = await this.isChatroomMember(client, chatroomId);
+    const isChatroomMember = await this.chatroomMemberService.isChatroomMember(
+      client.request.user,
+      chatroomId,
+    );
     if (!isChatroomMember) {
       throw new WsException('Forbidden');
     }
@@ -73,25 +79,13 @@ export class ChatGateway {
     @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const isChatroomMember = await this.isChatroomMember(client, chatroomId);
+    const isChatroomMember = await this.chatroomMemberService.isChatroomMember(
+      client.request.user,
+      chatroomId,
+    );
     if (!isChatroomMember) {
       throw new WsException('Forbidden');
     }
     client.leave(chatroomId);
-  }
-
-  private async isChatroomMember(
-    client: Socket,
-    chatroomId: string,
-  ): Promise<boolean> {
-    const user = client.request.user;
-    if (!user) {
-      return false;
-    }
-    const isChatroomMember = await this.chatroomMemberService.getById(
-      chatroomId,
-      user.id,
-    );
-    return isChatroomMember !== null;
   }
 }

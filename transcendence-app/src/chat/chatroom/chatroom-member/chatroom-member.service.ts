@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ChatroomMemberAsUserResponseDto } from './dto/chatroom-member.dto';
 import { IChatroomMemberRepository } from './infrastructure/db/chatroom-member.repository';
 import { ChatroomMember } from './chatroom-member.domain';
+import { User } from '../../../user/user.domain';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -54,5 +55,19 @@ export class ChatroomMemberService {
           }),
       ) ?? null
     );
+  }
+
+  async isChatroomMember(
+    user: User | null,
+    chatroomId: string,
+  ): Promise<boolean> {
+    if (!user) {
+      return false;
+    }
+    const isChatroomMember = await this.chatroomMemberRepository.getById(
+      chatroomId,
+      user.id,
+    );
+    return isChatroomMember !== null;
   }
 }
