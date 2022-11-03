@@ -26,7 +26,7 @@ export class BlockPostgresRepository
       WHERE ${BlockKeys.BLOCKER_ID} = $1 AND ${BlockKeys.BLOCKED_ID} = $2;`,
       values: [blockerId, blockedId],
     });
-    return block && block.length ? block[0] : null;
+    return block && block.length ? new this.ctor(block[0]) : null;
   }
 
   async deleteBlock(
@@ -40,6 +40,6 @@ export class BlockPostgresRepository
       RETURNING *;`,
       values: [blockerId, blockedId],
     });
-    return block && block.length ? block[0] : null;
+    return block && block.length ? new this.ctor(block[0]) : null;
   }
 }
