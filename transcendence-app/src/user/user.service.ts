@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
+import { User } from './infrastructure/db/user.entity';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
@@ -17,7 +18,6 @@ import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { UserAvatarDto } from './dto/user.avatar.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserDto } from './dto/user.dto';
-import { User } from './infrastructure/db/user.entity';
 
 @Injectable()
 export class UserService {

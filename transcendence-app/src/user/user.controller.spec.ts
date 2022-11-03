@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AvatarFileInterceptor, UserController } from './user.controller';
 import { UserService } from './user.service';
-import { CreateUserRequestDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from './user.domain';
 import { User } from './infrastructure/db/user.entity';
 
 const testUserMe = new User(
@@ -20,7 +19,7 @@ const testUserMe = new User(
     createdAt: new Date(Date.now()),
   }),
 );
-const testUserDto: CreateUserRequestDto = {
+const testUserDto: CreateUserDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
@@ -44,6 +43,7 @@ describe('UserController', () => {
           avatarY: 0,
           ...testUserDto,
           username,
+          isBlocked: false,
         });
       },
     };

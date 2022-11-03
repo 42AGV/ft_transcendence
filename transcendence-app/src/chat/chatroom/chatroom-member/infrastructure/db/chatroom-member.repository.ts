@@ -1,14 +1,14 @@
-import { ChatroomMemberWithUser } from '../../chatroom-member.domain';
-import { ChatroomMemberEntity } from './chatroom-member.entity';
+import {
+  ChatroomMember,
+  ChatroomMemberWithUser,
+} from './chatroom-member.entity';
 
 export abstract class IChatroomMemberRepository {
-  abstract add(
-    chatroomMember: ChatroomMemberEntity,
-  ): Promise<ChatroomMemberEntity | null>;
+  abstract add(chatroomMember: ChatroomMember): Promise<ChatroomMember | null>;
   abstract getById(
     chatId: string,
     userId: string,
-  ): Promise<ChatroomMemberEntity | null>;
+  ): Promise<ChatroomMember | null>;
   abstract retrieveChatroomMembers(
     chatroomId: string,
   ): Promise<ChatroomMemberWithUser[] | null>;
