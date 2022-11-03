@@ -4,10 +4,10 @@ import { ChatroomMessage } from './chatroom-message.entity';
 
 export abstract class IChatroomMessageRepository {
   abstract add(
-    chatRoomMessage: ChatroomMessage,
+    chatroomMessage: ChatroomMessage,
   ): Promise<ChatroomMessage | null>;
   abstract getWithUser(
-    chatRoomId: string,
+    chatroomId: string,
     paginationQueryDto: Required<PaginationQueryDto>,
   ): Promise<ChatroomMessageWithUser[] | null>;
 }
