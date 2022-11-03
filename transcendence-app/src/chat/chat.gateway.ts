@@ -92,9 +92,6 @@ export class ChatGateway {
       chatroomId,
       user.id,
     );
-    if (!isChatroomMember) {
-      return false;
-    }
-    return true;
+    return isChatroomMember !== null;
   }
 }
