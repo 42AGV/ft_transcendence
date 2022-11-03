@@ -8,7 +8,7 @@ export enum ChatroomMessageKeys {
 
 export interface ChatroomMessageData {
   id: string;
-  chatId: string;
+  chatroomId: string;
   userId: string;
   content: string;
   createdAt: Date;
@@ -16,7 +16,7 @@ export interface ChatroomMessageData {
 
 export class ChatroomMessage {
   id!: string;
-  chatId!: string;
+  chatroomId!: string;
   userId!: string;
   content!: string;
   createdAt!: Date;
@@ -24,7 +24,7 @@ export class ChatroomMessage {
   constructor(data: ChatroomMessageData) {
     this.id = data.id;
     this.userId = data.userId;
-    this.chatId = data.chatId;
+    this.chatroomId = data.chatroomId;
     this.content = data.content;
     this.createdAt = data.createdAt;
   }

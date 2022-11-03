@@ -15,9 +15,9 @@ import {
 import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
-import { UserAvatarDto } from './dto/user.avatar.dto';
+import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
-import { UserDto } from './dto/user.dto';
+import { UserResponseDto } from './dto/user.response.dto';
 
 @Injectable()
 export class UserService {
@@ -48,12 +48,12 @@ export class UserService {
   async retrieveUserWithUserName(
     username: string,
     userMe?: User,
-  ): Promise<UserDto | null> {
+  ): Promise<UserResponseDto | null> {
     const user = await this.userRepository.getByUsername(username);
 
     if (user && userMe) {
       const isBlocked = await this.isUserBlockedByMe(userMe, user.id);
-      return new UserDto(user, isBlocked);
+      return new UserResponseDto(user, isBlocked);
     }
     return null;
   }
@@ -117,7 +117,7 @@ export class UserService {
   private async addAvatarAndUpdateUser(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<UserAvatarDto | null> {
+  ): Promise<UserAvatarResponseDto | null> {
     const avatarUUID = uuidv4();
     const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
       { id: avatarUUID, createdAt: new Date(Date.now()), ...newAvatarFileDto },
@@ -143,7 +143,7 @@ export class UserService {
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<UserAvatarDto | null> {
+  ): Promise<UserAvatarResponseDto | null> {
     const previousAvatarId = user.avatarId;
     const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
     if (!avatar) {

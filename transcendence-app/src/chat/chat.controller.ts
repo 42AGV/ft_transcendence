@@ -31,8 +31,10 @@ import { User } from '../user/infrastructure/db/user.entity';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
-import { ChatroomMember } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
-import { ChatroomMemberAsUserResponseDto } from './chatroom/chatroom-member/dto/chatroom-member.dto';
+import {
+  ChatroomMember,
+  ChatroomMemberWithUser,
+} from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
 
@@ -109,14 +111,14 @@ export class ChatController {
   @Get('room/:chatroomId/members')
   @ApiOkResponse({
     description: `Lists all chat members for a given room)`,
-    type: [ChatroomMemberAsUserResponseDto],
+    type: [ChatroomMemberWithUser],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async retrieveChatroomMembers(
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
-  ): Promise<ChatroomMemberAsUserResponseDto[]> {
+  ): Promise<ChatroomMemberWithUser[]> {
     const isChatMember = await this.chatroomMemberService.getById(
       chatroomId,
       user.id,
