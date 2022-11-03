@@ -1,5 +1,7 @@
 import {
   ClassSerializerInterceptor,
+  ParseUUIDPipe,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -9,77 +11,90 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
+import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
-import { User } from '../user/user.domain';
-
-type ChatroomMessage = {
-  id: string;
-  user: User;
-  content: string;
-  createdAt: number;
-  chatroomId: string;
-};
-
-type ChatroomId = string;
+import { ChatService } from './chat.service';
+import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { CreateChatroomMessageDto } from './chatroom/chatroom-message/dto/create-chatroom-message.dto';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
+@UseFilters(BadRequestTransformationFilter)
 export class ChatGateway {
   @WebSocketServer() server!: Server;
-  chatrooms = new Map<ChatroomId, Set<ChatroomMessage>>();
+
+  constructor(
+    private chatService: ChatService,
+    private chatroomMemberService: ChatroomMemberService,
+  ) {}
 
   @SubscribeMessage('chatroomMessage')
-  handleMessage(
-    @MessageBody() data: { chatroomId: ChatroomId; content: string },
+  async handleMessage(
+    @MessageBody()
+    createChatroomMessageDto: CreateChatroomMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
+    const { chatroomId, content } = createChatroomMessageDto;
+    const isChatroomMember = await this.isChatroomMember(client, chatroomId);
     const user = client.request.user;
-    const { chatroomId, content } = data;
-    const chatroom = this.chatrooms.get(chatroomId);
-    if (user && chatroom) {
-      const message: ChatroomMessage = {
-        id: uuidv4(),
-        user: user,
-        content: content,
-        createdAt: Date.now(),
-        chatroomId: chatroomId,
-      };
-      chatroom.add(message);
-      this.server.to(chatroomId).emit('chatroomMessage', message);
+    if (!isChatroomMember || !user) {
+      throw new WsException('Forbidden');
     }
-  }
-
-  @SubscribeMessage('getChatroomMessages')
-  handleGetMessages(
-    @MessageBody() chatroomId: ChatroomId,
-    @ConnectedSocket() client: Socket,
-  ) {
-    const messages = this.chatrooms.get(chatroomId);
-    if (messages) {
-      client.emit('chatroomMessages', [...messages]);
+    const message = await this.chatService.addChatroomMessage({
+      chatroomId,
+      userId: user.id,
+      content,
+    });
+    if (message) {
+      this.server.to(chatroomId).emit('chatroomMessage', { ...message, user });
+    } else {
+      throw new WsException('Service Unavailable');
     }
   }
 
   @SubscribeMessage('joinChatroom')
-  handleJoinRoom(
-    @MessageBody() chatroomId: ChatroomId,
+  async handleJoinRoom(
+    @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    client.join(chatroomId);
-    if (!this.chatrooms.has(chatroomId)) {
-      this.chatrooms.set(chatroomId, new Set<ChatroomMessage>());
+    const isChatroomMember = await this.isChatroomMember(client, chatroomId);
+    if (!isChatroomMember) {
+      throw new WsException('Forbidden');
     }
+    client.join(chatroomId);
   }
 
   @SubscribeMessage('leaveChatroom')
-  handleLeaveRoom(
-    @MessageBody() chatroomId: ChatroomId,
+  async handleLeaveRoom(
+    @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
+    const isChatroomMember = await this.isChatroomMember(client, chatroomId);
+    if (!isChatroomMember) {
+      throw new WsException('Forbidden');
+    }
     client.leave(chatroomId);
+  }
+
+  private async isChatroomMember(
+    client: Socket,
+    chatroomId: string,
+  ): Promise<boolean> {
+    const user = client.request.user;
+    if (!user) {
+      return false;
+    }
+    const isChatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      user.id,
+    );
+    if (!isChatroomMember) {
+      return false;
+    }
+    return true;
   }
 }
