@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Exclude, Expose } from 'class-transformer';
 
 export enum ChatroomKeys {
@@ -28,8 +29,8 @@ export class Chatroom {
   @Exclude()
   password: string | null;
   avatarId: string | null;
-  avatarX: number;
-  avatarY: number;
+  avatarX: number = 0;
+  avatarY: number = 0;
   createdAt: Date;
   ownerId: string;
   @Expose()

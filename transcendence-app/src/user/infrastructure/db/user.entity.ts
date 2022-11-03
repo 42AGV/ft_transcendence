@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Exclude } from 'class-transformer';
 
 export enum userKeys {
@@ -32,8 +33,8 @@ export class User {
   @Exclude()
   password: string | null;
   avatarId: string | null;
-  avatarX: number;
-  avatarY: number;
+  avatarX: number = 0;
+  avatarY: number = 0;
   createdAt: Date;
 
   constructor(userData: UserData) {

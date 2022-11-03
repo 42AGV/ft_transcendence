@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 export enum ChatroomMemberKeys {
   CHATID = '"chatId"',
   USERID = '"userId"',
@@ -20,9 +21,9 @@ export class ChatroomMember {
   chatId: string;
   userId: string;
   joinedAt: Date;
-  admin: boolean;
-  muted: boolean;
-  banned: boolean;
+  admin: boolean = false;
+  muted: boolean = false;
+  banned: boolean = false;
 
   constructor(chatroomMemberData: ChatroomMemberData) {
     this.chatId = chatroomMemberData.chatId;
@@ -51,9 +52,9 @@ export class ChatroomMemberWithUser {
   avatarX: number;
   avatarY: number;
   owner: boolean;
-  admin: boolean;
-  muted: boolean;
-  banned: boolean;
+  admin: boolean = false;
+  muted: boolean = false;
+  banned: boolean = false;
 
   constructor(chatroomMemberWithUserData: ChatroomMemberWithUserData) {
     this.username = chatroomMemberWithUserData.username;
