@@ -136,11 +136,11 @@ export class ChatController {
 
   @Get('room/:id')
   @ApiCreatedResponse({
-    description: 'get a chatroom',
+    description: 'Get a chatroom',
     type: Chatroom,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   async getChatroomById(@Param('id', ParseUUIDPipe) chatroomId: string) {
     const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {

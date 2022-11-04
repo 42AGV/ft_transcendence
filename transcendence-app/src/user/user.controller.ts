@@ -77,6 +77,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Patch()
+  @ApiOkResponse({ description: 'Update the authenticated user', type: User })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateCurrentUser(
