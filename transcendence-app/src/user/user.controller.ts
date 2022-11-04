@@ -36,7 +36,7 @@ import {
 } from '@nestjs/swagger';
 import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
-import { User } from './user.domain';
+import { User } from './infrastructure/db/user.entity';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
 import {
   AVATARS_PATH,
@@ -46,8 +46,8 @@ import {
 } from '../shared/constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
-import { UserAvatarDto } from './dto/user.avatar.dto';
-import { UserDto } from './dto/user.dto';
+import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
+import { UserResponseDto } from './dto/user.response.dto';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -77,6 +77,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Patch()
+  @ApiOkResponse({ description: 'Update the authenticated user', type: User })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateCurrentUser(
@@ -138,13 +139,13 @@ export class UserController {
   }
 
   @Get(':userName')
-  @ApiOkResponse({ description: 'Get a user', type: UserDto })
+  @ApiOkResponse({ description: 'Get a user', type: UserResponseDto })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   async getUserByUserName(
     @GetUser() userMe: User,
     @Param('userName') userName: string,
-  ): Promise<UserDto> {
+  ): Promise<UserResponseDto> {
     const user = await this.userService.retrieveUserWithUserName(
       userName,
       userMe,
@@ -159,7 +160,10 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @ApiFile('file')
   @ApiProduces('image/jpeg')
-  @ApiOkResponse({ description: 'Update a user avatar', type: UserAvatarDto })
+  @ApiOkResponse({
+    description: 'Update a user avatar',
+    type: UserAvatarResponseDto,
+  })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   @ApiPayloadTooLargeResponse({ description: 'Payload Too Large' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
@@ -168,7 +172,7 @@ export class UserController {
     @GetUser() user: User,
     @UploadedFile()
     file: Express.Multer.File,
-  ): Promise<UserAvatarDto> {
+  ): Promise<UserAvatarResponseDto> {
     if (!file) {
       throw new UnprocessableEntityException();
     }

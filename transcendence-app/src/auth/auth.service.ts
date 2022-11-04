@@ -7,11 +7,12 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
-import { User } from '../user/user.domain';
+import { User } from '../user/infrastructure/db/user.entity';
 import { UserService } from '../user/user.service';
 import { IUserRepository } from '../user/infrastructure/db/user.repository';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Password } from '../shared/password';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -56,9 +57,8 @@ export class AuthService {
 
     const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
     const avatarId = uuidv4();
-    const userDto = {
+    const userDto: CreateUserDto = {
       ...newUser,
-      avatarId,
       password: hashedPassword,
     };
 

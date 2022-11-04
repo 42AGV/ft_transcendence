@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+import { Exclude, Expose } from 'class-transformer';
+
 export enum ChatroomKeys {
   ID = '"id"',
   NAME = '"name"',
@@ -9,15 +12,40 @@ export enum ChatroomKeys {
   OWNERID = '"ownerId',
 }
 
-export class ChatroomEntity {
-  constructor(
-    public id: string,
-    public name: string,
-    public password: string | null,
-    public avatarId: string | null,
-    public avatarX: number = 0,
-    public avatarY: number = 0,
-    public createdAt: Date,
-    public ownerId: string,
-  ) {}
+export interface ChatroomData {
+  id: string;
+  name: string;
+  password: string | null;
+  avatarId: string | null;
+  avatarX: number;
+  avatarY: number;
+  createdAt: Date;
+  ownerId: string;
+}
+
+export class Chatroom {
+  id: string;
+  name: string;
+  @Exclude()
+  password: string | null;
+  avatarId: string | null;
+  avatarX: number = 0;
+  avatarY: number = 0;
+  createdAt: Date;
+  ownerId: string;
+  @Expose()
+  get public(): boolean {
+    return this.password === null;
+  }
+
+  constructor(chatroomData: ChatroomData) {
+    this.id = chatroomData.id;
+    this.name = chatroomData.name;
+    this.password = chatroomData.password;
+    this.avatarId = chatroomData.avatarId;
+    this.avatarX = chatroomData.avatarX;
+    this.avatarY = chatroomData.avatarY;
+    this.createdAt = chatroomData.createdAt;
+    this.ownerId = chatroomData.ownerId;
+  }
 }

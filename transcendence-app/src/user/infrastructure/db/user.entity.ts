@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+import { Exclude } from 'class-transformer';
+
 export enum userKeys {
   ID = '"id"',
   USERNAME = '"username"',
@@ -10,30 +13,31 @@ export enum userKeys {
   AVATAR_Y = '"avatarY"',
 }
 
-type UserEntityData = {
+interface UserData {
   id: string;
   username: string;
   email: string;
   fullName: string;
   password: string | null;
-  avatarId: string | null;
+  avatarId: string;
   avatarX: number;
   avatarY: number;
   createdAt: Date;
-};
+}
 
-export class UserEntity {
+export class User {
   id: string;
   username: string;
   email: string;
   fullName: string;
+  @Exclude()
   password: string | null;
-  avatarId: string | null;
-  avatarX: number;
-  avatarY: number;
+  avatarId: string;
+  avatarX: number = 0;
+  avatarY: number = 0;
   createdAt: Date;
 
-  constructor(userData: UserEntityData) {
+  constructor(userData: UserData) {
     this.id = userData.id;
     this.username = userData.username;
     this.email = userData.email;

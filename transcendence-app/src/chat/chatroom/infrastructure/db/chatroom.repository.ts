@@ -1,7 +1,7 @@
 import { UpdateChatroomDto } from '../../dto/update-chatroom.dto';
 import { ChatroomPaginationQueryDto } from '../../dto/chatroom.pagination.dto';
-import { LocalFile } from '../../../../shared/local-file/local-file.domain';
-import { Chatroom } from '../../chatroom.domain';
+import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
+import { Chatroom } from '../../infrastructure/db/chatroom.entity';
 
 export abstract class IChatroomRepository {
   abstract getById(id: string): Promise<Chatroom | null>;
@@ -11,7 +11,7 @@ export abstract class IChatroomRepository {
     name: string,
     updateChatDto: UpdateChatroomDto,
   ): Promise<Chatroom | null>;
-  abstract add(chatroom: Chatroom): Promise<Chatroom | null>;
+  abstract add(chatroom: Partial<Chatroom>): Promise<Chatroom | null>;
   abstract getPaginatedChatrooms(
     queryDto: Required<ChatroomPaginationQueryDto>,
   ): Promise<Chatroom[] | null>;
