@@ -1,8 +1,8 @@
 import { AuthProviderType } from '../../../auth/auth-provider/auth-provider.service';
-import { LocalFile } from '../../../shared/local-file/local-file.domain';
+import { LocalFile } from '../../../shared/local-file/infrastructure/db/local-file.entity';
 import { UpdateUserDto } from '../../dto/update-user.dto';
 import { UsersPaginationQueryDto } from '../../dto/user.pagination.dto';
-import { User } from '../../user.domain';
+import { User } from './user.entity';
 
 export abstract class IUserRepository {
   abstract getById(id: string): Promise<User | null>;

@@ -56,9 +56,9 @@ CREATE TABLE
     "chatId" UUID REFERENCES Chatroom (id) ON DELETE CASCADE,
     "userId" UUID REFERENCES Users (id) ON DELETE CASCADE,
     "joinedAt" TIMESTAMPTZ DEFAULT NOW (),
-    "admin" BOOLEAN DEFAULT false,
-    "muted" BOOLEAN DEFAULT false,
-    "banned" BOOLEAN DEFAULT false,
+    "admin" BOOLEAN NOT NULL DEFAULT false,
+    "muted" BOOLEAN NOT NULL DEFAULT false,
+    "banned" BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY ("chatId", "userId")
   );
 

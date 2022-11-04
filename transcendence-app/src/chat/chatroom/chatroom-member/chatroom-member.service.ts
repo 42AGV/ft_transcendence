@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ChatroomMemberAsUserResponseDto } from './dto/chatroom-member.dto';
 import { IChatroomMemberRepository } from './infrastructure/db/chatroom-member.repository';
-import { ChatroomMember } from './chatroom-member.domain';
+import {
+  ChatroomMember,
+  ChatroomMemberWithUser,
+} from './infrastructure/db/chatroom-member.entity';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -36,23 +38,9 @@ export class ChatroomMemberService {
       : null;
   }
 
-  async retrieveChatroomMembers(
+  retrieveChatroomMembers(
     chatroomId: string,
-  ): Promise<ChatroomMemberAsUserResponseDto[] | null> {
-    const ret = await this.chatroomMemberRepository.retrieveChatroomMembers(
-      chatroomId,
-    );
-
-    return (
-      ret?.map(
-        (chatroomMember) =>
-          new ChatroomMemberAsUserResponseDto({
-            username: chatroomMember.username,
-            avatarId: chatroomMember.avatarId,
-            avatarX: chatroomMember.avatarX,
-            avatarY: chatroomMember.avatarY,
-          }),
-      ) ?? null
-    );
+  ): Promise<ChatroomMemberWithUser[] | null> {
+    return this.chatroomMemberRepository.retrieveChatroomMembers(chatroomId);
   }
 }

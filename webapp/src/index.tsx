@@ -15,6 +15,7 @@ import {
   RegisterPage,
   ChatroomPage,
   CreateChatroomPage,
+  AuthUserPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -91,7 +92,7 @@ root.render(
             path={USER_ME_URL}
             element={
               <RequireAuth>
-                <UserPage displayAsAuthUser />
+                <AuthUserPage />
               </RequireAuth>
             }
           />

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ResponseError, UserDto } from '../generated';
+import { ResponseError, UserResponseDto } from '../generated';
 import { usersApi } from '../services/ApiService';
 
-export function useBlock(user: UserDto | null) {
+export function useBlock(user: UserResponseDto | null) {
   const [isBlocked, setIsBlocked] = useState<boolean | null>(null);
 
   useEffect(() => {

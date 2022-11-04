@@ -1,13 +1,13 @@
 import { PaginationQueryDto } from '../../../../../shared/dtos/pagination-query.dto';
-import { ChatroomMessageWithUserEntity } from './chatroom-message-with-user.entity';
-import { ChatroomMessageEntity } from './chatroom-message.entity';
+import { ChatroomMessageWithUser } from './chatroom-message-with-user.entity';
+import { ChatroomMessage } from './chatroom-message.entity';
 
 export abstract class IChatroomMessageRepository {
   abstract add(
-    chatRoomMessage: ChatroomMessageEntity,
-  ): Promise<ChatroomMessageEntity | null>;
+    chatroomMessage: ChatroomMessage,
+  ): Promise<ChatroomMessage | null>;
   abstract getWithUser(
-    chatRoomId: string,
+    chatroomId: string,
     paginationQueryDto: Required<PaginationQueryDto>,
-  ): Promise<ChatroomMessageWithUserEntity[] | null>;
+  ): Promise<ChatroomMessageWithUser[] | null>;
 }

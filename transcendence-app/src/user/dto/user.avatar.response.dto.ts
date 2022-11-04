@@ -1,7 +1,7 @@
 import { StreamableFile } from '@nestjs/common';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
-export class UserAvatarDto {
+export class UserAvatarResponseDto {
   @IsUUID()
   avatarId!: string;
 

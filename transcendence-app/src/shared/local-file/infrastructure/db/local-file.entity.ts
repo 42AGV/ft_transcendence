@@ -7,13 +7,29 @@ export enum LocalFileKeys {
   CREATED_AT = '"createdAt"',
 }
 
-export class LocalFileEntity {
-  constructor(
-    public id: string,
-    public filename: string,
-    public path: string,
-    public mimetype: string,
-    public size: number,
-    public createdAt: Date,
-  ) {}
+export interface LocalFileData {
+  id: string;
+  filename: string;
+  path: string;
+  mimetype: string;
+  size: number;
+  createdAt: Date;
+}
+
+export class LocalFile {
+  id: string;
+  filename: string;
+  path: string;
+  mimetype: string;
+  size: number;
+  createdAt: Date;
+
+  constructor(localFileData: LocalFileData) {
+    this.id = localFileData.id;
+    this.filename = localFileData.filename;
+    this.path = localFileData.path;
+    this.mimetype = localFileData.mimetype;
+    this.size = localFileData.size;
+    this.createdAt = localFileData.createdAt;
+  }
 }
