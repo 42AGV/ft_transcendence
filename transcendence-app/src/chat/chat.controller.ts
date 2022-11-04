@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   ServiceUnavailableException,
@@ -35,6 +36,7 @@ import { ChatroomMember } from './chatroom/chatroom-member/chatroom-member.domai
 import { ChatroomMemberAsUserResponseDto } from './chatroom/chatroom-member/dto/chatroom-member.dto';
 import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/chatroom-message-with-user.domain';
+import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -179,5 +181,22 @@ export class ChatController {
       throw new ServiceUnavailableException();
     }
     return messages;
+  }
+
+  @Patch()
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  async updateChatroom(
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Body() updateChatroomDto: UpdateChatroomDto,
+  ): Promise<User> {
+    const updatedUser = await this.userService.updateUser(
+      user.id,
+      updateUserDto,
+    );
+    if (!updatedUser) {
+      throw new UnprocessableEntityException();
+    }
+    return updatedUser;
   }
 }
