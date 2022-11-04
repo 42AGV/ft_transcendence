@@ -9,7 +9,7 @@ export abstract class IChatroomRepository {
   abstract deleteByChatroomName(name: string): Promise<Chatroom | null>;
   abstract updateById(
     name: string,
-    updateChatDto: UpdateChatroomDto,
+    updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null>;
   abstract add(chatroom: Chatroom): Promise<Chatroom | null>;
   abstract getPaginatedChatrooms(

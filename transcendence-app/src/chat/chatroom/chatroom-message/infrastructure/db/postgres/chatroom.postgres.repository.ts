@@ -44,8 +44,8 @@ export class ChatroomPostgresRepository
     id: string,
     updateChatDto: UpdateChatroomDto,
   ): Promise<ChatroomEntity | null> {
-    const chats = await this.updateByKey(ChatroomKeys.ID, id, updateChatDto);
-    return chats && chats.length ? chats[0] : null;
+    const chatroom = await this.updateByKey(ChatroomKeys.ID, id, updateChatDto);
+    return chatroom && chatroom.length ? chatroom[0] : null;
   }
 
   getPaginatedChatrooms(
