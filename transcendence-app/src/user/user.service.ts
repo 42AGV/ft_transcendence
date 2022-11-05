@@ -16,7 +16,7 @@ import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
-import { UserResponseDto } from './dto/user.response.dto';
+import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 
 @Injectable()
@@ -52,8 +52,8 @@ export class UserService {
     const user = await this.userRepository.getByUsername(username);
 
     if (user && userMe) {
-      const isBlocked = await this.isUserBlockedByMe(userMe, user.id);
-      return new UserResponseDto(user, isBlocked);
+      const blockRelation = await this.getBlockRelation(userMe.id, user.id);
+      return new UserResponseDto(user, blockRelation);
     }
     return null;
   }
@@ -102,16 +102,21 @@ export class UserService {
     return this.streamAvatarData(file);
   }
 
-  private async isUserBlockedByMe(
-    userMe: User,
+  private async getBlockRelation(
+    userMeId: string,
     userId: string,
-  ): Promise<boolean | null> {
-    if (userMe.id === userId) {
+  ): Promise<UserBlockRelation | null> {
+    if (userMeId === userId) {
       return null;
     }
 
-    const block = await this.blockRepository.getBlock(userMe.id, userId);
-    return block?.blockedId === userId ?? false;
+    const meBlock = await this.blockRepository.getBlock(userMeId, userId);
+    const userBlock = await this.blockRepository.getBlock(userId, userMeId);
+
+    return {
+      isUserBlockedByMe: meBlock?.blockedId === userId ?? false,
+      amIBlockedByUser: userBlock?.blockedId === userMeId ?? false,
+    };
   }
 
   private async addAvatarAndUpdateUser(
