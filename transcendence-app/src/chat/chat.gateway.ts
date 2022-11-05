@@ -40,11 +40,11 @@ export class ChatGateway {
   ) {
     const { chatroomId, content } = createChatroomMessageDto;
     const user = client.request.user;
-    const isChatroomMember = await this.chatroomMemberService.isChatroomMember(
-      user,
+    const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,
+      user.id,
     );
-    if (!user || !isChatroomMember) {
+    if (!chatroomMember || chatroomMember.muted) {
       throw new WsException('Forbidden');
     }
     const message = await this.chatService.addChatroomMessage({
@@ -64,11 +64,11 @@ export class ChatGateway {
     @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const isChatroomMember = await this.chatroomMemberService.isChatroomMember(
-      client.request.user,
+    const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,
+      client.request.user.id,
     );
-    if (!isChatroomMember) {
+    if (!chatroomMember) {
       throw new WsException('Forbidden');
     }
     client.join(chatroomId);
@@ -79,11 +79,11 @@ export class ChatGateway {
     @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const isChatroomMember = await this.chatroomMemberService.isChatroomMember(
-      client.request.user,
+    const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,
+      client.request.user.id,
     );
-    if (!isChatroomMember) {
+    if (!chatroomMember) {
       throw new WsException('Forbidden');
     }
     client.leave(chatroomId);

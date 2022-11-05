@@ -31,7 +31,7 @@ export class ChatroomMemberPostgresRepository
         AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
       values: [chatId, userId],
     });
-    return members ? members[0] : null;
+    return members ? new ChatroomMember(members[0]) : null;
   }
 
   async retrieveChatroomMembers(

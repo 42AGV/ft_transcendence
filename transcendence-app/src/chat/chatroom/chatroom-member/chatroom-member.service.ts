@@ -4,7 +4,6 @@ import {
   ChatroomMember,
   ChatroomMemberWithUser,
 } from './infrastructure/db/chatroom-member.entity';
-import { User } from '../../../user/infrastructure/db/user.entity';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -34,28 +33,12 @@ export class ChatroomMemberService {
       chatId,
       userId,
     );
-    return chatMember && !chatMember.banned
-      ? new ChatroomMember(chatMember)
-      : null;
+    return chatMember && !chatMember.banned ? chatMember : null;
   }
 
   retrieveChatroomMembers(
     chatroomId: string,
   ): Promise<ChatroomMemberWithUser[] | null> {
     return this.chatroomMemberRepository.retrieveChatroomMembers(chatroomId);
-  }
-
-  async isChatroomMember(
-    user: User | null,
-    chatroomId: string,
-  ): Promise<boolean> {
-    if (!user) {
-      return false;
-    }
-    const isChatroomMember = await this.chatroomMemberRepository.getById(
-      chatroomId,
-      user.id,
-    );
-    return isChatroomMember !== null;
   }
 }
