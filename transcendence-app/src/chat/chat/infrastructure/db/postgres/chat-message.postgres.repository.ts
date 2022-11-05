@@ -23,7 +23,7 @@ export class ChatMessagePostgresRepository
   ): Promise<ChatMessage[] | null> {
     const { limit, offset } = paginationQueryDto;
 
-    return makeQuery<ChatMessage>(this.pool, {
+    const messages = await makeQuery<ChatMessage>(this.pool, {
       text: `SELECT * FROM ${this.table}
       WHERE ("senderId" = $1 AND "recipientId" = $2)
         OR  ("senderId" = $2 AND "recipientId" = $1)
@@ -32,5 +32,6 @@ export class ChatMessagePostgresRepository
       OFFSET $2;`,
       values: [userMeId, recipientId, limit, offset],
     });
+    return messages?.map((message) => new ChatMessage(message)) ?? null;
   }
 }
