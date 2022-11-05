@@ -3,12 +3,12 @@ import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgr
 import { table } from '../../../../../shared/db/models';
 import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
 import {
-  entityQueryMapper,
+  insertWithClient,
   makeQuery,
+  updateByIdWithClient,
 } from '../../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../../shared/local-file/infrastructure/db/local-file.entity';
-import { PoolClient } from 'pg';
 import { Chatroom, ChatroomKeys } from '../chatroom.entity';
 import { IChatroomRepository } from '../chatroom.repository';
 import { UpdateChatroomDto } from '../../../dto/update-chatroom.dto';
@@ -22,6 +22,25 @@ export class ChatroomPostgresRepository
   constructor(protected pool: PostgresPool) {
     super(pool, table.CHATROOM, Chatroom);
   }
+  async addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null> {
+    const chatroomData = await this.pool.transaction<Chatroom>(
+      async (client) => {
+        const chatroomData = await insertWithClient(
+          client,
+          table.CHATROOM,
+          chatroom,
+        );
+        const chatmember = {
+          chatId: chatroom.id,
+          userId: chatroom.ownerId,
+        };
+        await insertWithClient(client, table.CHATROOM_MEMBERS, chatmember);
+        return chatroomData.rows[0];
+      },
+    );
+    return chatroomData ? new this.ctor(chatroomData) : null;
+  }
+
   async getById(id: string): Promise<Chatroom | null> {
     const chats = await this.getByKey(ChatroomKeys.ID, id);
     return chats && chats.length ? chats[0] : null;
@@ -71,13 +90,13 @@ export class ChatroomPostgresRepository
   ): Promise<Chatroom | null> {
     const chatroomData = await this.pool.transaction<Chatroom>(
       async (client) => {
-        const avatarRes = await this.insertWithClient(
+        const avatarRes = await insertWithClient(
           client,
           table.LOCAL_FILE,
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const chatRes = await this.insertWithClient(client, table.CHATROOM, {
+        const chatRes = await insertWithClient(client, table.CHATROOM, {
           ...chatroom,
           avatarId,
         });
@@ -93,14 +112,15 @@ export class ChatroomPostgresRepository
   ): Promise<Chatroom | null> {
     const chatroomData = await this.pool.transaction<Chatroom>(
       async (client) => {
-        const avatarRes = await this.insertWithClient(
+        const avatarRes = await insertWithClient(
           client,
           table.LOCAL_FILE,
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const chatRes = await this.updateUserByIdWithClient(
+        const chatRes = await updateByIdWithClient(
           client,
+          this.table,
           chatroom.id,
           {
             avatarId,
@@ -110,28 +130,5 @@ export class ChatroomPostgresRepository
       },
     );
     return chatroomData ? new this.ctor(chatroomData) : null;
-  }
-
-  private insertWithClient(
-    client: PoolClient,
-    table: table,
-    entity: Partial<Chatroom> | LocalFile,
-  ) {
-    const { cols, params, values } = entityQueryMapper(entity);
-    const text = `INSERT INTO ${table}(${cols.join(
-      ', ',
-    )}) VALUES (${params.join(',')}) RETURNING *;`;
-    return client.query(text, values);
-  }
-
-  private updateUserByIdWithClient(
-    client: PoolClient,
-    id: string,
-    chatroom: Partial<Chatroom>,
-  ) {
-    const { cols, values } = entityQueryMapper(chatroom);
-    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
-    const text = `UPDATE ${this.table} SET ${colsToUpdate} WHERE "id"=$1 RETURNING *;`;
-    return client.query(text, [id, ...values]);
   }
 }

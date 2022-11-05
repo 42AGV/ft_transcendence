@@ -5,12 +5,12 @@ import { User, userKeys } from '../../db/user.entity';
 import { IUserRepository } from '../user.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import {
-  entityQueryMapper,
+  insertWithClient,
   makeQuery,
+  updateByIdWithClient,
 } from '../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
-import { PoolClient } from 'pg';
 import { UpdateUserDto } from '../../../dto/update-user.dto';
 import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.service';
 import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
@@ -70,41 +70,18 @@ export class UserPostgresRepository
     return usersData ? usersData.map((user) => new this.ctor(user)) : null;
   }
 
-  private insertWithClient(
-    client: PoolClient,
-    table: table,
-    entity: User | LocalFile,
-  ) {
-    const { cols, params, values } = entityQueryMapper(entity);
-    const text = `INSERT INTO ${table}(${cols.join(
-      ', ',
-    )}) VALUES (${params.join(',')}) RETURNING *;`;
-    return client.query(text, values);
-  }
-
-  private updateUserByIdWithClient(
-    client: PoolClient,
-    id: string,
-    user: Partial<User>,
-  ) {
-    const { cols, values } = entityQueryMapper(user);
-    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 2}`).join(',');
-    const text = `UPDATE ${this.table} SET ${colsToUpdate} WHERE "id"=$1 RETURNING *;`;
-    return client.query(text, [id, ...values]);
-  }
-
   async addAvatarAndAddUser(
     avatar: LocalFile,
     user: User,
   ): Promise<User | null> {
     const userData = await this.pool.transaction<User>(async (client) => {
-      const avatarRes = await this.insertWithClient(
+      const avatarRes = await insertWithClient(
         client,
         table.LOCAL_FILE,
         avatar,
       );
       const avatarId = (avatarRes.rows[0] as LocalFile).id;
-      const userRes = await this.insertWithClient(client, table.USERS, {
+      const userRes = await insertWithClient(client, table.USERS, {
         ...user,
         avatarId,
       });
@@ -118,13 +95,13 @@ export class UserPostgresRepository
     user: User,
   ): Promise<User | null> {
     const userData = await this.pool.transaction<User>(async (client) => {
-      const avatarRes = await this.insertWithClient(
+      const avatarRes = await insertWithClient(
         client,
         table.LOCAL_FILE,
         avatar,
       );
       const avatarId = (avatarRes.rows[0] as LocalFile).id;
-      const userRes = await this.updateUserByIdWithClient(client, user.id, {
+      const userRes = await updateByIdWithClient(client, this.table, user.id, {
         avatarId,
       });
       return userRes.rows[0];

@@ -39,7 +39,7 @@ export class ChatService {
   private async addChatroom(
     chatroom: Partial<Chatroom>,
   ): Promise<Chatroom | null> {
-    return this.chatroomRepository.add({
+    return this.chatroomRepository.addChatroom({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       avatarX: 0,
