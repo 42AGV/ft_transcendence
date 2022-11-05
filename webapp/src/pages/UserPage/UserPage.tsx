@@ -61,15 +61,15 @@ export default function UserPage() {
         />
         <div className="user-text">
           <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
             {user.fullName}
           </Text>
           <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
             {user.email}
