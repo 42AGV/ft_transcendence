@@ -4,7 +4,6 @@ import { table } from '../../../../shared/db/models';
 import { User, userKeys } from '../../db/user.entity';
 import { IUserRepository } from '../user.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
-import { UsersPaginationQueryDto } from '../../../dto/user.pagination.dto';
 import {
   entityQueryMapper,
   makeQuery,
@@ -14,6 +13,7 @@ import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local
 import { PoolClient } from 'pg';
 import { UpdateUserDto } from '../../../dto/update-user.dto';
 import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.service';
+import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
 
 @Injectable()
 export class UserPostgresRepository
@@ -53,7 +53,7 @@ export class UserPostgresRepository
   }
 
   async getPaginatedUsers(
-    paginationDto: Required<UsersPaginationQueryDto>,
+    paginationDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<User[] | null> {
     const { limit, offset, sort, search } = paginationDto;
     const orderBy =

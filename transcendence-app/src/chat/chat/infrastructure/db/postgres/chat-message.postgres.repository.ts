@@ -3,48 +3,34 @@ import { Injectable } from '@nestjs/common';
 import { table } from '../../../../../shared/db/models';
 import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
 import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
-import { ChatMessageEntity } from '../chat-message.entity';
+import { ChatMessage, chatMessageKeys } from '../chat-message.entity';
 import { IChatMessageRepository } from '../chat-message.repository';
-import { ChatMessagePaginationQueryDto } from '../../../../dto/chat-message.pagination.query.dto';
-import { ChatMessageQueryDto } from '../../../../dto/chat-message.query.dto';
 import { makeQuery } from '../../../../../shared/db/postgres/utils';
+import { PaginationQueryDto } from '../../../../../shared/dtos/pagination.query.dto';
 
 @Injectable()
 export class ChatMessagePostgresRepository
-  extends BasePostgresRepository<ChatMessageEntity>
+  extends BasePostgresRepository<ChatMessage>
   implements IChatMessageRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.CHAT_MESSAGE);
+    super(pool, table.CHAT_MESSAGE, ChatMessage);
   }
-
-  async addMessageSet(
-    queryDto: ChatMessageQueryDto,
-  ): Promise<ChatMessageEntity | null> {
-    const { authorId, content, user1Id, user2Id } = queryDto;
-
-    const message = await makeQuery<ChatMessageEntity>(this.pool, {
-      text: `INSERT INTO ${this.table}("authorId", "content", "user1Id", "user2Id")
-      VALUES ($1, $2, LEAST($3, $4), GREATEST($3, $4))
-      RETURNING *;`,
-      values: [authorId, content, user1Id, user2Id],
-    });
-
-    return message && message.length ? message[0] : null;
-  }
-
   async getPaginatedMessages(
-    queryDto: Required<ChatMessagePaginationQueryDto>,
-  ): Promise<ChatMessageEntity[] | null> {
-    const { limit, offset, user1Id, user2Id } = queryDto;
+    userMeId: string,
+    recipientId: string,
+    paginationQueryDto: Required<PaginationQueryDto>,
+  ): Promise<ChatMessage[] | null> {
+    const { limit, offset } = paginationQueryDto;
 
-    return makeQuery<ChatMessageEntity>(this.pool, {
+    return makeQuery<ChatMessage>(this.pool, {
       text: `SELECT * FROM ${this.table}
-      WHERE "user1Id" = LEAST($3, $4)::uuid
-        AND  "user2Id" = GREATEST($3, $4)::uuid
+      WHERE ("senderId" = $1 AND "recipientId" = $2)
+        OR  ("senderId" = $2 AND "recipientId" = $1)
+      ORDER BY ${chatMessageKeys.CREATED_AT} DESC
       LIMIT $1
       OFFSET $2;`,
-      values: [limit, offset, user1Id, user2Id],
+      values: [userMeId, recipientId, limit, offset],
     });
   }
 }

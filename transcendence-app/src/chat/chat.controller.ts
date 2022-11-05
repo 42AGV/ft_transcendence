@@ -29,16 +29,15 @@ import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
 import { User } from '../user/infrastructure/db/user.entity';
 import { User as GetUser } from '../user/decorators/user.decorator';
-import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import {
   ChatroomMember,
   ChatroomMemberWithUser,
 } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
-import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
+import { PaginationQueryDto } from '../shared/dtos/pagination.query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
-import { ChatMessagePaginationRequestDto } from './dto/chat-message-paginated.request.dto';
-import { ChatMessage } from './chat/chat-message.domain';
+import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
+import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -99,7 +98,7 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatrooms(
-    @Query() chatsPaginationQueryDto: ChatroomPaginationQueryDto,
+    @Query() chatsPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<Chatroom[]> {
     const chatrooms = await this.chatService.retrieveChatrooms(
       chatsPaginationQueryDto,
@@ -195,7 +194,7 @@ export class ChatController {
   async getChatMessages(
     @GetUser() userMe: User,
     @Param('userId', ParseUUIDPipe) recipientId: string,
-    @Query() requestDto: ChatMessagePaginationRequestDto,
+    @Query() requestDto: PaginationQueryDto,
   ) {
     const messages = await this.chatService.getOneToOneChatMessages(
       userMe.id,

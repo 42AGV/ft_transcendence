@@ -1,4 +1,4 @@
-import { PaginationQueryDto } from '../../../../../shared/dtos/pagination-query.dto';
+import { PaginationQueryDto } from '../../../../../shared/dtos/pagination.query.dto';
 import { ChatroomMessageWithUser } from './chatroom-message-with-user.entity';
 import { ChatroomMessage } from './chatroom-message.entity';
 
