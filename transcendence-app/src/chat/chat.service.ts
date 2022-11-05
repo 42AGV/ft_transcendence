@@ -91,7 +91,7 @@ export class ChatService {
       : null;
   }
 
-  async updateCharoom(
+  async updateChatroom(
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {

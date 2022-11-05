@@ -10,25 +10,19 @@ import {
 export class UpdateChatroomDto {
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsOptional()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   name?: string;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty()
   @ValidateIf((object, value) => value !== null)
-  password!: string | null;
+  password?: string | null;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty()
   @ValidateIf((object, value) => value !== null)
-  confirmationPassword!: string | null;
-
-  @IsInt()
-  @IsOptional()
-  avatarX?: number;
-
-  @IsInt()
-  @IsOptional()
-  avatarY?: number;
+  confirmationPassword?: string | null;
 }

@@ -149,7 +149,7 @@ export class ChatController {
     return chatroom;
   }
 
-  @Get('chat/room/:chatroomId/messages')
+  @Get('room/:chatroomId/messages')
   @ApiOkResponse({
     description: `Lists all messages in a chatroom (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [ChatroomMessageWithUser],
@@ -190,7 +190,7 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
-    const updatedChatroom = await this.chatService.updateCharoom(
+    const updatedChatroom = await this.chatService.updateChatroom(
       chatroomId,
       updateChatroomDto,
     );

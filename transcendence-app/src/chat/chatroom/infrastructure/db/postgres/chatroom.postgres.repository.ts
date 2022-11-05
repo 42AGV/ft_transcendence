@@ -39,10 +39,14 @@ export class ChatroomPostgresRepository
 
   async updateById(
     id: string,
-    updateChatDto: UpdateChatroomDto,
+    updateChatroomDto: UpdateChatroomDto,
   ): Promise<ChatroomEntity | null> {
-    const chats = await this.updateByKey(ChatroomKeys.ID, id, updateChatDto);
-    return chats && chats.length ? chats[0] : null;
+    const chatrooms = await this.updateByKey(
+      ChatroomKeys.ID,
+      id,
+      updateChatroomDto,
+    );
+    return chatrooms && chatrooms.length ? chatrooms[0] : null;
   }
 
   async getPaginatedChatrooms(
