@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgres.repository';
 import { table } from '../../../../../shared/db/models';
 import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
-import { ChatroomPaginationQueryDto } from '../../../dto/chatroom.pagination.dto';
 import {
   entityQueryMapper,
   makeQuery,
@@ -13,6 +12,7 @@ import { PoolClient } from 'pg';
 import { Chatroom, ChatroomKeys } from '../chatroom.entity';
 import { IChatroomRepository } from '../chatroom.repository';
 import { UpdateChatroomDto } from '../../../dto/update-chatroom.dto';
+import { PaginationWithSearchQueryDto } from '../../../../../shared/dtos/pagination-with-search.query.dto';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -46,7 +46,7 @@ export class ChatroomPostgresRepository
   }
 
   async getPaginatedChatrooms(
-    paginationDto: Required<ChatroomPaginationQueryDto>,
+    paginationDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Chatroom[] | null> {
     const { limit, offset, sort, search } = paginationDto;
     const orderBy =

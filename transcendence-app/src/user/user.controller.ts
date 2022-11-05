@@ -34,7 +34,6 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { User as GetUser } from './decorators/user.decorator';
 import { User } from './infrastructure/db/user.entity';
 import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
@@ -48,6 +47,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { UserResponseDto } from './dto/user.response.dto';
+import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -108,7 +108,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUsers(
-    @Query() usersPaginationQueryDto: UsersPaginationQueryDto,
+    @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<User[]> {
     const users = await this.userService.retrieveUsers(usersPaginationQueryDto);
     if (!users) {
