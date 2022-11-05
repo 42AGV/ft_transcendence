@@ -1,7 +1,6 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
 import { User } from './infrastructure/db/user.entity';
@@ -18,6 +17,7 @@ import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserResponseDto } from './dto/user.response.dto';
+import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 
 @Injectable()
 export class UserService {
@@ -36,7 +36,7 @@ export class UserService {
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: UsersPaginationQueryDto): Promise<User[] | null> {
+  }: PaginationWithSearchQueryDto): Promise<User[] | null> {
     return this.userRepository.getPaginatedUsers({
       limit,
       offset,

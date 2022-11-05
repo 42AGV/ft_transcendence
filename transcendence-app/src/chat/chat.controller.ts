@@ -29,14 +29,15 @@ import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
 import { User } from '../user/infrastructure/db/user.entity';
 import { User as GetUser } from '../user/decorators/user.decorator';
-import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import {
   ChatroomMember,
   ChatroomMemberWithUser,
 } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
-import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
+import { PaginationQueryDto } from '../shared/dtos/pagination.query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
+import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
+import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -97,7 +98,7 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatrooms(
-    @Query() chatsPaginationQueryDto: ChatroomPaginationQueryDto,
+    @Query() chatsPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<Chatroom[]> {
     const chatrooms = await this.chatService.retrieveChatrooms(
       chatsPaginationQueryDto,
@@ -179,6 +180,29 @@ export class ChatController {
     );
     if (!messages) {
       throw new ServiceUnavailableException();
+    }
+    return messages;
+  }
+
+  @Get(':userId/messages')
+  @ApiOkResponse({
+    description: `Get chat messages in a one to one conversation(max ${MAX_ENTRIES_PER_PAGE})`,
+    type: [ChatMessage],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async getChatMessages(
+    @GetUser() userMe: User,
+    @Param('userId', ParseUUIDPipe) recipientId: string,
+    @Query() requestDto: PaginationQueryDto,
+  ) {
+    const messages = await this.chatService.getOneToOneChatMessages(
+      userMe.id,
+      recipientId,
+      requestDto,
+    );
+    if (!messages) {
+      throw new UnprocessableEntityException();
     }
     return messages;
   }

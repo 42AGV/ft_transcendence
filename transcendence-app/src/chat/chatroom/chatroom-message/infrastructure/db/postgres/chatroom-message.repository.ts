@@ -3,7 +3,7 @@ import { table } from '../../../../../../shared/db/models';
 import { BasePostgresRepository } from '../../../../../../shared/db/postgres/postgres.repository';
 import { PostgresPool } from '../../../../../../shared/db/postgres/postgresConnection.provider';
 import { makeQuery } from '../../../../../../shared/db/postgres/utils';
-import { PaginationQueryDto } from '../../../../../../shared/dtos/pagination-query.dto';
+import { PaginationQueryDto } from '../../../../../../shared/dtos/pagination.query.dto';
 import {
   capitalizeFirstLetter,
   removeDoubleQuotes,

@@ -70,3 +70,12 @@ CREATE TABLE
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW ()
   );
+
+CREATE TABLE
+    IF NOT EXISTS ChatMessage (
+    "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
+    "senderId" UUID NOT NULL REFERENCES Users (id) ON DELETE CASCADE,
+    "recipientId" UUID NOT NULL REFERENCES Users (id) ON DELETE CASCADE,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+  );
