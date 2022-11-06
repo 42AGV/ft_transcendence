@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { Chatroom } from './chatroom/infrastructure/db/chatroom.entity';
@@ -13,6 +18,9 @@ import { IChatMessageRepository } from './chat/infrastructure/db/chat-message.re
 import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { ChatroomMessage } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.entity';
+import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
+import { ChatroomMember } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
+import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 
 @Injectable()
 export class ChatService {
@@ -20,6 +28,7 @@ export class ChatService {
     private chatMessageRepository: IChatMessageRepository,
     private chatroomRepository: IChatroomRepository,
     private chatroomMessageRepository: IChatroomMessageRepository,
+    private chatroomMemberService: ChatroomMemberService,
   ) {}
 
   async retrieveChatrooms({
@@ -110,5 +119,30 @@ export class ChatService {
 
   addChatroomMessage(chatroomMessage: Partial<ChatroomMessage>) {
     return this.chatroomMessageRepository.add(chatroomMessage);
+  }
+
+  async addChatroomMember(
+    chatroomId: string,
+    userId: string,
+    joinChatroomDto: JoinChatroomDto,
+  ): Promise<ChatroomMember | null> {
+    const foundChatroom = await this.getChatroomById(chatroomId);
+    if (!foundChatroom) {
+      throw new NotFoundException('Chatroom not found');
+    }
+    const { password, confirmationPassword } = joinChatroomDto;
+    if (password !== confirmationPassword) {
+      throw new BadRequestException(
+        'Password and Confirmation Password must match',
+      );
+    }
+    if (
+      foundChatroom.password &&
+      (!password ||
+        (await Password.compare(foundChatroom.password, password)) === false)
+    ) {
+      throw new ForbiddenException('Incorrect password');
+    }
+    return this.chatroomMemberService.addChatroomMember(chatroomId, userId);
   }
 }

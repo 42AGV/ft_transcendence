@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../../../shared/db/postgres/postgres.repository';
 import { table } from '../../../../../../shared/db/models';
-import { makeQuery } from '../../../../../../shared/db/postgres/utils';
+import {
+  entityQueryMapper,
+  makeQuery,
+} from '../../../../../../shared/db/postgres/utils';
 import { PostgresPool } from '../../../../../../shared/db/postgres/postgresConnection.provider';
 import { IChatroomMemberRepository } from '../chatroom-member.repository';
 import {
@@ -17,6 +20,28 @@ export class ChatroomMemberPostgresRepository
 {
   constructor(protected pool: PostgresPool) {
     super(pool, table.CHATROOM_MEMBERS, ChatroomMember);
+  }
+
+  async addChatroomMember(
+    chatroomMember: ChatroomMember,
+  ): Promise<ChatroomMember | null> {
+    const { cols, params, values } = entityQueryMapper(chatroomMember);
+    const joinedAtColName = ChatroomMemberKeys.JOINED_AT;
+
+    const chatroomMembersData = await makeQuery<ChatroomMember>(this.pool, {
+      text: `INSERT INTO ${this.table} (${cols.join(
+        ',',
+      )}) values (${params.join(',')})
+      ON CONFLICT
+      (${ChatroomMemberKeys.CHATID}, ${ChatroomMemberKeys.USERID})
+      DO UPDATE
+      SET ${joinedAtColName} = EXCLUDED.${joinedAtColName}
+      RETURNING *;`,
+      values,
+    });
+    return chatroomMembersData && chatroomMembersData.length
+      ? new this.ctor(chatroomMembersData[0])
+      : null;
   }
 
   async getById(

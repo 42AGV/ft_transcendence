@@ -21,7 +21,9 @@ export class ChatroomMemberService {
       muted: false,
       banned: false,
     };
-    const ret = await this.chatroomMemberRepository.add(chatmember);
+    const ret = await this.chatroomMemberRepository.addChatroomMember(
+      chatmember,
+    );
     return ret ? new ChatroomMember(ret) : null;
   }
 

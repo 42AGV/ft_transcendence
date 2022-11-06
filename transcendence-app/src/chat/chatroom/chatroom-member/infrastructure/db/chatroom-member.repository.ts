@@ -4,7 +4,9 @@ import {
 } from './chatroom-member.entity';
 
 export abstract class IChatroomMemberRepository {
-  abstract add(chatroomMember: ChatroomMember): Promise<ChatroomMember | null>;
+  abstract addChatroomMember(
+    chatroomMember: ChatroomMember,
+  ): Promise<ChatroomMember | null>;
   abstract getById(
     chatId: string,
     userId: string,
