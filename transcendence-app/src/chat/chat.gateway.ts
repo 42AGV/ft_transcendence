@@ -79,13 +79,6 @@ export class ChatGateway {
     @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const chatroomMember = await this.chatroomMemberService.getById(
-      chatroomId,
-      client.request.user.id,
-    );
-    if (!chatroomMember) {
-      throw new WsException('Forbidden');
-    }
     client.leave(chatroomId);
   }
 }
