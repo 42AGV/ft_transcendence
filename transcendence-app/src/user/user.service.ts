@@ -1,10 +1,9 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
-import { CreateUserRequestDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { UsersPaginationQueryDto } from './dto/user.pagination.dto';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { IUserRepository } from './infrastructure/db/user.repository';
-import { User } from './user.domain';
+import { User } from './infrastructure/db/user.entity';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
@@ -15,9 +14,10 @@ import {
 import { createReadStream } from 'fs';
 import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
-import { UserAvatarDto } from './dto/user.avatar.dto';
+import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
-import { UserDto } from './dto/user.dto';
+import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
+import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 
 @Injectable()
 export class UserService {
@@ -27,77 +27,60 @@ export class UserService {
     private blockRepository: IBlockRepository,
   ) {}
 
-  async retrieveUserWithId(id: string): Promise<User | null> {
-    const user = await this.userRepository.getById(id);
-    return user ? new User(user) : null;
+  retrieveUserWithId(id: string): Promise<User | null> {
+    return this.userRepository.getById(id);
   }
 
-  async retrieveUsers({
+  retrieveUsers({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: UsersPaginationQueryDto): Promise<User[] | null> {
-    const users = await this.userRepository.getPaginatedUsers({
+  }: PaginationWithSearchQueryDto): Promise<User[] | null> {
+    return this.userRepository.getPaginatedUsers({
       limit,
       offset,
       sort,
       search,
     });
-    return users ? users.map((user) => new User(user)) : null;
   }
 
   async retrieveUserWithUserName(
     username: string,
     userMe?: User,
-  ): Promise<UserDto | null> {
+  ): Promise<UserResponseDto | null> {
     const user = await this.userRepository.getByUsername(username);
 
     if (user && userMe) {
-      const userDto = {
-        ...user,
-        isBlocked: await this.isUserBlockedByMe(userMe, user.id),
-      };
-      return new UserDto(userDto);
+      const blockRelation = await this.getBlockRelation(userMe.id, user.id);
+      return new UserResponseDto(user, blockRelation);
     }
     return null;
   }
 
-  async addUser(userDto: CreateUserRequestDto): Promise<User | null> {
-    const user = await this.userRepository.add({
-      id: uuidv4(),
-      createdAt: new Date(Date.now()),
-      avatarX: 0,
-      avatarY: 0,
-      ...userDto,
-    });
-    return user ? new User(user) : null;
-  }
-
-  async addAvatarAndUser(
+  addAvatarAndUser(
     avatarId: string,
     avatarDto: LocalFileDto,
-    userDto: CreateUserRequestDto,
+    userDto: CreateUserDto,
   ): Promise<User | null> {
-    const user = await this.userRepository.addAvatarAndAddUser(
+    return this.userRepository.addAvatarAndAddUser(
       { id: avatarId, createdAt: new Date(Date.now()), ...avatarDto },
       {
         id: uuidv4(),
         createdAt: new Date(Date.now()),
+        avatarId,
         avatarX: 0,
         avatarY: 0,
         ...userDto,
       },
     );
-    return user ? new User(user) : null;
   }
 
-  async updateUser(
+  updateUser(
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
-    const user = await this.userRepository.updateById(userId, updateUserDto);
-    return user ? new User(user) : null;
+    return this.userRepository.updateById(userId, updateUserDto);
   }
 
   async getAvatar(userId: string): Promise<StreamableFile | null> {
@@ -119,22 +102,27 @@ export class UserService {
     return this.streamAvatarData(file);
   }
 
-  private async isUserBlockedByMe(
-    userMe: User,
+  private async getBlockRelation(
+    userMeId: string,
     userId: string,
-  ): Promise<boolean | null> {
-    if (userMe.id === userId) {
+  ): Promise<UserBlockRelation | null> {
+    if (userMeId === userId) {
       return null;
     }
 
-    const block = await this.blockRepository.getBlock(userMe.id, userId);
-    return block?.blockedId === userId ?? false;
+    const meBlock = await this.blockRepository.getBlock(userMeId, userId);
+    const userBlock = await this.blockRepository.getBlock(userId, userMeId);
+
+    return {
+      isUserBlockedByMe: meBlock?.blockedId === userId ?? false,
+      amIBlockedByUser: userBlock?.blockedId === userMeId ?? false,
+    };
   }
 
   private async addAvatarAndUpdateUser(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<UserAvatarDto | null> {
+  ): Promise<UserAvatarResponseDto | null> {
     const avatarUUID = uuidv4();
     const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
       { id: avatarUUID, createdAt: new Date(Date.now()), ...newAvatarFileDto },
@@ -160,7 +148,7 @@ export class UserService {
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<UserAvatarDto | null> {
+  ): Promise<UserAvatarResponseDto | null> {
     const previousAvatarId = user.avatarId;
     const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
     if (!avatar) {
@@ -198,15 +186,11 @@ export class UserService {
     return isValid;
   }
 
-  async retrieveUserWithAuthProvider(
+  retrieveUserWithAuthProvider(
     provider: AuthProviderType,
     providerId: string,
   ): Promise<User | null> {
-    const user = await this.userRepository.getByAuthProvider(
-      provider,
-      providerId,
-    );
-    return user ? new User(user) : null;
+    return this.userRepository.getByAuthProvider(provider, providerId);
   }
 
   addBlock(blockerId: string, blockedId: string) {

@@ -25,17 +25,20 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { Chatroom } from './chatroom/chatroom.domain';
+import { Chatroom } from './chatroom/infrastructure/db/chatroom.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { CreateChatroomDto } from './chatroom/dto/create-chatroom.dto';
-import { User } from '../user/user.domain';
+import { User } from '../user/infrastructure/db/user.entity';
 import { User as GetUser } from '../user/decorators/user.decorator';
-import { ChatroomPaginationQueryDto } from './chatroom/dto/chatroom.pagination.dto';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
-import { ChatroomMember } from './chatroom/chatroom-member/chatroom-member.domain';
-import { ChatroomMemberAsUserResponseDto } from './chatroom/chatroom-member/dto/chatroom-member.dto';
-import { PaginationQueryDto } from '../shared/dtos/pagination-query.dto';
-import { ChatroomMessageWithUser } from './chatroom/chatroom-message/chatroom-message-with-user.domain';
+import {
+  ChatroomMember,
+  ChatroomMemberWithUser,
+} from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
+import { PaginationQueryDto } from '../shared/dtos/pagination.query.dto';
+import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
+import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
+import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 
 @Controller('chat')
@@ -97,7 +100,7 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatrooms(
-    @Query() chatsPaginationQueryDto: ChatroomPaginationQueryDto,
+    @Query() chatsPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<Chatroom[]> {
     const chatrooms = await this.chatService.retrieveChatrooms(
       chatsPaginationQueryDto,
@@ -111,14 +114,14 @@ export class ChatController {
   @Get('room/:chatroomId/members')
   @ApiOkResponse({
     description: `Lists all chat members for a given room)`,
-    type: [ChatroomMemberAsUserResponseDto],
+    type: [ChatroomMemberWithUser],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async retrieveChatroomMembers(
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
-  ): Promise<ChatroomMemberAsUserResponseDto[]> {
+  ): Promise<ChatroomMemberWithUser[]> {
     const isChatMember = await this.chatroomMemberService.getById(
       chatroomId,
       user.id,
@@ -136,11 +139,11 @@ export class ChatController {
 
   @Get('room/:id')
   @ApiCreatedResponse({
-    description: 'get a chatroom',
+    description: 'Get a chatroom',
     type: Chatroom,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   async getChatroomById(@Param('id', ParseUUIDPipe) chatroomId: string) {
     const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
@@ -198,5 +201,28 @@ export class ChatController {
       throw new UnprocessableEntityException();
     }
     return updatedChatroom;
+  }
+
+  @Get(':userId/messages')
+  @ApiOkResponse({
+    description: `Get chat messages in a one to one conversation(max ${MAX_ENTRIES_PER_PAGE})`,
+    type: [ChatMessage],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getChatMessages(
+    @GetUser() userMe: User,
+    @Param('userId', ParseUUIDPipe) recipientId: string,
+    @Query() requestDto: PaginationQueryDto,
+  ) {
+    const messages = await this.chatService.getOneToOneChatMessages(
+      userMe.id,
+      recipientId,
+      requestDto,
+    );
+    if (!messages) {
+      throw new ServiceUnavailableException();
+    }
+    return messages;
   }
 }

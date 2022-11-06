@@ -7,8 +7,8 @@ import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Api42Service } from '../user/api42.service';
 import { AVATARS_PATH } from '../shared/constants';
-import { CreateUserRequestDto } from '../user/dto/user.dto';
-import { User } from '../user/user.domain';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { User } from '../user/infrastructure/db/user.entity';
 import { UserService } from '../user/user.service';
 import {
   AuthProviderService,
@@ -74,7 +74,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
 
   private async createUser(
     avatarDto: LocalFileDto,
-    userDto: CreateUserRequestDto,
+    userDto: CreateUserDto,
   ): Promise<User | null> {
     const userWithUsernameExists =
       await this.userService.retrieveUserWithUserName(userDto.username);

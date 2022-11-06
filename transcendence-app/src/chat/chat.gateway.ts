@@ -13,7 +13,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
-import { User } from '../user/user.domain';
+import { User } from '../user/infrastructure/db/user.entity';
 
 type ChatroomMessage = {
   id: string;

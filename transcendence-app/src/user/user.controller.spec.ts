@@ -1,31 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AvatarFileInterceptor, UserController } from './user.controller';
 import { UserService } from './user.service';
-import { CreateUserRequestDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from './user.domain';
-import { UserEntity } from './infrastructure/db/user.entity';
+import { User } from './infrastructure/db/user.entity';
 
 const testUserMe = new User(
-  new UserEntity({
+  new User({
     username: 'test',
     email: 'test@test.com',
     fullName: 'test',
     password: null,
-    avatarId: null,
+    avatarId: uuidv4(),
     avatarX: 0,
     avatarY: 0,
     id: uuidv4(),
     createdAt: new Date(Date.now()),
   }),
 );
-const testUserDto: CreateUserRequestDto = {
+const testUserDto: CreateUserDto = {
   username: 'user',
   email: 'afgv@github.com',
   fullName: 'user',
   password: null,
-  avatarId: uuidv4(),
 };
 const testUsername = 'paquito';
 
@@ -40,10 +38,15 @@ describe('UserController', () => {
         return Promise.resolve({
           id: uuidv4(),
           createdAt: new Date(Date.now()),
+          avatarId: uuidv4(),
           avatarX: 0,
           avatarY: 0,
           ...testUserDto,
           username,
+          blockRelation: {
+            isUserBlockedByMe: false,
+            amIBlockedByUser: false,
+          },
         });
       },
     };
