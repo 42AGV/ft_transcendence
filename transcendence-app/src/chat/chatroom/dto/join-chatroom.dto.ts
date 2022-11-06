@@ -4,10 +4,10 @@ export class JoinChatroomDto {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  password!: string | null;
+  password!: string;
 
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  confirmationPassword!: string | null;
+  confirmationPassword!: string;
 }
