@@ -43,7 +43,10 @@ describe('UserController', () => {
           avatarY: 0,
           ...testUserDto,
           username,
-          isBlocked: false,
+          blockRelation: {
+            isUserBlockedByMe: false,
+            amIBlockedByUser: false,
+          },
         });
       },
     };

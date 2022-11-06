@@ -9,3 +9,4 @@ export { ReactComponent as Logout } from './logout.svg';
 export { ReactComponent as Play } from './play.svg';
 export { ReactComponent as Search } from './search.svg';
 export { ReactComponent as Users } from './users.svg';
+export { ReactComponent as Send } from './send.svg';
