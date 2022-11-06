@@ -95,10 +95,26 @@ export class ChatService {
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {
-    const chatroom = await this.chatRepository.updateById(
-      chatroomId,
-      updateChatroomDto,
-    );
-    return chatroom ? new Chatroom(chatroom) : null;
+    const { confirmationPassword: _, ...updateChatroom } = updateChatroomDto;
+    if (updateChatroomDto.password) {
+      if (
+        updateChatroomDto.password !== updateChatroomDto.confirmationPassword
+      ) {
+        throw new BadRequestException(
+          'Password and Confirmation Password must match',
+        );
+      } else {
+        const hashedPassword = await Password.toHash(
+          updateChatroomDto.password,
+        );
+        const ret = this.chatRepository.updateById(chatroomId, {
+          ...updateChatroom,
+          password: hashedPassword,
+        });
+        return await ret;
+      }
+    } else {
+      return await this.chatRepository.updateById(chatroomId, updateChatroom);
+    }
   }
 }
