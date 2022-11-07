@@ -13,6 +13,13 @@
   grid-template-columns: 1fr;
 }
 
+.chatroom-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
 .chatroom-header {
   grid-area: header;
 }
