@@ -138,6 +138,27 @@ export class ChatController {
     return chatroomsMembers;
   }
 
+  @Get('room/:chatroomId/members/:userId')
+  @ApiOkResponse({
+    description: 'Get a chatroom member',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getChatroomMember(
+    @Param('chatroomId') chatroomId: string,
+    @Param('userId') userId: string,
+  ) {
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      userId,
+    );
+    if (!chatroomMember) {
+      throw new NotFoundException();
+    }
+    return chatroomMember;
+  }
+
   @Get('room/:id')
   @ApiCreatedResponse({
     description: 'Get a chatroom',
