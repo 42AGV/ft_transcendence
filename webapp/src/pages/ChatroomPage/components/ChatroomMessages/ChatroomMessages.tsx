@@ -1,33 +1,43 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ChatBubble, ChatBubbleVariant } from '../../../../shared/components';
-import { User } from '../../../../shared/generated';
+import { ENTRIES_LIMIT } from '../../../../shared/constants';
+import { ChatroomMessageWithUser } from '../../../../shared/generated';
 import { useAuth } from '../../../../shared/hooks/UseAuth';
+import { useData } from '../../../../shared/hooks/UseData';
+import { chatApi } from '../../../../shared/services/ApiService';
 import socket from '../../../../shared/socket';
 import { AVATAR_EP_URL } from '../../../../shared/urls';
 import './ChatroomMessages.css';
-
-type ChatroomMessageType = {
-  id: string;
-  user: User;
-  content: string;
-  createdAt: number;
-  chatroomId: string;
-};
 
 type ChatroomMessagesProps = {
   from: string;
 };
 
 function ChatroomMessages({ from }: ChatroomMessagesProps) {
-  const [messages, setMessages] = useState<ChatroomMessageType[]>([]);
+  const [messages, setMessages] = useState<ChatroomMessageWithUser[]>([]);
+  const getMessages = useCallback(
+    () =>
+      chatApi.chatControllerGetChatroomMessages({
+        chatroomId: from,
+        limit: ENTRIES_LIMIT,
+      }),
+    [from],
+  );
+  const { data: prevChatroomMessages } = useData(getMessages);
   const { authUser: me } = useAuth();
 
   useEffect(() => {
-    const messagesListener = (messages: ChatroomMessageType[]) => {
+    if (prevChatroomMessages) {
+      setMessages(prevChatroomMessages);
+    }
+  }, [prevChatroomMessages]);
+
+  useEffect(() => {
+    const messagesListener = (messages: ChatroomMessageWithUser[]) => {
       setMessages(messages);
     };
 
-    const messageListener = (message: ChatroomMessageType) => {
+    const messageListener = (message: ChatroomMessageWithUser) => {
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages, message];
         return newMessages;
