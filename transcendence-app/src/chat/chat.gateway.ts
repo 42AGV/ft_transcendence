@@ -45,7 +45,7 @@ export class ChatGateway {
       user.id,
     );
     if (!chatroomMember || chatroomMember.muted) {
-      throw new WsException('Forbidden');
+      throw new WsException('Not a chatroom member. Forbidden.');
     }
     const message = await this.chatService.addChatroomMessage({
       chatroomId,
@@ -55,7 +55,9 @@ export class ChatGateway {
     if (message) {
       this.server.to(chatroomId).emit('chatroomMessage', { ...message, user });
     } else {
-      throw new WsException('Service Unavailable');
+      throw new WsException(
+        'The message could not be sent. Service Unavailable',
+      );
     }
   }
 
@@ -69,7 +71,7 @@ export class ChatGateway {
       client.request.user.id,
     );
     if (!chatroomMember) {
-      throw new WsException('Forbidden');
+      throw new WsException('Not a chatroom member. Forbidden.');
     }
     client.join(chatroomId);
   }
