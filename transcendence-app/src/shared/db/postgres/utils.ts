@@ -52,7 +52,7 @@ export const makeTransactionalQuery = async <T>(
       if (isCriticalDatabaseError(err)) {
         PostgresLogger.error(err.message);
       }
-      return null;
+      data = null;
     } finally {
       client.release();
     }
