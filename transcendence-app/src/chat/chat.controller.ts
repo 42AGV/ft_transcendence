@@ -190,9 +190,17 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateChatroom(
+    @GetUser() userMe: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
+    const chatroom = await this.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new ServiceUnavailableException();
+    }
+    if (userMe.id !== chatroom.ownerId) {
+      throw new ForbiddenException();
+    }
     const updatedChatroom = await this.chatService.updateChatroom(
       chatroomId,
       updateChatroomDto,
