@@ -28,7 +28,7 @@ const mapChatToRow = (chatroom: Chatroom): RowItem => {
       url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
       status: 'offline',
     },
-    url: `${CHATROOM_URL}/${chatroom.name}`,
+    url: `${CHATROOM_URL}/${chatroom.id}`,
     title: chatroom.name,
     subtitle: 'last message',
     key: chatroom.id,
