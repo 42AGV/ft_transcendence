@@ -49,7 +49,10 @@ export const makeTransactionalQuery = async <T>(
       await client.query('COMMIT');
     } catch (err) {
       await client.query('ROLLBACK');
-      throw err;
+      if (isCriticalDatabaseError(err)) {
+        PostgresLogger.error(err.message);
+      }
+      return null;
     } finally {
       client.release();
     }
