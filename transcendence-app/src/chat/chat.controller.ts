@@ -193,7 +193,7 @@ export class ChatController {
     type: [ChatMessage],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatMessages(
     @GetUser() userMe: User,
     @Param('userId', ParseUUIDPipe) recipientId: string,
@@ -205,7 +205,7 @@ export class ChatController {
       requestDto,
     );
     if (!messages) {
-      throw new UnprocessableEntityException();
+      throw new ServiceUnavailableException();
     }
     return messages;
   }

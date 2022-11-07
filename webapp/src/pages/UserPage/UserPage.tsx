@@ -9,6 +9,8 @@ import {
   TextVariant,
   TextWeight,
   ToggleSwitch,
+  Button,
+  ButtonVariant,
 } from '../../shared/components';
 import { AVATAR_EP_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
@@ -27,7 +29,7 @@ export default function UserPage() {
   );
   const { data: user, isLoading } = useData(getUserByUserName);
   const { goBack } = useNavigation();
-  const { isBlocked, unblockUser, blockUser } = useBlock(user);
+  const { blockRelation, unblockUser, blockUser } = useBlock(user);
 
   if (isLoading) {
     return (
@@ -59,30 +61,43 @@ export default function UserPage() {
         />
         <div className="user-text">
           <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
             {user.fullName}
           </Text>
           <Text
-            variant={TextVariant.PARAGRAPH} // this size doesn't look like in figma
-            color={TextColor.LIGHT} // at least for desktop
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
             {user.email}
           </Text>
         </div>
         <div className="user-block-status-toggle">
-          {isBlocked !== null && (
+          {blockRelation !== null && (
             <ToggleSwitch
-              label={isBlocked ? 'Unblock' : 'Block'}
-              isToggled={isBlocked ?? false}
-              onToggle={isBlocked ? unblockUser : blockUser}
+              label={blockRelation.isUserBlocked ? 'Unblock' : 'Block'}
+              isToggled={blockRelation.isUserBlocked ?? false}
+              onToggle={blockRelation.isUserBlocked ? unblockUser : blockUser}
             />
           )}
         </div>
       </div>
+      {blockRelation !== null && (
+        <div className="user-page-chat-button">
+          <Button
+            disabled={
+              (blockRelation.amIBlocked || blockRelation.isUserBlocked) ?? false
+            }
+            variant={ButtonVariant.SUBMIT}
+            iconVariant={IconVariant.SEND}
+          >
+            Send message
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
