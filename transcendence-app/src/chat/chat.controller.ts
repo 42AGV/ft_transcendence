@@ -38,6 +38,7 @@ import { PaginationQueryDto } from '../shared/dtos/pagination.query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
 import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -78,10 +79,12 @@ export class ChatController {
   async createChatroomMember(
     @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Body() joinChatroomDto: JoinChatroomDto,
   ) {
-    const ret = await this.chatroomMemberService.addChatroomMember(
+    const ret = await this.chatService.addChatroomMember(
       chatroomId,
       user.id,
+      joinChatroomDto,
     );
 
     if (!ret) {

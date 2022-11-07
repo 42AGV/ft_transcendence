@@ -1,5 +1,7 @@
 import {
   ClassSerializerInterceptor,
+  ParseUUIDPipe,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -9,75 +11,74 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
+import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
-import { User } from '../user/infrastructure/db/user.entity';
-
-type ChatroomMessage = {
-  id: string;
-  user: User;
-  content: string;
-  createdAt: number;
-  chatroomId: string;
-};
-
-type ChatroomId = string;
+import { ChatService } from './chat.service';
+import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { CreateChatroomMessageDto } from './chatroom/chatroom-message/dto/create-chatroom-message.dto';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
+@UseFilters(BadRequestTransformationFilter)
 export class ChatGateway {
   @WebSocketServer() server!: Server;
-  chatrooms = new Map<ChatroomId, Set<ChatroomMessage>>();
+
+  constructor(
+    private chatService: ChatService,
+    private chatroomMemberService: ChatroomMemberService,
+  ) {}
 
   @SubscribeMessage('chatroomMessage')
-  handleMessage(
-    @MessageBody() data: { chatroomId: ChatroomId; content: string },
+  async handleMessage(
+    @MessageBody()
+    createChatroomMessageDto: CreateChatroomMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
+    const { chatroomId, content } = createChatroomMessageDto;
     const user = client.request.user;
-    const { chatroomId, content } = data;
-    const chatroom = this.chatrooms.get(chatroomId);
-    if (user && chatroom) {
-      const message: ChatroomMessage = {
-        id: uuidv4(),
-        user: user,
-        content: content,
-        createdAt: Date.now(),
-        chatroomId: chatroomId,
-      };
-      chatroom.add(message);
-      this.server.to(chatroomId).emit('chatroomMessage', message);
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      user.id,
+    );
+    if (!chatroomMember || chatroomMember.muted) {
+      throw new WsException('Not a chatroom member. Forbidden.');
     }
-  }
-
-  @SubscribeMessage('getChatroomMessages')
-  handleGetMessages(
-    @MessageBody() chatroomId: ChatroomId,
-    @ConnectedSocket() client: Socket,
-  ) {
-    const messages = this.chatrooms.get(chatroomId);
-    if (messages) {
-      client.emit('chatroomMessages', [...messages]);
+    const message = await this.chatService.addChatroomMessage({
+      chatroomId,
+      userId: user.id,
+      content,
+    });
+    if (message) {
+      this.server.to(chatroomId).emit('chatroomMessage', { ...message, user });
+    } else {
+      throw new WsException(
+        'The message could not be sent. Service Unavailable',
+      );
     }
   }
 
   @SubscribeMessage('joinChatroom')
-  handleJoinRoom(
-    @MessageBody() chatroomId: ChatroomId,
+  async handleJoinRoom(
+    @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    client.join(chatroomId);
-    if (!this.chatrooms.has(chatroomId)) {
-      this.chatrooms.set(chatroomId, new Set<ChatroomMessage>());
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      client.request.user.id,
+    );
+    if (!chatroomMember) {
+      throw new WsException('Not a chatroom member. Forbidden.');
     }
+    client.join(chatroomId);
   }
 
   @SubscribeMessage('leaveChatroom')
-  handleLeaveRoom(
-    @MessageBody() chatroomId: ChatroomId,
+  async handleLeaveRoom(
+    @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
     client.leave(chatroomId);

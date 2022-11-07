@@ -11,7 +11,7 @@ export abstract class IChatroomRepository {
     name: string,
     updateChatDto: UpdateChatroomDto,
   ): Promise<Chatroom | null>;
-  abstract add(chatroom: Partial<Chatroom>): Promise<Chatroom | null>;
+  abstract addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null>;
   abstract getPaginatedChatrooms(
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Chatroom[] | null>;
