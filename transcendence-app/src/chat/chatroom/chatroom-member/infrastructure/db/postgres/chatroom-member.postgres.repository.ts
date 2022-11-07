@@ -56,7 +56,7 @@ export class ChatroomMemberPostgresRepository
         AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
       values: [chatId, userId],
     });
-    return members ? new ChatroomMember(members[0]) : null;
+    return members && members.length ? new ChatroomMember(members[0]) : null;
   }
 
   async retrieveChatroomMembers(
@@ -81,8 +81,6 @@ export class ChatroomMemberPostgresRepository
                AND cm."joinedAt" IS NOT NULL`,
       values: [chatroomId],
     });
-    return users && users.length
-      ? users.map((user) => new ChatroomMemberWithUser(user))
-      : null;
+    return users ? users.map((user) => new ChatroomMemberWithUser(user)) : null;
   }
 }
