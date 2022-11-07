@@ -1,7 +1,7 @@
 import './RowsPageTemplate.css';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { USER_ME_URL, AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../../urls';
+import { USER_ME_URL, AVATAR_EP_URL } from '../../../urls';
 import { MediumAvatar } from '../../Avatar/Avatar';
 import SearchForm from '../../Input/SearchForm';
 import RowsList, { RowItem } from '../../RowsList/RowsList';
@@ -42,11 +42,7 @@ export default function RowsPageTemplate<T>({
       <div className="rows-template-avatar">
         <Link to={`${USER_ME_URL}`}>
           <MediumAvatar
-            url={
-              authUser.avatarId
-                ? `${AVATAR_EP_URL}/${authUser.avatarId}`
-                : WILDCARD_AVATAR_URL
-            }
+            url={`${AVATAR_EP_URL}/${authUser.avatarId}`}
             XCoordinate={authUser.avatarX ?? 0}
             YCoordinate={authUser.avatarY ?? 0}
           />

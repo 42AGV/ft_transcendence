@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+import { Exclude } from 'class-transformer';
+
 export enum userKeys {
   ID = '"id"',
   USERNAME = '"username"',
@@ -10,16 +13,39 @@ export enum userKeys {
   AVATAR_Y = '"avatarY"',
 }
 
-export class UserEntity {
-  constructor(
-    public username: string,
-    public email: string,
-    public fullName: string,
-    public password: string | null,
-    public avatarId: string | null,
-    public avatarX: number = 0,
-    public avatarY: number = 0,
-    public id: string,
-    public createdAt: Date,
-  ) {}
+interface UserData {
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  password: string | null;
+  avatarId: string;
+  avatarX: number;
+  avatarY: number;
+  createdAt: Date;
+}
+
+export class User {
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  @Exclude()
+  password: string | null;
+  avatarId: string;
+  avatarX: number = 0;
+  avatarY: number = 0;
+  createdAt: Date;
+
+  constructor(userData: UserData) {
+    this.id = userData.id;
+    this.username = userData.username;
+    this.email = userData.email;
+    this.fullName = userData.fullName;
+    this.password = userData.password;
+    this.avatarId = userData.avatarId;
+    this.avatarX = userData.avatarX;
+    this.avatarY = userData.avatarY;
+    this.createdAt = userData.createdAt;
+  }
 }

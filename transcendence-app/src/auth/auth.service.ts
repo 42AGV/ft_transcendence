@@ -4,23 +4,18 @@ import {
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { randomBytes, scrypt as _scrypt } from 'crypto';
-import { promisify } from 'util';
 import { v4 as uuidv4 } from 'uuid';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
-import { User } from '../user/user.domain';
+import { User } from '../user/infrastructure/db/user.entity';
 import { UserService } from '../user/user.service';
 import { IUserRepository } from '../user/infrastructure/db/user.repository';
 import { LocalFileService } from '../shared/local-file/local-file.service';
-
-const scrypt = promisify(_scrypt);
+import { Password } from '../shared/password';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
-  readonly saltLength = 8;
-  readonly hashLength = 32;
-
   constructor(
     private userRepository: IUserRepository,
     private readonly userService: UserService,
@@ -37,10 +32,7 @@ export class AuthService {
       throw incorrectCredentialsException;
     }
 
-    const [salt, storedHash] = foundUser.password.split('.');
-    const hash = (await scrypt(user.password, salt, this.hashLength)) as Buffer;
-
-    if (storedHash !== hash.toString('hex')) {
+    if ((await Password.compare(foundUser.password, user.password)) === false) {
       throw incorrectCredentialsException;
     }
 
@@ -60,18 +52,14 @@ export class AuthService {
       );
     }
 
-    const salt = randomBytes(this.saltLength).toString('hex');
-    const hash = (await scrypt(user.password, salt, this.hashLength)) as Buffer;
-    const result = salt + '.' + hash.toString('hex');
-
+    const hashedPassword = await Password.toHash(user.password);
     const { confirmationPassword: _, ...newUser } = user;
 
     const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
     const avatarId = uuidv4();
-    const userDto = {
+    const userDto: CreateUserDto = {
       ...newUser,
-      avatarId,
-      password: result,
+      password: hashedPassword,
     };
 
     return this.userService.addAvatarAndUser(avatarId, avatarDto, userDto);

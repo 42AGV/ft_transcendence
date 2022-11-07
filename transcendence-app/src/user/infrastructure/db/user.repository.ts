@@ -1,8 +1,8 @@
 import { AuthProviderType } from '../../../auth/auth-provider/auth-provider.service';
-import { LocalFile } from '../../../shared/local-file/local-file.domain';
+import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
+import { LocalFile } from '../../../shared/local-file/infrastructure/db/local-file.entity';
 import { UpdateUserDto } from '../../dto/update-user.dto';
-import { UsersPaginationQueryDto } from '../../dto/user.pagination.dto';
-import { User } from '../../user.domain';
+import { User } from './user.entity';
 
 export abstract class IUserRepository {
   abstract getById(id: string): Promise<User | null>;
@@ -15,7 +15,7 @@ export abstract class IUserRepository {
   ): Promise<User | null>;
   abstract add(user: User): Promise<User | null>;
   abstract getPaginatedUsers(
-    queryDto: Required<UsersPaginationQueryDto>,
+    queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<User[] | null>;
   abstract addAvatarAndAddUser(
     avatar: LocalFile,

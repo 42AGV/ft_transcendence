@@ -11,7 +11,7 @@ import {
   TextColor,
   Row,
 } from '../../shared/components';
-import { AVATAR_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { AVATAR_EP_URL } from '../../shared/urls';
 import { SubmitStatus } from '../../shared/types';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -22,7 +22,7 @@ import {
   EDITABLE_AVATAR_SCALE,
   EDITABLE_AVATAR_SCALE_REVERSE,
 } from '../../shared/components/Avatar/EditableAvatar';
-import { UserAvatarDto } from '../../shared/generated';
+import { UserAvatarResponseDto } from '../../shared/generated';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 type ImgData = {
@@ -88,7 +88,7 @@ export default function EditAvatarPage() {
     if (imgFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
-        .then((res: UserAvatarDto) => {
+        .then((res: UserAvatarResponseDto) => {
           setStatus({ type: 'success', message: 'Image uploaded correctly.' });
           setAuthUser((prevState) => {
             if (!prevState) return null;
@@ -142,11 +142,7 @@ export default function EditAvatarPage() {
         onChange={changeHandler}
       />
       <EditableAvatar
-        url={
-          authUser.avatarId
-            ? imgData.imgSrc || `${AVATAR_EP_URL}/${authUser.avatarId}`
-            : WILDCARD_AVATAR_URL
-        }
+        url={imgData.imgSrc || `${AVATAR_EP_URL}/${authUser.avatarId}`}
         XCoordinate={picturePosition.x}
         YCoordinate={picturePosition.y}
         handleDown={handleDown}

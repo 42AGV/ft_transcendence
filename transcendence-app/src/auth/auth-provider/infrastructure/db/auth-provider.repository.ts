@@ -1,5 +1,5 @@
 import { AuthProviderType } from '../../auth-provider.service';
-import { AuthProvider } from '../../auth-provider.domain';
+import { AuthProvider } from './auth-provider.entity';
 
 export abstract class IAuthProviderRepository {
   abstract getByProvider(

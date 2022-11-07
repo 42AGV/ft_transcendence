@@ -1,5 +1,7 @@
 import {
   ClassSerializerInterceptor,
+  ParseUUIDPipe,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -9,77 +11,76 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
+import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
-import { User } from '../user/user.domain';
-
-type ChatRoomMessage = {
-  id: string;
-  user: User;
-  content: string;
-  createdAt: number;
-  chatRoomId: string;
-};
-
-type ChatRoomId = string;
+import { ChatService } from './chat.service';
+import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { CreateChatroomMessageDto } from './chatroom/chatroom-message/dto/create-chatroom-message.dto';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
+@UseFilters(BadRequestTransformationFilter)
 export class ChatGateway {
   @WebSocketServer() server!: Server;
-  chatRooms = new Map<ChatRoomId, Set<ChatRoomMessage>>();
 
-  @SubscribeMessage('chatRoomMessage')
-  handleMessage(
-    @MessageBody() data: { chatRoomId: ChatRoomId; content: string },
+  constructor(
+    private chatService: ChatService,
+    private chatroomMemberService: ChatroomMemberService,
+  ) {}
+
+  @SubscribeMessage('chatroomMessage')
+  async handleMessage(
+    @MessageBody()
+    createChatroomMessageDto: CreateChatroomMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
+    const { chatroomId, content } = createChatroomMessageDto;
     const user = client.request.user;
-    const { chatRoomId, content } = data;
-    const chatRoom = this.chatRooms.get(chatRoomId);
-    if (user && chatRoom) {
-      const message: ChatRoomMessage = {
-        id: uuidv4(),
-        user: user,
-        content: content,
-        createdAt: Date.now(),
-        chatRoomId: chatRoomId,
-      };
-      chatRoom.add(message);
-      this.server.to(chatRoomId).emit('chatRoomMessage', message);
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      user.id,
+    );
+    if (!chatroomMember || chatroomMember.muted) {
+      throw new WsException('Not a chatroom member. Forbidden.');
+    }
+    const message = await this.chatService.addChatroomMessage({
+      chatroomId,
+      userId: user.id,
+      content,
+    });
+    if (message) {
+      this.server.to(chatroomId).emit('chatroomMessage', { ...message, user });
+    } else {
+      throw new WsException(
+        'The message could not be sent. Service Unavailable',
+      );
     }
   }
 
-  @SubscribeMessage('getChatRoomMessages')
-  handleGetMessages(
-    @MessageBody() chatRoomId: ChatRoomId,
+  @SubscribeMessage('joinChatroom')
+  async handleJoinRoom(
+    @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const messages = this.chatRooms.get(chatRoomId);
-    if (messages) {
-      client.emit('chatRoomMessages', [...messages]);
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      client.request.user.id,
+    );
+    if (!chatroomMember) {
+      throw new WsException('Not a chatroom member. Forbidden.');
     }
+    client.join(chatroomId);
   }
 
-  @SubscribeMessage('joinChatRoom')
-  handleJoinRoom(
-    @MessageBody() chatRoomId: ChatRoomId,
+  @SubscribeMessage('leaveChatroom')
+  async handleLeaveRoom(
+    @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    client.join(chatRoomId);
-    if (!this.chatRooms.has(chatRoomId)) {
-      this.chatRooms.set(chatRoomId, new Set<ChatRoomMessage>());
-    }
-  }
-
-  @SubscribeMessage('leaveChatRoom')
-  handleLeaveRoom(
-    @MessageBody() chatRoomId: ChatRoomId,
-    @ConnectedSocket() client: Socket,
-  ) {
-    client.leave(chatRoomId);
+    client.leave(chatroomId);
   }
 }
