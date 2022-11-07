@@ -57,7 +57,7 @@ export class ChatController {
   async createChatroom(
     @GetUser() user: User,
     @Body() createChatDto: CreateChatroomDto,
-  ) {
+  ): Promise<Chatroom> {
     const chatroom = await this.chatService.createChatroom(
       user.id,
       createChatDto,
@@ -80,7 +80,7 @@ export class ChatController {
     @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() joinChatroomDto: JoinChatroomDto,
-  ) {
+  ): Promise<ChatroomMember> {
     const ret = await this.chatService.addChatroomMember(
       chatroomId,
       user.id,
@@ -148,7 +148,7 @@ export class ChatController {
   async getChatroomMember(
     @Param('chatroomId') chatroomId: string,
     @Param('userId') userId: string,
-  ) {
+  ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,
       userId,
@@ -166,7 +166,9 @@ export class ChatController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  async getChatroomById(@Param('id', ParseUUIDPipe) chatroomId: string) {
+  async getChatroomById(
+    @Param('id', ParseUUIDPipe) chatroomId: string,
+  ): Promise<Chatroom> {
     const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
@@ -219,7 +221,7 @@ export class ChatController {
     @GetUser() userMe: User,
     @Param('userId', ParseUUIDPipe) recipientId: string,
     @Query() requestDto: PaginationQueryDto,
-  ) {
+  ): Promise<ChatMessage[]> {
     const messages = await this.chatService.getOneToOneChatMessages(
       userMe.id,
       recipientId,
