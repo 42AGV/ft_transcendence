@@ -15,7 +15,7 @@ import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
 import { useNavigate } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useEffect, useState } from 'react';
-import { CreateChatDto, ResponseError } from '../../shared/generated';
+import { CreateChatroomDto, ResponseError } from '../../shared/generated';
 import './EditChatRoomPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 
@@ -29,8 +29,8 @@ const initialSubmitFormStatus: FormStatus = {
   message: '',
 };
 
-export default function EditChatRoomPage() {
-  const initialFormValues: CreateChatDto = {
+export default function EditChatroomPage() {
+  const initialFormValues: CreateChatroomDto = {
     name: '',
     password: '',
     confirmationPassword: '',
@@ -38,7 +38,7 @@ export default function EditChatRoomPage() {
   const navigate = useNavigate();
   const { goBack } = useNavigation();
   const [formValues, setFormValues] =
-    useState<CreateChatDto>(initialFormValues);
+    useState<CreateChatroomDto>(initialFormValues);
   const [status, setStatus] = useState<FormStatus>({
     type: 'pending',
     message: '',
@@ -73,14 +73,14 @@ export default function EditChatRoomPage() {
     }
     return true;
   }
+
   async function register() {
     if (!hasValidFormValues()) {
       return;
     }
     try {
-      console.log(formValues);
-      await chatApi.chatControllerCreateChatRoom({
-        createChatDto: {
+      await chatApi.chatControllerCreateChatroom({
+        createChatroomDto: {
           ...formValues,
           password: formValues.password || null,
           confirmationPassword: formValues.confirmationPassword || null,
@@ -102,6 +102,7 @@ export default function EditChatRoomPage() {
       }
     }
   }
+
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     register().catch((e) => console.error(e));
