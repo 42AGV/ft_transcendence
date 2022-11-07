@@ -5,17 +5,23 @@ import { Header, IconVariant } from '../../shared/components';
 import socket from '../../shared/socket';
 import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { WsException } from '../../shared/types';
 
 function Chatroom() {
   const { chatroomId } = useParams();
   const { goBack } = useNavigation();
 
   useEffect(() => {
+    socket.on('exception', (wsError: WsException) => {
+      // TODO Add error notification in case of an WebSocket exception
+      console.log(wsError);
+    });
     if (chatroomId) {
       socket.emit('joinChatroom', { chatroomId });
     }
 
     return () => {
+      socket.off('exception');
       if (chatroomId) {
         socket.emit('leaveChatroom', { chatroomId });
       }
