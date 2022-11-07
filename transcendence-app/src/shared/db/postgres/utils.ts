@@ -40,8 +40,8 @@ export const makeTransactionalQuery = async <T>(
   pool: PostgresPool,
   callback: (client: PoolClient) => Promise<T | null>,
 ) => {
-  let data: T | null = null;
   try {
+    let data: T | null = null;
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
