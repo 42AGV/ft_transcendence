@@ -3,9 +3,8 @@ import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgr
 import { table } from '../../../../../shared/db/models';
 import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
 import {
-  insertWithClient,
   makeQuery,
-  updateByIdWithClient,
+  makeTransactionalQuery,
 } from '../../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../../shared/local-file/infrastructure/db/local-file.entity';
@@ -23,9 +22,10 @@ export class ChatroomPostgresRepository
     super(pool, table.CHATROOM, Chatroom);
   }
   async addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null> {
-    const chatroomData = await this.pool.transaction<Chatroom>(
+    const chatroomData = await makeTransactionalQuery<Chatroom>(
+      this.pool,
       async (client) => {
-        const chatroomData = await insertWithClient(
+        const chatroomData = await BasePostgresRepository.insertWithClient(
           client,
           table.CHATROOM,
           chatroom,
@@ -34,7 +34,11 @@ export class ChatroomPostgresRepository
           chatId: chatroom.id,
           userId: chatroom.ownerId,
         };
-        await insertWithClient(client, table.CHATROOM_MEMBERS, chatmember);
+        await BasePostgresRepository.insertWithClient(
+          client,
+          table.CHATROOM_MEMBERS,
+          chatmember,
+        );
         return chatroomData.rows[0];
       },
     );
@@ -88,18 +92,23 @@ export class ChatroomPostgresRepository
     avatar: LocalFile,
     chatroom: Chatroom,
   ): Promise<Chatroom | null> {
-    const chatroomData = await this.pool.transaction<Chatroom>(
+    const chatroomData = await makeTransactionalQuery<Chatroom>(
+      this.pool,
       async (client) => {
-        const avatarRes = await insertWithClient(
+        const avatarRes = await BasePostgresRepository.insertWithClient(
           client,
           table.LOCAL_FILE,
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const chatRes = await insertWithClient(client, table.CHATROOM, {
-          ...chatroom,
-          avatarId,
-        });
+        const chatRes = await BasePostgresRepository.insertWithClient(
+          client,
+          table.CHATROOM,
+          {
+            ...chatroom,
+            avatarId,
+          },
+        );
         return chatRes.rows[0];
       },
     );
@@ -110,15 +119,16 @@ export class ChatroomPostgresRepository
     avatar: LocalFile,
     chatroom: Chatroom,
   ): Promise<Chatroom | null> {
-    const chatroomData = await this.pool.transaction<Chatroom>(
+    const chatroomData = await makeTransactionalQuery<Chatroom>(
+      this.pool,
       async (client) => {
-        const avatarRes = await insertWithClient(
+        const avatarRes = await BasePostgresRepository.insertWithClient(
           client,
           table.LOCAL_FILE,
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const chatRes = await updateByIdWithClient(
+        const chatRes = await BasePostgresRepository.updateByIdWithClient(
           client,
           this.table,
           chatroom.id,

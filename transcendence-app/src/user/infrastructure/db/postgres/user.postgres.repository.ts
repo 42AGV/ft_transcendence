@@ -5,9 +5,8 @@ import { User, userKeys } from '../../db/user.entity';
 import { IUserRepository } from '../user.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import {
-  insertWithClient,
   makeQuery,
-  updateByIdWithClient,
+  makeTransactionalQuery,
 } from '../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
@@ -74,19 +73,26 @@ export class UserPostgresRepository
     avatar: LocalFile,
     user: User,
   ): Promise<User | null> {
-    const userData = await this.pool.transaction<User>(async (client) => {
-      const avatarRes = await insertWithClient(
-        client,
-        table.LOCAL_FILE,
-        avatar,
-      );
-      const avatarId = (avatarRes.rows[0] as LocalFile).id;
-      const userRes = await insertWithClient(client, table.USERS, {
-        ...user,
-        avatarId,
-      });
-      return userRes.rows[0];
-    });
+    const userData = await makeTransactionalQuery<User>(
+      this.pool,
+      async (client) => {
+        const avatarRes = await BasePostgresRepository.insertWithClient(
+          client,
+          table.LOCAL_FILE,
+          avatar,
+        );
+        const avatarId = (avatarRes.rows[0] as LocalFile).id;
+        const userRes = await BasePostgresRepository.insertWithClient(
+          client,
+          table.USERS,
+          {
+            ...user,
+            avatarId,
+          },
+        );
+        return userRes.rows[0];
+      },
+    );
     return userData ? new this.ctor(userData) : null;
   }
 
@@ -94,18 +100,26 @@ export class UserPostgresRepository
     avatar: LocalFile,
     user: User,
   ): Promise<User | null> {
-    const userData = await this.pool.transaction<User>(async (client) => {
-      const avatarRes = await insertWithClient(
-        client,
-        table.LOCAL_FILE,
-        avatar,
-      );
-      const avatarId = (avatarRes.rows[0] as LocalFile).id;
-      const userRes = await updateByIdWithClient(client, this.table, user.id, {
-        avatarId,
-      });
-      return userRes.rows[0];
-    });
+    const userData = await makeTransactionalQuery<User>(
+      this.pool,
+      async (client) => {
+        const avatarRes = await BasePostgresRepository.insertWithClient(
+          client,
+          table.LOCAL_FILE,
+          avatar,
+        );
+        const avatarId = (avatarRes.rows[0] as LocalFile).id;
+        const userRes = await BasePostgresRepository.updateByIdWithClient(
+          client,
+          this.table,
+          user.id,
+          {
+            avatarId,
+          },
+        );
+        return userRes.rows[0];
+      },
+    );
     return userData ? new this.ctor(userData) : null;
   }
 
