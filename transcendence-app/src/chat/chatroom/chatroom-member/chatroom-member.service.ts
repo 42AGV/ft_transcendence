@@ -21,7 +21,9 @@ export class ChatroomMemberService {
       muted: false,
       banned: false,
     };
-    const ret = await this.chatroomMemberRepository.add(chatmember);
+    const ret = await this.chatroomMemberRepository.addChatroomMember(
+      chatmember,
+    );
     return ret ? new ChatroomMember(ret) : null;
   }
 
@@ -33,9 +35,7 @@ export class ChatroomMemberService {
       chatId,
       userId,
     );
-    return chatMember && !chatMember.banned
-      ? new ChatroomMember(chatMember)
-      : null;
+    return chatMember && !chatMember.banned ? chatMember : null;
   }
 
   retrieveChatroomMembers(

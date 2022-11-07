@@ -17,3 +17,8 @@ export type SubmitStatus = {
   type: 'success' | 'error' | 'pending';
   message: string;
 };
+
+export type WsException = {
+  status: string;
+  message: string;
+};

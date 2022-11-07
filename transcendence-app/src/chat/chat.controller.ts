@@ -40,6 +40,7 @@ import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastruct
 import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
+import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -80,10 +81,12 @@ export class ChatController {
   async createChatroomMember(
     @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Body() joinChatroomDto: JoinChatroomDto,
   ) {
-    const ret = await this.chatroomMemberService.addChatroomMember(
+    const ret = await this.chatService.addChatroomMember(
       chatroomId,
       user.id,
+      joinChatroomDto,
     );
 
     if (!ret) {
@@ -190,9 +193,17 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateChatroom(
+    @GetUser() userMe: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
+    const chatroom = await this.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new ServiceUnavailableException();
+    }
+    if (userMe.id !== chatroom.ownerId) {
+      throw new ForbiddenException();
+    }
     const updatedChatroom = await this.chatService.updateChatroom(
       chatroomId,
       updateChatroomDto,
