@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
 import {
   Header,
@@ -9,6 +9,7 @@ import {
   TextColor,
   TextVariant,
 } from '../../shared/components';
+import { CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
@@ -90,8 +91,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   }
 
   if (!chatroomMember) {
-    // TODO Navigate to the join chatroom page, where the user can join this chatroom
-    window.location.assign('/api#/chat/ChatController_createChatroomMember');
+    return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} />;
   }
 
   return (
