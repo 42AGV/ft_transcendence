@@ -4,6 +4,7 @@ import { ENTRIES_LIMIT } from '../../../../shared/constants';
 import { ChatroomMessageWithUser } from '../../../../shared/generated';
 import { useAuth } from '../../../../shared/hooks/UseAuth';
 import { useData } from '../../../../shared/hooks/UseData';
+import { useIsElementVisible } from '../../../../shared/hooks/UseIsElementVisible';
 import { chatApi } from '../../../../shared/services/ApiService';
 import socket from '../../../../shared/socket';
 import { AVATAR_EP_URL } from '../../../../shared/urls';
@@ -15,28 +16,37 @@ type ChatroomMessagesProps = {
 
 function ChatroomMessages({ from }: ChatroomMessagesProps) {
   const [messages, setMessages] = useState<ChatroomMessageWithUser[]>([]);
+  const [offset, setOffset] = useState(0);
   const getMessages = useCallback(
     () =>
       chatApi.chatControllerGetChatroomMessages({
         chatroomId: from,
         limit: ENTRIES_LIMIT,
+        offset,
       }),
-    [from],
+    [from, offset],
   );
-  const { data: prevChatroomMessages } = useData(getMessages);
+  const { data: chatroomMessages } = useData(getMessages);
   const { authUser: me } = useAuth();
+  const { ref, isVisible } = useIsElementVisible();
 
   useEffect(() => {
-    if (prevChatroomMessages) {
-      setMessages(prevChatroomMessages);
+    if (chatroomMessages) {
+      setMessages((prevMessages) => {
+        const reversedchatroomMessages = chatroomMessages.slice().reverse();
+        const newMessages = [...reversedchatroomMessages, ...prevMessages];
+        return newMessages;
+      });
     }
-  }, [prevChatroomMessages]);
+  }, [chatroomMessages]);
 
   useEffect(() => {
-    const messagesListener = (messages: ChatroomMessageWithUser[]) => {
-      setMessages(messages);
-    };
+    if (isVisible) {
+      setOffset((prevOffset) => prevOffset + ENTRIES_LIMIT);
+    }
+  }, [isVisible]);
 
+  useEffect(() => {
     const messageListener = (message: ChatroomMessageWithUser) => {
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages, message];
@@ -45,12 +55,9 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
     };
 
     socket.on('chatroomMessage', messageListener);
-    socket.on('chatroomMessages', messagesListener);
-    socket.emit('getChatroomMessages', from);
 
     return () => {
       socket.off('chatroomMessage');
-      socket.off('chatroomMessages');
     };
   }, [from]);
 
@@ -64,7 +71,11 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
           index === 0 ||
           messages[index].user.id !== messages[index - 1].user.id;
         return (
-          <li key={message.id} className="chatroom-messages-list-item">
+          <li
+            key={message.id}
+            ref={index === 0 ? ref : undefined}
+            className="chatroom-messages-list-item"
+          >
             <ChatBubble
               variant={
                 me && me.id === message.user.id
