@@ -37,8 +37,8 @@ export default function Button({
   return (
     <button
       className={`${
-        children ? 'button' : 'button-small'
-      } subheading-bold button-${variant}`}
+        children ? 'button-large' : 'button-small'
+      } button subheading-bold button-${variant}`}
       disabled={disabled}
       onClick={onClick}
       form={form}
