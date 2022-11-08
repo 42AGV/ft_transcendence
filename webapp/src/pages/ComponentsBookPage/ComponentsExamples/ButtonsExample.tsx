@@ -32,5 +32,22 @@ export const ButtonsExample = () => (
         To Google
       </Button>
     </BookSubsection>
+    <BookSubsection title="Small warning type">
+      <Button variant={ButtonVariant.WARNING} onClick={buttonAction} />
+    </BookSubsection>
+    <BookSubsection title="Small disabled">
+      <Button
+        variant={ButtonVariant.WARNING}
+        iconVariant={IconVariant.LOGOUT}
+        disabled
+      />
+    </BookSubsection>
+    <BookSubsection title="Small submit type with icon">
+      <Button
+        variant={ButtonVariant.SUBMIT}
+        iconVariant={IconVariant.ARROW_FORWARD}
+        onClick={buttonLink}
+      />
+    </BookSubsection>
   </BookSection>
 );

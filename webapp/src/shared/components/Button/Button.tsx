@@ -34,36 +34,21 @@ export default function Button({
   form,
   children,
 }: ButtonProps) {
-  let l_icon: JSX.Element = (
-    <>
+  return (
+    <button
+      className={`${
+        children ? 'button' : 'button-small'
+      } subheading-bold button-${variant}`}
+      disabled={disabled}
+      onClick={onClick}
+      form={form}
+    >
       {iconVariant && (
         <div className="button-icon">
           {<Icon variant={iconVariant} size={IconSize.SMALL} />}
         </div>
       )}
-    </>
-  );
-  const large_button: JSX.Element = (
-    <button
-      className={`button subheading-bold button-${variant}`}
-      disabled={disabled}
-      onClick={onClick}
-      form={form}
-    >
-      {l_icon}
-      {children}
+      {children && children}
     </button>
   );
-  const small_button: JSX.Element = (
-    <button
-      className={`button subheading-bold button-${variant}`}
-      disabled={disabled}
-      onClick={onClick}
-      form={form}
-    >
-      {l_icon}
-    </button>
-  );
-
-  return children ? large_button : small_button;
 }
