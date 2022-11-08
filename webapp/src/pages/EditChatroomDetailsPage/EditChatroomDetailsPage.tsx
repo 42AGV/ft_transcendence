@@ -39,7 +39,7 @@ export default function CreateChatroomPage() {
   const { data: chatroom, isLoading } = useData(getChatRoomById);
 
   const initialFormValues: CreateChatroomDto = {
-    name: '',
+    name: isLoading ? '' : chatroom!.name,
     password: '',
     confirmationPassword: '',
   };
@@ -86,8 +86,9 @@ export default function CreateChatroomPage() {
       return;
     }
     try {
-      await chatApi.chatControllerCreateChatroom({
-        createChatroomDto: {
+      await chatApi.chatControllerUpdateChatroom({
+        chatroomId: chatroomId!,
+        updateChatroomDto: {
           ...formValues,
           password: formValues.password || null,
           confirmationPassword: formValues.confirmationPassword || null,
@@ -131,7 +132,7 @@ export default function CreateChatroomPage() {
             color={TextColor.LIGHT}
             weight={TextWeight.REGULAR}
           >
-            {formValues.name ? formValues.name : 'chat room name'}
+            {isLoading ? '' : chatroom!.name}
           </Text>
           <Text
             variant={TextVariant.PARAGRAPH}
@@ -151,7 +152,7 @@ export default function CreateChatroomPage() {
           <Input
             variant={InputVariant.LIGHT}
             label="Chat Room Name"
-            placeholder="chat room name"
+            placeholder={isLoading ? '' : chatroom!.name}
             value={formValues.name}
             name="name"
             onChange={handleInputChange}

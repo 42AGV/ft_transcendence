@@ -122,7 +122,7 @@ root.render(
             }
           />
           <Route
-            path={`${CHATROOM_URL}/:chatroomId/editdetails`}
+            path={`${CHATROOM_URL}/:chatroomId/edit`}
             element={
               <RequireAuth>
                 <EditChatroomDetailsPage />

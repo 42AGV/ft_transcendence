@@ -6,6 +6,7 @@ import socket from '../../shared/socket';
 import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { WsException } from '../../shared/types';
+import { CHATROOM_URL } from '../../shared/urls';
 
 function Chatroom() {
   const { chatroomId } = useParams();
@@ -35,7 +36,11 @@ function Chatroom() {
   return (
     <div className="chatroom">
       <div className="chatroom-header">
-        <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
+        <Header
+          icon={IconVariant.ARROW_BACK}
+          onClick={goBack}
+          titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/edit`} //TODO: update when details page is ready
+        >
           {chatroomId}
         </Header>
       </div>
