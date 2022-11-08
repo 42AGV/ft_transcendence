@@ -1,11 +1,18 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
-import { Header, IconVariant, Loading } from '../../shared/components';
+import {
+  Header,
+  IconVariant,
+  Loading,
+  Text,
+  TextColor,
+  TextVariant,
+} from '../../shared/components';
 import socket from '../../shared/socket';
 import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { WsException } from '../../shared/types';
+import { SubmitStatus, WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
@@ -29,6 +36,10 @@ type ChatroomProps = {
 
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   const { goBack } = useNavigation();
+  const [status, setStatus] = useState<SubmitStatus>({
+    type: 'pending',
+    message: '',
+  });
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
     [chatroomId],
@@ -47,8 +58,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
 
   useEffect(() => {
     socket.on('exception', (wsError: WsException) => {
-      // TODO Add error notification in case of an WebSocket exception
-      console.log(wsError);
+      setStatus({ type: 'error', message: wsError.message });
     });
     socket.emit('joinChatroom', { chatroomId });
 
@@ -57,6 +67,13 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
       socket.emit('leaveChatroom', { chatroomId });
     };
   }, [chatroomId]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStatus({ type: 'pending', message: '' });
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [status]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
     return (
@@ -73,7 +90,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   }
 
   if (!chatroomMember) {
-    // TODO Redirect to the chatroom details page, where the user can join this chatroom
+    // TODO Navigate to the join chatroom page, where the user can join this chatroom
     window.location.assign('/api#/chat/ChatController_createChatroomMember');
   }
 
@@ -89,6 +106,16 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
       </div>
       <div className="chatroom-message-input">
         <ChatroomMessageInput to={chatroomId} />
+      </div>
+      <div className="chatroom-status">
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={
+            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
+          }
+        >
+          {status.message}
+        </Text>
       </div>
     </div>
   );
