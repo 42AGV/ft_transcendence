@@ -28,13 +28,13 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
   );
   const { data: chatroomMessages } = useData(getMessages);
   const { authUser: me } = useAuth();
-  const { ref, isVisible } = useIsElementVisible();
+  const { ref: callbackRef, isVisible } = useIsElementVisible();
 
   useEffect(() => {
     if (chatroomMessages) {
       setMessages((prevMessages) => {
-        const reversedchatroomMessages = chatroomMessages.slice().reverse();
-        const newMessages = [...reversedchatroomMessages, ...prevMessages];
+        const reversedChatroomMessages = chatroomMessages.slice().reverse();
+        const newMessages = [...reversedChatroomMessages, ...prevMessages];
         return newMessages;
       });
     }
@@ -73,7 +73,7 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
         return (
           <li
             key={message.id}
-            ref={index === 0 ? ref : undefined}
+            ref={index === 0 ? callbackRef : undefined}
             className="chatroom-messages-list-item"
           >
             <ChatBubble
