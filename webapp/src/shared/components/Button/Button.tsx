@@ -1,5 +1,6 @@
 import Icon, { IconVariant, IconSize } from '../Icon/Icon';
 import './Button.css';
+import React from 'react';
 
 export enum ButtonVariant {
   SUBMIT = 'submit',
@@ -7,14 +8,23 @@ export enum ButtonVariant {
   ALTERNATIVE = 'submit-alternative',
 }
 
-type ButtonProps = {
+type CommonButtonProps = {
   variant: ButtonVariant;
   iconVariant?: IconVariant;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   form?: string;
+};
+
+type LargeButtonProps = CommonButtonProps & {
   children: string;
 };
+
+type SmallButtonProps = CommonButtonProps & {
+  children?: never;
+};
+
+type ButtonProps = SmallButtonProps | LargeButtonProps;
 
 export default function Button({
   variant,
@@ -24,19 +34,36 @@ export default function Button({
   form,
   children,
 }: ButtonProps) {
-  return (
+  let l_icon: JSX.Element = (
+    <>
+      {iconVariant && (
+        <div className="button-icon">
+          {<Icon variant={iconVariant} size={IconSize.SMALL} />}
+        </div>
+      )}
+    </>
+  );
+  const large_button: JSX.Element = (
     <button
       className={`button subheading-bold button-${variant}`}
       disabled={disabled}
       onClick={onClick}
       form={form}
     >
-      {iconVariant && (
-        <div className="button-icon">
-          {<Icon variant={iconVariant} size={IconSize.SMALL}></Icon>}
-        </div>
-      )}
+      {l_icon}
       {children}
     </button>
   );
+  const small_button: JSX.Element = (
+    <button
+      className={`button subheading-bold button-${variant}`}
+      disabled={disabled}
+      onClick={onClick}
+      form={form}
+    >
+      {l_icon}
+    </button>
+  );
+
+  return children ? large_button : small_button;
 }
