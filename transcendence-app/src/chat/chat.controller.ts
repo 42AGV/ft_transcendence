@@ -190,16 +190,17 @@ export class ChatController {
   }
 
   @Patch('room/:chatroomId')
-  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateChatroom(
     @GetUser() userMe: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
-    const chatroom = await this.getChatroomById(chatroomId);
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
-      throw new ServiceUnavailableException();
+      throw new NotFoundException();
     }
     if (userMe.id !== chatroom.ownerId) {
       throw new ForbiddenException();
