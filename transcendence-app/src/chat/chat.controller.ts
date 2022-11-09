@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   ServiceUnavailableException,
@@ -38,6 +39,7 @@ import { PaginationQueryDto } from '../shared/dtos/pagination.query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
 import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 
 @Controller('chat')
@@ -153,7 +155,7 @@ export class ChatController {
     return chatroom;
   }
 
-  @Get('chat/room/:chatroomId/messages')
+  @Get('room/:chatroomId/messages')
   @ApiOkResponse({
     description: `Lists all messages in a chatroom (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [ChatroomMessageWithUser],
@@ -185,6 +187,32 @@ export class ChatController {
       throw new ServiceUnavailableException();
     }
     return messages;
+  }
+
+  @Patch('room/:chatroomId')
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  async updateChatroom(
+    @GetUser() userMe: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Body() updateChatroomDto: UpdateChatroomDto,
+  ): Promise<Chatroom> {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    if (userMe.id !== chatroom.ownerId) {
+      throw new ForbiddenException();
+    }
+    const updatedChatroom = await this.chatService.updateChatroom(
+      chatroomId,
+      updateChatroomDto,
+    );
+    if (!updatedChatroom) {
+      throw new UnprocessableEntityException();
+    }
+    return updatedChatroom;
   }
 
   @Get(':userId/messages')
