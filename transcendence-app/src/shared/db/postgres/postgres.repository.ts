@@ -77,7 +77,7 @@ export class BasePostgresRepository<T> implements IBaseRepository<T> {
     )}) VALUES (${params.join(',')}) RETURNING *;`;
     return client.query(text, values);
   }
-  static updateByIdWithClient<EntityData extends Record<string, any>>(
+  async updateByIdWithClient<EntityData extends Record<string, any>>(
     client: PoolClient,
     table: table,
     id: string,
