@@ -34,7 +34,7 @@ export class ChatroomPostgresRepository
           chatId: chatroom.id,
           userId: chatroom.ownerId,
         };
-        await BasePostgresRepository.insertWithClient(
+        await this.insertWithClient(
           client,
           table.CHATROOM_MEMBERS,
           chatmember,
