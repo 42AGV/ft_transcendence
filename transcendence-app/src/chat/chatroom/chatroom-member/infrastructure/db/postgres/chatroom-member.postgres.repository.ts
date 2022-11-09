@@ -67,7 +67,7 @@ export class ChatroomMemberPostgresRepository
     const { cols, values } = entityQueryMapper(chatroomMember);
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 3}`).join(',');
 
-    const charoomMembersData = await makeQuery(this.pool, {
+    const chatroomMembersData = await makeQuery(this.pool, {
       text: `UPDATE ${this.table}
       SET ${colsToUpdate}
       WHERE ${ChatroomMemberKeys.CHATID} = $1
@@ -75,8 +75,8 @@ export class ChatroomMemberPostgresRepository
       RETURNING *;`,
       values: [chatroomId, userId, ...values],
     });
-    return charoomMembersData && charoomMembersData.length
-      ? new this.ctor(charoomMembersData[0])
+    return chatroomMembersData && chatroomMembersData.length
+      ? new this.ctor(chatroomMembersData[0])
       : null;
   }
 
