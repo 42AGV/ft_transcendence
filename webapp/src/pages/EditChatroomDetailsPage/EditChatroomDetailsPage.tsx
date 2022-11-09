@@ -5,13 +5,19 @@ import {
   IconVariant,
   Input,
   InputVariant,
+  LargeAvatar,
+  Loading,
   MediumAvatar,
   Text,
   TextColor,
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import {
+  CHAT_URL,
+  EDIT_AVATAR_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -116,15 +122,28 @@ export default function CreateChatroomPage() {
   const deleteChatoom = () => {
     alert('Are you sure you want to delete the chatroom?');
   };
+  if (!chatroom) {
+    return (
+      <div className="edit-user-page">
+        <div className="edit-user-loading">
+          <Loading />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="edit-chatroom-details-page">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
         {isLoading ? '' : `${chatroom!.name}/edit details`}
       </Header>
       <div className="edit-chatroom-details-page-avatar-properties">
-        <div className="edit-chatroom-details-page-avatar">
-          {/* TODO: make chatroom avatar not null*/}
-          <MediumAvatar url={WILDCARD_AVATAR_URL} />
+        <div className="edit-user-avatar">
+          <LargeAvatar
+            url={WILDCARD_AVATAR_URL}
+            editUrl={EDIT_AVATAR_URL}
+            XCoordinate={chatroom.avatarX}
+            YCoordinate={chatroom.avatarY}
+          />
         </div>
         <div className="edit-chatroom-details-page-properties">
           <Text
