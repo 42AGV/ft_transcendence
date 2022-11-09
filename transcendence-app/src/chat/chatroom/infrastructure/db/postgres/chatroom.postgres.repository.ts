@@ -128,7 +128,7 @@ export class ChatroomPostgresRepository
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const chatRes = await BasePostgresRepository.updateByIdWithClient(
+        const chatRes = await this.updateByIdWithClient(
           client,
           this.table,
           chatroom.id,
