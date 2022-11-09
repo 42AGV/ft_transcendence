@@ -25,7 +25,7 @@ export class ChatroomPostgresRepository
     const chatroomData = await makeTransactionalQuery<Chatroom>(
       this.pool,
       async (client) => {
-        const chatroomData = await BasePostgresRepository.insertWithClient(
+        const chatroomData = await this.insertWithClient(
           client,
           table.CHATROOM,
           chatroom,
