@@ -84,15 +84,15 @@ export class ChatroomMemberPostgresRepository
     chatroomId: string,
     userId: string,
   ): Promise<ChatroomMember | null> {
-    const chatroomMemberdData = await makeQuery(this.pool, {
+    const chatroomMembersData = await makeQuery(this.pool, {
       text: `DELETE FROM ${this.table}
       WHERE ${ChatroomMemberKeys.CHATID} = $1
         AND ${ChatroomMemberKeys.USERID} = $2
       RETURNING *;`,
       values: [chatroomId, userId],
     });
-    return chatroomMemberdData && chatroomMemberdData.length
-      ? new this.ctor(chatroomMemberdData[0])
+    return chatroomMembersData && chatroomMembersData.length
+      ? new this.ctor(chatroomMembersData[0])
       : null;
   }
 
