@@ -10,14 +10,20 @@ services:
       target: production
       args:
         - REACT_APP_NAME=webapp-prod
+    volumes:
+      - ./nginx/webapp.conf:/etc/nginx/conf.d/default.conf:ro
 
   transcendence-app:
     build:
       context: ./transcendence-app
       target: production
     environment:
-      - POSTGRES_USER={POSTGRES_USER:?required}
-      - POSTGRES_PASSWORD={POSTGRES_PASSWORD:?required}
+      - POSTGRES_USER=${POSTGRES_USER:?required}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
+      - FORTYTWO_APP_ID=${FORTYTWO_APP_ID:?required}
+      - FORTYTWO_APP_SECRET=${FORTYTWO_APP_SECRET:?required}
+      - SESSION_SECRET=${SESSION_SECRET:?required}
+      - MEMCACHED_SECRET=${MEMCACHED_SECRET:?required}
 
   db:
     environment:
