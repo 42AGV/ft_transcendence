@@ -1,0 +1,57 @@
+.snackbar {
+  position: fixed;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  border: none;
+  border-radius: 0.75rem;
+  height: 3rem;
+  width: 15rem;
+  color: var(--color-light);
+}
+
+.snackbar-type-warning {
+  background-color: var(--color-warning);
+}
+
+.snackbar-type-info {
+  background-color: var(--color-online);
+}
+
+@keyframes slide-in-bottom {
+  from {
+    bottom: -5rem;
+  }
+  to {
+    bottom: 5rem;
+  }
+}
+
+@keyframes slide-out-bottom {
+  from {
+    bottom: 5rem;
+  }
+  to {
+    bottom: -5rem;
+  }
+}
+
+@keyframes slide-in-top {
+  from {
+    top: -5rem;
+  }
+  to {
+    top: 5rem;
+  }
+}
+
+@keyframes slide-out-top {
+  from {
+    top: 5rem;
+  }
+  to {
+    top: -5rem;
+  }
+}
