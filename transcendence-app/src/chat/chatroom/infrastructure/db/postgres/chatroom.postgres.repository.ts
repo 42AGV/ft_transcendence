@@ -34,11 +34,7 @@ export class ChatroomPostgresRepository
           chatId: chatroom.id,
           userId: chatroom.ownerId,
         };
-        await this.insertWithClient(
-          client,
-          table.CHATROOM_MEMBERS,
-          chatmember,
-        );
+        await this.insertWithClient(client, table.CHATROOM_MEMBERS, chatmember);
         return chatroomData.rows[0];
       },
     );
@@ -101,14 +97,10 @@ export class ChatroomPostgresRepository
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const chatRes = await this.insertWithClient(
-          client,
-          table.CHATROOM,
-          {
-            ...chatroom,
-            avatarId,
-          },
-        );
+        const chatRes = await this.insertWithClient(client, table.CHATROOM, {
+          ...chatroom,
+          avatarId,
+        });
         return chatRes.rows[0];
       },
     );

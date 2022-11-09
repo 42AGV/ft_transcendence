@@ -66,7 +66,7 @@ export class BasePostgresRepository<T> implements IBaseRepository<T> {
       : null;
   }
 
-  async insertWithClient<EntityData extends Record<string, any>>(
+  insertWithClient<EntityData extends Record<string, any>>(
     client: PoolClient,
     table: table,
     entity: Partial<EntityData>,
@@ -77,7 +77,8 @@ export class BasePostgresRepository<T> implements IBaseRepository<T> {
     )}) VALUES (${params.join(',')}) RETURNING *;`;
     return client.query(text, values);
   }
-  async updateByIdWithClient<EntityData extends Record<string, any>>(
+
+  updateByIdWithClient<EntityData extends Record<string, any>>(
     client: PoolClient,
     table: table,
     id: string,

@@ -82,14 +82,10 @@ export class UserPostgresRepository
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const userRes = await this.insertWithClient(
-          client,
-          table.USERS,
-          {
-            ...user,
-            avatarId,
-          },
-        );
+        const userRes = await this.insertWithClient(client, table.USERS, {
+          ...user,
+          avatarId,
+        });
         return userRes.rows[0];
       },
     );
