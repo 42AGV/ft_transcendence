@@ -122,7 +122,7 @@ export class ChatroomPostgresRepository
     const chatroomData = await makeTransactionalQuery<Chatroom>(
       this.pool,
       async (client) => {
-        const avatarRes = await BasePostgresRepository.insertWithClient(
+        const avatarRes = await this.insertWithClient(
           client,
           table.LOCAL_FILE,
           avatar,
