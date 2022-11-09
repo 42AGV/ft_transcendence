@@ -82,7 +82,7 @@ export class UserPostgresRepository
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const userRes = await BasePostgresRepository.insertWithClient(
+        const userRes = await this.insertWithClient(
           client,
           table.USERS,
           {
