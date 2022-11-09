@@ -14,6 +14,7 @@ import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastruct
 import { IChatroomMessageRepository } from './chatroom/chatroom-message/infrastructure/db/chatroom-message.repository';
 import { PaginationQueryDto } from '../shared/dtos/pagination.query.dto';
 import { Password } from '../shared/password';
+import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 import { IChatMessageRepository } from './chat/infrastructure/db/chat-message.repository';
 import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
@@ -115,6 +116,36 @@ export class ChatService {
         offset,
       },
     );
+  }
+
+  async updateChatroom(
+    chatroomId: string,
+    updateChatroomDto: UpdateChatroomDto,
+  ): Promise<Chatroom | null> {
+    const { confirmationPassword: _, ...updateChatroom } = updateChatroomDto;
+    if (updateChatroomDto.password) {
+      if (
+        updateChatroomDto.password !== updateChatroomDto.confirmationPassword
+      ) {
+        throw new BadRequestException(
+          'Password and Confirmation Password must match',
+        );
+      } else {
+        const hashedPassword = await Password.toHash(
+          updateChatroomDto.password,
+        );
+        const ret = this.chatroomRepository.updateById(chatroomId, {
+          ...updateChatroom,
+          password: hashedPassword,
+        });
+        return await ret;
+      }
+    } else {
+      return await this.chatroomRepository.updateById(
+        chatroomId,
+        updateChatroom,
+      );
+    }
   }
 
   addChatroomMessage(chatroomMessage: Partial<ChatroomMessage>) {
