@@ -109,7 +109,7 @@ export class UserPostgresRepository
           avatar,
         );
         const avatarId = (avatarRes.rows[0] as LocalFile).id;
-        const userRes = await BasePostgresRepository.updateByIdWithClient(
+        const userRes = await this.updateByIdWithClient(
           client,
           this.table,
           user.id,
