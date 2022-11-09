@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { IChatroomMemberRepository } from './infrastructure/db/chatroom-member.repository';
 import {
   ChatroomMember,
@@ -36,6 +36,26 @@ export class ChatroomMemberService {
       userId,
     );
     return chatMember && !chatMember.banned ? chatMember : null;
+  }
+
+  async leaveChatroom(
+    chatroomId: string,
+    userId: string,
+  ): Promise<ChatroomMember | null> {
+    const foundChatroomMember = await this.chatroomMemberRepository.getById(
+      chatroomId,
+      userId,
+    );
+
+    if (!foundChatroomMember) {
+      throw new NotFoundException();
+    }
+    if (foundChatroomMember.banned || foundChatroomMember.muted) {
+      return this.chatroomMemberRepository.updateById(chatroomId, userId, {
+        joinedAt: null,
+      });
+    }
+    return this.chatroomMemberRepository.deleteById(chatroomId, userId);
   }
 
   retrieveChatroomMembers(

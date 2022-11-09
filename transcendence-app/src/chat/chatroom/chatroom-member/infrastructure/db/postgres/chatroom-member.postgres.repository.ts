@@ -45,7 +45,7 @@ export class ChatroomMemberPostgresRepository
   }
 
   async getById(
-    chatId: string,
+    chatroomId: string,
     userId: string,
   ): Promise<ChatroomMember | null> {
     const members = await makeQuery<ChatroomMember>(this.pool, {
@@ -54,9 +54,46 @@ export class ChatroomMemberPostgresRepository
       WHERE ${ChatroomMemberKeys.CHATID} = $1
         AND ${ChatroomMemberKeys.USERID} = $2
         AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
-      values: [chatId, userId],
+      values: [chatroomId, userId],
     });
     return members && members.length ? new ChatroomMember(members[0]) : null;
+  }
+
+  async updateById(
+    chatroomId: string,
+    userId: string,
+    chatroomMember: Partial<ChatroomMember>,
+  ): Promise<ChatroomMember | null> {
+    const { cols, values } = entityQueryMapper(chatroomMember);
+    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 3}`).join(',');
+
+    const charoomMembersData = await makeQuery(this.pool, {
+      text: `UPDATE ${this.table}
+      SET ${colsToUpdate}
+      WHERE ${ChatroomMemberKeys.CHATID} = $1
+        AND ${ChatroomMemberKeys.USERID} = $2
+      RETURNING *;`,
+      values: [chatroomId, userId, ...values],
+    });
+    return charoomMembersData && charoomMembersData.length
+      ? new this.ctor(charoomMembersData[0])
+      : null;
+  }
+
+  async deleteById(
+    chatroomId: string,
+    userId: string,
+  ): Promise<ChatroomMember | null> {
+    const chatroomMemberdData = await makeQuery(this.pool, {
+      text: `DELETE FROM ${this.table}
+      WHERE ${ChatroomMemberKeys.CHATID} = $1
+        AND ${ChatroomMemberKeys.USERID} = $2
+      RETURNING *;`,
+      values: [chatroomId, userId],
+    });
+    return chatroomMemberdData && chatroomMemberdData.length
+      ? new this.ctor(chatroomMemberdData[0])
+      : null;
   }
 
   async retrieveChatroomMembers(

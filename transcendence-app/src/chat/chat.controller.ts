@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   NotFoundException,
@@ -95,6 +96,28 @@ export class ChatController {
     return ret;
   }
 
+  @Delete('room/:chatroomId/members')
+  @ApiOkResponse({
+    description: 'Authenticated user leaves the given chatroom',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async leaveChatroom(
+    @GetUser() user: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+  ): Promise<ChatroomMember> {
+    const chatroomMember = await this.chatroomMemberService.leaveChatroom(
+      chatroomId,
+      user.id,
+    );
+    if (!chatroomMember) {
+      throw new ServiceUnavailableException();
+    }
+    return chatroomMember;
+  }
+
   @Get('room')
   @ApiOkResponse({
     description: `Lists all chatrooms (max ${MAX_ENTRIES_PER_PAGE})`,
@@ -141,7 +164,7 @@ export class ChatController {
   }
 
   @Get('room/:id')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Get a chatroom',
     type: Chatroom,
   })

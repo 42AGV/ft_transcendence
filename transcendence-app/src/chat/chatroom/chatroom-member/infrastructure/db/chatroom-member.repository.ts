@@ -8,7 +8,16 @@ export abstract class IChatroomMemberRepository {
     chatroomMember: ChatroomMember,
   ): Promise<ChatroomMember | null>;
   abstract getById(
-    chatId: string,
+    chatroomId: string,
+    userId: string,
+  ): Promise<ChatroomMember | null>;
+  abstract updateById(
+    chatroomId: string,
+    userId: string,
+    chatroomMember: Partial<ChatroomMember>,
+  ): Promise<ChatroomMember | null>;
+  abstract deleteById(
+    chatroomId: string,
     userId: string,
   ): Promise<ChatroomMember | null>;
   abstract retrieveChatroomMembers(
