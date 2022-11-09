@@ -66,7 +66,7 @@ export class BasePostgresRepository<T> implements IBaseRepository<T> {
       : null;
   }
 
-  static insertWithClient<EntityData extends Record<string, any>>(
+  async insertWithClient<EntityData extends Record<string, any>>(
     client: PoolClient,
     table: table,
     entity: Partial<EntityData>,
