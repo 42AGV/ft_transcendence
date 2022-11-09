@@ -32,12 +32,12 @@
 
 .edit-avatar-page .row {
   cursor: pointer;
-  width: 100%;
+  width: 15rem;
 }
 
 .edit-avatar-page .button {
   z-index: 1;
-  width: 100%;
+  width: 15rem;
 }
 
 @media (min-height: 800px) {
@@ -58,11 +58,5 @@
 
   .edit-avatar-page .editable-avatar {
     align-self: flex-start;
-  }
-}
-
-@media all and (min-width: 768px) {
-  .edit-avatar-page .row {
-    width: 15rem;
   }
 }
