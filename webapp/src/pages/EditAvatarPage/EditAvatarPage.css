@@ -37,6 +37,7 @@
 
 .edit-avatar-page .button {
   z-index: 1;
+  width: 15rem;
 }
 
 @media (min-height: 800px) {

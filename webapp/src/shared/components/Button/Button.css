@@ -11,7 +11,9 @@
 }
 
 .button-large {
-  width: 15rem;
+  width: 100%;
+  min-width: 15rem;
+  max-width: 20rem;
   border-radius: 0.5rem;
 }
 
