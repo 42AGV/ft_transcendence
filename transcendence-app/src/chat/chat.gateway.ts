@@ -44,8 +44,13 @@ export class ChatGateway {
       chatroomId,
       user.id,
     );
-    if (!chatroomMember || chatroomMember.muted) {
+    if (!chatroomMember) {
       throw new WsException('Not a chatroom member. Forbidden.');
+    }
+    if (chatroomMember.muted) {
+      throw new WsException(
+        "Account muted. You can't reply in this chatroom. Forbidden.",
+      );
     }
     const message = await this.chatService.addChatroomMessage({
       chatroomId,

@@ -4,13 +4,25 @@
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  gap: 1rem;
   grid-template-areas:
     'header'
     'messages'
-    'message-input';
-  grid-template-rows: auto 1fr auto;
+    'message-input'
+    'status';
+  grid-template-rows: auto 1fr auto auto;
   grid-template-columns: 1fr;
+}
+
+.chatroom-header,
+.chatroom-messages {
+  margin-bottom: 1rem;
+}
+
+.chatroom-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
 }
 
 .chatroom-header {
@@ -29,4 +41,17 @@
 
 .chatroom-message-input {
   grid-area: message-input;
+}
+
+.chatroom-status {
+  grid-area: status;
+}
+
+.chatroom-status > p {
+  margin: 0;
+}
+
+.chatroom-status > p:empty::before {
+  content: '';
+  display: inline-block;
 }
