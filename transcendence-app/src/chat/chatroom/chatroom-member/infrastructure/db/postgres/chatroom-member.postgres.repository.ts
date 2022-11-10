@@ -11,7 +11,10 @@ import {
   ChatroomMember,
   ChatroomMemberWithUser,
   ChatroomMemberKeys,
+  ChatroomMemberWithUserData,
 } from '../chatroom-member.entity';
+import { userKeys } from '../../../../../../user/infrastructure/db/user.entity';
+import { ChatroomKeys } from '../../../../infrastructure/db/chatroom.entity';
 
 @Injectable()
 export class ChatroomMemberPostgresRepository
@@ -57,6 +60,33 @@ export class ChatroomMemberPostgresRepository
       values: [chatroomId, userId],
     });
     return members && members.length ? new ChatroomMember(members[0]) : null;
+  }
+
+  async getByIdWithUser(
+    chatroomId: string,
+    userId: string,
+  ): Promise<ChatroomMemberWithUser | null> {
+    const members = await makeQuery<ChatroomMemberWithUserData>(this.pool, {
+      text: `SELECT u.${userKeys.USERNAME},
+	            u.${userKeys.AVATAR_ID},
+	            u.${userKeys.AVATAR_X},
+	            u.${userKeys.AVATAR_Y},
+	            c.${ChatroomKeys.OWNERID} IS NOT NULL AS owner,
+	            cm.${ChatroomMemberKeys.ADMIN},
+	            cm.${ChatroomMemberKeys.MUTED},
+	            cm.${ChatroomMemberKeys.BANNED}
+            FROM ${table.USERS} u
+            INNER JOIN ${this.table} cm ON cm.${ChatroomMemberKeys.USERID} = u.${userKeys.ID}
+            LEFT JOIN ${table.CHATROOM} c ON c.${ChatroomKeys.ID} = cm.${ChatroomMemberKeys.CHATID}
+	            AND u.${userKeys.ID} = c.${ChatroomKeys.OWNERID}
+            WHERE cm.${ChatroomMemberKeys.CHATID} = $1
+	            AND cm.${ChatroomMemberKeys.USERID} = $2
+	            AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL;`,
+      values: [chatroomId, userId],
+    });
+    return members && members.length
+      ? new ChatroomMemberWithUser(members[0])
+      : null;
   }
 
   async updateById(
