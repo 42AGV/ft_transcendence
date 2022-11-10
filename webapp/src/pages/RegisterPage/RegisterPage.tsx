@@ -76,10 +76,7 @@ export default function RegisterPage() {
       });
 
       notify('Registration complete');
-
-      setTimeout(() => {
-        navigate(LOGIN_OPTIONS_URL);
-      }, 2000);
+      navigate(LOGIN_OPTIONS_URL);
     } catch (error) {
       let errMessage = '';
 

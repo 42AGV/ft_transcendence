@@ -1,20 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, ButtonVariant, Input, InputVariant } from '../';
 import './EditUserForm.css';
 import { usersApi } from '../../services/ApiService';
 import { ResponseError } from '../../generated';
 import { useAuth } from '../../hooks/UseAuth';
 import { useNotificationContext } from '../../context/NotificationContext';
-
-type EditUserFormSubmitStatus = {
-  type: 'success' | 'error' | 'pending';
-  message: string;
-};
-
-const initialSubmitFormStatus: EditUserFormSubmitStatus = {
-  type: 'pending',
-  message: '',
-};
 
 type EditUserProps = {
   origUsername: string;
@@ -30,9 +20,6 @@ export default function EditUserForm({
   const [username, setUsername] = useState(origUsername);
   const [fullName, setFullName] = useState(origFullName);
   const [email, setEmail] = useState(origEmail);
-  const [status, setStatus] = useState<EditUserFormSubmitStatus>(
-    initialSubmitFormStatus,
-  );
   const { setAuthUser } = useAuth();
   const { warn, notify } = useNotificationContext();
 
@@ -71,13 +58,6 @@ export default function EditUserForm({
     e.preventDefault();
     updateData();
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus(initialSubmitFormStatus);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [status]);
 
   return (
     <form
