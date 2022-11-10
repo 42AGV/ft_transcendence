@@ -7,6 +7,7 @@ export abstract class IChatroomRepository {
   abstract getById(id: string): Promise<Chatroom | null>;
   abstract getByChatroomName(name: string): Promise<Chatroom | null>;
   abstract deleteByChatroomName(name: string): Promise<Chatroom | null>;
+  abstract deleteById(id: string): Promise<Chatroom | null>;
   abstract updateById(
     name: string,
     updateChatroomDto: UpdateChatroomDto,
