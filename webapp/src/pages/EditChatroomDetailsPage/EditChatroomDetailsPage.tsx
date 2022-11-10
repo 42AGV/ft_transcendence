@@ -124,7 +124,7 @@ export default function CreateChatroomPage() {
   };
   if (!chatroom) {
     return (
-      <div className="edit-user-page">
+      <div className="edit-user">
         <div className="edit-user-loading">
           <Loading />
         </div>
@@ -132,12 +132,12 @@ export default function CreateChatroomPage() {
     );
   }
   return (
-    <div className="edit-chatroom-details-page">
+    <div className="edit-chatroom-details">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
         {isLoading ? '' : `${chatroom!.name}/edit details`}
       </Header>
-      <div className="edit-chatroom-details-page-avatar-properties">
-        <div className="edit-user-avatar">
+      <div className="edit-chatroom-details-avatar-properties">
+        <div className="edit-chatroom-details-avatar">
           <LargeAvatar
             url={WILDCARD_AVATAR_URL}
             editUrl={EDIT_AVATAR_URL}
@@ -145,7 +145,7 @@ export default function CreateChatroomPage() {
             YCoordinate={chatroom.avatarY}
           />
         </div>
-        <div className="edit-chatroom-details-page-properties">
+        <div className="edit-chatroom-details-properties">
           <Text
             variant={TextVariant.PARAGRAPH}
             color={TextColor.LIGHT}
@@ -163,11 +163,11 @@ export default function CreateChatroomPage() {
         </div>
       </div>
       <form
-        id="edit-chatroom-details-page-form"
-        className="edit-chatroom-details-page-form"
+        id="edit-chatroom-details-form"
+        className="edit-chatroom-details-form"
         onSubmit={handleOnSubmit}
       >
-        <div className="edit-chatroom-details-page-form-inputs-container">
+        <div className="edit-chatroom-details-form-inputs-container">
           <Input
             variant={InputVariant.LIGHT}
             label="Chat Room Name"
@@ -207,7 +207,7 @@ export default function CreateChatroomPage() {
           </Text>
         </div>
       </form>
-      <div className="edit-chatroom-details-page-buttons">
+      <div className="edit-chatroom-details-buttons">
         <Button
           iconVariant={IconVariant.EDIT}
           children="Delete chatroom"
@@ -215,7 +215,7 @@ export default function CreateChatroomPage() {
           onClick={deleteChatoom}
         />
         <Button
-          form="edit-chatroom-details-page-form"
+          form="edit-chatroom-details-form"
           children="Save"
           variant={ButtonVariant.SUBMIT}
         />
