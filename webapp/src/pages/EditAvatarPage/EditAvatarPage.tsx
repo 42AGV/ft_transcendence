@@ -6,13 +6,9 @@ import {
   Header,
   IconVariant,
   Loading,
-  Text,
-  TextVariant,
-  TextColor,
   Row,
 } from '../../shared/components';
 import { AVATAR_EP_URL } from '../../shared/urls';
-import { SubmitStatus } from '../../shared/types';
 import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
@@ -24,6 +20,7 @@ import {
 } from '../../shared/components/Avatar/EditableAvatar';
 import { UserAvatarResponseDto } from '../../shared/generated';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 type ImgData = {
   imgName: string | null;
@@ -35,16 +32,12 @@ export default function EditAvatarPage() {
   const { username } = useParams();
   const { authUser, setAuthUser } = useAuth(username);
   const { goBack } = useNavigation();
-
-  const [status, setStatus] = useState<SubmitStatus>({
-    type: 'pending',
-    message: '',
-  });
   const [imgData, setImgData] = useState<ImgData>({
     imgName: null,
     imgFile: null,
     imgSrc: '',
   });
+  const { notify, warn } = useNotificationContext();
   const reverseTransform = useCallback(
     (value: number) => -value * EDITABLE_AVATAR_SCALE,
     [],
@@ -70,18 +63,13 @@ export default function EditAvatarPage() {
         },
       })
       .then(() => {
-        setStatus({
-          type: 'success',
-          message: 'Image visible area saved correctly.',
-        });
+        notify('Image visible area saved correctly.');
         setAuthUser((prevState) => {
           if (!prevState) return null;
           return { ...prevState, avatarX, avatarY };
         });
       })
-      .catch((e) =>
-        setStatus({ type: 'error', message: e.response.statusText }),
-      );
+      .catch((e) => warn(e.response.statusText));
   };
 
   const uploadAvatar = async () => {
@@ -89,16 +77,14 @@ export default function EditAvatarPage() {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
         .then((res: UserAvatarResponseDto) => {
-          setStatus({ type: 'success', message: 'Image uploaded correctly.' });
+          notify('Image uploaded correctly.');
           setAuthUser((prevState) => {
             if (!prevState) return null;
             const { avatarId } = res;
             return { ...prevState, avatarId };
           });
         })
-        .catch((e) =>
-          setStatus({ type: 'error', message: e.response.statusText }),
-        )
+        .catch((e) => warn(e.response.statusText))
         .finally(() => {
           setImgData({
             imgName: null,
@@ -117,10 +103,6 @@ export default function EditAvatarPage() {
       imgFile: event.target.files[0],
       imgName: event.target.files[0].name,
       imgSrc: URL.createObjectURL(event.target.files[0]),
-    });
-    setStatus({
-      type: 'pending',
-      message: '',
     });
   };
 
@@ -150,16 +132,6 @@ export default function EditAvatarPage() {
         handleMove={handleMove}
         disabled={imgFile !== null}
       />
-      {status.type !== 'pending' && (
-        <Text
-          variant={TextVariant.PARAGRAPH}
-          color={
-            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-          }
-        >
-          {status.message}
-        </Text>
-      )}
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}

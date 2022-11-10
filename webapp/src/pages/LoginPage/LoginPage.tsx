@@ -20,7 +20,6 @@ import {
   USERS_URL,
   HOST_URL,
 } from '../../shared/urls';
-import { SubmitStatus } from '../../shared/types';
 import './LoginPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';

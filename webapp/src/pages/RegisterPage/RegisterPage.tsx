@@ -14,7 +14,6 @@ import {
 import { RegisterUserDto, ResponseError } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { authApi } from '../../shared/services/ApiService';
-import { SubmitStatus } from '../../shared/types';
 import {
   DEFAULT_LOGIN_REDIRECT_URL,
   LOGIN_OPTIONS_URL,
