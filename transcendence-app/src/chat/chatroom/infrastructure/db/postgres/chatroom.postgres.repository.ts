@@ -56,6 +56,11 @@ export class ChatroomPostgresRepository
     return chats && chats.length ? chats[0] : null;
   }
 
+  async deleteById(id: string): Promise<Chatroom | null> {
+    const chats = await this.deleteByKey(ChatroomKeys.ID, id);
+    return chats && chats.length ? chats[0] : null;
+  }
+
   async updateById(
     id: string,
     updateChatroomDto: UpdateChatroomDto,
