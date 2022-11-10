@@ -2,7 +2,6 @@
   margin: 0;
   min-height: 100vh;
   padding: var(--padding-top-bottom) var(--padding-sides);
-  min-height: 100vh;
   overflow: hidden;
   background-color: var(--color-background);
   color: var(--color-light);
@@ -41,9 +40,9 @@
 }
 
 .login-form > .input,
-.button,
-.final-text,
-.login-container__separator {
+.login .button,
+.login .final-text,
+.login .login-container__separator {
   margin-bottom: 0.875rem;
   width: 100%;
   min-width: 15rem;

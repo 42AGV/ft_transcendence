@@ -11,3 +11,4 @@ export { HeaderExample } from './HeaderExample';
 export { LoadingExample } from './LoadingExample';
 export { ChatBubbleExample } from './ChatBubbleExample';
 export { ToggleSwitchExample } from './ToggleSwitchExample';
+export { SnackBarExample } from './SnackBarExample';
