@@ -7,9 +7,11 @@
   flex-direction: row;
   border: none;
   border-radius: 0.75rem;
-  height: 3rem;
-  width: 15rem;
+  min-height: 3rem;
+  min-width: 15rem;
   color: var(--color-light);
+  padding: 0 1rem;
+  margin: 0 1rem;
 }
 
 .snackbar-type-warning {

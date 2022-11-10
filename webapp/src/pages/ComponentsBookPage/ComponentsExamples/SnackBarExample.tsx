@@ -31,7 +31,7 @@ export const SnackBarExample = () => {
       />
       <SnackBar
         visible={visibleBottom}
-        text="This is a notification!"
+        text="Lorem fistrum nisi irure te voy a borrar el cerito elit amatomaa te voy a borrar el cerito. Sed quis amatomaa a peich. Ese hombree esse duis tiene musho peligro esse pupita eiusmod laboris torpedo. Ex consequat tiene musho peligro de la pradera apetecan. Et ese pedazo de mamaar esse. "
         position="bottom"
         type="warning"
       />
