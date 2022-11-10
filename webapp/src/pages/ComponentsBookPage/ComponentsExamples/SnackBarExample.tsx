@@ -1,40 +1,28 @@
 import * as React from 'react';
 
-import { SnackBar, Button, ButtonVariant } from '../../../shared/components';
+import { Button, ButtonVariant } from '../../../shared/components';
 import { BookSection } from '../BookSection';
+import { useNotificationContext } from '../../../shared/context/NotificationContext';
 
 export const SnackBarExample = () => {
-  const [visibleTop, setVisibleTop] = React.useState(false);
-  const [visibleBottom, setVisibleBottom] = React.useState(false);
+  const { notify, warn } = useNotificationContext();
 
   return (
     <>
       <BookSection title="Snack bar component" displayVertical>
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => setVisibleTop((prev) => !prev)}
+          onClick={() => notify('This is an informative notification!')}
         >
-          {`${visibleTop ? 'hide' : 'show'} snack bar from top`}
+          informative notification
         </Button>
         <Button
           variant={ButtonVariant.SUBMIT}
-          onClick={() => setVisibleBottom((prev) => !prev)}
+          onClick={() => warn('This is a warn notification!')}
         >
-          {`${visibleBottom ? 'hide' : 'show'} snack bar from bottom`}
+          warning notification
         </Button>
       </BookSection>
-      <SnackBar
-        visible={visibleTop}
-        text="This is a notification!"
-        position="top"
-        type="info"
-      />
-      <SnackBar
-        visible={visibleBottom}
-        text="Lorem fistrum nisi irure te voy a borrar el cerito elit amatomaa te voy a borrar el cerito. Sed quis amatomaa a peich. Ese hombree esse duis tiene musho peligro esse pupita eiusmod laboris torpedo. Ex consequat tiene musho peligro de la pradera apetecan. Et ese pedazo de mamaar esse. "
-        position="bottom"
-        type="warning"
-      />
     </>
   );
 };

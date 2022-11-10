@@ -4,16 +4,16 @@ import { Text, TextVariant } from '../index';
 
 import './Snackbar.css';
 
-type SnackbarSlidePositions = 'top' | 'bottom';
+export type SnackbarPosition = 'top' | 'bottom';
 
-type SnackbarType = 'warning' | 'info';
+export type SnackbarType = 'warning' | 'info';
 
 type SnackbarProps = {
   visible: boolean;
   text: string;
-  closeOnTap?: boolean;
-  position: SnackbarSlidePositions;
+  position: SnackbarPosition;
   type: SnackbarType;
+  onClick?: () => void;
 };
 
 export default function Snackbar({
@@ -21,7 +21,7 @@ export default function Snackbar({
   text,
   position,
   type,
-  closeOnTap = false,
+  onClick,
 }: SnackbarProps) {
   const [shouldRender, setShouldRender] = React.useState(false);
 
@@ -53,6 +53,7 @@ export default function Snackbar({
             } 0.5s`,
           }}
           onAnimationEnd={onAnimationEnd}
+          onClick={onClick}
         >
           <Text variant={TextVariant.CAPTION}>{text}</Text>
         </div>
