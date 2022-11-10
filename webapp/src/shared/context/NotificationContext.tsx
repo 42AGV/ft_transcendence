@@ -28,19 +28,19 @@ export const NotificationContextProvider = ({
   const [notification, setNotification] = React.useState<Notification>();
   const [visible, setVisible] = React.useState<boolean>(false);
 
-  const notify = (message: string) => {
+  const notify = React.useCallback((message: string) => {
     if (message.length) {
       setNotification({ message, type: 'info', position: 'top' });
       setVisible(true);
     }
-  };
+  }, []);
 
-  const warn = (message: string) => {
+  const warn = React.useCallback((message: string) => {
     if (message.length) {
       setNotification({ message, type: 'warning', position: 'bottom' });
       setVisible(true);
     }
-  };
+  }, []);
 
   const hide = () => {
     setVisible(false);

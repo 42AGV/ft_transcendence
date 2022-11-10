@@ -42,16 +42,3 @@
 .chatroom-message-input {
   grid-area: message-input;
 }
-
-.chatroom-status {
-  grid-area: status;
-}
-
-.chatroom-status > p {
-  margin: 0;
-}
-
-.chatroom-status > p:empty::before {
-  content: '';
-  display: inline-block;
-}
