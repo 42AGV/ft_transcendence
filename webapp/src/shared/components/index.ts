@@ -39,3 +39,5 @@ export { default as ChatBubble } from './ChatBubble/ChatBubble';
 export * from './ChatBubble/ChatBubble';
 
 export { default as ToggleSwitch } from './ToggleSwitch/ToggleSwitch';
+
+export { default as SnackBar } from './Snackbar/Snackbar';
