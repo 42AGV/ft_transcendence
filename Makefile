@@ -31,9 +31,9 @@ gen:
 
 .PHONY: clean
 clean:
+	$(DOCKER_COMPOSE) down -v
 	rm -rf $(PROJECT_ROOT)/webapp/src/shared/generated || true
 	rm $(PROJECT_ROOT)/transcendence-app/swagger-spec.yaml || true
-	$(DOCKER_COMPOSE) down -v
 
 .PHONY: re
 re:
