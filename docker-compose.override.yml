@@ -5,6 +5,7 @@ services:
       - "3000:80"
 
   webapp:
+    image: ft_transcendence/webapp-dev
     build:
       context: ./webapp
       target: development
@@ -16,6 +17,7 @@ services:
       - WDS_SOCKET_PORT=0
 
   transcendence-app:
+    image: ft_transcendence/transcendence-app-dev
     build:
       context: ./transcendence-app
       target: development
