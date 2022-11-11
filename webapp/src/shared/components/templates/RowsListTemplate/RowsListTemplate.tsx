@@ -1,17 +1,17 @@
-import './RowsListWithSearchTemplate.css';
+import './RowsListTemplate.css';
 import * as React from 'react';
 import SearchForm from '../../Input/SearchForm';
 import RowsList, { RowItem } from '../../RowsList/RowsList';
 import Loading from '../../Loading/Loading';
 import { useSearchContext } from '../../../context/SearchContext';
 
-type RowsListWithSearchTemplate<T> = {
+export type RowsListTemplateProps<T> = {
   dataMapper: (data: T) => RowItem;
 };
 
-export default function RowsListWithSearchTemplate<T>({
+export default function RowsListTemplate<T>({
   dataMapper,
-}: RowsListWithSearchTemplate<T>) {
+}: RowsListTemplateProps<T>) {
   const { result, fetchMoreResults } = useSearchContext();
 
   const data = ((array: object): RowItem[] | null => {
@@ -23,8 +23,8 @@ export default function RowsListWithSearchTemplate<T>({
 
   if (!data) {
     return (
-      <div className="rows-list-with-search-template">
-        <div className="rows-list-with-search-template-loading">
+      <div className="rows-list-template">
+        <div className="rows-list-template-loading">
           <Loading />
         </div>
       </div>
@@ -32,11 +32,11 @@ export default function RowsListWithSearchTemplate<T>({
   }
 
   return (
-    <div className="rows-list-with-search-template">
-      <div className="rows-list-with-search-template-search">
+    <div className="rows-list-template">
+      <div className="rows-list-template-search">
         <SearchForm />
       </div>
-      <div className="rows-list-with-search-template-rows">
+      <div className="rows-list-template-rows">
         <RowsList rows={data} onLastRowVisible={fetchMoreResults} />
       </div>
     </div>

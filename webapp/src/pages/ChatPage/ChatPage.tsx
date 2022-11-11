@@ -3,7 +3,7 @@ import {
   ButtonVariant,
   IconVariant,
   RowItem,
-  RowsTemplate,
+  MainTabTemplate,
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
@@ -47,7 +47,7 @@ export default function ChatPage() {
     <div className="chat-page">
       <div className="chat-page-content">
         <SearchContextProvider fetchFn={getChats} maxEntries={ENTRIES_LIMIT}>
-          <RowsTemplate dataMapper={mapChatToRow} />
+          <MainTabTemplate dataMapper={mapChatToRow} />
         </SearchContextProvider>
       </div>
       <div className="chat-page-button">

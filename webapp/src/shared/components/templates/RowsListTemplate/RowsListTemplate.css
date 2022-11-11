@@ -1,4 +1,4 @@
-.rows-list-with-search-template {
+.rows-list-template {
   position: relative;
   margin: 0;
   min-height: 100vh;
@@ -10,18 +10,18 @@
   gap: var(--row-gap) var(--column-gap);
 }
 
-.rows-list-with-search-template-search {
+.rows-list-template-search {
   grid-row: 2/3;
 }
 
-.rows-list-with-search-template-rows {
+.rows-list-template-rows {
   grid-row: 3/4;
   overflow: scroll;
   padding-bottom: var(--padding-top-bottom);
 }
 
 @media all and (min-width: 768px) {
-  .rows-list-with-search-template {
+  .rows-list-template {
     height: 100vh;
     column-gap: var(--column-gap);
     row-gap: var(--row-gap);
@@ -30,17 +30,17 @@
     grid-template-rows: auto 1fr;
   }
 
-  .rows-list-with-search-template-search {
+  .rows-list-template-search {
     align-self: center;
     margin: 0;
     grid-column: 2/6;
     grid-row: 1/2;
   }
 
-  .rows-list-with-search-template-search .input-container {
+  .rows-list-template-search .input-container {
     margin: 0;
   }
-  .rows-list-with-search-template-rows {
+  .rows-list-template-rows {
     grid-column: 1 / var(--column-end);
     grid-row: 2/3;
     overflow-y: auto;
