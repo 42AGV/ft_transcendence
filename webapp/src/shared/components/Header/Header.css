@@ -47,3 +47,5 @@
 .header-buttons > *:last-child {
   margin-right: 0;
 }
+
+/* TODO: make buttons flex-direction:column in narrow screens */

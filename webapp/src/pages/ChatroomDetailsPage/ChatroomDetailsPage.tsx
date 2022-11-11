@@ -31,7 +31,7 @@ export default function ChatroomDetailsPage() {
     if (authUser!.id === chatroom!.ownerId) {
       setIsOwner(true);
     }
-  }, [authUser, isUserLoading, chatroom, isChatroomLoading]);
+  }, [error, authUser, isUserLoading, chatroom, isChatroomLoading]);
   const leaveChatroom = useCallback(async () => {
     if (!chatroomId) return;
     try {
@@ -44,7 +44,7 @@ export default function ChatroomDetailsPage() {
     } finally {
       navigate(`${CHAT_URL}`);
     }
-  }, [chatroomId, navigate]);
+  }, [isOwner, chatroomId, navigate]);
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
     navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
