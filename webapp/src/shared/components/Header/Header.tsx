@@ -5,9 +5,13 @@ import Icon, { IconSize, IconVariant } from '../Icon/Icon';
 import Status, { StatusVariant } from '../Status/Status';
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './Header.css';
+import { ButtonProps } from '../Button/Button';
+import { Button } from '../index';
+import React from 'react';
 
 type HeaderCommon = {
   statusVariant?: StatusVariant;
+  buttonProps?: ButtonProps[];
   children: string;
   titleNavigationUrl?: string;
 };
@@ -41,6 +45,7 @@ export default function Header({
   iconNavigationUrl,
   onClick,
   statusVariant,
+  buttonProps,
   titleNavigationUrl,
   children,
 }: HeaderProps) {
@@ -62,6 +67,26 @@ export default function Header({
       {children}
     </Text>
   );
+  let statusElement: JSX.Element | undefined = undefined;
+  if (statusVariant) {
+    if (statusVariant !== 'button') {
+      statusElement = (
+        <div className="header-status">
+          {statusVariant && <Status variant={statusVariant} />}
+        </div>
+      );
+    } else {
+      if (buttonProps !== undefined) {
+        statusElement = (
+          <div className="header-buttons">
+            {buttonProps.map((buttonProp) => (
+              <Button {...buttonProp} />
+            ))}
+          </div>
+        );
+      }
+    }
+  }
   return (
     <header className="header">
       <div className="header-navigation">
@@ -76,9 +101,7 @@ export default function Header({
           <div className="header-text">{headerTitle}</div>
         )}
       </div>
-      <div className="header-status">
-        {statusVariant && <Status variant={statusVariant} />}
-      </div>
+      {statusElement && statusElement}
     </header>
   );
 }

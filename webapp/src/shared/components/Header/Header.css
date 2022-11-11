@@ -33,3 +33,17 @@
 .header-status {
   justify-content: flex-end;
 }
+
+.header-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.header-buttons > * {
+  margin-right: 1rem;
+}
+
+.header-buttons > *:last-child {
+  margin-right: 0;
+}

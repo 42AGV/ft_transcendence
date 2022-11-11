@@ -24,7 +24,7 @@ type SmallButtonProps = CommonButtonProps & {
   children?: never;
 };
 
-type ButtonProps = SmallButtonProps | LargeButtonProps;
+export type ButtonProps = SmallButtonProps | LargeButtonProps;
 
 export default function Button({
   variant,
