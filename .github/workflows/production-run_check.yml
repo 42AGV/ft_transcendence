@@ -28,7 +28,6 @@ jobs:
           target: production
           push: false
           load: true
-          tags: ft_transcendence_transcendence-app:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - name: Generate code
@@ -40,7 +39,6 @@ jobs:
           target: production
           push: false
           load: true
-          tags: ft_transcendence_webapp:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - name: Run
