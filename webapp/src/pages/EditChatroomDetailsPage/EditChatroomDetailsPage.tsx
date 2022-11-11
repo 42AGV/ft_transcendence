@@ -120,7 +120,16 @@ export default function CreateChatroomPage() {
     updateChatroomDetails().catch((e) => console.error(e));
   };
   const deleteChatoom = () => {
-    alert('Are you sure you want to delete the chatroom?');
+    if (confirm('Are you sure you want to delete the chatroom?')) {
+      chatApi.chatControllerUpdateChatroom({
+        chatroomId: chatroomId!, //TODO update with delete
+        updateChatroomDto: {
+          ...formValues,
+          password: formValues.password || null,
+          confirmationPassword: formValues.confirmationPassword || null,
+        },
+      });
+    }
   };
   if (!chatroom) {
     return (
@@ -134,7 +143,7 @@ export default function CreateChatroomPage() {
   return (
     <div className="edit-chatroom-details">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-        {isLoading ? '' : `${chatroom!.name}/edit details`}
+        {`edit/${chatroom!.name}`}
       </Header>
       <div className="edit-chatroom-details-avatar-properties">
         <div className="edit-chatroom-details-avatar">
@@ -146,13 +155,6 @@ export default function CreateChatroomPage() {
           />
         </div>
         <div className="edit-chatroom-details-properties">
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={TextColor.LIGHT}
-            weight={TextWeight.REGULAR}
-          >
-            {isLoading ? '' : chatroom!.name}
-          </Text>
           <Text
             variant={TextVariant.PARAGRAPH}
             color={TextColor.LIGHT}
