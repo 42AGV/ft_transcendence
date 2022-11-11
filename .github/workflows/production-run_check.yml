@@ -14,3 +14,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Run
         run: make prod && make prod-down
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          FORTYTWO_APP_ID: ${{ secrets.FORTYTWO_APP_ID }}
+          FORTYTWO_APP_SECRET: ${{ secrets.FORTYTWO_APP_SECRET }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          MEMCACHED_SECRET: ${{ secrets.MEMCACHED_SECRET }}
