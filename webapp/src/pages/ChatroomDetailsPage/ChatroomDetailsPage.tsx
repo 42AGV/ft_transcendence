@@ -11,7 +11,7 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function ChatroomDetailsPage() {
   const { chatroomId } = useParams();
-  const navigate = useNavigate();
+  const { goBack, navigate } = useNavigation();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
@@ -49,7 +49,6 @@ export default function ChatroomDetailsPage() {
     if (!chatroomId) return;
     navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
   }, [chatroomId, navigate]);
-  const { goBack } = useNavigation();
 
   let buttonProps = [
     {
