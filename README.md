@@ -193,12 +193,6 @@ By default, `./scripts/generate-openapi.sh` is analogous to running `make gen` a
 
 We use knex to seed the database, more info [here](https://knexjs.org/guide/migrations.html#seed-files).
 
-To create a seed file, run the following command from the transcendence-app directory (replace `seed_name` with the name you want)
-
-```
-npx knex seed:make seed_name
-```
-
 To run seed files, run the following command from the root directory:
 
 ```
@@ -208,7 +202,13 @@ docker compose exec -it transcendence-app npx knex seed:run
 or its make counterpart, from the root directory
 
 ```shell
-make seed-run
+make seed
+```
+
+To create a seed file, run the following command from the transcendence-app directory (replace `seed_name` with the name you want)
+
+```
+npx knex seed:make seed_name
 ```
 
 ## 🔧 Running the tests <a name = "tests"></a>
