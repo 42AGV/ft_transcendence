@@ -79,8 +79,8 @@ export default function Header({
       if (buttonProps !== undefined) {
         statusElement = (
           <div className="header-buttons">
-            {buttonProps.map((buttonProp) => (
-              <Button {...buttonProp} />
+            {buttonProps.map((buttonProp, idx) => (
+              <Button key={idx} {...buttonProp} />
             ))}
           </div>
         );
