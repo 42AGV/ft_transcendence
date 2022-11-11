@@ -8,6 +8,8 @@ import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
+import Loading from '../../shared/components/Loading/Loading';
 
 export default function ChatroomDetailsPage() {
   const { chatroomId } = useParams();
@@ -16,23 +18,19 @@ export default function ChatroomDetailsPage() {
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
   );
-  const {
-    data: chatroom,
-    isLoading: isChatroomLoading,
-    error,
-  } = useData<Chatroom>(getChatroom);
-  const { isLoading: isUserLoading, authUser } = useAuth();
+  const { data: chatroom } = useData<Chatroom>(getChatroom);
+  const { authUser } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
   useEffect(() => {
-    if (isChatroomLoading || isUserLoading || error) {
+    if (!(authUser && chatroom)) {
       // TODO: do something if error
       setIsOwner(false);
       return;
     }
-    if (authUser!.id === chatroom!.ownerId) {
+    if (authUser.id === chatroom.ownerId) {
       setIsOwner(true);
     }
-  }, [error, authUser, isUserLoading, chatroom, isChatroomLoading]);
+  }, [authUser, chatroom]);
   const leaveChatroom = useCallback(async () => {
     if (!chatroomId) return;
     try {
@@ -51,6 +49,17 @@ export default function ChatroomDetailsPage() {
     navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
   }, [chatroomId, navigate]);
 
+  const retrieveChatroomMembers = useCallback(
+    () =>
+      chatApi.chatControllerRetrieveChatroomMembers({
+        chatroomId: chatroomId!,
+      }),
+    [chatroomId],
+  );
+  const {
+    data: chatroomMembers,
+  } = useData<ChatroomMemberWithUser[]>(retrieveChatroomMembers);
+
   let buttonProps = [
     {
       variant: ButtonVariant.WARNING,
@@ -64,6 +73,15 @@ export default function ChatroomDetailsPage() {
       iconVariant: IconVariant.EDIT,
       onClick: editChatroom,
     });
+  }
+  if (!(authUser && chatroom && chatroomMembers)) {
+    return (
+      <div className="chatroom-details-page">
+        <div className="chatroom-details-page-loading">
+          <Loading />
+        </div>
+      </div>
+    );
   }
   return (
     <div className="chatroom-details-page">

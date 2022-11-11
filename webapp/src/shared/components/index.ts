@@ -30,6 +30,7 @@ export { default as EditUserForm } from './Input/EditUserForm';
 export { default as SearchForm } from './Input/SearchForm';
 
 export { default as RowsTemplate } from './templates/RowsPageTemplate/RowsPageTemplate';
+export { default as RowsListTemplate } from './templates/RowsListWithSearchTemplate/RowsListWithSearchTemplate';
 export * from './templates/RowsPageTemplate/RowsPageTemplate';
 
 export { default as EditableAvatar } from './Avatar/EditableAvatar';

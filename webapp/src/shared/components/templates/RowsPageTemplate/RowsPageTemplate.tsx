@@ -3,12 +3,11 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { USER_ME_URL, AVATAR_EP_URL } from '../../../urls';
 import { MediumAvatar } from '../../Avatar/Avatar';
-import SearchForm from '../../Input/SearchForm';
-import RowsList, { RowItem } from '../../RowsList/RowsList';
+import { RowItem } from '../../RowsList/RowsList';
 import NavigationBar from '../../NavigationBar/NavigationBar';
 import Loading from '../../Loading/Loading';
-import { useSearchContext } from '../../../context/SearchContext';
 import { useAuth } from '../../../hooks/UseAuth';
+import RowsListWithSearchTemplate from '../RowsListWithSearchTemplate/RowsListWithSearchTemplate';
 
 type RowsPageTemplateProps<T> = {
   dataMapper: (data: T) => RowItem;
@@ -17,17 +16,9 @@ type RowsPageTemplateProps<T> = {
 export default function RowsPageTemplate<T>({
   dataMapper,
 }: RowsPageTemplateProps<T>) {
-  const { result, fetchMoreResults } = useSearchContext();
   const { authUser } = useAuth();
 
-  const data = ((array: object): RowItem[] | null => {
-    if (!Array.isArray(array)) {
-      return null;
-    }
-    return array.map((el) => dataMapper(el));
-  })(result.data);
-
-  if (!(authUser && data)) {
+  if (!authUser) {
     return (
       <div className="rows-template">
         <div className="rows-template-loading">
@@ -48,12 +39,7 @@ export default function RowsPageTemplate<T>({
           />
         </Link>
       </div>
-      <div className="rows-template-search">
-        <SearchForm />
-      </div>
-      <div className="rows-template-rows">
-        <RowsList rows={data} onLastRowVisible={fetchMoreResults} />
-      </div>
+      <RowsListWithSearchTemplate dataMapper={dataMapper} />
       <div className="rows-template-navigation">
         <NavigationBar />
       </div>
