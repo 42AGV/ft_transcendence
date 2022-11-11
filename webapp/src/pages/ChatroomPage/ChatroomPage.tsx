@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
 import {
+  ButtonSize,
   ButtonVariant,
   Header,
   IconVariant,
@@ -109,6 +110,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
           statusVariant="button"
           buttonProps={[
             {
+              buttonSize: ButtonSize.SMALL,
               variant: ButtonVariant.SUBMIT,
               iconVariant: IconVariant.EDIT,
               onClick: chatroomDetails,

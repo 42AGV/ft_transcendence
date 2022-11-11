@@ -1,13 +1,18 @@
-.chat-page-button {
-  position: fixed;
-  width: 20rem;
-  bottom: 5rem;
-  left: 50%;
-  transform: translateX(-50%);
+@media all and (max-width: 768px) {
+  .chat-page-button {
+    position: fixed;
+    display: block;
+    right: 1.875rem;
+    top: 1.875rem;
+  }
 }
 
 @media all and (min-width: 768px) {
   .chat-page-button {
+    position: fixed;
+    width: 20rem;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 1.875rem;
   }
 }

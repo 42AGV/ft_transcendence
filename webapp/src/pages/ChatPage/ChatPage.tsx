@@ -4,6 +4,7 @@ import {
   IconVariant,
   RowItem,
   MainTabTemplate,
+  ButtonSize,
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
@@ -20,6 +21,7 @@ import { SearchContextProvider } from '../../shared/context/SearchContext';
 import './ChatPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { ENTRIES_LIMIT } from '../../shared/constants';
+import { useMediaQuery } from '../../shared/hooks/UseMediaQuery';
 
 const mapChatToRow = (chatroom: Chatroom): RowItem => {
   return {
@@ -42,6 +44,14 @@ export default function ChatPage() {
     [],
   );
   const navigate = useNavigate();
+  const windowIsBig = useMediaQuery(768);
+  console.log(windowIsBig);
+  const buttonProps = {
+    buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
+    variant: ButtonVariant.SUBMIT,
+    onClick: () => navigate(CREATE_CHATROOM_URL),
+    iconVariant: IconVariant.ADD,
+  };
 
   return (
     <div className="chat-page">
@@ -51,13 +61,7 @@ export default function ChatPage() {
         </SearchContextProvider>
       </div>
       <div className="chat-page-button">
-        <Button
-          variant={ButtonVariant.SUBMIT}
-          onClick={() => navigate(CREATE_CHATROOM_URL)}
-          iconVariant={IconVariant.ADD}
-        >
-          add chatroom
-        </Button>
+        <Button {...buttonProps}>add chatroom</Button>
       </div>
     </div>
   );

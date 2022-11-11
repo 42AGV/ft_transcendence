@@ -1,4 +1,9 @@
-import { ButtonVariant, Header, IconVariant } from '../../shared/components';
+import {
+  ButtonSize,
+  ButtonVariant,
+  Header,
+  IconVariant,
+} from '../../shared/components';
 import { CHAT_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
@@ -56,12 +61,13 @@ export default function ChatroomDetailsPage() {
       }),
     [chatroomId],
   );
-  const {
-    data: chatroomMembers,
-  } = useData<ChatroomMemberWithUser[]>(retrieveChatroomMembers);
+  const { data: chatroomMembers } = useData<ChatroomMemberWithUser[]>(
+    retrieveChatroomMembers,
+  );
 
   let buttonProps = [
     {
+      buttonSize: ButtonSize.SMALL,
       variant: ButtonVariant.WARNING,
       iconVariant: IconVariant.LOGOUT,
       onClick: leaveChatroom,
@@ -69,6 +75,7 @@ export default function ChatroomDetailsPage() {
   ];
   if (isOwner) {
     buttonProps.unshift({
+      buttonSize: ButtonSize.SMALL,
       variant: ButtonVariant.SUBMIT,
       iconVariant: IconVariant.EDIT,
       onClick: editChatroom,
