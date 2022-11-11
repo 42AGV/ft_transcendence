@@ -148,6 +148,10 @@ export class ChatService {
     }
   }
 
+  async deleteChatroom(chatroomId: string): Promise<Chatroom | null> {
+    return this.chatroomRepository.deleteById(chatroomId);
+  }
+
   addChatroomMessage(chatroomMessage: Partial<ChatroomMessage>) {
     return this.chatroomMessageRepository.add(chatroomMessage);
   }
