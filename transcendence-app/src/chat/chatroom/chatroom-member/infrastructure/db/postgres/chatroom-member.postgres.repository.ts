@@ -11,7 +11,10 @@ import {
   ChatroomMember,
   ChatroomMemberWithUser,
   ChatroomMemberKeys,
+  ChatroomMemberWithUserData,
 } from '../chatroom-member.entity';
+import { userKeys } from '../../../../../../user/infrastructure/db/user.entity';
+import { ChatroomKeys } from '../../../../infrastructure/db/chatroom.entity';
 
 @Injectable()
 export class ChatroomMemberPostgresRepository
@@ -45,7 +48,7 @@ export class ChatroomMemberPostgresRepository
   }
 
   async getById(
-    chatId: string,
+    chatroomId: string,
     userId: string,
   ): Promise<ChatroomMember | null> {
     const members = await makeQuery<ChatroomMember>(this.pool, {
@@ -54,9 +57,73 @@ export class ChatroomMemberPostgresRepository
       WHERE ${ChatroomMemberKeys.CHATID} = $1
         AND ${ChatroomMemberKeys.USERID} = $2
         AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
-      values: [chatId, userId],
+      values: [chatroomId, userId],
     });
     return members && members.length ? new ChatroomMember(members[0]) : null;
+  }
+
+  async getByIdWithUser(
+    chatroomId: string,
+    userId: string,
+  ): Promise<ChatroomMemberWithUser | null> {
+    const members = await makeQuery<ChatroomMemberWithUserData>(this.pool, {
+      text: `SELECT u.${userKeys.USERNAME},
+	            u.${userKeys.AVATAR_ID},
+	            u.${userKeys.AVATAR_X},
+	            u.${userKeys.AVATAR_Y},
+	            c.${ChatroomKeys.OWNERID} IS NOT NULL AS owner,
+	            cm.${ChatroomMemberKeys.ADMIN},
+	            cm.${ChatroomMemberKeys.MUTED},
+	            cm.${ChatroomMemberKeys.BANNED}
+            FROM ${table.USERS} u
+            INNER JOIN ${this.table} cm ON cm.${ChatroomMemberKeys.USERID} = u.${userKeys.ID}
+            LEFT JOIN ${table.CHATROOM} c ON c.${ChatroomKeys.ID} = cm.${ChatroomMemberKeys.CHATID}
+	            AND u.${userKeys.ID} = c.${ChatroomKeys.OWNERID}
+            WHERE cm.${ChatroomMemberKeys.CHATID} = $1
+	            AND cm.${ChatroomMemberKeys.USERID} = $2
+	            AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL;`,
+      values: [chatroomId, userId],
+    });
+    return members && members.length
+      ? new ChatroomMemberWithUser(members[0])
+      : null;
+  }
+
+  async updateById(
+    chatroomId: string,
+    userId: string,
+    chatroomMember: Partial<ChatroomMember>,
+  ): Promise<ChatroomMember | null> {
+    const { cols, values } = entityQueryMapper(chatroomMember);
+    const colsToUpdate = cols.map((col, i) => `${col}=$${i + 3}`).join(',');
+
+    const chatroomMembersData = await makeQuery(this.pool, {
+      text: `UPDATE ${this.table}
+      SET ${colsToUpdate}
+      WHERE ${ChatroomMemberKeys.CHATID} = $1
+        AND ${ChatroomMemberKeys.USERID} = $2
+      RETURNING *;`,
+      values: [chatroomId, userId, ...values],
+    });
+    return chatroomMembersData && chatroomMembersData.length
+      ? new this.ctor(chatroomMembersData[0])
+      : null;
+  }
+
+  async deleteById(
+    chatroomId: string,
+    userId: string,
+  ): Promise<ChatroomMember | null> {
+    const chatroomMembersData = await makeQuery(this.pool, {
+      text: `DELETE FROM ${this.table}
+      WHERE ${ChatroomMemberKeys.CHATID} = $1
+        AND ${ChatroomMemberKeys.USERID} = $2
+      RETURNING *;`,
+      values: [chatroomId, userId],
+    });
+    return chatroomMembersData && chatroomMembersData.length
+      ? new this.ctor(chatroomMembersData[0])
+      : null;
   }
 
   async retrieveChatroomMembers(
