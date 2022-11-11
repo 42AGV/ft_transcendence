@@ -22,6 +22,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: Run
+        with:
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
         run: make prod && make prod-down
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
