@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   NotFoundException,
@@ -59,7 +60,7 @@ export class ChatController {
   async createChatroom(
     @GetUser() user: User,
     @Body() createChatDto: CreateChatroomDto,
-  ) {
+  ): Promise<Chatroom> {
     const chatroom = await this.chatService.createChatroom(
       user.id,
       createChatDto,
@@ -82,7 +83,7 @@ export class ChatController {
     @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() joinChatroomDto: JoinChatroomDto,
-  ) {
+  ): Promise<ChatroomMember> {
     const ret = await this.chatService.addChatroomMember(
       chatroomId,
       user.id,
@@ -93,6 +94,28 @@ export class ChatController {
       throw new UnprocessableEntityException();
     }
     return ret;
+  }
+
+  @Delete('room/:chatroomId/members')
+  @ApiOkResponse({
+    description: 'Authenticated user leaves the given chatroom',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async leaveChatroom(
+    @GetUser() user: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+  ): Promise<ChatroomMember> {
+    const chatroomMember = await this.chatroomMemberService.leaveChatroom(
+      chatroomId,
+      user.id,
+    );
+    if (!chatroomMember) {
+      throw new ServiceUnavailableException();
+    }
+    return chatroomMember;
   }
 
   @Get('room')
@@ -140,14 +163,37 @@ export class ChatController {
     return chatroomsMembers;
   }
 
+  @Get('room/:chatroomId/members/:userId')
+  @ApiOkResponse({
+    description: 'Get a chatroom member',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async getChatroomMember(
+    @Param('chatroomId') chatroomId: string,
+    @Param('userId') userId: string,
+  ): Promise<ChatroomMember> {
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      userId,
+    );
+    if (!chatroomMember) {
+      throw new NotFoundException();
+    }
+    return chatroomMember;
+  }
+
   @Get('room/:id')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Get a chatroom',
     type: Chatroom,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  async getChatroomById(@Param('id', ParseUUIDPipe) chatroomId: string) {
+  async getChatroomById(
+    @Param('id', ParseUUIDPipe) chatroomId: string,
+  ): Promise<Chatroom> {
     const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
@@ -190,16 +236,17 @@ export class ChatController {
   }
 
   @Patch('room/:chatroomId')
-  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateChatroom(
     @GetUser() userMe: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
-    const chatroom = await this.getChatroomById(chatroomId);
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
-      throw new ServiceUnavailableException();
+      throw new NotFoundException();
     }
     if (userMe.id !== chatroom.ownerId) {
       throw new ForbiddenException();
@@ -225,7 +272,7 @@ export class ChatController {
     @GetUser() userMe: User,
     @Param('userId', ParseUUIDPipe) recipientId: string,
     @Query() requestDto: PaginationQueryDto,
-  ) {
+  ): Promise<ChatMessage[]> {
     const messages = await this.chatService.getOneToOneChatMessages(
       userMe.id,
       recipientId,

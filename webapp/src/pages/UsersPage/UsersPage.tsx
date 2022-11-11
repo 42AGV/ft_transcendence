@@ -5,8 +5,7 @@ import { RowsTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
-
-const ENTRIES_LIMIT = 15;
+import { ENTRIES_LIMIT } from '../../shared/constants';
 
 const mapUserToRow = (user: User): RowItem => {
   return {

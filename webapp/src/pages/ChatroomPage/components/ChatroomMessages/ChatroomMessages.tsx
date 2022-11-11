@@ -1,33 +1,53 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ChatBubble, ChatBubbleVariant } from '../../../../shared/components';
-import { User } from '../../../../shared/generated';
+import { ENTRIES_LIMIT } from '../../../../shared/constants';
+import { ChatroomMessageWithUser } from '../../../../shared/generated';
 import { useAuth } from '../../../../shared/hooks/UseAuth';
+import { useData } from '../../../../shared/hooks/UseData';
+import { useIsElementVisible } from '../../../../shared/hooks/UseIsElementVisible';
+import { chatApi } from '../../../../shared/services/ApiService';
 import socket from '../../../../shared/socket';
 import { AVATAR_EP_URL } from '../../../../shared/urls';
 import './ChatroomMessages.css';
-
-type ChatroomMessageType = {
-  id: string;
-  user: User;
-  content: string;
-  createdAt: number;
-  chatroomId: string;
-};
 
 type ChatroomMessagesProps = {
   from: string;
 };
 
 function ChatroomMessages({ from }: ChatroomMessagesProps) {
-  const [messages, setMessages] = useState<ChatroomMessageType[]>([]);
+  const [messages, setMessages] = useState<ChatroomMessageWithUser[]>([]);
+  const [offset, setOffset] = useState(0);
+  const getMessages = useCallback(
+    () =>
+      chatApi.chatControllerGetChatroomMessages({
+        chatroomId: from,
+        limit: ENTRIES_LIMIT,
+        offset,
+      }),
+    [from, offset],
+  );
+  const { data: chatroomMessages } = useData(getMessages);
   const { authUser: me } = useAuth();
+  const { ref: callbackRef, isVisible } = useIsElementVisible();
 
   useEffect(() => {
-    const messagesListener = (messages: ChatroomMessageType[]) => {
-      setMessages(messages);
-    };
+    if (chatroomMessages) {
+      setMessages((prevMessages) => {
+        const reversedChatroomMessages = chatroomMessages.slice().reverse();
+        const newMessages = [...reversedChatroomMessages, ...prevMessages];
+        return newMessages;
+      });
+    }
+  }, [chatroomMessages]);
 
-    const messageListener = (message: ChatroomMessageType) => {
+  useEffect(() => {
+    if (isVisible) {
+      setOffset((prevOffset) => prevOffset + ENTRIES_LIMIT);
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
+    const messageListener = (message: ChatroomMessageWithUser) => {
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages, message];
         return newMessages;
@@ -35,12 +55,9 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
     };
 
     socket.on('chatroomMessage', messageListener);
-    socket.on('chatroomMessages', messagesListener);
-    socket.emit('getChatroomMessages', from);
 
     return () => {
       socket.off('chatroomMessage');
-      socket.off('chatroomMessages');
     };
   }, [from]);
 
@@ -54,7 +71,11 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
           index === 0 ||
           messages[index].user.id !== messages[index - 1].user.id;
         return (
-          <li key={message.id} className="chatroom-messages-list-item">
+          <li
+            key={message.id}
+            ref={index === 0 ? callbackRef : undefined}
+            className="chatroom-messages-list-item"
+          >
             <ChatBubble
               variant={
                 me && me.id === message.user.id
