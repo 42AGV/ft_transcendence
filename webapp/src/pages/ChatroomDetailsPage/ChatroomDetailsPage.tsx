@@ -1,6 +1,6 @@
 import { ButtonVariant, Header, IconVariant } from '../../shared/components';
 import { CHAT_URL, CHATROOM_URL } from '../../shared/urls';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import './ChatroomDetailsPage.css';
@@ -25,6 +25,7 @@ export default function ChatroomDetailsPage() {
   const [isOwner, setIsOwner] = useState(false);
   useEffect(() => {
     if (isChatroomLoading || isUserLoading || error) {
+      // TODO: do something if error
       setIsOwner(false);
       return;
     }

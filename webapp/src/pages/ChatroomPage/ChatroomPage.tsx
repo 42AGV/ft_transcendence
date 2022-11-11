@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
 import {
+  ButtonVariant,
   Header,
   IconVariant,
   Loading,
@@ -36,7 +37,7 @@ type ChatroomProps = {
 };
 
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const [status, setStatus] = useState<SubmitStatus>({
     type: 'pending',
     message: '',
@@ -56,6 +57,11 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   );
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
+
+  const chatroomDetails = useCallback(async () => {
+    if (!chatroomId) return;
+    navigate(`${CHATROOM_URL}/${chatroomId}/details`);
+  }, [chatroomId, navigate]);
 
   useEffect(() => {
     socket.on('exception', (wsError: WsException) => {
@@ -100,8 +106,14 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
         <Header
           icon={IconVariant.ARROW_BACK}
           onClick={goBack}
-          titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
-          // TODO maybe add a button to this header ??
+          statusVariant="button"
+          buttonProps={[
+            {
+              variant: ButtonVariant.SUBMIT,
+              iconVariant: IconVariant.EDIT,
+              onClick: chatroomDetails,
+            },
+          ]}
         >
           {chatroom.name}
         </Header>
