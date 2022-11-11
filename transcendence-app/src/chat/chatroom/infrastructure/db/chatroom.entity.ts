@@ -9,7 +9,7 @@ export enum ChatroomKeys {
   CREATED_AT = '"createdAt"',
   AVATAR_X = '"avatarX"',
   AVATAR_Y = '"avatarY"',
-  OWNERID = '"ownerId',
+  OWNERID = '"ownerId"',
 }
 
 export interface ChatroomData {
