@@ -17,6 +17,10 @@ down:
 prod: gen
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 
+.PHONY: prod-no-gen
+prod-no-gen:
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+
 .PHONY: prod-down
 prod-down:
 	${DOCKER_COMPOSE} -f docker-compose.yml -f docker-compose.prod.yml down
