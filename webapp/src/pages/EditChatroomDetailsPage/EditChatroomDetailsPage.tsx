@@ -120,17 +120,13 @@ export default function CreateChatroomPage() {
     updateChatroomDetails().catch((e) => console.error(e));
   };
   const deleteChatoom = () => {
-    if (confirm('Are you sure you want to delete the chatroom?')) {
-      chatApi.chatControllerUpdateChatroom({
+    if (window.confirm('Are you sure you want to delete the chatroom?')) {
+      chatApi.({
         chatroomId: chatroomId!, //TODO update with delete
-        updateChatroomDto: {
-          ...formValues,
-          password: formValues.password || null,
-          confirmationPassword: formValues.confirmationPassword || null,
-        },
       });
     }
   };
+  
   if (!chatroom) {
     return (
       <div className="edit-user">
@@ -160,7 +156,7 @@ export default function CreateChatroomPage() {
             color={TextColor.LIGHT}
             weight={TextWeight.REGULAR}
           >
-            {formValues.password ? 'private channel' : 'public channel'}
+            {chatroom.password ? 'private channel' : 'public channel'}
           </Text>
         </div>
       </div>
