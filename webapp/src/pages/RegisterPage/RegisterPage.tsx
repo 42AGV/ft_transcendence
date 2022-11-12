@@ -14,12 +14,13 @@ import {
 import { RegisterUserDto, ResponseError } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { authApi } from '../../shared/services/ApiService';
-import { SubmitStatus } from '../../shared/types';
 import {
   DEFAULT_LOGIN_REDIRECT_URL,
   LOGIN_OPTIONS_URL,
   HOST_URL,
 } from '../../shared/urls';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
+
 import './RegisterPage.css';
 
 export default function RegisterPage() {
@@ -33,12 +34,9 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [formValues, setFormValues] =
     useState<RegisterUserDto>(initialFormValues);
-  const [status, setStatus] = useState<SubmitStatus>({
-    type: 'pending',
-    message: '',
-  });
-
   const { isLoggedIn } = useAuth();
+  const { warn, notify } = useNotificationContext();
+
   if (isLoggedIn) {
     return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
   }
@@ -49,39 +47,24 @@ export default function RegisterPage() {
       return { ...previousValues, [name]: value };
     });
   };
-  function hasValidFormValues() {
+  function hasValidFormValues(): boolean {
+    let errMessage = '';
+
     if (formValues.username === '') {
-      setStatus({
-        type: 'error',
-        message: 'Username can not be empty',
-      });
-      return false;
+      errMessage = 'Username can not be empty';
     } else if (formValues.email === '') {
-      setStatus({
-        type: 'error',
-        message: 'Email can not be empty',
-      });
-      return false;
+      errMessage = 'Email can not be empty';
     } else if (formValues.fullName === '') {
-      setStatus({
-        type: 'error',
-        message: 'Full Name can not be empty',
-      });
-      return false;
+      errMessage = 'Full Name can not be empty';
     } else if (formValues.password === '') {
-      setStatus({
-        type: 'error',
-        message: 'Password can not be empty',
-      });
-      return false;
+      errMessage = 'Password can not be empty';
     } else if (formValues.password !== formValues.confirmationPassword) {
-      setStatus({
-        type: 'error',
-        message: 'Passwords are different',
-      });
-      return false;
+      errMessage = 'Passwords are different';
     }
-    return true;
+
+    warn(errMessage);
+
+    return !errMessage;
   }
   async function register() {
     if (!hasValidFormValues()) {
@@ -91,31 +74,25 @@ export default function RegisterPage() {
       await authApi.authControllerRegisterLocalUser({
         registerUserDto: formValues,
       });
-      setStatus({
-        type: 'success',
-        message: 'Registration complete',
-      });
-      setTimeout(() => {
-        navigate(LOGIN_OPTIONS_URL);
-      }, 2000);
+
+      notify('Registration complete');
+      navigate(LOGIN_OPTIONS_URL);
     } catch (error) {
+      let errMessage = '';
+
       if (error instanceof ResponseError) {
         if (error.response.status === 422) {
-          setStatus({
-            type: 'error',
-            message: 'Username already registered',
-          });
+          errMessage = 'Username already registered';
         } else if (error.response.status === 400) {
-          setStatus({
-            type: 'error',
-            message: 'Invalid email',
-          });
+          errMessage = 'Invalid email';
         } else {
-          setStatus({ type: 'error', message: `${error.response.statusText}` });
+          errMessage = `${error.response.statusText}`;
         }
       } else if (error instanceof Error) {
-        setStatus({ type: 'error', message: `${error.message}` });
+        errMessage = `${error.message}`;
       }
+
+      warn(errMessage);
     }
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
@@ -188,14 +165,6 @@ export default function RegisterPage() {
               type="password"
               onChange={handleInputChange}
             />
-            <Text
-              variant={TextVariant.PARAGRAPH}
-              color={
-                status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-              }
-            >
-              {status.message}
-            </Text>
             <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
           </div>
         </form>
