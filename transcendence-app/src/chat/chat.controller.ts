@@ -265,6 +265,28 @@ export class ChatController {
     return updatedChatroom;
   }
 
+  @Delete('room/:chatroomId')
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailabe' })
+  async deleteChatroom(
+    @GetUser() userMe: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+  ): Promise<Chatroom> {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    if (userMe.id !== chatroom.ownerId) {
+      throw new ForbiddenException();
+    }
+    const deletedChatroom = await this.chatService.deleteChatroom(chatroomId);
+    if (!deletedChatroom) {
+      throw new ServiceUnavailableException();
+    }
+    return deletedChatroom;
+  }
+
   @Get(':userId/messages')
   @ApiOkResponse({
     description: `Get chat messages in a one to one conversation(max ${MAX_ENTRIES_PER_PAGE})`,
