@@ -7,15 +7,12 @@ import {
   Header,
   IconVariant,
   Loading,
-  Text,
-  TextColor,
-  TextVariant,
 } from '../../shared/components';
 import { CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { SubmitStatus, WsException } from '../../shared/types';
+import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';

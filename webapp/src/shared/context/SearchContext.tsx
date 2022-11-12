@@ -4,7 +4,7 @@ import { useData } from '../hooks/UseData';
 
 type SearchContextProps<T> = {
   children: React.ReactNode;
-  fetchFn: (requestParams: {}) => Promise<T[]>;
+  fetchFn: (requestParams: any) => Promise<T[]>;
   maxEntries: number;
 };
 

@@ -19,8 +19,11 @@ import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMe
 import Loading from '../../shared/components/Loading/Loading';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
+import { ChatControllerGetChatroomMembersRequest } from '../../shared/generated/apis/ChatApi';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 export default function ChatroomDetailsPage() {
+  const { warn } = useNotificationContext();
   const { chatroomId } = useParams();
   const { goBack, navigate } = useNavigation();
   const getChatroom = useCallback(
@@ -30,6 +33,7 @@ export default function ChatroomDetailsPage() {
   const { data: chatroom } = useData<Chatroom>(getChatroom);
   const { authUser } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
+  const [hasOwnerBeenWarned, setHasOwnerBeenWarned] = useState(false);
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     return {
       iconVariant: IconVariant.EDIT,
@@ -58,30 +62,35 @@ export default function ChatroomDetailsPage() {
   const leaveChatroom = useCallback(async () => {
     if (!chatroomId) return;
     try {
-      if (isOwner) {
-        //TODO warn user this action will remove the channel, and wait for confirmation
+      if (isOwner && !hasOwnerBeenWarned) {
+        warn(
+          'You are the owner of this chatroom. If you leave, the chatroom' +
+            'will be deleted. If you attempt to leave again, it will happen. ' +
+            'This the first and only warning.',
+        );
+        setHasOwnerBeenWarned(true);
+        return;
       }
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
+      navigate(`${CHAT_URL}`);
     } catch (err) {
       console.error(err);
-    } finally {
       navigate(`${CHAT_URL}`);
     }
-  }, [isOwner, chatroomId, navigate]);
+  }, [isOwner, warn, hasOwnerBeenWarned, chatroomId, navigate]);
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
     navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
   }, [chatroomId, navigate]);
 
-  const retrieveChatroomMembers = useCallback(
-    () =>
-      chatApi.chatControllerRetrieveChatroomMembers({
+  const getChatroomMembers = useCallback(
+    (requestParameters: ChatControllerGetChatroomMembersRequest) =>
+      chatApi.chatControllerGetChatroomMembers({
+        ...requestParameters,
+        limit: ENTRIES_LIMIT,
         chatroomId: chatroomId!,
       }),
     [chatroomId],
-  );
-  const { data: chatroomMembers } = useData<ChatroomMemberWithUser[]>(
-    retrieveChatroomMembers,
   );
 
   let buttonProps = [
@@ -100,7 +109,7 @@ export default function ChatroomDetailsPage() {
       onClick: editChatroom,
     });
   }
-  if (!(authUser && chatroom && chatroomMembers)) {
+  if (!(authUser && chatroom)) {
     return (
       <div className="chatroom-details-page">
         <div className="chatroom-details-page-loading">
@@ -120,7 +129,7 @@ export default function ChatroomDetailsPage() {
         chat details
       </Header>
       <SearchContextProvider
-        fetchFn={retrieveChatroomMembers}
+        fetchFn={getChatroomMembers}
         maxEntries={ENTRIES_LIMIT}
       >
         <RowsListTemplate dataMapper={mapChatMemberToRow} />
