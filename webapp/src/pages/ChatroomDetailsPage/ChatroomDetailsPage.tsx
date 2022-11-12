@@ -3,8 +3,10 @@ import {
   ButtonVariant,
   Header,
   IconVariant,
+  RowItem,
+  RowsListTemplate,
 } from '../../shared/components';
-import { CHAT_URL, CHATROOM_URL } from '../../shared/urls';
+import { AVATAR_EP_URL, CHAT_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -15,6 +17,8 @@ import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
 import Loading from '../../shared/components/Loading/Loading';
+import { ENTRIES_LIMIT } from '../../shared/constants';
+import { SearchContextProvider } from '../../shared/context/SearchContext';
 
 export default function ChatroomDetailsPage() {
   const { chatroomId } = useParams();
@@ -26,6 +30,21 @@ export default function ChatroomDetailsPage() {
   const { data: chatroom } = useData<Chatroom>(getChatroom);
   const { authUser } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
+  const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
+    return {
+      iconVariant: IconVariant.EDIT,
+      avatarProps: {
+        url: `${AVATAR_EP_URL}/${member.avatarId}`,
+        status: 'offline',
+        XCoordinate: member.avatarX,
+        YCoordinate: member.avatarY,
+      },
+      url: `${CHATROOM_URL}/${chatroomId}/member/${member.username}/edit`,
+      title: member.username,
+      subtitle: 'level x',
+      key: member.username,
+    };
+  };
   useEffect(() => {
     if (!(authUser && chatroom)) {
       // TODO: do something if error
@@ -100,6 +119,12 @@ export default function ChatroomDetailsPage() {
       >
         chat details
       </Header>
+      <SearchContextProvider
+        fetchFn={retrieveChatroomMembers}
+        maxEntries={ENTRIES_LIMIT}
+      >
+        <RowsListTemplate dataMapper={mapChatMemberToRow} />
+      </SearchContextProvider>
     </div>
   );
 }
