@@ -28,8 +28,8 @@ export class ChatMessagePostgresRepository
       WHERE ("senderId" = $1 AND "recipientId" = $2)
         OR  ("senderId" = $2 AND "recipientId" = $1)
       ORDER BY ${chatMessageKeys.CREATED_AT} DESC
-      LIMIT $1
-      OFFSET $2;`,
+      LIMIT $3
+      OFFSET $4;`,
       values: [userMeId, recipientId, limit, offset],
     });
     return messages?.map((message) => new ChatMessage(message)) ?? null;
