@@ -79,7 +79,7 @@ export class ChatroomMemberService {
     return this.chatroomMemberRepository.deleteById(chatroomId, userId);
   }
 
-  retrieveChatroomMembers(
+  getChatroomMembers(
     chatroomId: string,
     {
       search = '',

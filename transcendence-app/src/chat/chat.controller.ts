@@ -144,7 +144,7 @@ export class ChatController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async retrieveChatroomMembers(
+  async getChatroomMembers(
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
     @Query() paginationWithSearchQueryDto: PaginationWithSearchQueryDto,
@@ -157,7 +157,7 @@ export class ChatController {
       throw new ForbiddenException();
     }
     const chatroomsMembers =
-      await this.chatroomMemberService.retrieveChatroomMembers(
+      await this.chatroomMemberService.getChatroomMembers(
         chatroomId,
         paginationWithSearchQueryDto,
       );
