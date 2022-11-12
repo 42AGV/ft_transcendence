@@ -1,5 +1,7 @@
 .snackbar {
   position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -8,14 +10,14 @@
   border: none;
   border-radius: 0.75rem;
   min-height: 3rem;
-  min-width: 15rem;
-  color: var(--color-light);
+  min-width: 18rem;
+  color: var(--color-dark);
   padding: 0 1rem;
-  margin: 0 1rem;
+  z-index: 100; /* ensure is always on top*/
 }
 
 .snackbar-type-warning {
-  background-color: var(--color-warning);
+  background-color: var(--color-offline);
 }
 
 .snackbar-type-info {

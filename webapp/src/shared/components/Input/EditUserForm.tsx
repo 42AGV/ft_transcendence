@@ -1,27 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  ButtonVariant,
-  Input,
-  InputVariant,
-  Text,
-  TextColor,
-  TextVariant,
-} from '../';
+import React, { useState } from 'react';
+import { Button, ButtonVariant, Input, InputVariant } from '../';
 import './EditUserForm.css';
 import { usersApi } from '../../services/ApiService';
 import { ResponseError } from '../../generated';
 import { useAuth } from '../../hooks/UseAuth';
-
-type EditUserFormSubmitStatus = {
-  type: 'success' | 'error' | 'pending';
-  message: string;
-};
-
-const initialSubmitFormStatus: EditUserFormSubmitStatus = {
-  type: 'pending',
-  message: '',
-};
+import { useNotificationContext } from '../../context/NotificationContext';
 
 type EditUserProps = {
   origUsername: string;
@@ -37,34 +20,37 @@ export default function EditUserForm({
   const [username, setUsername] = useState(origUsername);
   const [fullName, setFullName] = useState(origFullName);
   const [email, setEmail] = useState(origEmail);
-  const [status, setStatus] = useState<EditUserFormSubmitStatus>(
-    initialSubmitFormStatus,
-  );
-
   const { setAuthUser } = useAuth();
+  const { warn, notify } = useNotificationContext();
 
   async function updateData() {
     try {
       await usersApi.userControllerUpdateCurrentUser({
         updateUserDto: { username, fullName, email },
       });
-      setStatus({ type: 'success', message: 'Update successfully' });
+
+      notify('Updated successfully');
+
       setAuthUser((prevState) => {
         if (!prevState) return null;
         return { ...prevState, username, fullName, email };
       });
     } catch (error) {
+      let errMessage = '';
+
       if (error instanceof ResponseError) {
         if (error.response.status === 400) {
-          setStatus({ type: 'error', message: 'Invalid or missing fields' });
+          errMessage = 'Invalid or missing fields';
         } else if (error.response.status === 422) {
-          setStatus({ type: 'error', message: 'Username already exists' });
+          errMessage = 'Username already exists';
         } else {
-          setStatus({ type: 'error', message: `${error.response.statusText}` });
+          errMessage = `${error.response.statusText}`;
         }
       } else if (error instanceof Error) {
-        setStatus({ type: 'error', message: `${error.message}` });
+        errMessage = `${error.message}`;
       }
+
+      warn(errMessage);
     }
   }
 
@@ -72,13 +58,6 @@ export default function EditUserForm({
     e.preventDefault();
     updateData();
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus(initialSubmitFormStatus);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [status]);
 
   return (
     <form
@@ -117,14 +96,6 @@ export default function EditUserForm({
             setEmail(e.target.value);
           }}
         />
-        <Text
-          variant={TextVariant.PARAGRAPH}
-          color={
-            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-          }
-        >
-          {status.message}
-        </Text>
       </div>
       <Button
         form="edit-user-form"
