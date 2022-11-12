@@ -60,11 +60,6 @@
   width: 100%;
 }
 
-.login-form > p:empty::before {
-  content: '';
-  display: inline-block;
-}
-
 .final-text {
   display: flex;
   justify-content: center;
