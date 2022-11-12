@@ -9,6 +9,8 @@ import {
   ChatroomMemberWithUser,
 } from './infrastructure/db/chatroom-member.entity';
 import { IChatroomRepository } from '../infrastructure/db/chatroom.repository';
+import { MAX_ENTRIES_PER_PAGE } from '../../../shared/constants';
+import { PaginationQueryDto } from '../../../shared/dtos/pagination.query.dto';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -78,7 +80,14 @@ export class ChatroomMemberService {
 
   retrieveChatroomMembers(
     chatroomId: string,
+    { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
   ): Promise<ChatroomMemberWithUser[] | null> {
-    return this.chatroomMemberRepository.retrieveChatroomMembers(chatroomId);
+    return this.chatroomMemberRepository.getPaginatedChatroomMembers(
+      chatroomId,
+      {
+        limit,
+        offset,
+      },
+    );
   }
 }

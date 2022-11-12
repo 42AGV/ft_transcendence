@@ -147,6 +147,7 @@ export class ChatController {
   async retrieveChatroomMembers(
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
+    @Query() paginationQueryDto: PaginationQueryDto,
   ): Promise<ChatroomMemberWithUser[]> {
     const isChatMember = await this.chatroomMemberService.getById(
       chatroomId,
@@ -156,7 +157,10 @@ export class ChatController {
       throw new ForbiddenException();
     }
     const chatroomsMembers =
-      await this.chatroomMemberService.retrieveChatroomMembers(chatroomId);
+      await this.chatroomMemberService.retrieveChatroomMembers(
+        chatroomId,
+        paginationQueryDto,
+      );
     if (!chatroomsMembers) {
       throw new ServiceUnavailableException();
     }

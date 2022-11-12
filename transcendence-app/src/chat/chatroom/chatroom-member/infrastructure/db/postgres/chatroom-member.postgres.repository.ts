@@ -15,6 +15,7 @@ import {
 } from '../chatroom-member.entity';
 import { userKeys } from '../../../../../../user/infrastructure/db/user.entity';
 import { ChatroomKeys } from '../../../../infrastructure/db/chatroom.entity';
+import { PaginationQueryDto } from '../../../../../../shared/dtos/pagination.query.dto';
 
 @Injectable()
 export class ChatroomMemberPostgresRepository
@@ -32,14 +33,13 @@ export class ChatroomMemberPostgresRepository
     const joinedAtColName = ChatroomMemberKeys.JOINED_AT;
 
     const chatroomMembersData = await makeQuery<ChatroomMember>(this.pool, {
-      text: `INSERT INTO ${this.table} (${cols.join(
-        ',',
-      )}) values (${params.join(',')})
-      ON CONFLICT
-      (${ChatroomMemberKeys.CHATID}, ${ChatroomMemberKeys.USERID})
-      DO UPDATE
-      SET ${joinedAtColName} = EXCLUDED.${joinedAtColName}
-      RETURNING *;`,
+      text: `INSERT INTO ${this.table} (${cols.join(',')})
+             values (${params.join(',')})
+             ON CONFLICT
+               (${ChatroomMemberKeys.CHATID}, ${ChatroomMemberKeys.USERID})
+               DO UPDATE
+               SET ${joinedAtColName} = EXCLUDED.${joinedAtColName}
+             RETURNING *;`,
       values,
     });
     return chatroomMembersData && chatroomMembersData.length
@@ -53,10 +53,10 @@ export class ChatroomMemberPostgresRepository
   ): Promise<ChatroomMember | null> {
     const members = await makeQuery<ChatroomMember>(this.pool, {
       text: `SELECT *
-      FROM ${this.table}
-      WHERE ${ChatroomMemberKeys.CHATID} = $1
-        AND ${ChatroomMemberKeys.USERID} = $2
-        AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
+             FROM ${this.table}
+             WHERE ${ChatroomMemberKeys.CHATID} = $1
+               AND ${ChatroomMemberKeys.USERID} = $2
+               AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
       values: [chatroomId, userId],
     });
     return members && members.length ? new ChatroomMember(members[0]) : null;
@@ -68,20 +68,20 @@ export class ChatroomMemberPostgresRepository
   ): Promise<ChatroomMemberWithUser | null> {
     const members = await makeQuery<ChatroomMemberWithUserData>(this.pool, {
       text: `SELECT u.${userKeys.USERNAME},
-	            u.${userKeys.AVATAR_ID},
-	            u.${userKeys.AVATAR_X},
-	            u.${userKeys.AVATAR_Y},
-	            c.${ChatroomKeys.OWNERID} IS NOT NULL AS owner,
-	            cm.${ChatroomMemberKeys.ADMIN},
-	            cm.${ChatroomMemberKeys.MUTED},
-	            cm.${ChatroomMemberKeys.BANNED}
-            FROM ${table.USERS} u
-            INNER JOIN ${this.table} cm ON cm.${ChatroomMemberKeys.USERID} = u.${userKeys.ID}
-            LEFT JOIN ${table.CHATROOM} c ON c.${ChatroomKeys.ID} = cm.${ChatroomMemberKeys.CHATID}
-	            AND u.${userKeys.ID} = c.${ChatroomKeys.OWNERID}
-            WHERE cm.${ChatroomMemberKeys.CHATID} = $1
-	            AND cm.${ChatroomMemberKeys.USERID} = $2
-	            AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL;`,
+                    u.${userKeys.AVATAR_ID},
+                    u.${userKeys.AVATAR_X},
+                    u.${userKeys.AVATAR_Y},
+                    c.${ChatroomKeys.OWNERID} IS NOT NULL AS owner,
+                    cm.${ChatroomMemberKeys.ADMIN},
+                    cm.${ChatroomMemberKeys.MUTED},
+                    cm.${ChatroomMemberKeys.BANNED}
+             FROM ${table.USERS} u
+                    INNER JOIN ${this.table} cm ON cm.${ChatroomMemberKeys.USERID} = u.${userKeys.ID}
+                    LEFT JOIN ${table.CHATROOM} c ON c.${ChatroomKeys.ID} = cm.${ChatroomMemberKeys.CHATID}
+               AND u.${userKeys.ID} = c.${ChatroomKeys.OWNERID}
+             WHERE cm.${ChatroomMemberKeys.CHATID} = $1
+               AND cm.${ChatroomMemberKeys.USERID} = $2
+               AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL;`,
       values: [chatroomId, userId],
     });
     return members && members.length
@@ -99,10 +99,10 @@ export class ChatroomMemberPostgresRepository
 
     const chatroomMembersData = await makeQuery(this.pool, {
       text: `UPDATE ${this.table}
-      SET ${colsToUpdate}
-      WHERE ${ChatroomMemberKeys.CHATID} = $1
-        AND ${ChatroomMemberKeys.USERID} = $2
-      RETURNING *;`,
+             SET ${colsToUpdate}
+             WHERE ${ChatroomMemberKeys.CHATID} = $1
+               AND ${ChatroomMemberKeys.USERID} = $2
+             RETURNING *;`,
       values: [chatroomId, userId, ...values],
     });
     return chatroomMembersData && chatroomMembersData.length
@@ -115,10 +115,11 @@ export class ChatroomMemberPostgresRepository
     userId: string,
   ): Promise<ChatroomMember | null> {
     const chatroomMembersData = await makeQuery(this.pool, {
-      text: `DELETE FROM ${this.table}
-      WHERE ${ChatroomMemberKeys.CHATID} = $1
-        AND ${ChatroomMemberKeys.USERID} = $2
-      RETURNING *;`,
+      text: `DELETE
+             FROM ${this.table}
+             WHERE ${ChatroomMemberKeys.CHATID} = $1
+               AND ${ChatroomMemberKeys.USERID} = $2
+             RETURNING *;`,
       values: [chatroomId, userId],
     });
     return chatroomMembersData && chatroomMembersData.length
@@ -126,27 +127,32 @@ export class ChatroomMemberPostgresRepository
       : null;
   }
 
-  async retrieveChatroomMembers(
+  async getPaginatedChatroomMembers(
     chatroomId: string,
+    paginationQueryDto: Required<PaginationQueryDto>,
   ): Promise<ChatroomMemberWithUser[] | null> {
+    const { limit, offset } = paginationQueryDto;
+
     const users = await makeQuery<ChatroomMemberWithUser>(this.pool, {
-      text: `SELECT u."username",
-                    u."avatarId",
-                    u."avatarX",
-                    u."avatarY",
-                    c."ownerId" IS NOT NULL as owner,
-                    cm."admin",
-                    cm."muted",
-                    cm."banned"
+      text: `SELECT u.${userKeys.USERNAME},
+                    u.${userKeys.AVATAR_ID},
+                    u.${userKeys.AVATAR_X},
+                    u.${userKeys.AVATAR_Y},
+                    c.${ChatroomKeys.OWNERID} IS NOT NULL as owner,
+                    cm.${ChatroomMemberKeys.ADMIN},
+                    cm.${ChatroomMemberKeys.MUTED},
+                    cm.${ChatroomMemberKeys.BANNED}
              FROM ${table.USERS} u
                     INNER JOIN ${this.table} cm
-                               ON cm."userId" = u."id"
+                               ON cm.${ChatroomMemberKeys.USERID} = u.${userKeys.ID}
                     LEFT JOIN ${table.CHATROOM} c
-                              ON c."id" = cm."chatId"
-                                AND u."id" = c."ownerId"
-             WHERE cm."chatId" = $1
-               AND cm."joinedAt" IS NOT NULL`,
-      values: [chatroomId],
+                              ON c.${ChatroomKeys.ID} = cm.${ChatroomMemberKeys.CHATID}
+                                AND u.${userKeys.ID} = c.${ChatroomKeys.OWNERID}
+             WHERE cm.${ChatroomMemberKeys.CHATID} = $1
+               AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
+             ORDER BY ${userKeys.USERNAME} DESC
+             LIMIT $2 OFFSET $3;`,
+      values: [chatroomId, limit, offset],
     });
     return users ? users.map((user) => new ChatroomMemberWithUser(user)) : null;
   }
