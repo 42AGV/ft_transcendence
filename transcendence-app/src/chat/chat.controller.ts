@@ -139,7 +139,7 @@ export class ChatController {
 
   @Get('room/:chatroomId/members')
   @ApiOkResponse({
-    description: `Lists all chat members for a given room)`,
+    description: `Lists chat members for a given room (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [ChatroomMemberWithUser],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
@@ -147,7 +147,7 @@ export class ChatController {
   async retrieveChatroomMembers(
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
-    @Query() paginationQueryDto: PaginationQueryDto,
+    @Query() paginationWithSearchQueryDto: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[]> {
     const isChatMember = await this.chatroomMemberService.getById(
       chatroomId,
@@ -159,7 +159,7 @@ export class ChatController {
     const chatroomsMembers =
       await this.chatroomMemberService.retrieveChatroomMembers(
         chatroomId,
-        paginationQueryDto,
+        paginationWithSearchQueryDto,
       );
     if (!chatroomsMembers) {
       throw new ServiceUnavailableException();

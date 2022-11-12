@@ -15,7 +15,8 @@ import {
 } from '../chatroom-member.entity';
 import { userKeys } from '../../../../../../user/infrastructure/db/user.entity';
 import { ChatroomKeys } from '../../../../infrastructure/db/chatroom.entity';
-import { PaginationQueryDto } from '../../../../../../shared/dtos/pagination.query.dto';
+import { PaginationWithSearchQueryDto } from '../../../../../../shared/dtos/pagination-with-search.query.dto';
+import { BooleanString } from '../../../../../../shared/enums/boolean-string.enum';
 
 @Injectable()
 export class ChatroomMemberPostgresRepository
@@ -129,10 +130,14 @@ export class ChatroomMemberPostgresRepository
 
   async getPaginatedChatroomMembers(
     chatroomId: string,
-    paginationQueryDto: Required<PaginationQueryDto>,
+    paginationQueryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<ChatroomMemberWithUser[] | null> {
-    const { limit, offset } = paginationQueryDto;
+    const { limit, offset, sort, search } = paginationQueryDto;
 
+    const orderBy =
+      sort === BooleanString.True
+        ? ChatroomMemberKeys.JOINED_AT
+        : userKeys.USERNAME;
     const users = await makeQuery<ChatroomMemberWithUser>(this.pool, {
       text: `SELECT u.${userKeys.USERNAME},
                     u.${userKeys.AVATAR_ID},
@@ -150,9 +155,10 @@ export class ChatroomMemberPostgresRepository
                                 AND u.${userKeys.ID} = c.${ChatroomKeys.OWNERID}
              WHERE cm.${ChatroomMemberKeys.CHATID} = $1
                AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
-             ORDER BY ${userKeys.USERNAME} DESC
-             LIMIT $2 OFFSET $3;`,
-      values: [chatroomId, limit, offset],
+               AND ${userKeys.USERNAME} ILIKE $2
+             ORDER BY ${orderBy} DESC
+             LIMIT $3 OFFSET $4;`,
+      values: [chatroomId, `%${search}%`, limit, offset],
     });
     return users ? users.map((user) => new ChatroomMemberWithUser(user)) : null;
   }
