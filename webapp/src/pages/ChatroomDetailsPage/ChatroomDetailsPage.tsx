@@ -33,7 +33,7 @@ export default function ChatroomDetailsPage() {
   const { data: chatroom } = useData<Chatroom>(getChatroom);
   const { authUser } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
-  const [hasOwnerBeenWarned, setHasOwnerBeenWarned] = useState(false);
+  const [ownerHasBeenWarned, setOwnerHasBeenWarned] = useState(false);
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     return {
       iconVariant: IconVariant.EDIT,
@@ -62,13 +62,13 @@ export default function ChatroomDetailsPage() {
   const leaveChatroom = useCallback(async () => {
     if (!chatroomId) return;
     try {
-      if (isOwner && !hasOwnerBeenWarned) {
+      if (isOwner && !ownerHasBeenWarned) {
         warn(
-          'You are the owner of this chatroom. If you leave, the chatroom' +
+          'You are the owner of this chatroom. If you leave, the chatroom ' +
             'will be deleted. If you attempt to leave again, it will happen. ' +
-            'This the first and only warning.',
+            'This is the first and only warning.',
         );
-        setHasOwnerBeenWarned(true);
+        setOwnerHasBeenWarned(true);
         return;
       }
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
@@ -77,7 +77,7 @@ export default function ChatroomDetailsPage() {
       console.error(err);
       navigate(`${CHAT_URL}`);
     }
-  }, [isOwner, warn, hasOwnerBeenWarned, chatroomId, navigate]);
+  }, [isOwner, warn, ownerHasBeenWarned, chatroomId, navigate]);
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
     navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
