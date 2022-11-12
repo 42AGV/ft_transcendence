@@ -121,25 +121,33 @@ export default function CreateChatroomPage() {
   };
   const deleteChatoom = () => {
     if (window.confirm('Are you sure you want to delete the chatroom?')) {
-      chatApi.({
-        chatroomId: chatroomId!, //TODO update with delete
-      });
+      try {
+        chatApi.chatControllerDeleteChatroom({
+          chatroomId: chatroomId!,
+        });
+        setTimeout(() => {
+          navigate(CHAT_URL);
+        }, 2000);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
-  
+
   if (!chatroom) {
     return (
-      <div className="edit-user">
-        <div className="edit-user-loading">
+      <div className="edit-chatroom-details">
+        <div className="edit-chatroom-details-loading">
           <Loading />
         </div>
       </div>
     );
   }
+
   return (
     <div className="edit-chatroom-details">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-        {`edit/${chatroom!.name}`}
+        {`edit/${chatroom.name}`}
       </Header>
       <div className="edit-chatroom-details-avatar-properties">
         <div className="edit-chatroom-details-avatar">

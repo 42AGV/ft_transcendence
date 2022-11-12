@@ -26,6 +26,13 @@
   color: var(--color-light);
 }
 
+.edit-chatroom-details-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
 .edit-chatroom-details-avatar .avatar-large {
   width: fit-content;
   justify-self: center;
