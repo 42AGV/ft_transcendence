@@ -75,7 +75,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   }
 
   if (!chatroomMember) {
-    return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} />;
+    return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
   }
 
   return (

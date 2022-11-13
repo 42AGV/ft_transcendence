@@ -1,0 +1,41 @@
+.join-chatroom {
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  gap: 4rem;
+  grid-template-areas:
+    'header'
+    'avatar'
+    'info';
+  grid-template-rows: auto auto 1fr;
+  grid-template-columns: 1fr;
+}
+
+.join-chatroom-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
+.join-chatroom .header {
+  grid-area: header;
+}
+
+.join-chatroom-avatar {
+  grid-area: avatar;
+}
+
+.join-chatroom-info {
+  min-width: 15rem;
+  width: 100%;
+  max-width: 20rem;
+  justify-self: center;
+}
+
+.join-chatroom-info-text,
+.join-chatroom-info-form .input {
+  margin-bottom: 0.875rem;
+}
