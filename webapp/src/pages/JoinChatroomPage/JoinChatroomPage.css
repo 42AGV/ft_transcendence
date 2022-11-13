@@ -29,13 +29,30 @@
 }
 
 .join-chatroom-info {
+  grid-area: info;
   min-width: 15rem;
   width: 100%;
   max-width: 20rem;
   justify-self: center;
 }
 
-.join-chatroom-info-text,
+.join-chatroom-info-text {
+  margin-bottom: 2rem;
+}
+
 .join-chatroom-info-form .input {
-  margin-bottom: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Styles for viewports wider than 768 pixels. */
+@media (min-width: 768px) {
+  .join-chatroom {
+    row-gap: 8rem;
+    column-gap: var(--column-gap);
+    grid-template-areas:
+      'header header header header header header header header header header header header'
+      '... ... avatar avatar avatar ... info info info info ... ...';
+    grid-template-rows: auto 1fr;
+    grid-template-columns: repeat(12, 1fr);
+  }
 }
