@@ -19,6 +19,7 @@
 }
 
 .main-tab-template-avatar {
+  justify-self: flex-start;
   grid-row: 1/2;
 }
 
