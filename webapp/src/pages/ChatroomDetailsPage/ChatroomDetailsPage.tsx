@@ -145,7 +145,9 @@ export default function ChatroomDetailsPage() {
             color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
-            {chatroom.name}
+            {chatroom.name.length > 15
+              ? `${chatroom.name.substring(0, 15)}...`
+              : chatroom.name}
           </Text>
           <Text
             variant={TextVariant.PARAGRAPH}

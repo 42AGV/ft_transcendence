@@ -36,16 +36,35 @@
 
 .header-buttons {
   display: flex;
-  flex-direction: row;
   justify-content: flex-end;
 }
 
-.header-buttons > * {
-  margin-right: 1rem;
+@media all and (max-width: 768px) {
+  .header-buttons {
+    flex-direction: column;
+  }
+
+  .header-buttons > * {
+    margin-bottom: 0.5rem;
+  }
+
+  .header-buttons > *:last-child {
+    margin-bottom: 0;
+  }
 }
 
-.header-buttons > *:last-child {
-  margin-right: 0;
+@media all and (min-width: 768px) {
+  .header-buttons {
+    flex-direction: row;
+  }
+
+  .header-buttons > * {
+    margin-right: 0.5rem;
+  }
+
+  .header-buttons > *:last-child {
+    margin-right: 0;
+  }
 }
 
 /* TODO: make buttons flex-direction:column in narrow screens */
