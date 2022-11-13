@@ -120,7 +120,7 @@ export default function Header({
       className="header"
       style={{
         transform: `translateY(-${calcDownwardsDisplacement(
-          buttonProps?.length ?? 0,
+          buttonProps?.length && !windowIsBig ? buttonProps?.length : 0,
         )}%)`,
       }}
     >
