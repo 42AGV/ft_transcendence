@@ -53,7 +53,7 @@
   }
 }
 
-@media all and (min-width: 768px) {
+@media all and (min-width: 769px) {
   .header-buttons {
     flex-direction: row;
     justify-self: flex-end;

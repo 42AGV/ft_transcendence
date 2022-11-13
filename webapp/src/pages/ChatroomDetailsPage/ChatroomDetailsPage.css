@@ -39,6 +39,7 @@
 .chatroom-details-page .rows-list-template-rows {
   grid-row: 4/5;
   grid-column: 1/-1;
+  overflow-y: scroll;
 }
 
 .chatroom-details-page .chatroom-briefing .chatroom-text-info {
