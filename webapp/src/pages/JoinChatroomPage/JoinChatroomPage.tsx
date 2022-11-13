@@ -45,35 +45,38 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
     [chatroomId],
   );
   const { data: chatroom, isLoading: isChatroomLoading } = useData(getChatroom);
+  const isProtectedChatroom = chatroom?._public === false;
   const [password, setPassword] = useState('');
   const { warn, notify } = useNotificationContext();
   const { navigate } = useNavigation();
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
+    event,
+  ) => {
     event.preventDefault();
-    chatApi
-      .chatControllerCreateChatroomMember({
+    try {
+      await chatApi.chatControllerCreateChatroomMember({
         chatroomId: chatroomId,
         joinChatroomDto: {
-          password: chatroom && !chatroom._public ? password : undefined,
+          password: isProtectedChatroom ? password : undefined,
         },
-      })
-      .then(() => notify('You have joined a chatroom'))
-      .then(() => navigate(`${CHATROOM_URL}/${chatroomId}`, { replace: true }))
-      .catch(async (error: unknown) => {
-        if (error instanceof ResponseError) {
-          const responseBody = await error.response.json();
-          if (responseBody.message) {
-            warn(responseBody.message);
-          } else {
-            warn(error.response.statusText);
-          }
-        } else if (error instanceof Error) {
-          warn(error.message);
-        } else {
-          warn('Could not join the chatroom');
-        }
       });
+      notify('You joined a chatroom');
+      navigate(`${CHATROOM_URL}/${chatroomId}`, { replace: true });
+    } catch (error: unknown) {
+      if (error instanceof ResponseError) {
+        const responseBody = await error.response.json();
+        if (responseBody.message) {
+          warn(responseBody.message);
+        } else {
+          warn(error.response.statusText);
+        }
+      } else if (error instanceof Error) {
+        warn(error.message);
+      } else {
+        warn('Could not join the chatroom');
+      }
+    }
   };
 
   if (isChatroomLoading) {
@@ -111,7 +114,7 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
           <Text variant={TextVariant.PARAGRAPH}>{chatroom.name}</Text>
         </div>
         <form className="join-chatroom-info-form" onSubmit={handleSubmit}>
-          {!chatroom._public && (
+          {isProtectedChatroom && (
             <Input
               variant={InputVariant.LIGHT}
               placeholder="password"
