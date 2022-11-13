@@ -40,6 +40,22 @@ type NoFigureHeader = HeaderCommon & {
 
 type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
 
+export const calcDownwardsDisplacement = (len: number): number => {
+  switch (len) {
+    case 1:
+      return 0;
+    case 2:
+      return 30;
+    case 3:
+      return 34;
+    case 4:
+      return 38;
+    default:
+    case 5:
+      return 43;
+  }
+};
+
 export default function Header({
   icon,
   avatar,
@@ -71,21 +87,6 @@ export default function Header({
   );
   let style: React.CSSProperties | undefined;
   let statusElement: JSX.Element | undefined = undefined;
-  const calcDownwardsDisplacement = (len: number): number => {
-    switch (len) {
-      case 1:
-        return 0;
-      case 2:
-        return 30;
-      case 3:
-        return 34;
-      case 4:
-        return 38;
-      default:
-      case 5:
-        return 43;
-    }
-  };
   if (statusVariant) {
     if (statusVariant !== 'button') {
       statusElement = (

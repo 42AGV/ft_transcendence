@@ -46,6 +46,10 @@
     width: 100%;
     background-color: var(--color-background);
   }
+
+  .main-tab-buttons-wrapper {
+
+  }
 }
 
 @media all and (min-width: 768px) {

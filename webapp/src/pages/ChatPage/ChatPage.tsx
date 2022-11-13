@@ -1,5 +1,4 @@
 import {
-  Button,
   ButtonVariant,
   IconVariant,
   RowItem,
@@ -45,29 +44,28 @@ export default function ChatPage() {
   );
   const navigate = useNavigate();
   const windowIsBig = useMediaQuery(768);
-  const addChatButton = {
-    buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
-    variant: ButtonVariant.SUBMIT,
-    onClick: () => navigate(CREATE_CHATROOM_URL),
-    iconVariant: IconVariant.ADD,
-  };
-  const discoverChatButton = {
-    buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
-    variant: ButtonVariant.SUBMIT,
-    onClick: () => navigate(`${CHATROOM_URL}/discover`),
-    iconVariant: IconVariant.ARROW_FORWARD,
-  };
-
+  const chatButtons = [
+    {
+      buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
+      variant: ButtonVariant.SUBMIT,
+      onClick: () => navigate(CREATE_CHATROOM_URL),
+      iconVariant: IconVariant.ADD,
+      children: 'Add chatroom',
+    },
+    {
+      buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
+      variant: ButtonVariant.SUBMIT,
+      onClick: () => navigate(`${CHATROOM_URL}/discover`),
+      iconVariant: IconVariant.ARROW_FORWARD,
+      children: 'Discover',
+    },
+  ];
   return (
     <div className="chat-page">
       <div className="chat-page-content">
         <SearchContextProvider fetchFn={getChats} maxEntries={ENTRIES_LIMIT}>
-          <MainTabTemplate dataMapper={mapChatToRow} />
+          <MainTabTemplate dataMapper={mapChatToRow} buttons={chatButtons} />
         </SearchContextProvider>
-      </div>
-      <div className="chat-page-button">
-        <Button {...addChatButton}>add chatroom</Button>
-        <Button {...discoverChatButton}>discover chatrooms</Button>
       </div>
     </div>
   );
