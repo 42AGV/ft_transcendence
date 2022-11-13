@@ -17,7 +17,6 @@ import {
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
-import './ChatPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { useMediaQuery } from '../../shared/hooks/UseMediaQuery';
