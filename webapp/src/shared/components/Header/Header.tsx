@@ -42,6 +42,8 @@ type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
 
 export const calcDownwardsDisplacement = (len: number): number => {
   switch (len) {
+    case 0:
+      return 0;
     case 1:
       return 0;
     case 2:

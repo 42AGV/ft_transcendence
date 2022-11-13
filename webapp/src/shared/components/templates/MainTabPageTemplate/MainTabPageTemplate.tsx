@@ -72,7 +72,7 @@ export default function MainTabPageTemplate<T>({
           className="main-tab-buttons-wrapper"
           style={{
             transform: `translateY(-${calcDownwardsDisplacement(
-              buttons.length ?? 0,
+              buttons.length && windowIsBig ? 0 : buttons.length,
             )}%)`,
           }}
         >
