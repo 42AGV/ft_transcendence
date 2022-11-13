@@ -45,11 +45,17 @@ export default function ChatPage() {
   );
   const navigate = useNavigate();
   const windowIsBig = useMediaQuery(768);
-  const buttonProps = {
+  const addChatButton = {
     buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
     variant: ButtonVariant.SUBMIT,
     onClick: () => navigate(CREATE_CHATROOM_URL),
     iconVariant: IconVariant.ADD,
+  };
+  const discoverChatButton = {
+    buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
+    variant: ButtonVariant.SUBMIT,
+    onClick: () => navigate(`${CHATROOM_URL}/discover`),
+    iconVariant: IconVariant.ARROW_FORWARD,
   };
 
   return (
@@ -60,7 +66,8 @@ export default function ChatPage() {
         </SearchContextProvider>
       </div>
       <div className="chat-page-button">
-        <Button {...buttonProps}>add chatroom</Button>
+        <Button {...addChatButton}>add chatroom</Button>
+        <Button {...discoverChatButton}>discover chatrooms</Button>
       </div>
     </div>
   );
