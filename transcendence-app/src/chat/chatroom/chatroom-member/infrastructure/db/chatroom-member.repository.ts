@@ -2,6 +2,7 @@ import {
   ChatroomMember,
   ChatroomMemberWithUser,
 } from './chatroom-member.entity';
+import { PaginationWithSearchQueryDto } from '../../../../../shared/dtos/pagination-with-search.query.dto';
 
 export abstract class IChatroomMemberRepository {
   abstract addChatroomMember(
@@ -24,7 +25,8 @@ export abstract class IChatroomMemberRepository {
     chatroomId: string,
     userId: string,
   ): Promise<ChatroomMember | null>;
-  abstract retrieveChatroomMembers(
+  abstract getPaginatedChatroomMembers(
     chatroomId: string,
+    paginationQueryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<ChatroomMemberWithUser[] | null>;
 }

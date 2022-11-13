@@ -9,6 +9,9 @@ import {
   ChatroomMemberWithUser,
 } from './infrastructure/db/chatroom-member.entity';
 import { IChatroomRepository } from '../infrastructure/db/chatroom.repository';
+import { MAX_ENTRIES_PER_PAGE } from '../../../shared/constants';
+import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
+import { BooleanString } from '../../../shared/enums/boolean-string.enum';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -76,9 +79,23 @@ export class ChatroomMemberService {
     return this.chatroomMemberRepository.deleteById(chatroomId, userId);
   }
 
-  retrieveChatroomMembers(
+  getChatroomMembers(
     chatroomId: string,
+    {
+      search = '',
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.True,
+    }: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[] | null> {
-    return this.chatroomMemberRepository.retrieveChatroomMembers(chatroomId);
+    return this.chatroomMemberRepository.getPaginatedChatroomMembers(
+      chatroomId,
+      {
+        search,
+        limit,
+        offset,
+        sort,
+      },
+    );
   }
 }
