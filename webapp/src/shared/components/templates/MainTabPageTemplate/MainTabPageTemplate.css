@@ -52,12 +52,6 @@
   grid-row: 1/2;
 }
 
-.main-tab-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
 @media all and (min-width: 768px) {
   .main-tab-template {
     height: 100vh;
@@ -102,18 +96,9 @@
   }
 
   .main-tab-buttons-wrapper {
-    display: flex;
-    flex-direction: row;
     justify-self: center;
     grid-column: 1/-1;
     grid-row: 3/4;
-  }
-
-  .main-tab-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 4rem;
-    justify-self: center;
   }
 }
 

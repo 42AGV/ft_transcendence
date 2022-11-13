@@ -6,15 +6,8 @@ import { MediumAvatar } from '../../Avatar/Avatar';
 import NavigationBar from '../../NavigationBar/NavigationBar';
 import Loading from '../../Loading/Loading';
 import { useAuth } from '../../../hooks/UseAuth';
-import {
-  Button,
-  ButtonProps,
-  ButtonSize,
-  RowItem,
-  RowsListTemplate,
-} from '../../index';
-import { useMediaQuery } from '../../../hooks/UseMediaQuery';
-import { calcDownwardsDisplacement } from '../../Header/Header';
+import MainTabButtons from './components/MainTabButtons';
+import { ButtonProps, RowItem, RowsListTemplate } from '../../index';
 
 export type MainTabPageTemplateProps<T> = {
   dataMapper: (data: T) => RowItem;
@@ -26,32 +19,7 @@ export default function MainTabPageTemplate<T>({
   buttons,
 }: MainTabPageTemplateProps<T>) {
   const { authUser } = useAuth();
-  const windowIsBig = useMediaQuery(768);
-  let style: React.CSSProperties | undefined;
-  let buttonElements: JSX.Element | undefined = undefined;
 
-  if (buttons !== undefined) {
-    let buttonSize = ButtonSize.LARGE;
-    if (!windowIsBig) {
-      style = {
-        transform: `translateY(${calcDownwardsDisplacement(buttons.length)}%)`,
-      };
-      buttonSize = ButtonSize.SMALL;
-    }
-    buttonElements = (
-      <div className="main-tab-buttons" style={style}>
-        {buttons.map((buttonProp: ButtonProps, idx) => (
-          <Button
-            key={idx}
-            {...({
-              ...buttonProp,
-              buttonSize: buttonSize,
-            } as ButtonProps)}
-          />
-        ))}
-      </div>
-    );
-  }
   if (!authUser) {
     return (
       <div className="main-tab-template">
@@ -77,18 +45,7 @@ export default function MainTabPageTemplate<T>({
       <div className="main-tab-template-navigation">
         <NavigationBar />
       </div>
-      {buttons && (
-        <div
-          className="main-tab-buttons-wrapper"
-          style={{
-            transform: `translateY(-${calcDownwardsDisplacement(
-              buttons.length && windowIsBig ? 0 : buttons.length,
-            )}%)`,
-          }}
-        >
-          {buttonElements}
-        </div>
-      )}
+      {buttons && <MainTabButtons buttons={buttons} />}
     </div>
   );
 }
