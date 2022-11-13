@@ -34,6 +34,7 @@
 .main-tab-template .rows-list-template-rows {
   grid-row: 3/4;
   padding-bottom: var(--padding-top-bottom);
+  overflow-y: auto;
 }
 
 @media all and (max-width: 768px) {
