@@ -11,13 +11,6 @@
   gap: var(--row-gap) var(--column-gap);
 }
 
-.main-tab-template .rows-list-template {
-  padding: 0;
-  margin: 0;
-  grid-column: 1/-1;
-  grid-row: 2/3;
-}
-
 .main-tab-template-loading {
   grid-column: 1/-1;
   grid-row: 1/-1;
@@ -68,11 +61,6 @@
     grid-column: 1/2;
     grid-row: 1/2;
     z-index: 1;
-  }
-
-  .main-tab-template .rows-list-template {
-    padding: 0;
-    grid-row: 1/-1;
   }
 
   .main-tab-template .rows-list-template-search {

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Exclude, Expose } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export enum ChatroomKeys {
   ID = '"id"',
@@ -33,8 +34,9 @@ export class Chatroom {
   avatarY: number = 0;
   createdAt: Date;
   ownerId: string;
+  @ApiProperty({ type: Boolean })
   @Expose()
-  get public(): boolean {
+  get isPublic(): boolean {
     return this.password === null;
   }
 

@@ -152,7 +152,7 @@ export default function ChatroomDetailsPage() {
             color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
-            {chatroom.password ? 'private channel' : 'public channel'}
+            {chatroom.isPublic ? 'public chatroom' : 'private chatroom'}
           </Text>
         </div>
       </div>

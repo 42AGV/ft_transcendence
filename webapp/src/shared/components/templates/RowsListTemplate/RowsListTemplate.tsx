@@ -1,4 +1,3 @@
-import './RowsListTemplate.css';
 import * as React from 'react';
 import SearchForm from '../../Input/SearchForm';
 import RowsList, { RowItem } from '../../RowsList/RowsList';
@@ -32,13 +31,13 @@ export default function RowsListTemplate<T>({
   }
 
   return (
-    <div className="rows-list-template">
+    <>
       <div className="rows-list-template-search">
         <SearchForm />
       </div>
       <div className="rows-list-template-rows">
         <RowsList rows={data} onLastRowVisible={fetchMoreResults} />
       </div>
-    </div>
+    </>
   );
 }
