@@ -3,8 +3,13 @@ import {
   ButtonVariant,
   Header,
   IconVariant,
+  MediumAvatar,
   RowItem,
   RowsListTemplate,
+  TextColor,
+  TextVariant,
+  TextWeight,
+  Text,
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
@@ -128,6 +133,29 @@ export default function ChatroomDetailsPage() {
       >
         chat details
       </Header>
+      <div className="chatroom-briefing">
+        <MediumAvatar
+          url={`${AVATAR_EP_URL}/${chatroom.avatarId}`}
+          XCoordinate={chatroom.avatarX}
+          YCoordinate={chatroom.avatarY}
+        />
+        <div className="chatroom-text-info">
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.MEDIUM}
+          >
+            {chatroom.name}
+          </Text>
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.MEDIUM}
+          >
+            {chatroom.password ? 'private channel' : 'public channel'}
+          </Text>
+        </div>
+      </div>
       <SearchContextProvider
         fetchFn={getChatroomMembers}
         maxEntries={ENTRIES_LIMIT}

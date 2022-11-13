@@ -45,7 +45,6 @@ export default function ChatPage() {
   );
   const navigate = useNavigate();
   const windowIsBig = useMediaQuery(768);
-  console.log(windowIsBig);
   const buttonProps = {
     buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
     variant: ButtonVariant.SUBMIT,
