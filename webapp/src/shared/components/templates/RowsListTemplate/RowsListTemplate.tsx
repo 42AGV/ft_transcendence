@@ -3,11 +3,9 @@ import SearchForm from '../../Input/SearchForm';
 import RowsList, { RowItem } from '../../RowsList/RowsList';
 import Loading from '../../Loading/Loading';
 import { useSearchContext } from '../../../context/SearchContext';
-import { ButtonProps } from '../../Button/Button';
 
-export type RowsListTemplateProps<T> = {
+type RowsListTemplateProps<T> = {
   dataMapper: (data: T) => RowItem;
-  buttons?: ButtonProps[];
 };
 
 export default function RowsListTemplate<T>({

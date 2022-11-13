@@ -6,15 +6,25 @@ import { MediumAvatar } from '../../Avatar/Avatar';
 import NavigationBar from '../../NavigationBar/NavigationBar';
 import Loading from '../../Loading/Loading';
 import { useAuth } from '../../../hooks/UseAuth';
-import { Button, ButtonProps, ButtonSize, RowsListTemplate } from '../../index';
-import { RowsListTemplateProps } from '../RowsListTemplate/RowsListTemplate';
+import {
+  Button,
+  ButtonProps,
+  ButtonSize,
+  RowItem,
+  RowsListTemplate,
+} from '../../index';
 import { useMediaQuery } from '../../../hooks/UseMediaQuery';
 import { calcDownwardsDisplacement } from '../../Header/Header';
+
+export type MainTabPageTemplateProps<T> = {
+  dataMapper: (data: T) => RowItem;
+  buttons?: ButtonProps[];
+};
 
 export default function MainTabPageTemplate<T>({
   dataMapper,
   buttons,
-}: RowsListTemplateProps<T>) {
+}: MainTabPageTemplateProps<T>) {
   const { authUser } = useAuth();
   const windowIsBig = useMediaQuery(768);
   let style: React.CSSProperties | undefined;

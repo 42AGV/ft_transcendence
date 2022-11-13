@@ -4,13 +4,15 @@ import { useData } from '../hooks/UseData';
 
 type SearchContextProps<T> = {
   children: React.ReactNode;
-  fetchFn: (requestParams: any) => Promise<T[]>;
+  fetchFn: <RequestType extends Query>(
+    requestParams: RequestType,
+  ) => Promise<T[]>;
   maxEntries: number;
 };
 
-type Query = {
-  search: string;
-  offset: number;
+export type Query = {
+  search?: string;
+  offset?: number;
 };
 
 type Result<T> = {
@@ -39,7 +41,7 @@ function queryReducerCallback(state: Query, action: QueryReducerAction) {
   if (type === 'SEARCH') {
     return { search: action.value, offset: 0 };
   } else if (type === 'LOAD_MORE') {
-    return { ...state, offset: state.offset + action.limit };
+    return { ...state, offset: state.offset ?? 0 + action.limit };
   }
   throw new Error('Unknown query reducer action');
 }

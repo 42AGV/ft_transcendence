@@ -23,7 +23,10 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
 import Loading from '../../shared/components/Loading/Loading';
 import { ENTRIES_LIMIT } from '../../shared/constants';
-import { SearchContextProvider } from '../../shared/context/SearchContext';
+import {
+  Query,
+  SearchContextProvider,
+} from '../../shared/context/SearchContext';
 import { ChatControllerGetChatroomMembersRequest } from '../../shared/generated/apis/ChatApi';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 
@@ -96,7 +99,9 @@ export default function ChatroomDetailsPage() {
         chatroomId: chatroomId!,
       }),
     [chatroomId],
-  );
+  ) as <RequestType extends Query>(
+    requestParams: RequestType,
+  ) => Promise<ChatroomMemberWithUser[]>;
 
   let buttonProps = [
     {

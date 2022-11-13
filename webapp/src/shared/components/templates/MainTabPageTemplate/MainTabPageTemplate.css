@@ -7,7 +7,7 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto auto 1fr auto;
-  gap: var(--row-gap) var(--column-gap);
+  gap: 2rem var(--column-gap);
 }
 
 .main-tab-template-loading {
@@ -38,6 +38,7 @@
   grid-row: 3/4;
   padding-bottom: var(--padding-top-bottom);
   overflow-y: auto;
+  overflow-x: clip;
 }
 
 .main-tab-template-navigation {
@@ -79,6 +80,7 @@
     margin: 0;
     grid-column: 2/6;
     grid-row: 1/2;
+    overflow-x: clip;
   }
 
   .main-tab-template .rows-list-template-search .input-container {
