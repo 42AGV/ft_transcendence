@@ -141,7 +141,7 @@ export default function ChatroomDetailsPage() {
         />
         <div className="chatroom-text-info">
           <Text
-            variant={TextVariant.PARAGRAPH}
+            variant={TextVariant.SUBHEADING}
             color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
