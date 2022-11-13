@@ -122,21 +122,22 @@ export class ChatService {
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {
-    const { confirmationPassword: _, ...updateChatroom } = updateChatroomDto;
-    if (updateChatroomDto.password) {
+    const { oldPassword, confirmationPassword, ...updateChatroom } =
+      updateChatroomDto;
+    if (updateChatroomDto.newPassword) {
       if (
-        updateChatroomDto.password !== updateChatroomDto.confirmationPassword
+        updateChatroomDto.newPassword !== updateChatroomDto.confirmationPassword
       ) {
         throw new BadRequestException(
           'Password and Confirmation Password must match',
         );
       } else {
         const hashedPassword = await Password.toHash(
-          updateChatroomDto.password,
+          updateChatroomDto.newPassword,
         );
         const ret = this.chatroomRepository.updateById(chatroomId, {
           ...updateChatroom,
-          password: hashedPassword,
+          newPassword: hashedPassword,
         });
         return await ret;
       }

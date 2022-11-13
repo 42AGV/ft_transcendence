@@ -20,19 +20,16 @@ import {
   USERS_URL,
   HOST_URL,
 } from '../../shared/urls';
-import { SubmitStatus } from '../../shared/types';
 import './LoginPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState<SubmitStatus>({
-    type: 'pending',
-    message: '',
-  });
-
   const { isLoggedIn } = useAuth();
+  const { warn } = useNotificationContext();
+
   if (isLoggedIn) {
     return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
   }
@@ -43,18 +40,17 @@ export default function LoginPage() {
       });
       window.location.href = USERS_URL;
     } catch (error) {
+      let errMessage = '';
       if (error instanceof ResponseError) {
         if (error.response.status === 403 || error.response.status === 401) {
-          setStatus({
-            type: 'error',
-            message: 'Incorrect username or password',
-          });
+          errMessage = 'Incorrect username or password';
         } else {
-          setStatus({ type: 'error', message: `${error.response.statusText}` });
+          errMessage = `${error.response.statusText}`;
         }
       } else if (error instanceof Error) {
-        setStatus({ type: 'error', message: `${error.message}` });
+        errMessage = `${error.message}`;
       }
+      warn(errMessage);
     }
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
@@ -114,14 +110,6 @@ export default function LoginPage() {
               setPassword(e.target.value);
             }}
           />
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={
-              status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-            }
-          >
-            {status.message}
-          </Text>
         </form>
         <Button
           form="login-form"

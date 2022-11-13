@@ -18,7 +18,13 @@ export class UpdateChatroomDto {
   @IsOptional()
   @IsNotEmpty()
   @ValidateIf((object, value) => value !== null)
-  password?: string | null;
+  oldPassword?: string | null;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  @ValidateIf((object, value) => value !== null)
+  newPassword?: string | null;
 
   @IsString()
   @IsOptional()

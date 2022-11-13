@@ -39,8 +39,9 @@
 }
 
 .edit-chatroom-details-properties {
+  margin-top: var(--row-gap);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .edit-chatroom-details-form {
@@ -69,6 +70,7 @@
   flex-direction: column;
   align-self: end;
   align-items: center;
+  gap: 0.875rem;
 }
 
 @media all and (min-width: 768px) {

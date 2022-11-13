@@ -7,11 +7,7 @@ import {
   InputVariant,
   LargeAvatar,
   Loading,
-  MediumAvatar,
-  Text,
-  TextColor,
-  TextVariant,
-  TextWeight,
+  ToggleSwitch,
 } from '../../shared/components';
 import {
   CHAT_URL,
@@ -21,49 +17,33 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useCallback, useEffect, useState } from 'react';
-import { CreateChatroomDto, ResponseError } from '../../shared/generated';
+import { ResponseError, UpdateChatroomDto } from '../../shared/generated';
 import './EditChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
-
-type FormStatus = {
-  type: 'success' | 'error' | 'pending';
-  message: string;
-};
-
-const initialSubmitFormStatus: FormStatus = {
-  type: 'pending',
-  message: '',
-};
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 export default function CreateChatroomPage() {
   const { chatroomId } = useParams();
+  const { warn, notify } = useNotificationContext();
   const getChatRoomById = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
   );
   const { data: chatroom, isLoading } = useData(getChatRoomById);
-
-  const initialFormValues: CreateChatroomDto = {
+  const [disabled, setDisabled] = useState(
+    isLoading ? false : !chatroom!._public,
+  );
+  const initialFormValues: UpdateChatroomDto = {
     name: isLoading ? '' : chatroom!.name,
-    password: '',
+    oldPassword: '',
+    newPassword: '',
     confirmationPassword: '',
   };
   const navigate = useNavigate();
   const { goBack } = useNavigation();
   const [formValues, setFormValues] =
-    useState<CreateChatroomDto>(initialFormValues);
-  const [status, setStatus] = useState<FormStatus>({
-    type: 'pending',
-    message: '',
-  });
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus(initialSubmitFormStatus);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [status]);
-
+    useState<UpdateChatroomDto>(initialFormValues);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues((previousValues: any) => {
@@ -72,21 +52,13 @@ export default function CreateChatroomPage() {
   };
 
   function hasValidFormValues() {
-    if (formValues.name === '') {
-      setStatus({
-        type: 'error',
-        message: 'Chat room name can not be empty',
-      });
-      return false;
-    } else if (formValues.password !== formValues.confirmationPassword) {
-      setStatus({
-        type: 'error',
-        message: 'Passwords are different',
-      });
+    if (formValues.newPassword !== formValues.confirmationPassword) {
+      warn('Passwords are different');
       return false;
     }
     return true;
   }
+
   async function updateChatroomDetails() {
     if (!hasValidFormValues()) {
       return;
@@ -95,24 +67,22 @@ export default function CreateChatroomPage() {
       await chatApi.chatControllerUpdateChatroom({
         chatroomId: chatroomId!,
         updateChatroomDto: {
-          ...formValues,
-          password: formValues.password || null,
+          name: formValues.name ? formValues.name : initialFormValues.name,
+          oldPassword: formValues.oldPassword || null,
+          newPassword: formValues.newPassword || null,
           confirmationPassword: formValues.confirmationPassword || null,
         },
       });
-      setStatus({
-        type: 'success',
-        message: 'Chatroom details updated',
-      });
-      setTimeout(() => {
-        navigate(CHAT_URL);
-      }, 2000);
+      notify('Chatroom details successfully updated');
+      navigate(CHAT_URL);
     } catch (error) {
+      let errMessage = '';
       if (error instanceof ResponseError) {
-        setStatus({ type: 'error', message: `${error.response.statusText}` });
+        errMessage = `${error.response.statusText}`;
       } else if (error instanceof Error) {
-        setStatus({ type: 'error', message: `${error.message}` });
+        errMessage = `${error.message}`;
       }
+      warn(errMessage);
     }
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
@@ -125,11 +95,16 @@ export default function CreateChatroomPage() {
         chatApi.chatControllerDeleteChatroom({
           chatroomId: chatroomId!,
         });
-        setTimeout(() => {
-          navigate(CHAT_URL);
-        }, 2000);
+        notify('Chatroom successfully deleted');
+        navigate(CHAT_URL);
       } catch (error) {
-        console.error(error);
+        let errMessage = '';
+        if (error instanceof ResponseError) {
+          errMessage = `${error.response.statusText}`;
+        } else if (error instanceof Error) {
+          errMessage = `${error.message}`;
+        }
+        warn(errMessage);
       }
     }
   };
@@ -159,13 +134,11 @@ export default function CreateChatroomPage() {
           />
         </div>
         <div className="edit-chatroom-details-properties">
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={TextColor.LIGHT}
-            weight={TextWeight.REGULAR}
-          >
-            {chatroom.password ? 'private channel' : 'public channel'}
-          </Text>
+          <ToggleSwitch
+            isToggled={!disabled}
+            onToggle={() => setDisabled(!disabled)}
+            label={!disabled ? 'private channel' : 'public channel'}
+          />
         </div>
       </div>
       <form
@@ -177,19 +150,30 @@ export default function CreateChatroomPage() {
           <Input
             variant={InputVariant.LIGHT}
             label="Chat Room Name"
-            placeholder={isLoading ? '' : chatroom!.name}
+            placeholder={chatroom.name}
             value={formValues.name}
             name="name"
             onChange={handleInputChange}
           />
           <Input
             variant={InputVariant.LIGHT}
-            label="Password"
-            placeholder="password"
-            value={formValues.password ? formValues.password : ''}
-            name="password"
+            label="Old password"
+            placeholder="old password"
+            value={formValues.oldPassword ? formValues.oldPassword : ''}
+            name="oldPassword"
             type="password"
             onChange={handleInputChange}
+            disabled={disabled}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            label="New password"
+            placeholder="new password"
+            value={formValues.newPassword ? formValues.newPassword : ''}
+            name="newPassword"
+            type="password"
+            onChange={handleInputChange}
+            disabled={disabled}
           />
           <Input
             variant={InputVariant.LIGHT}
@@ -202,15 +186,8 @@ export default function CreateChatroomPage() {
             name="confirmationPassword"
             type="password"
             onChange={handleInputChange}
+            disabled={disabled}
           />
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={
-              status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-            }
-          >
-            {status.message}
-          </Text>
         </div>
       </form>
       <div className="edit-chatroom-details-buttons">
