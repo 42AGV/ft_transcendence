@@ -10,11 +10,12 @@ import {
   TextVariant,
   TextWeight,
   Text,
+  ButtonProps,
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import './ChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
@@ -40,7 +41,7 @@ export default function ChatroomDetailsPage() {
   );
   const { data: chatroom } = useData<Chatroom>(getChatroom);
   const { authUser } = useAuth();
-  const [isOwner, setIsOwner] = useState(false);
+  const isOwner: boolean = authUser?.id === chatroom?.ownerId;
   const [ownerHasBeenWarned, setOwnerHasBeenWarned] = useState(false);
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     return {
@@ -57,16 +58,6 @@ export default function ChatroomDetailsPage() {
       key: member.username,
     };
   };
-  useEffect(() => {
-    if (!(authUser && chatroom)) {
-      // TODO: do something if error
-      setIsOwner(false);
-      return;
-    }
-    if (authUser.id === chatroom.ownerId) {
-      setIsOwner(true);
-    }
-  }, [authUser, chatroom]);
   const leaveChatroom = useCallback(async () => {
     if (!chatroomId) return;
     try {
@@ -103,21 +94,21 @@ export default function ChatroomDetailsPage() {
     requestParams: RequestType,
   ) => Promise<ChatroomMemberWithUser[]>;
 
-  let buttonProps = [
-    {
-      buttonSize: ButtonSize.SMALL,
-      variant: ButtonVariant.WARNING,
-      iconVariant: IconVariant.LOGOUT,
-      onClick: leaveChatroom,
-    },
-  ];
+  let buttonProps: ButtonProps;
   if (isOwner) {
-    buttonProps.unshift({
+    buttonProps = {
       buttonSize: ButtonSize.SMALL,
       variant: ButtonVariant.SUBMIT,
       iconVariant: IconVariant.EDIT,
       onClick: editChatroom,
-    });
+    };
+  } else {
+    buttonProps = {
+      buttonSize: ButtonSize.SMALL,
+      variant: ButtonVariant.WARNING,
+      iconVariant: IconVariant.LOGOUT,
+      onClick: leaveChatroom,
+    };
   }
   if (!(authUser && chatroom)) {
     return (

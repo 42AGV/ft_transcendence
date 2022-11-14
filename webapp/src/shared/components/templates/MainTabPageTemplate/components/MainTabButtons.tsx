@@ -2,10 +2,27 @@ import './MainTabButtons.css';
 import * as React from 'react';
 import { Button, ButtonProps, ButtonSize } from '../../../index';
 import { useMediaQuery } from '../../../../hooks/UseMediaQuery';
-import { calcDownwardsDisplacement } from '../../../Header/Header';
 
 export type MainTabButtonsProps = {
   buttons: ButtonProps[];
+};
+
+const calcDownwardsDisplacement = (len: number): number => {
+  switch (len) {
+    case 0:
+      return 0;
+    case 1:
+      return 0;
+    case 2:
+      return 30;
+    case 3:
+      return 34;
+    case 4:
+      return 38;
+    default:
+    case 5:
+      return 43;
+  }
 };
 
 export default function MainTabButtons({ buttons }: MainTabButtonsProps) {

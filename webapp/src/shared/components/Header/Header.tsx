@@ -8,11 +8,10 @@ import './Header.css';
 import { ButtonProps } from '../Button/Button';
 import { Button } from '../index';
 import React from 'react';
-import { useMediaQuery } from '../../hooks/UseMediaQuery';
 
 type HeaderCommon = {
   statusVariant?: StatusVariant;
-  buttonProps?: ButtonProps[];
+  buttonProps?: ButtonProps;
   children: string;
   titleNavigationUrl?: string;
 };
@@ -40,24 +39,6 @@ type NoFigureHeader = HeaderCommon & {
 
 type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
 
-export const calcDownwardsDisplacement = (len: number): number => {
-  switch (len) {
-    case 0:
-      return 0;
-    case 1:
-      return 0;
-    case 2:
-      return 30;
-    case 3:
-      return 34;
-    case 4:
-      return 38;
-    default:
-    case 5:
-      return 43;
-  }
-};
-
 export default function Header({
   icon,
   avatar,
@@ -68,7 +49,6 @@ export default function Header({
   titleNavigationUrl,
   children,
 }: HeaderProps) {
-  const windowIsBig = useMediaQuery(768);
   const lNavFigure = (
     <>
       {icon ? (
@@ -87,7 +67,6 @@ export default function Header({
       {children}
     </Text>
   );
-  let style: React.CSSProperties | undefined;
   let statusElement: JSX.Element | undefined = undefined;
   if (statusVariant) {
     if (statusVariant !== 'button') {
@@ -98,32 +77,16 @@ export default function Header({
       );
     } else {
       if (buttonProps !== undefined) {
-        if (!windowIsBig) {
-          style = {
-            transform: `translateY(${calcDownwardsDisplacement(
-              buttonProps.length,
-            )}%)`,
-          };
-        }
         statusElement = (
-          <div className="header-buttons" style={style}>
-            {buttonProps.map((buttonProp, idx) => (
-              <Button key={idx} {...buttonProp} />
-            ))}
+          <div className="header-buttons">
+            <Button {...buttonProps} />
           </div>
         );
       }
     }
   }
   return (
-    <header
-      className="header"
-      style={{
-        transform: `translateY(-${calcDownwardsDisplacement(
-          buttonProps?.length && !windowIsBig ? buttonProps?.length : 0,
-        )}%)`,
-      }}
-    >
+    <header className="header">
       <div className="header-navigation">
         {(iconNavigationUrl && (
           <Link to={iconNavigationUrl}>{lNavFigure}</Link>

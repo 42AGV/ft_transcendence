@@ -8,7 +8,8 @@
 .header-navigation a,
 .header-navigation button,
 .header-text,
-.header-status {
+.header-status,
+.header-buttons {
   display: flex;
   align-items: center;
 }
@@ -36,34 +37,5 @@
 
 .header-buttons {
   display: flex;
-}
-
-@media all and (max-width: 768px) {
-  .header-buttons {
-    flex-direction: column;
-    justify-self: flex-end;
-  }
-
-  .header-buttons > * {
-    margin-bottom: 0.5rem;
-  }
-
-  .header-buttons > *:last-child {
-    margin-bottom: 0;
-  }
-}
-
-@media all and (min-width: 769px) {
-  .header-buttons {
-    flex-direction: row;
-    justify-self: flex-end;
-  }
-
-  .header-buttons > * {
-    margin-right: 0.5rem;
-  }
-
-  .header-buttons > *:last-child {
-    margin-right: 0;
-  }
+  justify-self: flex-end;
 }

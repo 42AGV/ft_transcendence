@@ -38,18 +38,11 @@ export const HeaderExample = () => (
       avatar={avProps}
       iconNavigationUrl="/"
       statusVariant="button"
-      buttonProps={[
-        {
-          variant: ButtonVariant.SUBMIT,
-          iconVariant: IconVariant.ARROW_FORWARD,
-          onClick: buttonLink,
-        },
-        {
-          variant: ButtonVariant.WARNING,
-          iconVariant: IconVariant.LOGOUT,
-          onClick: buttonLink,
-        },
-      ]}
+      buttonProps={{
+        variant: ButtonVariant.SUBMIT,
+        iconVariant: IconVariant.ARROW_FORWARD,
+        onClick: buttonLink,
+      }}
     >
       {placeholderTitle}
     </Header>

@@ -96,14 +96,12 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
           icon={IconVariant.ARROW_BACK}
           onClick={goBack}
           statusVariant="button"
-          buttonProps={[
-            {
-              buttonSize: ButtonSize.SMALL,
-              variant: ButtonVariant.SUBMIT,
-              iconVariant: IconVariant.EDIT,
-              onClick: chatroomDetails,
-            },
-          ]}
+          buttonProps={{
+            buttonSize: ButtonSize.SMALL,
+            variant: ButtonVariant.SUBMIT,
+            iconVariant: IconVariant.EDIT,
+            onClick: chatroomDetails,
+          }}
         >
           {chatroom.name}
         </Header>
