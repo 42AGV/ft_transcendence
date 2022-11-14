@@ -101,6 +101,7 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
       <div className="join-chatroom-avatar">
         <LargeAvatar
           url={
+            // TODO: Remove the wildcard avatar when we implement #317
             chatroom.avatarId
               ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${chatroom.avatarId}`
               : WILDCARD_AVATAR_URL
