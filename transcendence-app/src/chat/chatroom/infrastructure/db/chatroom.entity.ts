@@ -37,7 +37,7 @@ export class Chatroom {
   ownerId: string;
   @ApiProperty({ type: Boolean })
   @Expose()
-  get public(): boolean {
+  get isPublic(): boolean {
     return this.password === null;
   }
 

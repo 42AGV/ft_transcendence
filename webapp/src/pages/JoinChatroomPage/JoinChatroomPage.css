@@ -8,8 +8,9 @@
   grid-template-areas:
     'header'
     'avatar'
-    'info';
-  grid-template-rows: auto auto 1fr;
+    'info'
+    'button';
+  grid-template-rows: auto auto 1fr auto;
   grid-template-columns: 1fr;
 }
 
@@ -36,12 +37,12 @@
   justify-self: center;
 }
 
-.join-chatroom-info-text {
-  margin-bottom: 2rem;
+.join-chatroom .button {
+  grid-area: button;
 }
 
-.join-chatroom-info-form .input {
-  margin-bottom: 0.5rem;
+.join-chatroom-info-text {
+  margin-bottom: 2rem;
 }
 
 /* Styles for viewports wider than 768 pixels. */
@@ -51,7 +52,8 @@
     column-gap: var(--column-gap);
     grid-template-areas:
       'header header header header header header header header header header header header'
-      '... ... avatar avatar avatar ... info info info info ... ...';
+      '... ... avatar avatar avatar ... info info info info ... ...'
+      '... ... ... ... button button button button ... ... ... ...';
     grid-template-rows: auto 1fr;
     grid-template-columns: repeat(12, 1fr);
   }

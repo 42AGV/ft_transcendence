@@ -45,7 +45,7 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
     [chatroomId],
   );
   const { data: chatroom, isLoading: isChatroomLoading } = useData(getChatroom);
-  const isProtectedChatroom = chatroom?._public === false;
+  const isProtectedChatroom = chatroom?.isPublic === false;
   const [password, setPassword] = useState('');
   const { warn, notify } = useNotificationContext();
   const { navigate } = useNavigation();
@@ -96,7 +96,7 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
   return (
     <div className="join-chatroom">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-        join chatroom
+        {`channel/${chatroom.name}`}
       </Header>
       <div className="join-chatroom-avatar">
         <LargeAvatar
@@ -113,20 +113,30 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
       <div className="join-chatroom-info">
         <div className="join-chatroom-info-text">
           <Text variant={TextVariant.PARAGRAPH}>{chatroom.name}</Text>
+          <Text variant={TextVariant.PARAGRAPH}>
+            {chatroom.isPublic ? 'public channel' : 'private channel'}
+          </Text>
         </div>
-        <form className="join-chatroom-info-form" onSubmit={handleSubmit}>
+        <form
+          className="join-chatroom-info-form"
+          id="join-chatroom-form"
+          onSubmit={handleSubmit}
+        >
           {isProtectedChatroom && (
             <Input
               variant={InputVariant.LIGHT}
+              label="insert password"
               placeholder="password"
               type="password"
               onChange={(event) => setPassword(event.target.value)}
               value={password}
             />
           )}
-          <Button variant={ButtonVariant.SUBMIT}>join</Button>
         </form>
       </div>
+      <Button variant={ButtonVariant.SUBMIT} form="join-chatroom-form">
+        join
+      </Button>
     </div>
   );
 }
