@@ -1,5 +1,6 @@
 .join-chatroom {
   padding: var(--padding-top-bottom) var(--padding-sides);
+  min-height: 45rem;
   height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
@@ -49,13 +50,14 @@
 /* Styles for viewports wider than 768 pixels. */
 @media (min-width: 768px) {
   .join-chatroom {
+    min-height: 40rem;
     row-gap: 8rem;
     column-gap: var(--column-gap);
     grid-template-areas:
       'header header header header header header header header header header header header'
       '... ... avatar avatar avatar ... info info info info ... ...'
       '... ... ... ... button button button button ... ... ... ...';
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     grid-template-columns: repeat(12, 1fr);
   }
 }

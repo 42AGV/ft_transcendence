@@ -39,7 +39,7 @@ type JoinChatroomProps = {
 };
 
 function JoinChatroom({ chatroomId }: JoinChatroomProps) {
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
     [chatroomId],
@@ -48,7 +48,6 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
   const isProtectedChatroom = chatroom?.isPublic === false;
   const [password, setPassword] = useState('');
   const { warn, notify } = useNotificationContext();
-  const { navigate } = useNavigation();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
     event,
