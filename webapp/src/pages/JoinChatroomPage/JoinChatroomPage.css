@@ -39,6 +39,7 @@
 
 .join-chatroom .button {
   grid-area: button;
+  justify-self: center;
 }
 
 .join-chatroom-info-text {
