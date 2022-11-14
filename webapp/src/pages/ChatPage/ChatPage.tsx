@@ -6,9 +6,10 @@ import {
   RowsTemplate,
 } from '../../shared/components';
 import {
-  AVATAR_EP_URL,
+  CHATROOM_EP_URL,
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
+  WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import {
   ChatControllerGetChatroomsRequest,
@@ -25,7 +26,10 @@ const mapChatToRow = (chatroom: Chatroom): RowItem => {
   return {
     iconVariant: IconVariant.ARROW_FORWARD,
     avatarProps: {
-      url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
+      // TODO: Remove the wildcard avatar when we implement #317
+      url: chatroom.avatarId
+        ? `${CHATROOM_EP_URL}/${chatroom.id}/avatars/${chatroom.avatarId}`
+        : WILDCARD_AVATAR_URL,
       status: 'offline',
     },
     url: `${CHATROOM_URL}/${chatroom.id}`,
