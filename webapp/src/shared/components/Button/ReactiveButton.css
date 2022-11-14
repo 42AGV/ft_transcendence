@@ -1,0 +1,14 @@
+.reactive-button {
+  display: contents;
+}
+
+@media all and (max-width: 768px) {
+  .reactive-button .button.button-large {
+    display: none;
+  }
+}
+@media all and (min-width: 769px) {
+  .reactive-button .button.button-small {
+    display: none;
+  }
+}
