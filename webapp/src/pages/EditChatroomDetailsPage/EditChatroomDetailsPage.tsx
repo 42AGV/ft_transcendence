@@ -25,23 +25,23 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 
 export default function CreateChatroomPage() {
   const { chatroomId } = useParams();
+  const navigate = useNavigate();
+  const { goBack } = useNavigation();
   const { warn, notify } = useNotificationContext();
+
   const getChatRoomById = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
   );
   const { data: chatroom, isLoading } = useData(getChatRoomById);
-  const [disabled, setDisabled] = useState(
-    isLoading ? false : !chatroom!._public,
-  );
+  const [disabled, setDisabled] = useState(false);
+
   const initialFormValues: UpdateChatroomDto = {
     name: isLoading ? '' : chatroom!.name,
     oldPassword: '',
     newPassword: '',
     confirmationPassword: '',
   };
-  const navigate = useNavigate();
-  const { goBack } = useNavigation();
   const [formValues, setFormValues] =
     useState<UpdateChatroomDto>(initialFormValues);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,9 +135,9 @@ export default function CreateChatroomPage() {
         </div>
         <div className="edit-chatroom-details-properties">
           <ToggleSwitch
-            isToggled={!disabled}
+            isToggled={disabled}
             onToggle={() => setDisabled(!disabled)}
-            label={!disabled ? 'private channel' : 'public channel'}
+            label={disabled ? 'private channel' : 'public channel'}
           />
         </div>
       </div>
