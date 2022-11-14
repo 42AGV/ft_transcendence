@@ -6,8 +6,12 @@ import { MediumAvatar } from '../../Avatar/Avatar';
 import NavigationBar from '../../NavigationBar/NavigationBar';
 import Loading from '../../Loading/Loading';
 import { useAuth } from '../../../hooks/UseAuth';
-import MainTabButtons from './components/MainTabButtons';
-import { ButtonProps, RowItem, RowsListTemplate } from '../../index';
+import {
+  ButtonProps,
+  ReactiveButton,
+  RowItem,
+  RowsListTemplate,
+} from '../../index';
 
 export type MainTabPageTemplateProps<T> = {
   dataMapper: (data: T) => RowItem;
@@ -45,7 +49,18 @@ export default function MainTabPageTemplate<T>({
       <div className="main-tab-template-navigation">
         <NavigationBar />
       </div>
-      {buttons && <MainTabButtons buttons={buttons} />}
+      {buttons && (
+        <div className="main-tab-buttons">
+          {buttons.map((buttonProp: ButtonProps, idx) => (
+            <ReactiveButton
+              key={idx}
+              {...{
+                ...buttonProp,
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
