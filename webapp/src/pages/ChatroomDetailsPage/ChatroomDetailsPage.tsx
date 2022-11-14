@@ -83,16 +83,14 @@ export default function ChatroomDetailsPage() {
   }, [chatroomId, navigate]);
 
   const getChatroomMembers = useCallback(
-    (requestParameters: ChatControllerGetChatroomMembersRequest) =>
+    <T extends Query>(requestParameters: T) =>
       chatApi.chatControllerGetChatroomMembers({
         ...requestParameters,
         limit: ENTRIES_LIMIT,
         chatroomId: chatroomId!,
-      }),
+      } as ChatControllerGetChatroomMembersRequest),
     [chatroomId],
-  ) as <RequestType extends Query>(
-    requestParams: RequestType,
-  ) => Promise<ChatroomMemberWithUser[]>;
+  );
 
   let buttonProps: ButtonProps;
   if (isOwner) {
