@@ -3,7 +3,6 @@ import {
   IconVariant,
   RowItem,
   MainTabTemplate,
-  ButtonSize,
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
@@ -19,7 +18,6 @@ import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
 import { chatApi } from '../../shared/services/ApiService';
 import { ENTRIES_LIMIT } from '../../shared/constants';
-import { useMediaQuery } from '../../shared/hooks/UseMediaQuery';
 
 const mapChatToRow = (chatroom: Chatroom): RowItem => {
   return {
@@ -42,17 +40,14 @@ export default function ChatPage() {
     [],
   );
   const navigate = useNavigate();
-  const windowIsBig = useMediaQuery(768);
   const chatButtons = [
     {
-      buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
       variant: ButtonVariant.SUBMIT,
       onClick: () => navigate(CREATE_CHATROOM_URL),
       iconVariant: IconVariant.ADD,
       children: 'Add chatroom',
     },
     {
-      buttonSize: windowIsBig ? ButtonSize.LARGE : ButtonSize.SMALL,
       variant: ButtonVariant.SUBMIT,
       onClick: () => navigate(`${CHATROOM_URL}/discover`),
       iconVariant: IconVariant.ARROW_FORWARD,
