@@ -1,13 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
-import {
-  ButtonSize,
-  ButtonVariant,
-  Header,
-  IconVariant,
-  Loading,
-} from '../../shared/components';
+import { Header, IconVariant, Loading } from '../../shared/components';
 import { CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import './ChatroomPage.css';
@@ -36,7 +30,7 @@ type ChatroomProps = {
 };
 
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
-  const { goBack, navigate } = useNavigation();
+  const { goBack } = useNavigation();
   const { warn } = useNotificationContext();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
@@ -53,11 +47,6 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   );
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
-
-  const chatroomDetails = useCallback(async () => {
-    if (!chatroomId) return;
-    navigate(`${CHATROOM_URL}/${chatroomId}/details`);
-  }, [chatroomId, navigate]);
 
   useEffect(() => {
     socket.on('exception', (wsError: WsException) => {
@@ -96,12 +85,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
           icon={IconVariant.ARROW_BACK}
           onClick={goBack}
           statusVariant="button"
-          buttonProps={{
-            buttonSize: ButtonSize.SMALL,
-            variant: ButtonVariant.SUBMIT,
-            iconVariant: IconVariant.EDIT,
-            onClick: chatroomDetails,
-          }}
+          titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
         >
           {chatroom.name}
         </Header>

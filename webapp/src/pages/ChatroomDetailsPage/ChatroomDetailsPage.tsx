@@ -10,7 +10,6 @@ import {
   TextVariant,
   TextWeight,
   Text,
-  ButtonProps,
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
@@ -19,6 +18,7 @@ import React, { useCallback, useState } from 'react';
 import './ChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
+import { ResponseError } from '../../shared/generated';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
@@ -72,15 +72,21 @@ export default function ChatroomDetailsPage() {
       }
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
       navigate(`${CHAT_URL}`);
-    } catch (err) {
-      console.error(err);
-      navigate(`${CHAT_URL}`);
+    } catch (error: unknown) {
+      if (error instanceof ResponseError) {
+        const responseBody = await error.response.json();
+        if (responseBody.message) {
+          warn(responseBody.message);
+        } else {
+          warn(error.response.statusText);
+        }
+      } else if (error instanceof Error) {
+        warn(error.message);
+      } else {
+        warn('Could not leave the chatroom');
+      }
     }
   }, [isOwner, warn, ownerHasBeenWarned, chatroomId, navigate]);
-  const editChatroom = useCallback(async () => {
-    if (!chatroomId) return;
-    navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
-  }, [chatroomId, navigate]);
 
   const getChatroomMembers = useCallback(
     <T extends Query>(requestParameters: T) =>
@@ -92,22 +98,6 @@ export default function ChatroomDetailsPage() {
     [chatroomId],
   );
 
-  let buttonProps: ButtonProps;
-  if (isOwner) {
-    buttonProps = {
-      buttonSize: ButtonSize.SMALL,
-      variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.EDIT,
-      onClick: editChatroom,
-    };
-  } else {
-    buttonProps = {
-      buttonSize: ButtonSize.SMALL,
-      variant: ButtonVariant.WARNING,
-      iconVariant: IconVariant.LOGOUT,
-      onClick: leaveChatroom,
-    };
-  }
   if (!(authUser && chatroom)) {
     return (
       <div className="chatroom-details-page">
@@ -123,7 +113,13 @@ export default function ChatroomDetailsPage() {
         icon={IconVariant.ARROW_BACK}
         onClick={goBack}
         statusVariant="button"
-        buttonProps={buttonProps}
+        titleNavigationUrl={isOwner ? `${CHATROOM_URL}/${chatroomId}/edit` : ''}
+        buttonProps={{
+          buttonSize: ButtonSize.SMALL,
+          variant: ButtonVariant.WARNING,
+          iconVariant: IconVariant.LOGOUT,
+          onClick: leaveChatroom,
+        }}
       >
         chat details
       </Header>
