@@ -258,7 +258,7 @@ Change the current working directory to `ft_transcendence`
 cd ft_transcendence
 ```
 
-Either create a `.env` file in the root directory containing the following environment variables (replace the ID and SECRET with the ones from the OAuth application you create in the previous step):
+Either create a `.env` file in the root directory containing the following environment variables (replace the FORTYTWO_APP_ID and FORTYTWO_APP_SECRET with the ones from the OAuth application you create in the previous step):
 
 > **_NOTE:_**  You can generate UUIDs using the `uuidgen` command
 
@@ -274,10 +274,10 @@ MEMCACHED_SECRET=your-memcached-secret-uuid
 Or export them from the shell like:
 
 ```
-export POSTGRES_USER=your-postgres-user
-export POSTGRES_PASSWORD=your-postgres-password
 export FORTYTWO_APP_ID=your-42-app-id
 export FORTYTWO_APP_SECRET=your-42-app-secret
+export POSTGRES_USER=your-postgres-user
+export POSTGRES_PASSWORD=your-postgres-password
 export SESSION_SECRET=your-session-secret-uuid
 export MEMCACHED_SECRET=your-memcached-secret-uuid
 ```

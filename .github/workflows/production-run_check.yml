@@ -27,15 +27,20 @@ jobs:
           context: ./transcendence-app
           target: production
           push: false
+          load: true
           tags: ft_transcendence/transcendence-app-prod:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          outputs: type=oci,dest=/tmp/transcendence-app-prod-image.tar
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+      - name: Build swagger docker image
+        uses: docker/build-push-action@v2
         with:
-          name: transcendence-app-prod-image
-          path: /tmp/transcendence-app-prod-image.tar
+          context: ./transcendence-app
+          target: swagger
+          push: false
+          load: true
+          tags: ft_transcendence/swagger:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - name: Generate code
         run: make gen
       - name: Build webapp docker image
@@ -44,21 +49,14 @@ jobs:
           context: ./webapp
           target: production
           push: false
+          load: true
           tags: ft_transcendence/webapp-prod:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          outputs: type=oci,dest=/tmp/webapp-prod-image.tar
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: webapp-prod-image
-          path: /tmp/webapp-prod-image.tar
       - name: Run
         run: |
-          docker load --input /tmp/transcendence-app-prod-image.tar
-          docker load --input /tmp/webapp-prod-image.tar
-          make prod-no-gen
-          make prod-down
+          docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+          docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}

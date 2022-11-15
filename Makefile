@@ -9,21 +9,9 @@ all: gen
 	$(DOCKER_COMPOSE) up --build -d
 	make seed
 
-.PHONY: down
-down:
-	$(DOCKER_COMPOSE) down
-
 .PHONY: prod
 prod: gen
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
-
-.PHONY: prod-no-gen
-prod-no-gen:
-	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
-
-.PHONY: prod-down
-prod-down:
-	${DOCKER_COMPOSE} -f docker-compose.yml -f docker-compose.prod.yml down
 
 transcendence-app/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
 	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-gen
