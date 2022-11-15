@@ -8,7 +8,8 @@
 .header-navigation a,
 .header-navigation button,
 .header-text,
-.header-status {
+.header-status,
+.header-buttons {
   display: flex;
   align-items: center;
 }
@@ -32,4 +33,9 @@
 
 .header-status {
   justify-content: flex-end;
+}
+
+.header-buttons {
+  display: flex;
+  justify-self: flex-end;
 }

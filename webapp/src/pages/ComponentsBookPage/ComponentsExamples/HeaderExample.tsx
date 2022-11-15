@@ -1,4 +1,4 @@
-import { Header, IconVariant } from '../../../shared/components';
+import { ButtonVariant, Header, IconVariant } from '../../../shared/components';
 import { HOST_URL } from '../../../shared/urls';
 import { BookSection } from '../BookSection';
 
@@ -6,6 +6,9 @@ const randomAvatar = 'https://i.pravatar.cc/1000';
 const avProps = { url: randomAvatar };
 const placeholderTitle = 'Header title';
 const buttonAction = (): void => alert('This is an alert');
+const buttonLink = (): void => {
+  window.location.href = 'http://google.com';
+};
 
 export const HeaderExample = () => (
   <BookSection title="Header component" displayVertical>
@@ -29,6 +32,18 @@ export const HeaderExample = () => (
       {placeholderTitle}
     </Header>
     <Header avatar={avProps} iconNavigationUrl="/" statusVariant="playing">
+      {placeholderTitle}
+    </Header>
+    <Header
+      avatar={avProps}
+      iconNavigationUrl="/"
+      statusVariant="button"
+      buttonProps={{
+        variant: ButtonVariant.SUBMIT,
+        iconVariant: IconVariant.ARROW_FORWARD,
+        onClick: buttonLink,
+      }}
+    >
       {placeholderTitle}
     </Header>
   </BookSection>

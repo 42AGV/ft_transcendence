@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Exclude } from 'class-transformer';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 export enum userKeys {
   ID = '"id"',
@@ -30,6 +31,7 @@ export class User {
   username: string;
   email: string;
   fullName: string;
+  @ApiHideProperty()
   @Exclude()
   password: string | null;
   avatarId: string;

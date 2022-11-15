@@ -8,9 +8,15 @@ export enum ButtonVariant {
   ALTERNATIVE = 'submit-alternative',
 }
 
+export enum ButtonSize {
+  SMALL = 'small',
+  LARGE = 'large',
+}
+
 type CommonButtonProps = {
   variant: ButtonVariant;
   iconVariant?: IconVariant;
+  buttonSize?: ButtonSize;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   form?: string;
@@ -24,7 +30,7 @@ type SmallButtonProps = CommonButtonProps & {
   children?: never;
 };
 
-type ButtonProps = SmallButtonProps | LargeButtonProps;
+export type ButtonProps = SmallButtonProps | LargeButtonProps;
 
 export default function Button({
   variant,
@@ -33,11 +39,14 @@ export default function Button({
   disabled = false,
   form,
   children,
+  buttonSize = ButtonSize.LARGE,
 }: ButtonProps) {
   return (
     <button
       className={`${
-        children ? 'button-large' : 'button-small'
+        children && buttonSize === ButtonSize.LARGE
+          ? 'button-large'
+          : 'button-small'
       } button subheading-bold button-${variant}`}
       disabled={disabled}
       onClick={onClick}
@@ -48,7 +57,7 @@ export default function Button({
           {<Icon variant={iconVariant} size={IconSize.SMALL} />}
         </div>
       )}
-      {children && children}
+      {children && buttonSize === ButtonSize.LARGE && children}
     </button>
   );
 }

@@ -11,3 +11,4 @@ export { default as RegisterPage } from './RegisterPage/RegisterPage';
 export { default as ChatroomPage } from './ChatroomPage/ChatroomPage';
 export { default as CreateChatroomPage } from './CreateChatroomPage/CreateChatroomPage';
 export { default as AuthUserPage } from './AuthUserPage/AuthUserPage';
+export { default as ChatroomDetailsPage } from './ChatroomDetailsPage/ChatroomDetailsPage';

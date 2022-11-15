@@ -8,6 +8,7 @@ export { default as Input } from './Input/Input';
 export * from './Input/Input';
 
 export { default as Button } from './Button/Button';
+export { default as ReactiveButton } from './Button/ReactiveButton';
 export * from './Button/Button';
 
 export { default as Status } from './Status/Status';
@@ -29,8 +30,9 @@ export * from './RowsList/RowsList';
 export { default as EditUserForm } from './Input/EditUserForm';
 export { default as SearchForm } from './Input/SearchForm';
 
-export { default as RowsTemplate } from './templates/RowsPageTemplate/RowsPageTemplate';
-export * from './templates/RowsPageTemplate/RowsPageTemplate';
+export { default as MainTabTemplate } from './templates/MainTabPageTemplate/MainTabPageTemplate';
+export { default as RowsListTemplate } from './templates/RowsListTemplate/RowsListTemplate';
+export * from './templates/MainTabPageTemplate/MainTabPageTemplate';
 
 export { default as EditableAvatar } from './Avatar/EditableAvatar';
 export { default as Loading } from './Loading/Loading';
