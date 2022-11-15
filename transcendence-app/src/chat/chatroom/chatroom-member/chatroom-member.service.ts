@@ -62,10 +62,6 @@ export class ChatroomMemberService {
     );
   }
 
-  isAdmin(chatId: string, userId: string): Promise<boolean | null> {
-    return this.chatroomMemberRepository.isAdmin(chatId, userId);
-  }
-
   async leaveChatroom(
     chatroomId: string,
     userId: string,

@@ -186,35 +186,38 @@ export class ChatService {
   }
 
   async updateChatroomMember(
-    userMe: User,
+    authUser: User,
     chatroomId: string,
     userId: string,
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
-    const chatroom = await this.chatroomRepository.getById(chatroomId);
-    const chatroomMember = await this.chatroomMemberRepository.getById(
+    const authChatroomMember =
+      await this.chatroomMemberRepository.getByIdWithUser(
+        chatroomId,
+        authUser.id,
+      );
+    const chatroomMember = await this.chatroomMemberRepository.getByIdWithUser(
       chatroomId,
       userId,
     );
-    if (!chatroom || !chatroomMember) {
+    if (!authChatroomMember || !chatroomMember) {
       throw new NotFoundException();
     }
-    if (chatroom.ownerId === userId) {
+    if (chatroomMember.owner) {
       throw new ForbiddenException();
     }
-    if (chatroom.ownerId === userMe.id) {
+    if (authChatroomMember.owner) {
       return this.chatroomMemberService.updateById(
         chatroomId,
         userId,
         updateChatroomMemberDto,
       );
     }
-    const isMeAdmin = await this.chatroomMemberService.isAdmin(
-      chatroomId,
-      userMe.id,
-    );
-    const { admin } = updateChatroomMemberDto;
-    if (!isMeAdmin || chatroomMember.admin || admin !== undefined) {
+    if (
+      !authChatroomMember.admin ||
+      chatroomMember.admin ||
+      updateChatroomMemberDto.admin !== undefined
+    ) {
       throw new ForbiddenException();
     }
     return this.chatroomMemberService.updateById(

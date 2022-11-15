@@ -163,16 +163,4 @@ export class ChatroomMemberPostgresRepository
     });
     return users ? users.map((user) => new ChatroomMemberWithUser(user)) : null;
   }
-
-  async isAdmin(chatroomId: string, userId: string): Promise<boolean | null> {
-    const adminData = await makeQuery<ChatroomMemberData>(this.pool, {
-      text: `SELECT *
-            FROM ${this.table}
-            WHERE ${ChatroomMemberKeys.CHATID} = $1
-              AND ${ChatroomMemberKeys.USERID} = $2
-              AND ${ChatroomMemberKeys.ADMIN} IS TRUE;`,
-      values: [chatroomId, userId],
-    });
-    return adminData ? adminData.length > 0 : null;
-  }
 }
