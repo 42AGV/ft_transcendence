@@ -42,6 +42,7 @@ import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
+import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -181,6 +182,31 @@ export class ChatController {
     const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,
       userId,
+    );
+    if (!chatroomMember) {
+      throw new NotFoundException();
+    }
+    return chatroomMember;
+  }
+
+  @Patch('chat/room/:chatroomId/members/:userId')
+  @ApiOkResponse({
+    description: 'Update a chatroom member',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  async updateChatroomMember(
+    @GetUser() userMe: User,
+    @Param('chatroomId') chatroomId: string,
+    @Param('userId') userId: string,
+    @Body() updateChatroomMemberDto: UpdateChatroomMemberDto,
+  ): Promise<ChatroomMember> {
+    const chatroomMember = await this.chatService.updateChatroomMember(
+      userMe,
+      chatroomId,
+      userId,
+      updateChatroomMemberDto,
     );
     if (!chatroomMember) {
       throw new NotFoundException();

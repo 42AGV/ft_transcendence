@@ -29,4 +29,5 @@ export abstract class IChatroomMemberRepository {
     chatroomId: string,
     paginationQueryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<ChatroomMemberWithUser[] | null>;
+  abstract isAdmin(chatroomId: string, userId: string): Promise<boolean | null>;
 }

@@ -22,6 +22,8 @@ import { ChatroomMessage } from './chatroom/chatroom-message/infrastructure/db/c
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 import { ChatroomMember } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { User } from '../user/infrastructure/db/user.entity';
+import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
 
 @Injectable()
 export class ChatService {
@@ -179,5 +181,46 @@ export class ChatService {
       throw new ForbiddenException('Incorrect password');
     }
     return this.chatroomMemberService.addChatroomMember(chatroomId, userId);
+  }
+
+  async updateChatroomMember(
+    userMe: User,
+    chatroomId: string,
+    userId: string,
+    updateChatroomMemberDto: UpdateChatroomMemberDto,
+  ): Promise<ChatroomMember | null> {
+    const chatroom = await this.chatroomRepository.getById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    if (chatroom.ownerId === userId) {
+      throw new ForbiddenException();
+    }
+    if (chatroom.ownerId === userMe.id) {
+      return this.chatroomMemberService.updateById(
+        chatroomId,
+        userId,
+        updateChatroomMemberDto,
+      );
+    }
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      userId,
+    );
+    if (!chatroomMember) {
+      throw new NotFoundException();
+    }
+    const isMeAdmin = await this.chatroomMemberService.isAdmin(
+      chatroomId,
+      userMe.id,
+    );
+    if (!isMeAdmin || chatroomMember.admin) {
+      throw new ForbiddenException();
+    }
+    return this.chatroomMemberService.updateById(
+      chatroomId,
+      userId,
+      updateChatroomMemberDto,
+    );
   }
 }
