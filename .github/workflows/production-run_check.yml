@@ -27,7 +27,6 @@ jobs:
           context: ./transcendence-app
           target: production
           push: false
-          load: true
           tags: ft_transcendence/transcendence-app-prod:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
@@ -45,7 +44,6 @@ jobs:
           context: ./webapp
           target: production
           push: false
-          load: true
           tags: ft_transcendence/webapp-prod:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
