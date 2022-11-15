@@ -265,6 +265,7 @@ Either create a `.env` file in the root directory containing the following envir
 ```
 FORTYTWO_APP_ID=your-42-app-id
 FORTYTWO_APP_SECRET=your-42-app-secret
+FORTYTWO_APP_CALLBACK_URL=http://your-domain-or-ip-here/api/v1/auth/login
 POSTGRES_USER=your-postgres-user
 POSTGRES_PASSWORD=your-postgres-password
 SESSION_SECRET=your-session-secret-uuid
@@ -276,6 +277,7 @@ Or export them from the shell like:
 ```
 export FORTYTWO_APP_ID=your-42-app-id
 export FORTYTWO_APP_SECRET=your-42-app-secret
+export FORTYTWO_APP_CALLBACK_URL=http://your-domain-or-ip-here/api/v1/auth/login
 export POSTGRES_USER=your-postgres-user
 export POSTGRES_PASSWORD=your-postgres-password
 export SESSION_SECRET=your-session-secret-uuid

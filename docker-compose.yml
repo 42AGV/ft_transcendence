@@ -25,7 +25,6 @@ services:
     volumes:
       - transcendence-app-data:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
     environment:
-      - FORTYTWO_APP_CALLBACK_URL=http://localhost:3000/api/v1/auth/login
       - FORTYTWO_APP_AUTHORIZATION_URL=https://api.intra.42.fr/oauth/authorize
       - FORTYTWO_APP_TOKEN_URL=https://api.intra.42.fr/oauth/token
       - FORTYTWO_APP_PROFILE_URL=https://api.intra.42.fr/v2/me
