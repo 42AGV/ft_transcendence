@@ -58,19 +58,19 @@ A step-by-step series of examples that tell you how to get a development environ
 
 Clone the GitHub repository
 
-```
+```shell
 git clone https://github.com/42AGV/ft_transcendence.git
 ```
 
 Change the current working directory to `transcendence-app`
 
-```
+```shell
 cd ft_transcendence/transcendence-app
 ```
 
 Copy the `.env.sample` to `.env.development`
 
-```
+```shell
 cp .env.sample .env.development
 ```
 
@@ -92,7 +92,7 @@ FORTYTWO_APP_SECRET=42-intra-app-secret
 
 Change the working directory to the root directory
 
-```
+```shell
 cd ..
 ```
 
@@ -109,7 +109,7 @@ or
 
 Start the application using `Docker`
 
-```
+```shell
 docker compose up -d --build
 ```
 > **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
@@ -124,7 +124,7 @@ You can now access the web application at http://localhost:3000 and the Swagger 
 
 Install the node packages required for the web and server application.
 
-```
+```shell
 cd transcendence-app
 npm ci
 cd ../webapp
@@ -134,7 +134,7 @@ cd ..
 
 Some useful commands to see the output logs of the Docker containers
 
-```
+```shell
 docker compose logs -f webapp
 docker compose logs -f transcendence-app
 docker compose logs -f db
@@ -152,7 +152,7 @@ make log-db
 
 Inspect the container using the container name or ID
 
-```
+```shell
 docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ft_transcendence-webapp-1
 ```
 or its make counterpart
@@ -164,7 +164,7 @@ Access using the Docker container IP and the service port
 
 After a config file change, please run the following command to recreate the images, renew anonymous volumes and restart the Docker containers
 
-```
+```shell
 docker compose up --build -d -V
 ```
 or its make counterpart
@@ -195,7 +195,7 @@ We use knex to seed the database, more info [here](https://knexjs.org/guide/migr
 
 To run seed files, run the following command from the root directory:
 
-```
+```shell
 docker compose exec -it transcendence-app npx knex seed:run
 ```
 
@@ -207,7 +207,7 @@ make seed
 
 To create a seed file, run the following command from the transcendence-app directory (replace `seed_name` with the name you want)
 
-```
+```shell
 npx knex seed:make seed_name
 ```
 
@@ -215,7 +215,7 @@ npx knex seed:make seed_name
 
 Change the working directory to `webapp` or `transcendence-app`
 
-```
+```shell
 cd webapp
 npm test
 npm run test:e2e
@@ -225,7 +225,7 @@ npm run test:e2e
 
 Change the working directory to `webapp` or `transcendence-app` and run style check
 
-```
+```shell
 cd transcendence-app
 npm run style
 ```
@@ -235,6 +235,20 @@ npm run style
 TODO: Add notes about how to use the system.
 
 ## 🚀 Deployment <a name = "deployment"></a>
+
+### Prerequisites
+
+What things do you need to install the software, and how to install them.
+
+[git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+
+[docker compose](https://docs.docker.com/compose/install/)
+
+[make](https://www.gnu.org/software/make/)
+
+> **_NOTE:_**  make is optional, but you may find that having it greatly simplifies your life.
+
+### Installing
 
 Register a new OAuth application on the [42 intranet](https://profile.intra.42.fr/oauth/applications/new)
 
