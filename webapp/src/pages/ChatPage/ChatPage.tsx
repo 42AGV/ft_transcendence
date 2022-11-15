@@ -1,9 +1,8 @@
 import {
-  Button,
   ButtonVariant,
   IconVariant,
   RowItem,
-  RowsTemplate,
+  MainTabTemplate,
 } from '../../shared/components';
 import {
   AVATAR_EP_URL,
@@ -17,7 +16,6 @@ import {
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
-import './ChatPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 
@@ -42,22 +40,26 @@ export default function ChatPage() {
     [],
   );
   const navigate = useNavigate();
-
+  const chatButtons = [
+    {
+      variant: ButtonVariant.SUBMIT,
+      onClick: () => navigate(CREATE_CHATROOM_URL),
+      iconVariant: IconVariant.ADD,
+      children: 'Add chatroom',
+    },
+    {
+      variant: ButtonVariant.SUBMIT,
+      onClick: () => navigate(`${CHATROOM_URL}/discover`),
+      iconVariant: IconVariant.ARROW_FORWARD,
+      children: 'Discover',
+    },
+  ];
   return (
     <div className="chat-page">
       <div className="chat-page-content">
         <SearchContextProvider fetchFn={getChats} maxEntries={ENTRIES_LIMIT}>
-          <RowsTemplate dataMapper={mapChatToRow} />
+          <MainTabTemplate dataMapper={mapChatToRow} buttons={chatButtons} />
         </SearchContextProvider>
-      </div>
-      <div className="chat-page-button">
-        <Button
-          variant={ButtonVariant.SUBMIT}
-          onClick={() => navigate(CREATE_CHATROOM_URL)}
-          iconVariant={IconVariant.ADD}
-        >
-          add chatroom
-        </Button>
       </div>
     </div>
   );

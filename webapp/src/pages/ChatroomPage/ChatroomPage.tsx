@@ -84,7 +84,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
         <Header
           icon={IconVariant.ARROW_BACK}
           onClick={goBack}
-          titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/edit`} //TODO: update when details page is ready
+          titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
         >
           {chatroom.name}
         </Header>
