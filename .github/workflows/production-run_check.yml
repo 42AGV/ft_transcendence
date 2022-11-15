@@ -56,7 +56,7 @@ jobs:
           name: webapp-prod-image
           path: /tmp/webapp-prod-image.tar
       - name: Run
-      - run: |
+        run: |
           docker load --input /tmp/transcendence-app-prod-image.tar
           docker load --input /tmp/webapp-prod-image.tar
           make prod-no-gen
