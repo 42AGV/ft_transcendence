@@ -298,15 +298,15 @@ or
 Start the application using `Docker`
 
 ```
-docker compose up -d --build
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
 > **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
 
 or
 ```shell
-make all
+make prod
 ```
-> **_NOTE:_**  `make all` will dispatch to the right docker-compose executable, and will also generate the files for you if you haven't run `make gen` in the previous step
+> **_NOTE:_**  `make prod` will dispatch to the right docker-compose executable, and will also generate the files for you if you haven't run `make gen` in the previous step
 
 You can now access the web application locally at http://localhost and the Swagger documentation for the API at http://localhost/api
 
