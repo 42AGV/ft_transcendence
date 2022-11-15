@@ -247,14 +247,14 @@ http://localhost/api/v1/auth/login
 
 Clone the GitHub repository
 
-```
+```shell
 git clone https://github.com/42AGV/ft_transcendence.git
 ```
 
 
 Change the current working directory to `ft_transcendence`
 
-```
+```shell
 cd ft_transcendence
 ```
 
@@ -274,7 +274,7 @@ MEMCACHED_SECRET=your-memcached-secret-uuid
 
 Or export them from the shell like:
 
-```
+```shell
 export FORTYTWO_APP_ID=your-42-app-id
 export FORTYTWO_APP_SECRET=your-42-app-secret
 export FORTYTWO_APP_CALLBACK_URL=http://your-domain-or-ip-here/api/v1/auth/login
@@ -297,7 +297,7 @@ or
 
 Start the application using `Docker`
 
-```
+```shell
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
 > **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
