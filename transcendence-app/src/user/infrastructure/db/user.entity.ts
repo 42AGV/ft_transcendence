@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { ApiHideProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { ApiHideProperty } from '@nestjs/swagger';
 
