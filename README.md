@@ -236,7 +236,77 @@ TODO: Add notes about how to use the system.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-TODO: Add additional notes about how to deploy this on a live system.
+Register a new OAuth application on the [42 intranet](https://profile.intra.42.fr/oauth/applications/new)
+
+Set the Redirect URIs
+
+```
+http://your-domain-or-ip-here/api/v1/auth/login
+http://localhost/api/v1/auth/login
+```
+
+Clone the GitHub repository
+
+```
+git clone https://github.com/42AGV/ft_transcendence.git
+```
+
+
+Change the current working directory to `ft_transcendence`
+
+```
+cd ft_transcendence
+```
+
+Either create a `.env` file in the root directory containing the following environment variables (replace the ID and SECRET with the ones from the OAuth application you create in the previous step):
+
+> **_NOTE:_**  You can generate UUIDs using the `uuidgen` command
+
+```
+FORTYTWO_APP_ID=your-42-app-id
+FORTYTWO_APP_SECRET=your-42-app-secret
+POSTGRES_USER=your-postgres-user
+POSTGRES_PASSWORD=your-postgres-password
+SESSION_SECRET=your-session-secret-uuid
+MEMCACHED_SECRET=your-memcached-secret-uuid
+```
+
+Or export them from the shell like:
+
+```
+export POSTGRES_USER=your-postgres-user
+export POSTGRES_PASSWORD=your-postgres-password
+export FORTYTWO_APP_ID=your-42-app-id
+export FORTYTWO_APP_SECRET=your-42-app-secret
+export SESSION_SECRET=your-session-secret-uuid
+export MEMCACHED_SECRET=your-memcached-secret-uuid
+```
+
+Generate the generated files, that are not a part of the repository:
+
+```shell
+make gen
+```
+or
+```shell
+./scripts/generate-openapi.sh [options]
+```
+> **_NOTE:_**  You can see a help panel for this script if you pass to it a `--help` or `-h` option.
+
+Start the application using `Docker`
+
+```
+docker compose up -d --build
+```
+> **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
+
+or
+```shell
+make all
+```
+> **_NOTE:_**  `make all` will dispatch to the right docker-compose executable, and will also generate the files for you if you haven't run `make gen` in the previous step
+
+You can now access the web application locally at http://localhost and the Swagger documentation for the API at http://localhost/api
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
