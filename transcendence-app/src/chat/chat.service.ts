@@ -24,6 +24,7 @@ import { ChatroomMember } from './chatroom/chatroom-member/infrastructure/db/cha
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import { User } from '../user/infrastructure/db/user.entity';
 import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
+import { IChatroomMemberRepository } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
 
 @Injectable()
 export class ChatService {
@@ -32,6 +33,7 @@ export class ChatService {
     private chatroomRepository: IChatroomRepository,
     private chatroomMessageRepository: IChatroomMessageRepository,
     private chatroomMemberService: ChatroomMemberService,
+    private chatroomMemberRepository: IChatroomMemberRepository,
   ) {}
 
   async retrieveChatrooms({
@@ -190,7 +192,7 @@ export class ChatService {
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
     const chatroom = await this.chatroomRepository.getById(chatroomId);
-    const chatroomMember = await this.chatroomMemberService.getById(
+    const chatroomMember = await this.chatroomMemberRepository.getById(
       chatroomId,
       userId,
     );
