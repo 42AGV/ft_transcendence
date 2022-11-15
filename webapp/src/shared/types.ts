@@ -13,12 +13,12 @@ export type Position = {
   y: number;
 };
 
-export type SubmitStatus = {
-  type: 'success' | 'error' | 'pending';
-  message: string;
-};
-
 export type WsException = {
   status: string;
   message: string;
+};
+
+export type Query = {
+  search?: string;
+  offset?: number;
 };

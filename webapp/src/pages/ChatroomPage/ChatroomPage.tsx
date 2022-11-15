@@ -1,24 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
-import {
-  Header,
-  IconVariant,
-  Loading,
-  Text,
-  TextColor,
-  TextVariant,
-} from '../../shared/components';
+import { Header, IconVariant, Loading } from '../../shared/components';
 import { CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { SubmitStatus, WsException } from '../../shared/types';
+import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { User } from '../../shared/generated';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 export default function ChatroomPage() {
   const { chatroomId } = useParams();
@@ -37,10 +31,7 @@ type ChatroomProps = {
 
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   const { goBack } = useNavigation();
-  const [status, setStatus] = useState<SubmitStatus>({
-    type: 'pending',
-    message: '',
-  });
+  const { warn } = useNotificationContext();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
     [chatroomId],
@@ -59,7 +50,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
 
   useEffect(() => {
     socket.on('exception', (wsError: WsException) => {
-      setStatus({ type: 'error', message: wsError.message });
+      warn(wsError.message);
     });
     socket.emit('joinChatroom', { chatroomId });
 
@@ -67,14 +58,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
       socket.off('exception');
       socket.emit('leaveChatroom', { chatroomId });
     };
-  }, [chatroomId]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus({ type: 'pending', message: '' });
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [status]);
+  }, [chatroomId, warn]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
     return (
@@ -97,7 +81,11 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   return (
     <div className="chatroom">
       <div className="chatroom-header">
-        <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
+        <Header
+          icon={IconVariant.ARROW_BACK}
+          onClick={goBack}
+          titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
+        >
           {chatroom.name}
         </Header>
       </div>
@@ -106,16 +94,6 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
       </div>
       <div className="chatroom-message-input">
         <ChatroomMessageInput to={chatroomId} />
-      </div>
-      <div className="chatroom-status">
-        <Text
-          variant={TextVariant.PARAGRAPH}
-          color={
-            status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-          }
-        >
-          {status.message}
-        </Text>
       </div>
     </div>
   );

@@ -139,14 +139,15 @@ export class ChatController {
 
   @Get('room/:chatroomId/members')
   @ApiOkResponse({
-    description: `Lists all chat members for a given room)`,
+    description: `Lists chat members for a given room (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [ChatroomMemberWithUser],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async retrieveChatroomMembers(
+  async getChatroomMembers(
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetUser() user: User,
+    @Query() paginationWithSearchQueryDto: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[]> {
     const isChatMember = await this.chatroomMemberService.getById(
       chatroomId,
@@ -156,7 +157,10 @@ export class ChatController {
       throw new ForbiddenException();
     }
     const chatroomsMembers =
-      await this.chatroomMemberService.retrieveChatroomMembers(chatroomId);
+      await this.chatroomMemberService.getChatroomMembers(
+        chatroomId,
+        paginationWithSearchQueryDto,
+      );
     if (!chatroomsMembers) {
       throw new ServiceUnavailableException();
     }
@@ -259,6 +263,28 @@ export class ChatController {
       throw new UnprocessableEntityException();
     }
     return updatedChatroom;
+  }
+
+  @Delete('room/:chatroomId')
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailabe' })
+  async deleteChatroom(
+    @GetUser() userMe: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+  ): Promise<Chatroom> {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    if (userMe.id !== chatroom.ownerId) {
+      throw new ForbiddenException();
+    }
+    const deletedChatroom = await this.chatService.deleteChatroom(chatroomId);
+    if (!deletedChatroom) {
+      throw new ServiceUnavailableException();
+    }
+    return deletedChatroom;
   }
 
   @Get(':userId/messages')

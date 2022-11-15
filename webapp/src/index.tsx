@@ -16,6 +16,7 @@ import {
   ChatroomPage,
   CreateChatroomPage,
   AuthUserPage,
+  ChatroomDetailsPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -35,6 +36,7 @@ import {
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
+import { NotificationContextProvider } from './shared/context/NotificationContext';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -44,97 +46,107 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path={LOGIN_OPTIONS_URL} element={<LoginPage />} />
-          <Route path={REGISTER_URL} element={<RegisterPage />} />
-          <Route
-            path={USERS_URL}
-            element={
-              <RequireAuth>
-                <UsersPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={PLAY_URL}
-            element={
-              <RequireAuth>
-                <PlayPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={CHAT_URL}
-            element={
-              <RequireAuth>
-                <ChatPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={CREATE_CHATROOM_URL}
-            element={
-              <RequireAuth>
-                <CreateChatroomPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={`${USER_URL}/:username`}
-            element={
-              <RequireAuth>
-                <UserPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={USER_ME_URL}
-            element={
-              <RequireAuth>
-                <AuthUserPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={EDIT_USER_URL}
-            element={
-              <RequireAuth>
-                <EditUserPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={EDIT_AVATAR_URL}
-            element={
-              <RequireAuth>
-                <EditAvatarPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path={`${CHATROOM_URL}/:chatroomId`}
-            element={
-              <RequireAuth>
-                <ChatroomPage />
-              </RequireAuth>
-            }
-          />
-          {developmentMode && (
+        <NotificationContextProvider>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path={LOGIN_OPTIONS_URL} element={<LoginPage />} />
+            <Route path={REGISTER_URL} element={<RegisterPage />} />
             <Route
-              path={COMPONENTS_BOOK_URL}
-              element={<ComponentsBookPage />}
+              path={USERS_URL}
+              element={
+                <RequireAuth>
+                  <UsersPage />
+                </RequireAuth>
+              }
             />
-          )}
-          <Route
-            path="*"
-            element={
-              <RequireAuth>
-                <NotFoundPage />
-              </RequireAuth>
-            }
-          />
-        </Routes>
+            <Route
+              path={PLAY_URL}
+              element={
+                <RequireAuth>
+                  <PlayPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={CHAT_URL}
+              element={
+                <RequireAuth>
+                  <ChatPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={CREATE_CHATROOM_URL}
+              element={
+                <RequireAuth>
+                  <CreateChatroomPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={`${USER_URL}/:username`}
+              element={
+                <RequireAuth>
+                  <UserPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={USER_ME_URL}
+              element={
+                <RequireAuth>
+                  <AuthUserPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={EDIT_USER_URL}
+              element={
+                <RequireAuth>
+                  <EditUserPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={EDIT_AVATAR_URL}
+              element={
+                <RequireAuth>
+                  <EditAvatarPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={`${CHATROOM_URL}/:chatroomId`}
+              element={
+                <RequireAuth>
+                  <ChatroomPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={`${CHATROOM_URL}/:chatroomId/details`}
+              element={
+                <RequireAuth>
+                  <ChatroomDetailsPage />
+                </RequireAuth>
+              }
+            />
+            {developmentMode && (
+              <Route
+                path={COMPONENTS_BOOK_URL}
+                element={<ComponentsBookPage />}
+              />
+            )}
+            <Route
+              path="*"
+              element={
+                <RequireAuth>
+                  <NotFoundPage />
+                </RequireAuth>
+              }
+            />
+          </Routes>
+        </NotificationContextProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

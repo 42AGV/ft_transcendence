@@ -47,11 +47,6 @@
   max-width: 20rem;
 }
 
-.register-form .inputs-container > p:empty::before {
-  content: '';
-  display: inline-block;
-}
-
 .register .landing-animation {
   display: none;
 }

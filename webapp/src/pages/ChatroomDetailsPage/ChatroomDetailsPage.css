@@ -1,0 +1,75 @@
+.chatroom-details-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  column-gap: var(--column-gap);
+  row-gap: 1.5rem;
+  grid-template-columns: repeat(var(--column-number), 1fr);
+  grid-template-rows: auto auto auto 1fr;
+}
+
+.chatroom-details-page-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
+.chatroom-details-page .header {
+  grid-column: 1/-1;
+  grid-row: 1/2;
+}
+
+.chatroom-details-page .chatroom-briefing {
+  grid-row: 2/3;
+  grid-column: 1/-1;
+  display: flex;
+  flex-direction: row;
+  gap: var(--row-gap);
+}
+
+.chatroom-details-page .rows-list-template-search {
+  grid-row: 3/4;
+  grid-column: 1/-1;
+}
+
+.chatroom-details-page .rows-list-template-rows {
+  grid-row: 4/5;
+  grid-column: 1/-1;
+  overflow-y: scroll;
+}
+
+.chatroom-details-page .chatroom-briefing .chatroom-text-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.chatroom-details-page .chatroom-briefing .chatroom-text-info > * {
+  margin: 0.1rem;
+}
+
+@media all and (min-width: 768px) {
+  .chatroom-details-page {
+    display: grid;
+    grid-template-columns: repeat(var(--column-number), 1fr);
+    column-gap: var(--column-gap);
+    grid-template-rows: auto auto auto 1fr;
+  }
+  .chatroom-details-page .chatroom-briefing {
+    grid-row: 2/3;
+    grid-column: 1/6;
+  }
+
+  .chatroom-details-page .rows-list-template-search {
+    grid-row: 2/3;
+    grid-column: 8/-1;
+  }
+
+  .chatroom-details-page .rows-list-template-rows {
+    grid-row: 3/4;
+    grid-column: 1/-1;
+  }
+}
