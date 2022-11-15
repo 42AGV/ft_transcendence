@@ -31,6 +31,12 @@ jobs:
           tags: ft_transcendence/transcendence-app-prod:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          outputs: type=oci,dest=/tmp/transcendence-app-prod-image.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: transcendence-app-prod-image
+          path: /tmp/transcendence-app-prod-image.tar
       - name: Generate code
         run: make gen
       - name: Build webapp docker image
@@ -43,8 +49,17 @@ jobs:
           tags: ft_transcendence/webapp-prod:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          outputs: type=oci,dest=/tmp/webapp-prod-image.tar
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: webapp-prod-image
+          path: /tmp/webapp-prod-image.tar
       - name: Run
-        run: make prod-no-gen && make prod-down
+      - run: docker load --input /tmp/transcendence-app-prod-image.tar
+      - run: docker load --input /tmp/webapp-prod-image.tar
+      - run: make prod-no-gen
+      - run: make prod-down
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -52,10 +67,10 @@ jobs:
           FORTYTWO_APP_SECRET: ${{ secrets.FORTYTWO_APP_SECRET }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           MEMCACHED_SECRET: ${{ secrets.MEMCACHED_SECRET }}
-      # Temp fix
-      # https://github.com/docker/build-push-action/issues/252
-      # https://github.com/moby/buildkit/issues/1896
-      - name: Move cache
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
