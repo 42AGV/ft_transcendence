@@ -1,7 +1,7 @@
 import { IconVariant, RowItem } from '../../shared/components';
 import { AVATAR_EP_URL, USER_URL } from '../../shared/urls';
 import { User, UserControllerGetUsersRequest } from '../../shared/generated';
-import { RowsTemplate } from '../../shared/components/index';
+import { MainTabTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
@@ -35,7 +35,7 @@ export default function UsersPage() {
 
   return (
     <SearchContextProvider fetchFn={getUsers} maxEntries={ENTRIES_LIMIT}>
-      <RowsTemplate dataMapper={mapUserToRow} />
+      <MainTabTemplate dataMapper={mapUserToRow} />
     </SearchContextProvider>
   );
 }

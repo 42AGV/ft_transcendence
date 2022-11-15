@@ -17,3 +17,8 @@ export type WsException = {
   status: string;
   message: string;
 };
+
+export type Query = {
+  search?: string;
+  offset?: number;
+};
