@@ -27,17 +27,17 @@ export interface ChatroomData {
 export class Chatroom {
   id: string;
   name: string;
-  @Exclude()
   @ApiHideProperty()
+  @Exclude()
   password: string | null;
   avatarId: string | null;
   avatarX: number = 0;
   avatarY: number = 0;
   createdAt: Date;
   ownerId: string;
-  @Expose()
   @ApiProperty({ type: Boolean })
-  get public(): boolean {
+  @Expose()
+  get isPublic(): boolean {
     return this.password === null;
   }
 

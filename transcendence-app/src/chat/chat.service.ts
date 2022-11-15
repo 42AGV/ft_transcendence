@@ -122,8 +122,36 @@ export class ChatService {
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {
-    const { oldPassword, confirmationPassword, ...updateChatroom } =
+    const { oldPassword, confirmationPassword, isPublic, ...updateChatroom } =
       updateChatroomDto;
+    const chatroom = await this.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    if (
+      !chatroom.isPublic &&
+      !updateChatroomDto.isPublic &&
+      updateChatroomDto.password === null
+    ) {
+      return await this.chatroomRepository.updateById(chatroomId, {
+        ...updateChatroom,
+        password: chatroom.password,
+      });
+    }
+    if (
+      (!chatroom.isPublic &&
+        !updateChatroomDto.isPublic &&
+        chatroom.password &&
+        !updateChatroomDto.oldPassword) ||
+      (updateChatroomDto.oldPassword &&
+        (await Password.compare(
+          chatroom.password!,
+          updateChatroomDto.oldPassword,
+        )) === false)
+    ) {
+      throw new ForbiddenException('Incorrect password');
+    }
+
     if (updateChatroomDto.password) {
       if (
         updateChatroomDto.password !== updateChatroomDto.confirmationPassword

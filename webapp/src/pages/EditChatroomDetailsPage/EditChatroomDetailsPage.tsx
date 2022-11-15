@@ -34,16 +34,24 @@ export default function CreateChatroomPage() {
     [chatroomId],
   );
   const { data: chatroom, isLoading } = useData(getChatRoomById);
-  const [disabled, setDisabled] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
 
   const initialFormValues: UpdateChatroomDto = {
     name: isLoading ? '' : chatroom!.name,
     oldPassword: '',
-    newPassword: '',
+    password: '',
     confirmationPassword: '',
+    isPublic: isPublic,
   };
   const [formValues, setFormValues] =
     useState<UpdateChatroomDto>(initialFormValues);
+
+  useEffect(() => {
+    if (chatroom) {
+      setIsPublic(chatroom.isPublic);
+    }
+  }, [chatroom]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues((previousValues: any) => {
@@ -52,7 +60,7 @@ export default function CreateChatroomPage() {
   };
 
   function hasValidFormValues() {
-    if (formValues.newPassword !== formValues.confirmationPassword) {
+    if (formValues.password !== formValues.confirmationPassword) {
       warn('Passwords are different');
       return false;
     }
@@ -69,8 +77,9 @@ export default function CreateChatroomPage() {
         updateChatroomDto: {
           name: formValues.name ? formValues.name : initialFormValues.name,
           oldPassword: formValues.oldPassword || null,
-          newPassword: formValues.newPassword || null,
+          password: formValues.password || null,
           confirmationPassword: formValues.confirmationPassword || null,
+          isPublic: isPublic,
         },
       });
       notify('Chatroom details successfully updated');
@@ -135,9 +144,9 @@ export default function CreateChatroomPage() {
         </div>
         <div className="edit-chatroom-details-properties">
           <ToggleSwitch
-            isToggled={disabled}
-            onToggle={() => setDisabled(!disabled)}
-            label={disabled ? 'private channel' : 'public channel'}
+            isToggled={!isPublic}
+            onToggle={() => setIsPublic(!isPublic)}
+            label={isPublic ? 'public channel' : 'private channel'}
           />
         </div>
       </div>
@@ -163,17 +172,17 @@ export default function CreateChatroomPage() {
             name="oldPassword"
             type="password"
             onChange={handleInputChange}
-            disabled={disabled}
+            disabled={isPublic}
           />
           <Input
             variant={InputVariant.LIGHT}
             label="New password"
             placeholder="new password"
-            value={formValues.newPassword ? formValues.newPassword : ''}
-            name="newPassword"
+            value={formValues.password ? formValues.password : ''}
+            name="password"
             type="password"
             onChange={handleInputChange}
-            disabled={disabled}
+            disabled={isPublic}
           />
           <Input
             variant={InputVariant.LIGHT}
@@ -186,7 +195,7 @@ export default function CreateChatroomPage() {
             name="confirmationPassword"
             type="password"
             onChange={handleInputChange}
-            disabled={disabled}
+            disabled={isPublic}
           />
         </div>
       </form>

@@ -1,5 +1,6 @@
 import { Transform, TransformFnParams } from 'class-transformer';
 import {
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -39,4 +40,8 @@ export class UpdateChatroomDto {
   @IsInt()
   @IsOptional()
   avatarY?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isPublic?: boolean;
 }
