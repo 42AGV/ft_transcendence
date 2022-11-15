@@ -84,7 +84,6 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
         <Header
           icon={IconVariant.ARROW_BACK}
           onClick={goBack}
-          statusVariant="button"
           titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
         >
           {chatroom.name}

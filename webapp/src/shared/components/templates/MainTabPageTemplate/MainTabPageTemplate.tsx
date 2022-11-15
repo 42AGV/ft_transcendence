@@ -52,12 +52,7 @@ export default function MainTabPageTemplate<T>({
       {buttons && (
         <div className="main-tab-buttons">
           {buttons.map((buttonProp: ButtonProps, idx) => (
-            <ReactiveButton
-              key={idx}
-              {...{
-                ...buttonProp,
-              }}
-            />
+            <ReactiveButton key={idx} {...buttonProp} />
           ))}
         </div>
       )}

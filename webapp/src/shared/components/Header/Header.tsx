@@ -93,7 +93,7 @@ export default function Header({
         )) || <button onClick={onClick}>{lNavFigure}</button>}
       </div>
       <div className="header-text">
-        {titleNavigationUrl && titleNavigationUrl !== '' ? (
+        {titleNavigationUrl ? (
           <Link to={titleNavigationUrl}>{headerTitle}</Link>
         ) : (
           <div className="header-text">{headerTitle}</div>
