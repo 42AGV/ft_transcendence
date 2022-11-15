@@ -56,10 +56,11 @@ jobs:
           name: webapp-prod-image
           path: /tmp/webapp-prod-image.tar
       - name: Run
-      - run: docker load --input /tmp/transcendence-app-prod-image.tar
-      - run: docker load --input /tmp/webapp-prod-image.tar
-      - run: make prod-no-gen
-      - run: make prod-down
+      - run: |
+          docker load --input /tmp/transcendence-app-prod-image.tar
+          docker load --input /tmp/webapp-prod-image.tar
+          make prod-no-gen
+          make prod-down
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
