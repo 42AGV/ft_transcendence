@@ -196,6 +196,7 @@ export class ChatController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async updateChatroomMember(
     @GetUser() userMe: User,
     @Param('chatroomId') chatroomId: string,
@@ -209,7 +210,7 @@ export class ChatController {
       updateChatroomMemberDto,
     );
     if (!chatroomMember) {
-      throw new NotFoundException();
+      throw new ServiceUnavailableException();
     }
     return chatroomMember;
   }

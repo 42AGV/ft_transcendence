@@ -190,7 +190,11 @@ export class ChatService {
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
     const chatroom = await this.chatroomRepository.getById(chatroomId);
-    if (!chatroom) {
+    const chatroomMember = await this.chatroomMemberService.getById(
+      chatroomId,
+      userId,
+    );
+    if (!chatroom || !chatroomMember) {
       throw new NotFoundException();
     }
     if (chatroom.ownerId === userId) {
@@ -203,18 +207,12 @@ export class ChatService {
         updateChatroomMemberDto,
       );
     }
-    const chatroomMember = await this.chatroomMemberService.getById(
-      chatroomId,
-      userId,
-    );
-    if (!chatroomMember) {
-      throw new NotFoundException();
-    }
     const isMeAdmin = await this.chatroomMemberService.isAdmin(
       chatroomId,
       userMe.id,
     );
-    if (!isMeAdmin || chatroomMember.admin) {
+    const { admin } = updateChatroomMemberDto;
+    if (!isMeAdmin || chatroomMember.admin || admin !== undefined) {
       throw new ForbiddenException();
     }
     return this.chatroomMemberService.updateById(
