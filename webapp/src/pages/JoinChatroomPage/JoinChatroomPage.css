@@ -51,13 +51,20 @@
 @media (min-width: 768px) {
   .join-chatroom {
     min-height: 40rem;
-    row-gap: 8rem;
+    row-gap: 0;
     column-gap: var(--column-gap);
     grid-template-areas:
       'header header header header header header header header header header header header'
-      '... ... avatar avatar avatar ... info info info info ... ...'
-      '... ... ... ... button button button button ... ... ... ...';
-    grid-template-rows: auto 1fr auto;
+      ' ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...  '
+      ' ...    ...   avatar avatar avatar  ...    info   info   info   info   ...    ...  '
+      ' ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...  '
+      'button button button button button button button button button button button button';
+    grid-template-rows: auto 20% auto 1fr auto;
     grid-template-columns: repeat(12, 1fr);
+  }
+
+  .join-chatroom-avatar,
+  .join-chatroom-info {
+    justify-self: start;
   }
 }
