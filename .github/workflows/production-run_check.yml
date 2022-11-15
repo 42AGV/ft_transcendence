@@ -62,6 +62,7 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           FORTYTWO_APP_ID: ${{ secrets.FORTYTWO_APP_ID }}
           FORTYTWO_APP_SECRET: ${{ secrets.FORTYTWO_APP_SECRET }}
+          FORTYTWO_APP_CALLBACK_URL: ${{ secrets.FORTYTWO_APP_CALLBACK_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           MEMCACHED_SECRET: ${{ secrets.MEMCACHED_SECRET }}
       - # Temp fix
