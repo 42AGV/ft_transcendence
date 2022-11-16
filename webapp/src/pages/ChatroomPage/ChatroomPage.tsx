@@ -47,18 +47,27 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   );
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
+  const enableNotifications = chatroom !== null && chatroomMember !== null;
 
   useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
-    });
     socket.emit('joinChatroom', { chatroomId });
 
     return () => {
-      socket.off('exception');
       socket.emit('leaveChatroom', { chatroomId });
     };
-  }, [chatroomId, warn]);
+  }, [chatroomId, warn, enableNotifications]);
+
+  useEffect(() => {
+    socket.on('exception', (wsError: WsException) => {
+      if (enableNotifications) {
+        warn(wsError.message);
+      }
+    });
+
+    return () => {
+      socket.off('exception');
+    };
+  }, [warn, enableNotifications]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
     return (
@@ -75,7 +84,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   }
 
   if (!chatroomMember) {
-    return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} />;
+    return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
   }
 
   return (
