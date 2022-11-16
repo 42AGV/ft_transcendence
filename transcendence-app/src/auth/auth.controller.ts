@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiFoundResponse,
   ApiNotFoundResponse,
@@ -29,6 +30,7 @@ import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { AuthService } from './auth.service';
 import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
+import { User } from '../user/infrastructure/db/user.entity';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -68,9 +70,12 @@ export class AuthController {
   }
 
   @Post('local/register')
+  @ApiCreatedResponse({ description: 'Login successfully', type: User })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
-  async registerLocalUser(@Body() registerUserDto: RegisterUserDto) {
+  async registerLocalUser(
+    @Body() registerUserDto: RegisterUserDto,
+  ): Promise<User> {
     const user = await this.authService.registerLocalUser(registerUserDto);
 
     if (!user) {
@@ -81,10 +86,11 @@ export class AuthController {
 
   @Post('local/login')
   @UseGuards(LocalGuard)
+  @ApiCreatedResponse({ description: 'Login successfully', type: User })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto) {
+  loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto): User {
     return req.user;
   }
 }

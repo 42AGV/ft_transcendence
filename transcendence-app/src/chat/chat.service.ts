@@ -169,12 +169,7 @@ export class ChatService {
     if (!foundChatroom) {
       throw new NotFoundException('Chatroom not found');
     }
-    const { password, confirmationPassword } = joinChatroomDto;
-    if (password !== confirmationPassword) {
-      throw new BadRequestException(
-        'Password and Confirmation Password must match',
-      );
-    }
+    const { password } = joinChatroomDto;
     if (
       foundChatroom.password &&
       (!password ||

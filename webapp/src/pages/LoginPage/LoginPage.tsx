@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
@@ -27,18 +27,20 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, setAuthUser } = useAuth();
   const { warn } = useNotificationContext();
+  const navigate = useNavigate();
 
   if (isLoggedIn) {
     return <Navigate to={DEFAULT_LOGIN_REDIRECT_URL} replace />;
   }
   async function login() {
     try {
-      await authApi.authControllerLoginLocalUser({
+      const authUser = await authApi.authControllerLoginLocalUser({
         loginUserDto: { username, password },
       });
-      window.location.href = USERS_URL;
+      setAuthUser(authUser);
+      navigate(USERS_URL, { replace: true });
     } catch (error) {
       let errMessage = '';
       if (error instanceof ResponseError) {
