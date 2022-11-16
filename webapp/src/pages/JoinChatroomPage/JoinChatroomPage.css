@@ -1,0 +1,70 @@
+.join-chatroom {
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  min-height: 45rem;
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  gap: 4rem;
+  grid-template-areas:
+    'header'
+    'avatar'
+    'info'
+    'button';
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: 1fr;
+}
+
+.join-chatroom-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
+.join-chatroom .header {
+  grid-area: header;
+}
+
+.join-chatroom-avatar {
+  grid-area: avatar;
+}
+
+.join-chatroom-info {
+  grid-area: info;
+  min-width: 15rem;
+  width: 100%;
+  max-width: 20rem;
+  justify-self: center;
+}
+
+.join-chatroom .button {
+  grid-area: button;
+  justify-self: center;
+}
+
+.join-chatroom-info-text {
+  margin-bottom: 2rem;
+}
+
+/* Styles for viewports wider than 768 pixels. */
+@media (min-width: 768px) {
+  .join-chatroom {
+    min-height: 40rem;
+    row-gap: 0;
+    column-gap: var(--column-gap);
+    grid-template-areas:
+      'header header header header header header header header header header header header'
+      ' ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...  '
+      ' ...    ...   avatar avatar avatar  ...    info   info   info   info   ...    ...  '
+      ' ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...    ...  '
+      'button button button button button button button button button button button button';
+    grid-template-rows: auto 20% auto 1fr auto;
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .join-chatroom-avatar,
+  .join-chatroom-info {
+    justify-self: start;
+  }
+}
