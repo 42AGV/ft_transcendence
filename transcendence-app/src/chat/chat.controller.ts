@@ -176,8 +176,8 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getChatroomMember(
-    @Param('chatroomId') chatroomId: string,
-    @Param('userId') userId: string,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,
@@ -199,8 +199,8 @@ export class ChatController {
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async updateChatroomMember(
     @GetUser() userMe: User,
-    @Param('chatroomId') chatroomId: string,
-    @Param('userId') userId: string,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatService.updateChatroomMember(
