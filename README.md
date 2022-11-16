@@ -50,8 +50,6 @@ What things do you need to install the software, and how to install them.
 
 [make](https://www.gnu.org/software/make/)
 
-> **_NOTE:_**  make is optional, but you may find that having it greatly simplifies your life.
-
 ### Installing
 
 A step-by-step series of examples that tell you how to get a development environment running.
@@ -96,29 +94,11 @@ Change the working directory to the root directory
 cd ..
 ```
 
-Generate the generated files, that are not a part of the repository:
+Start the application using make
 
-```shell
-make gen
-```
-or
-```shell
-./scripts/generate-openapi.sh [options]
-```
-> **_NOTE:_**  You can see a help panel for this script if you pass to it a `--help` or `-h` option.
-
-Start the application using `Docker`
-
-```shell
-docker compose up -d --build
-```
-> **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
-
-or
 ```shell
 make all
 ```
-> **_NOTE:_**  `make all` will dispatch to the right docker-compose executable, and will also generate the files for you if you haven't run `make gen` in the previous step
 
 You can now access the web application at http://localhost:3000 and the Swagger documentation for the API at http://localhost:3000/api
 
@@ -135,12 +115,6 @@ cd ..
 Some useful commands to see the output logs of the Docker containers
 
 ```shell
-docker compose logs -f webapp
-docker compose logs -f transcendence-app
-docker compose logs -f db
-```
-or their make counterparts:
-```shell
 make log-wa
 make log-tr
 make log-db
@@ -150,12 +124,8 @@ make log-db
 
 > **_NOTE:_**  For advanced use cases, you can connect to a service using the Docker container IP and port 
 
-Inspect the container using the container name or ID
+Inspect the containers
 
-```shell
-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ft_transcendence-webapp-1
-```
-or its make counterpart
 ```shell
 make get-ip
 ```
@@ -164,10 +134,6 @@ Access using the Docker container IP and the service port
 
 After a config file change, please run the following command to recreate the images, renew anonymous volumes and restart the Docker containers
 
-```shell
-docker compose up --build -d -V
-```
-or its make counterpart
 ```shell
 make re
 ```
@@ -184,22 +150,16 @@ Please don't modify these files manually.
 
 If you change code that impacts the swagger specs in transcendence-app, you will have to regenerate the generated files. The file `swagger-spec.yaml` will update itself when modified, since our server runs on hot reload, if the app is running. To run the script, from the root directory, run:
 ```shell
-./scripts/generate-openapi.sh [options]
+make gen
 ```
 
-By default, `./scripts/generate-openapi.sh` is analogous to running `make gen` as it creates both yaml file and generated webapp files. If you intend to separately build either webapp api generated files or the swagger-spec.yaml you have different options: To generate only webapp generated files pass the `--no-spec` or `--ns` option to the script or run `make gen-webapp`. To generate only swagger spec pass the `--no-gen` or `-ng` option to the script or run `make spec`.
+`make gen` creates both yaml file and generated webapp files. To generate only webapp generated files run `make gen-webapp`. To generate only swagger spec run `make spec`.
 
 ### Seed the database
 
 We use knex to seed the database, more info [here](https://knexjs.org/guide/migrations.html#seed-files).
 
 To run seed files, run the following command from the root directory:
-
-```shell
-docker compose exec -it transcendence-app npx knex seed:run
-```
-
-or its make counterpart, from the root directory
 
 ```shell
 make seed
@@ -245,8 +205,6 @@ What things do you need to install the software, and how to install them.
 [docker compose](https://docs.docker.com/compose/install/)
 
 [make](https://www.gnu.org/software/make/)
-
-> **_NOTE:_**  make is optional, but you may find that having it greatly simplifies your life.
 
 ### Installing
 
@@ -298,29 +256,11 @@ export SESSION_SECRET=your-session-secret-uuid
 export MEMCACHED_SECRET=your-memcached-secret-uuid
 ```
 
-Generate the generated files, that are not a part of the repository:
+Start the application using make
 
-```shell
-make gen
-```
-or
-```shell
-./scripts/generate-openapi.sh [options]
-```
-> **_NOTE:_**  You can see a help panel for this script if you pass to it a `--help` or `-h` option.
-
-Start the application using `Docker`
-
-```shell
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-```
-> **_NOTE:_**  If you are using Docker Compose V1, replace the `docker compose` commands with `docker-compose` (with a hyphen)
-
-or
 ```shell
 make prod
 ```
-> **_NOTE:_**  `make prod` will dispatch to the right docker-compose executable, and will also generate the files for you if you haven't run `make gen` in the previous step
 
 You can now access the web application locally at http://localhost and the Swagger documentation for the API at http://localhost/api
 
