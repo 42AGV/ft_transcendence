@@ -19,6 +19,7 @@ const API_ENDPOINT_URL = '/api/v1';
 export const LOGIN_EP_URL = `${API_ENDPOINT_URL}/auth/login`;
 export const LOGOUT_EP_URL = `${API_ENDPOINT_URL}/auth/logout`;
 export const USERS_EP_URL = `${API_ENDPOINT_URL}${USERS_URL}`;
+export const CHATROOM_EP_URL = `${API_ENDPOINT_URL}/chat/room`;
 export const AVATAR_EP_URL = `${USERS_EP_URL}/avatars`;
 
 // others
