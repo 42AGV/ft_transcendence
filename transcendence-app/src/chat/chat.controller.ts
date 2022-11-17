@@ -189,14 +189,14 @@ export class ChatController {
     return chatroomMember;
   }
 
-  @Patch('chat/room/:chatroomId/members/:userId')
+  @Patch('room/:chatroomId/members/:userId')
   @ApiOkResponse({
     description: 'Update a chatroom member',
     type: ChatroomMember,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async updateChatroomMember(
     @GetUser() userMe: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
@@ -210,7 +210,7 @@ export class ChatController {
       updateChatroomMemberDto,
     );
     if (!chatroomMember) {
-      throw new ServiceUnavailableException();
+      throw new UnprocessableEntityException();
     }
     return chatroomMember;
   }
