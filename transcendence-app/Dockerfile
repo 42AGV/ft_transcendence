@@ -29,6 +29,7 @@ WORKDIR  /transcendence-app
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm clean-install --production
 COPY --from=development --chown=node:node /transcendence-app/dist ./dist
+RUN chown -R node:node /transcendence-app
 USER node
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
