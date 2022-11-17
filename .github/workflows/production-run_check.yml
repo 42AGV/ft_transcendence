@@ -56,7 +56,7 @@ jobs:
       - name: Run
         run: |
           docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-          docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+          make down
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
