@@ -59,6 +59,18 @@ CREATE TABLE
     "admin" BOOLEAN NOT NULL DEFAULT false,
     "muted" BOOLEAN NOT NULL DEFAULT false,
     "banned" BOOLEAN NOT NULL DEFAULT false,
+    CHECK (
+      NOT (
+        (
+          "admin" IS true
+          AND "banned" IS true
+        )
+        OR (
+          "admin" IS true
+          AND "muted" IS true
+        )
+      )
+    ),
     PRIMARY KEY ("chatId", "userId")
   );
 
