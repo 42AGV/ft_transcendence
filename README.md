@@ -196,6 +196,10 @@ TODO: Add notes about how to use the system.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
+This section is for deploying the app on a production system.
+
+> **_NOTE:_**  The application runs on port 80 in the production environment. If another service uses that port, please shut it down before running it.
+
 ### Prerequisites
 
 What things do you need to install the software, and how to install them.
