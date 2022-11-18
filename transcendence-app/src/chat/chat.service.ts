@@ -210,6 +210,8 @@ export class ChatService {
     }
     if (
       !authChatroomMember.admin ||
+      authChatroomMember.banned ||
+      authChatroomMember.muted ||
       chatroomMember.admin ||
       updateChatroomMemberDto.admin !== undefined
     ) {
