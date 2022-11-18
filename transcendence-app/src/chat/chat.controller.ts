@@ -196,7 +196,7 @@ export class ChatController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async updateChatroomMember(
     @GetUser() userMe: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
@@ -210,7 +210,7 @@ export class ChatController {
       updateChatroomMemberDto,
     );
     if (!chatroomMember) {
-      throw new UnprocessableEntityException();
+      throw new ServiceUnavailableException();
     }
     return chatroomMember;
   }
