@@ -22,6 +22,9 @@ import { ChatroomMessage } from './chatroom/chatroom-message/infrastructure/db/c
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 import { ChatroomMember } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { User } from '../user/infrastructure/db/user.entity';
+import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
+import { IChatroomMemberRepository } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
 
 @Injectable()
 export class ChatService {
@@ -30,6 +33,7 @@ export class ChatService {
     private chatroomRepository: IChatroomRepository,
     private chatroomMessageRepository: IChatroomMessageRepository,
     private chatroomMemberService: ChatroomMemberService,
+    private chatroomMemberRepository: IChatroomMemberRepository,
   ) {}
 
   async retrieveChatrooms({
@@ -174,5 +178,49 @@ export class ChatService {
       throw new ForbiddenException('Incorrect password');
     }
     return this.chatroomMemberService.addChatroomMember(chatroomId, userId);
+  }
+
+  async updateChatroomMember(
+    authUser: User,
+    chatroomId: string,
+    userId: string,
+    updateChatroomMemberDto: UpdateChatroomMemberDto,
+  ): Promise<ChatroomMember | null> {
+    const authChatroomMember =
+      await this.chatroomMemberRepository.getByIdWithUser(
+        chatroomId,
+        authUser.id,
+      );
+    const chatroomMember = await this.chatroomMemberRepository.getByIdWithUser(
+      chatroomId,
+      userId,
+    );
+    if (!authChatroomMember || !chatroomMember) {
+      throw new NotFoundException();
+    }
+    if (chatroomMember.owner) {
+      throw new ForbiddenException();
+    }
+    if (authChatroomMember.owner) {
+      return this.chatroomMemberService.updateById(
+        chatroomId,
+        userId,
+        updateChatroomMemberDto,
+      );
+    }
+    if (
+      !authChatroomMember.admin ||
+      authChatroomMember.banned ||
+      authChatroomMember.muted ||
+      chatroomMember.admin ||
+      updateChatroomMemberDto.admin !== undefined
+    ) {
+      throw new ForbiddenException();
+    }
+    return this.chatroomMemberService.updateById(
+      chatroomId,
+      userId,
+      updateChatroomMemberDto,
+    );
   }
 }

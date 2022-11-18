@@ -12,6 +12,7 @@ import { IChatroomRepository } from '../infrastructure/db/chatroom.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../../../shared/constants';
 import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
 import { BooleanString } from '../../../shared/enums/boolean-string.enum';
+import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -47,6 +48,18 @@ export class ChatroomMemberService {
       userId,
     );
     return chatMember && !chatMember.banned ? chatMember : null;
+  }
+
+  updateById(
+    chatId: string,
+    userId: string,
+    updateChatroomMemberDto: UpdateChatroomMemberDto,
+  ): Promise<ChatroomMember | null> {
+    return this.chatroomMemberRepository.updateById(
+      chatId,
+      userId,
+      updateChatroomMemberDto,
+    );
   }
 
   async leaveChatroom(

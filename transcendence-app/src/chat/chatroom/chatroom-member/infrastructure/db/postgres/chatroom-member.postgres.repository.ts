@@ -12,6 +12,7 @@ import {
   ChatroomMemberWithUser,
   ChatroomMemberKeys,
   ChatroomMemberWithUserData,
+  ChatroomMemberData,
 } from '../chatroom-member.entity';
 import { userKeys } from '../../../../../../user/infrastructure/db/user.entity';
 import { ChatroomKeys } from '../../../../infrastructure/db/chatroom.entity';
@@ -33,7 +34,7 @@ export class ChatroomMemberPostgresRepository
     const { cols, params, values } = entityQueryMapper(chatroomMember);
     const joinedAtColName = ChatroomMemberKeys.JOINED_AT;
 
-    const chatroomMembersData = await makeQuery<ChatroomMember>(this.pool, {
+    const chatroomMembersData = await makeQuery<ChatroomMemberData>(this.pool, {
       text: `INSERT INTO ${this.table} (${cols.join(',')})
              values (${params.join(',')})
              ON CONFLICT
@@ -52,7 +53,7 @@ export class ChatroomMemberPostgresRepository
     chatroomId: string,
     userId: string,
   ): Promise<ChatroomMember | null> {
-    const members = await makeQuery<ChatroomMember>(this.pool, {
+    const members = await makeQuery<ChatroomMemberData>(this.pool, {
       text: `SELECT *
              FROM ${this.table}
              WHERE ${ChatroomMemberKeys.CHATID} = $1
@@ -98,7 +99,7 @@ export class ChatroomMemberPostgresRepository
     const { cols, values } = entityQueryMapper(chatroomMember);
     const colsToUpdate = cols.map((col, i) => `${col}=$${i + 3}`).join(',');
 
-    const chatroomMembersData = await makeQuery(this.pool, {
+    const chatroomMembersData = await makeQuery<ChatroomMemberData>(this.pool, {
       text: `UPDATE ${this.table}
              SET ${colsToUpdate}
              WHERE ${ChatroomMemberKeys.CHATID} = $1
@@ -115,7 +116,7 @@ export class ChatroomMemberPostgresRepository
     chatroomId: string,
     userId: string,
   ): Promise<ChatroomMember | null> {
-    const chatroomMembersData = await makeQuery(this.pool, {
+    const chatroomMembersData = await makeQuery<ChatroomMemberData>(this.pool, {
       text: `DELETE
              FROM ${this.table}
              WHERE ${ChatroomMemberKeys.CHATID} = $1
