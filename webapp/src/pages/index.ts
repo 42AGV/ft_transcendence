@@ -13,3 +13,4 @@ export { default as CreateChatroomPage } from './CreateChatroomPage/CreateChatro
 export { default as AuthUserPage } from './AuthUserPage/AuthUserPage';
 export { default as ChatroomDetailsPage } from './ChatroomDetailsPage/ChatroomDetailsPage';
 export { default as JoinChatroomPage } from './JoinChatroomPage/JoinChatroomPage';
+export { default as EditChatroomMemberPage } from './EditChatroomMemberPage/EditChatroomMemberPage';
