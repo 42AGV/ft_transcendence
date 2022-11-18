@@ -69,6 +69,6 @@ get-ip:
 	@echo "db:"
 	@docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(shell ./scripts/get-running-containers-names.sh "ft.transcendence.db.1" )
 
-PHONY: seed
+.PHONY: seed
 seed:
 	$(DOCKER_COMPOSE) exec -it transcendence-app npx knex seed:run
