@@ -37,9 +37,9 @@ type NoFigureHeader = HeaderCommon & {
   onClick?: never;
 };
 
-type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
+export type HeaderProps = IconHeader | AvatarHeader | NoFigureHeader;
 
-export default function Header({
+export function Header({
   icon,
   avatar,
   iconNavigationUrl,

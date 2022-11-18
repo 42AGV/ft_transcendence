@@ -20,7 +20,7 @@ export * from './Avatar/Avatar';
 
 export { default as NavigationBar } from './NavigationBar/NavigationBar';
 
-export { default as Header } from './Header/Header';
+export * from './Header/Header';
 
 export { default as Row } from './Row/Row';
 
