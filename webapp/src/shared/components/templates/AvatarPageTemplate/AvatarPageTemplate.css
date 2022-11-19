@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
-  grid-row-gap: calc(var(--row-gap) * 3);
+  grid-row-gap: calc(var(--row-gap) * 2);
   overflow: scroll;
 }
 
