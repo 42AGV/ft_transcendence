@@ -1,73 +1,17 @@
-import './EditChatroomMemberPage.css';
 import {
-  Button,
-  ButtonProps,
+  AvatarPageTemplate,
+  AvatarPageTemplateProps,
   ButtonVariant,
-  Header,
   IconVariant,
-  LargeAvatar,
   Loading,
   Row,
-  StatusVariant,
   Text,
   TextColor,
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { LargeAvatarProps } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { AVATAR_EP_URL, EDIT_USER_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
-
-type AvatarPageTemplateProps = {
-  isLoading: boolean;
-  headerStatusVariant?: StatusVariant;
-  title: string;
-  avatarProps: LargeAvatarProps;
-  content: JSX.Element;
-  button?: ButtonProps;
-};
-
-function EditChatroomMemberPageHelper({
-  isLoading,
-  avatarProps,
-  content,
-  button,
-  title,
-  headerStatusVariant,
-}: AvatarPageTemplateProps) {
-  const { chatroomId, username } = useParams();
-  console.log(`${chatroomId}, ${username}`);
-  const { goBack } = useNavigation();
-
-  if (isLoading) {
-    return (
-      <div className="avatar-page-template">
-        <div className="avatar-page-template-loading">
-          <Loading />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="avatar-page-template">
-      <Header
-        icon={IconVariant.ARROW_BACK}
-        onClick={goBack}
-        statusVariant={headerStatusVariant}
-      >
-        {title}
-      </Header>
-      <div className="center-element-wrapper">
-        <LargeAvatar {...avatarProps} />
-        <div className="generic-content-wrapper">{content}</div>
-      </div>
-      {button && <Button {...button} />}
-    </div>
-  );
-}
 
 export default function EditChatroomMemberPage() {
   const { authUser, logout, isLoading: isAuthUserLoading } = useAuth();
@@ -120,5 +64,5 @@ export default function EditChatroomMemberPage() {
       children: 'Logout',
     },
   };
-  return EditChatroomMemberPageHelper(param);
+  return <AvatarPageTemplate {...param} />;
 }
