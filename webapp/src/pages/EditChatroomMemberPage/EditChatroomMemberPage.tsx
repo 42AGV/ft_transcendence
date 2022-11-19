@@ -38,6 +38,48 @@ export default function EditChatroomMemberPage() {
         >
           Test
         </Text>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          Test
+        </Text>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          Test
+        </Text>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          Test
+        </Text>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          Test
+        </Text>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          Test
+        </Text>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          Test
+        </Text>
       </>
     </AvatarPageTemplate>
   );
