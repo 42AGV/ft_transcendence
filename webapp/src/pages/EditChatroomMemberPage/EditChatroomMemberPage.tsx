@@ -22,15 +22,15 @@ import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { useParams } from 'react-router-dom';
 
 type AvatarPageTemplateProps = {
-  avatarProps?: LargeAvatarProps;
-  elements?: JSX.Element[];
+  avatarProps: LargeAvatarProps;
+  header: HeaderProps;
+  content: JSX.Element;
   button?: ButtonProps;
-  header?: HeaderProps;
 };
 
 function EditChatroomMemberPageHelper({
   avatarProps,
-  elements,
+  content,
   button,
   header,
 }: AvatarPageTemplateProps) {
@@ -54,24 +54,13 @@ function EditChatroomMemberPageHelper({
   ) : (
     <div className="avatar-page-template">
       {(header && <Header {...header}>{header.children[0]}</Header>) || (
-        <Header
-          icon={IconVariant.ARROW_BACK}
-          onClick={goBack}
-          statusVariant="online"
-        >
+        <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
           {authUser.username}
         </Header>
       )}
       <div className="center-element-wrapper">
-        {(avatarProps && <LargeAvatar {...avatarProps} />) || (
-          <LargeAvatar
-            url={`${AVATAR_EP_URL}/${authUser.avatarId}`}
-            caption="level 4"
-            XCoordinate={authUser.avatarX}
-            YCoordinate={authUser.avatarY}
-          />
-        )}
-        <div className="generic-content-wrapper">{elements && elements}</div>
+        <LargeAvatar {...avatarProps} />
+        <div className="generic-content-wrapper">{content}</div>
       </div>
       {button && <Button {...button} />}
     </div>
@@ -81,30 +70,6 @@ function EditChatroomMemberPageHelper({
 export default function EditChatroomMemberPage() {
   const { authUser, logout, isLoading: isAuthUserLoading } = useAuth();
   const { goBack } = useNavigation();
-  const content = [
-    <Text
-      key="0"
-      variant={TextVariant.PARAGRAPH}
-      color={TextColor.LIGHT}
-      weight={TextWeight.MEDIUM}
-    >
-      {authUser?.fullName ?? ''}
-    </Text>,
-    <Text
-      key="1"
-      variant={TextVariant.PARAGRAPH}
-      color={TextColor.LIGHT}
-      weight={TextWeight.MEDIUM}
-    >
-      {authUser?.email ?? ''}
-    </Text>,
-    <Row
-      key="2"
-      iconVariant={IconVariant.USERS}
-      url={EDIT_USER_URL}
-      title="Edit profile"
-    />,
-  ];
   if (isAuthUserLoading) {
     return (
       <div className="auth-user-page">
@@ -115,25 +80,47 @@ export default function EditChatroomMemberPage() {
     );
   }
   const param: AvatarPageTemplateProps = {
-    avatarProps: {
-      url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
-      caption: 'level 4',
-      XCoordinate: authUser?.avatarX,
-      YCoordinate: authUser?.avatarY,
-    },
-    button: {
-      variant: ButtonVariant.WARNING,
-      iconVariant: IconVariant.LOGOUT,
-      onClick: logout,
-      children: 'Logout',
-    },
     header: {
       icon: IconVariant.ARROW_BACK,
       onClick: goBack,
       statusVariant: 'online',
       children: authUser?.username ?? '',
     },
-    elements: content,
+    avatarProps: {
+      url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
+      caption: 'level 4',
+      XCoordinate: authUser?.avatarX,
+      YCoordinate: authUser?.avatarY,
+    },
+    content: (
+      <>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          {authUser?.fullName ?? ''}
+        </Text>
+        <Text
+          variant={TextVariant.PARAGRAPH}
+          color={TextColor.LIGHT}
+          weight={TextWeight.MEDIUM}
+        >
+          {authUser?.email ?? ''}
+        </Text>
+        <Row
+          iconVariant={IconVariant.USERS}
+          url={EDIT_USER_URL}
+          title="Edit profile"
+        />
+      </>
+    ),
+    button: {
+      variant: ButtonVariant.WARNING,
+      iconVariant: IconVariant.LOGOUT,
+      onClick: logout,
+      children: 'Logout',
+    },
   };
   return EditChatroomMemberPageHelper(param);
 }
