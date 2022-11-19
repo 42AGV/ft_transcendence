@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { User } from '../generated';
 import { useData } from '../hooks/UseData';
 import { authApi, usersApi } from '../services/ApiService';
+import socket from '../socket';
 import { HOST_URL } from '../urls';
 
 export interface AuthContextType {
@@ -45,6 +46,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(isDataLoading);
     setAuthUser(data);
   }, [data, isDataLoading]);
+
+  useEffect(() => {
+    if (authUser) {
+      socket.connect();
+    }
+  }, [authUser]);
 
   const logout = useCallback(async () => {
     try {
