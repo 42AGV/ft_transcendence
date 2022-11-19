@@ -68,7 +68,7 @@ export default function EditChatroomMemberPage() {
     <AvatarPageTemplate
       isLoading={isChatroomLoading && isCrMemberUserLoading && isUserLoading}
       headerStatusVariant="online"
-      title={chatroom?.name ?? ''}
+      title="chatroom member"
       avatarProps={{
         url:
           // TODO: Remove the wildcard avatar when we implement #317
@@ -77,6 +77,7 @@ export default function EditChatroomMemberPage() {
             : WILDCARD_AVATAR_URL,
         XCoordinate: chatroom?.avatarX,
         YCoordinate: chatroom?.avatarY,
+        caption: chatroom?.name ?? '',
       }}
       button={{
         variant: ButtonVariant.WARNING,
@@ -96,6 +97,7 @@ export default function EditChatroomMemberPage() {
           iconVariant={IconVariant.USERS}
           url={`${USER_URL}/${username}`}
           title={username}
+          subtitle="level x"
         />
         <ToggleSwitch
           label="admin"
