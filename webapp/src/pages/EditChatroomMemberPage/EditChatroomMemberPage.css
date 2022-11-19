@@ -12,7 +12,7 @@
   overflow: scroll;
 }
 
-.auth-user-page-loading {
+.avatar-page-template .avatar-page-template-loading {
   grid-column: 1/-1;
   grid-row: 1/-1;
   align-self: center;

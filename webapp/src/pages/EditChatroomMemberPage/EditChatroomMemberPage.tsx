@@ -4,11 +4,11 @@ import {
   ButtonProps,
   ButtonVariant,
   Header,
-  HeaderProps,
   IconVariant,
   LargeAvatar,
   Loading,
   Row,
+  StatusVariant,
   Text,
   TextColor,
   TextVariant,
@@ -18,46 +18,48 @@ import { LargeAvatarProps } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { AVATAR_EP_URL, EDIT_USER_URL } from '../../shared/urls';
-import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { useParams } from 'react-router-dom';
 
 type AvatarPageTemplateProps = {
+  isLoading: boolean;
+  headerStatusVariant?: StatusVariant;
+  title: string;
   avatarProps: LargeAvatarProps;
-  header: HeaderProps;
   content: JSX.Element;
   button?: ButtonProps;
 };
 
 function EditChatroomMemberPageHelper({
+  isLoading,
   avatarProps,
   content,
   button,
-  header,
+  title,
+  headerStatusVariant,
 }: AvatarPageTemplateProps) {
   const { chatroomId, username } = useParams();
   console.log(`${chatroomId}, ${username}`);
   const { goBack } = useNavigation();
-  const { isLoading, authUser } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="auth-user-page">
-        <div className="auth-user-page-loading">
+      <div className="avatar-page-template">
+        <div className="avatar-page-template-loading">
           <Loading />
         </div>
       </div>
     );
   }
 
-  return authUser === null ? (
-    <NotFoundPage />
-  ) : (
+  return (
     <div className="avatar-page-template">
-      {(header && <Header {...header}>{header.children[0]}</Header>) || (
-        <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-          {authUser.username}
-        </Header>
-      )}
+      <Header
+        icon={IconVariant.ARROW_BACK}
+        onClick={goBack}
+        statusVariant={headerStatusVariant}
+      >
+        {title}
+      </Header>
       <div className="center-element-wrapper">
         <LargeAvatar {...avatarProps} />
         <div className="generic-content-wrapper">{content}</div>
@@ -69,7 +71,6 @@ function EditChatroomMemberPageHelper({
 
 export default function EditChatroomMemberPage() {
   const { authUser, logout, isLoading: isAuthUserLoading } = useAuth();
-  const { goBack } = useNavigation();
   if (isAuthUserLoading) {
     return (
       <div className="auth-user-page">
@@ -80,12 +81,9 @@ export default function EditChatroomMemberPage() {
     );
   }
   const param: AvatarPageTemplateProps = {
-    header: {
-      icon: IconVariant.ARROW_BACK,
-      onClick: goBack,
-      statusVariant: 'online',
-      children: authUser?.username ?? '',
-    },
+    isLoading: isAuthUserLoading,
+    headerStatusVariant: 'online',
+    title: authUser?.username ?? '',
     avatarProps: {
       url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
       caption: 'level 4',
