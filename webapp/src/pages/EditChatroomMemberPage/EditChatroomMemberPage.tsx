@@ -129,7 +129,7 @@ export default function EditChatroomMemberPage() {
         } else if (error instanceof Error) {
           warn(error.message);
         } else {
-          warn('Could not remove the chat member');
+          warn('Could not update the chat member');
         }
       }
     };
