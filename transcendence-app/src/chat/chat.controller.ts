@@ -119,6 +119,30 @@ export class ChatController {
     return chatroomMember;
   }
 
+  @Delete('room/:chatroomId/members/:userId')
+  @ApiOkResponse({
+    description: 'Chatroom admin removes chatroom member',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async removeChatroomMember(
+    @GetUser() user: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
+  ): Promise<ChatroomMember> {
+    const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
+      chatroomId,
+      user.id,
+      toDeleteUserId,
+    );
+    if (!chatroomMember) {
+      throw new ServiceUnavailableException();
+    }
+    return chatroomMember;
+  }
+
   @Get('room')
   @ApiOkResponse({
     description: `Lists all chatrooms (max ${MAX_ENTRIES_PER_PAGE})`,

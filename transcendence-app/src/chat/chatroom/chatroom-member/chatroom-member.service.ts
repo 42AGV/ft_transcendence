@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
@@ -60,6 +61,53 @@ export class ChatroomMemberService {
       userId,
       updateChatroomMemberDto,
     );
+  }
+
+  async removeFromChatroom(
+    chatroomId: string,
+    authUserId: string,
+    toDeleteUserId: string,
+  ): Promise<ChatroomMember | null> {
+    const foundChatroom = await this.chatroomRepository.getById(chatroomId);
+    if (!foundChatroom) {
+      throw new NotFoundException();
+    }
+    const foundChatroomAuthMember = await this.chatroomMemberRepository.getById(
+      chatroomId,
+      authUserId,
+    );
+    if (!foundChatroomAuthMember) {
+      throw new NotFoundException();
+    }
+    if (
+      !(foundChatroomAuthMember.admin || foundChatroom.ownerId === authUserId)
+    ) {
+      throw new ForbiddenException();
+    }
+    const foundChatroomMemberToDelete =
+      await this.chatroomMemberRepository.getById(chatroomId, toDeleteUserId);
+    if (!foundChatroomMemberToDelete) {
+      throw new NotFoundException();
+    }
+    if (
+      foundChatroom.ownerId === toDeleteUserId ||
+      (foundChatroomAuthMember.admin && foundChatroomMemberToDelete.admin)
+    ) {
+      throw new ForbiddenException();
+    }
+    if (
+      foundChatroomMemberToDelete.banned ||
+      foundChatroomMemberToDelete.muted
+    ) {
+      return this.chatroomMemberRepository.updateById(
+        chatroomId,
+        toDeleteUserId,
+        {
+          joinedAt: null,
+        },
+      );
+    }
+    return this.chatroomMemberRepository.deleteById(chatroomId, toDeleteUserId);
   }
 
   async leaveChatroom(
