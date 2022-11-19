@@ -58,10 +58,10 @@ export default function EditChatroomMemberPage() {
     useGetChatroomMember(authUser?.id),
   );
 
-  const shouldShowButton =
-    (authCrMember?.admin ?? false) ||
-    ((authUser?.id === chatroom?.ownerId ?? false) &&
-      (chatroom?.ownerId !== user?.id ?? false));
+  const canEdit =
+    ((authCrMember?.admin ?? false) ||
+      (authUser?.id === chatroom?.ownerId ?? false)) &&
+    (chatroom?.ownerId !== user?.id ?? false);
 
   const removeChatMember = useCallback(async () => {
     try {
@@ -94,21 +94,37 @@ export default function EditChatroomMemberPage() {
       muted: crMember.muted,
       banned: crMember.banned,
     });
-  }, [crMember, chatroomId]);
+  }, [crMember]);
   const genericOnToggle = (dto?: UpdateChatroomMemberDto): (() => void) => {
     return async () => {
-      if (dto === undefined || !user || !chatroomId) {
+      if (dto === undefined || !user || !chatroomId || !canEdit) {
+        if (!canEdit) warn("You don't have permission to modify this setting");
         return;
       }
-      await chatApi.chatControllerUpdateChatroomMember({
-        chatroomId: chatroomId,
-        userId: user.id,
-        updateChatroomMemberDto: dto,
-      });
-      setUpdateChatroomMember(dto);
+      try {
+        await chatApi.chatControllerUpdateChatroomMember({
+          chatroomId: chatroomId,
+          userId: user.id,
+          updateChatroomMemberDto: dto,
+        });
+        setUpdateChatroomMember(dto);
+      } catch (error: unknown) {
+        if (error instanceof ResponseError) {
+          const responseBody = await error.response.json();
+          if (responseBody.message) {
+            warn(responseBody.message);
+          } else {
+            warn(error.response.statusText);
+          }
+        } else if (error instanceof Error) {
+          warn(error.message);
+        } else {
+          warn('Could not remove the chat member');
+        }
+      }
     };
   };
-  const button: ButtonProps | undefined = shouldShowButton
+  const button: ButtonProps | undefined = canEdit
     ? {
         variant: ButtonVariant.WARNING,
         iconVariant: IconVariant.REMOVE,
