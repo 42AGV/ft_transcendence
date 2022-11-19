@@ -22,6 +22,7 @@ import { ChatroomMessage } from './chatroom/chatroom-message/infrastructure/db/c
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 import { ChatroomMember } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { User } from '../user/infrastructure/db/user.entity';
 
 @Injectable()
 export class ChatService {
@@ -119,62 +120,63 @@ export class ChatService {
   }
 
   async updateChatroom(
+    userMe: User,
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {
-    const { oldPassword, confirmationPassword, isPublic, ...updateChatroom } =
+    const { oldPassword, confirmationPassword, ...updateChatroom } =
       updateChatroomDto;
     const chatroom = await this.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
     }
-    if (
-      !chatroom.isPublic &&
-      !updateChatroomDto.isPublic &&
-      updateChatroomDto.password === null
-    ) {
-      return await this.chatroomRepository.updateById(chatroomId, {
-        ...updateChatroom,
-        password: chatroom.password,
-      });
+
+    if (userMe.id !== chatroom.ownerId) {
+      throw new ForbiddenException();
     }
+
+    // If the user doesn't update the password, we can update the chatroom without any checks
+    if (updateChatroom.password === undefined) {
+      return await this.chatroomRepository.updateById(
+        chatroomId,
+        updateChatroom,
+      );
+    }
+
+    // Check if the chatroom password matches the old password provided by the user
     if (
-      (!chatroom.isPublic &&
-        !updateChatroomDto.isPublic &&
-        chatroom.password &&
-        !updateChatroomDto.oldPassword) ||
-      (updateChatroomDto.oldPassword &&
+      chatroom.password &&
+      (!updateChatroomDto.oldPassword ||
         (await Password.compare(
-          chatroom.password!,
+          chatroom.password,
           updateChatroomDto.oldPassword,
         )) === false)
     ) {
       throw new ForbiddenException('Incorrect password');
     }
 
-    if (updateChatroomDto.password) {
-      if (
-        updateChatroomDto.password !== updateChatroomDto.confirmationPassword
-      ) {
-        throw new BadRequestException(
-          'Password and Confirmation Password must match',
-        );
-      } else {
-        const hashedPassword = await Password.toHash(
-          updateChatroomDto.password,
-        );
-        const ret = this.chatroomRepository.updateById(chatroomId, {
-          ...updateChatroom,
-          password: hashedPassword,
-        });
-        return await ret;
-      }
-    } else {
+    // Check if the new password matches the confirmation password
+    if (updateChatroomDto.password !== updateChatroomDto.confirmationPassword) {
+      throw new BadRequestException(
+        'Password and Confirmation Password must match',
+      );
+    }
+
+    // If the user provided a null password for a public chatroom, we can update directly
+    if (updateChatroom.password === null) {
       return await this.chatroomRepository.updateById(
         chatroomId,
         updateChatroom,
       );
     }
+
+    // The user provided a password and we have to encrypt it password before saving it into the database
+    const hashedPassword = await Password.toHash(updateChatroom.password);
+    const ret = this.chatroomRepository.updateById(chatroomId, {
+      ...updateChatroom,
+      password: hashedPassword,
+    });
+    return await ret;
   }
 
   async deleteChatroom(chatroomId: string): Promise<Chatroom | null> {

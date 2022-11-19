@@ -10,6 +10,7 @@ import {
   ToggleSwitch,
 } from '../../shared/components';
 import {
+  CHATROOM_EP_URL,
   CHAT_URL,
   EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
@@ -22,6 +23,7 @@ import './EditChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 export default function CreateChatroomPage() {
   const { chatroomId } = useParams();
@@ -37,11 +39,10 @@ export default function CreateChatroomPage() {
   const [isPublic, setIsPublic] = useState(false);
 
   const initialFormValues: UpdateChatroomDto = {
-    name: isLoading ? '' : chatroom!.name,
+    name: '',
     oldPassword: '',
     password: '',
     confirmationPassword: '',
-    isPublic: isPublic,
   };
   const [formValues, setFormValues] =
     useState<UpdateChatroomDto>(initialFormValues);
@@ -49,6 +50,9 @@ export default function CreateChatroomPage() {
   useEffect(() => {
     if (chatroom) {
       setIsPublic(chatroom.isPublic);
+      setFormValues((prevValues) => {
+        return { ...prevValues, name: chatroom.name };
+      });
     }
   }, [chatroom]);
 
@@ -60,45 +64,113 @@ export default function CreateChatroomPage() {
   };
 
   function hasValidFormValues() {
+    if (formValues.name === '') {
+      warn('Chatroom name can not be empty');
+      return false;
+    }
+    if (
+      chatroom &&
+      !chatroom.isPublic &&
+      !isPublic &&
+      formValues.password !== '' &&
+      formValues.oldPassword === ''
+    ) {
+      warn('Old password can not be empty');
+      return false;
+    }
+    if (
+      chatroom &&
+      chatroom.isPublic &&
+      !isPublic &&
+      formValues.password === ''
+    ) {
+      warn('Password can not be empty');
+      return false;
+    }
+    if (
+      chatroom &&
+      !chatroom.isPublic &&
+      !isPublic &&
+      formValues.oldPassword &&
+      !formValues.password
+    ) {
+      warn('Password can not be empty');
+      return false;
+    }
     if (formValues.password !== formValues.confirmationPassword) {
-      warn('Passwords are different');
+      warn('Password and Confirmation Password must match');
       return false;
     }
     return true;
   }
 
+  // TODO: We can move this function to shared directory
+  const handleRequestError = async (error: unknown) => {
+    let errMessage = '';
+    if (error instanceof ResponseError) {
+      const responseBody = await error.response.json();
+      if (responseBody.message) {
+        errMessage = responseBody.message;
+      } else {
+        errMessage = error.response.statusText;
+      }
+    } else if (error instanceof Error) {
+      errMessage = error.message;
+    }
+    warn(errMessage);
+  };
+
   async function updateChatroomDetails() {
-    if (!hasValidFormValues()) {
+    if (!chatroom || !chatroomId || !hasValidFormValues()) {
       return;
     }
     try {
+      let updateChatroomDto: UpdateChatroomDto;
+      // Update public chatroom
+      if (chatroom.isPublic && isPublic) {
+        updateChatroomDto = {
+          name: formValues.name || undefined,
+        };
+        // Update from public to protected
+      } else if (chatroom.isPublic && !isPublic) {
+        updateChatroomDto = {
+          name: formValues.name || undefined,
+          oldPassword: null,
+          password: formValues.password,
+          confirmationPassword: formValues.confirmationPassword,
+        };
+        // Update from protected to public
+      } else if (!chatroom.isPublic && isPublic) {
+        updateChatroomDto = {
+          name: formValues.name || undefined,
+          oldPassword: formValues.oldPassword,
+          password: null,
+          confirmationPassword: null,
+        };
+        // Update from protected to protected
+      } else {
+        updateChatroomDto = {
+          name: formValues.name || undefined,
+          oldPassword: formValues.oldPassword || undefined,
+          password: formValues.password || undefined,
+          confirmationPassword: formValues.confirmationPassword || undefined,
+        };
+      }
       await chatApi.chatControllerUpdateChatroom({
         chatroomId: chatroomId!,
-        updateChatroomDto: {
-          name: formValues.name ? formValues.name : initialFormValues.name,
-          oldPassword: formValues.oldPassword || null,
-          password: formValues.password || null,
-          confirmationPassword: formValues.confirmationPassword || null,
-          isPublic: isPublic,
-        },
+        updateChatroomDto,
       });
       notify('Chatroom details successfully updated');
       navigate(CHAT_URL);
     } catch (error) {
-      let errMessage = '';
-      if (error instanceof ResponseError) {
-        errMessage = `${error.response.statusText}`;
-      } else if (error instanceof Error) {
-        errMessage = `${error.message}`;
-      }
-      warn(errMessage);
+      handleRequestError(error);
     }
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     updateChatroomDetails().catch((e) => console.error(e));
   };
-  const deleteChatoom = () => {
+  const deleteChatoom = async () => {
     if (window.confirm('Are you sure you want to delete the chatroom?')) {
       try {
         chatApi.chatControllerDeleteChatroom({
@@ -107,18 +179,12 @@ export default function CreateChatroomPage() {
         notify('Chatroom successfully deleted');
         navigate(CHAT_URL);
       } catch (error) {
-        let errMessage = '';
-        if (error instanceof ResponseError) {
-          errMessage = `${error.response.statusText}`;
-        } else if (error instanceof Error) {
-          errMessage = `${error.message}`;
-        }
-        warn(errMessage);
+        handleRequestError(error);
       }
     }
   };
 
-  if (!chatroom) {
+  if (isLoading) {
     return (
       <div className="edit-chatroom-details">
         <div className="edit-chatroom-details-loading">
@@ -126,6 +192,10 @@ export default function CreateChatroomPage() {
         </div>
       </div>
     );
+  }
+
+  if (!chatroom) {
+    return <NotFoundPage />;
   }
 
   return (
@@ -136,7 +206,13 @@ export default function CreateChatroomPage() {
       <div className="edit-chatroom-details-avatar-properties">
         <div className="edit-chatroom-details-avatar">
           <LargeAvatar
-            url={WILDCARD_AVATAR_URL}
+            // TODO: Remove the wildcard avatar when we implement #317
+            url={
+              chatroom.avatarId
+                ? `${CHATROOM_EP_URL}/${chatroom.id}/avatars/${chatroom.avatarId}`
+                : WILDCARD_AVATAR_URL
+            }
+            //TODO: update url to EDIT_CHAT_AVATAR_URL or a common page
             editUrl={EDIT_AVATAR_URL}
             XCoordinate={chatroom.avatarX}
             YCoordinate={chatroom.avatarY}
@@ -159,7 +235,7 @@ export default function CreateChatroomPage() {
           <Input
             variant={InputVariant.LIGHT}
             label="Chat Room Name"
-            placeholder={chatroom.name}
+            placeholder="name"
             value={formValues.name}
             name="name"
             onChange={handleInputChange}
@@ -172,7 +248,7 @@ export default function CreateChatroomPage() {
             name="oldPassword"
             type="password"
             onChange={handleInputChange}
-            disabled={isPublic}
+            disabled={chatroom.isPublic}
           />
           <Input
             variant={InputVariant.LIGHT}

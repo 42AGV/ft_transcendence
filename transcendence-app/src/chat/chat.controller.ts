@@ -240,6 +240,11 @@ export class ChatController {
   }
 
   @Patch('room/:chatroomId')
+  @ApiOkResponse({
+    description: 'Update a chatroom',
+    type: Chatroom,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
@@ -248,14 +253,8 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
-    const chatroom = await this.chatService.getChatroomById(chatroomId);
-    if (!chatroom) {
-      throw new NotFoundException();
-    }
-    if (userMe.id !== chatroom.ownerId) {
-      throw new ForbiddenException();
-    }
     const updatedChatroom = await this.chatService.updateChatroom(
+      userMe,
       chatroomId,
       updateChatroomDto,
     );
