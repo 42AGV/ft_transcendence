@@ -33,7 +33,7 @@
   --padding-sides: 1.25rem;
   --padding-top-bottom: 2rem;
   --column-gap: 1rem;
-  --row-gap: 2.5rem;
+  --row-gap: 1.5rem;
 }
 
 /* Styles for viewports wider than 768 pixels. */
