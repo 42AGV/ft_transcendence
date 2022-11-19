@@ -11,19 +11,19 @@ import {
 } from '../../index';
 import { useNavigation } from '../../../hooks/UseNavigation';
 
-export type AvatarPageTemplateProps = {
+type AvatarPageTemplateProps = {
   isLoading: boolean;
   headerStatusVariant?: StatusVariant;
   title: string;
   avatarProps: LargeAvatarProps;
-  content: JSX.Element;
+  children: JSX.Element;
   button?: ButtonProps;
 };
 
-export function AvatarPageTemplate({
+export default function AvatarPageTemplate({
   isLoading,
   avatarProps,
-  content,
+  children,
   button,
   title,
   headerStatusVariant,
@@ -51,7 +51,7 @@ export function AvatarPageTemplate({
       </Header>
       <div className="center-element-wrapper">
         <LargeAvatar {...avatarProps} />
-        <div className="generic-content-wrapper">{content}</div>
+        <div className="generic-content-wrapper">{children}</div>
       </div>
       {button && <Button {...button} />}
     </div>

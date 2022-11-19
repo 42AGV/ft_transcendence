@@ -1,6 +1,5 @@
 import {
   AvatarPageTemplate,
-  AvatarPageTemplateProps,
   ButtonVariant,
   IconVariant,
   Loading,
@@ -24,17 +23,24 @@ export default function EditChatroomMemberPage() {
       </div>
     );
   }
-  const param: AvatarPageTemplateProps = {
-    isLoading: isAuthUserLoading,
-    headerStatusVariant: 'online',
-    title: authUser?.username ?? '',
-    avatarProps: {
-      url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
-      caption: 'level 4',
-      XCoordinate: authUser?.avatarX,
-      YCoordinate: authUser?.avatarY,
-    },
-    content: (
+  return (
+    <AvatarPageTemplate
+      isLoading={isAuthUserLoading}
+      headerStatusVariant="online"
+      title={authUser?.username ?? ''}
+      avatarProps={{
+        url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
+        caption: 'level 4',
+        XCoordinate: authUser?.avatarX,
+        YCoordinate: authUser?.avatarY,
+      }}
+      button={{
+        variant: ButtonVariant.WARNING,
+        iconVariant: IconVariant.LOGOUT,
+        onClick: logout,
+        children: 'Logout',
+      }}
+    >
       <>
         <Text
           variant={TextVariant.PARAGRAPH}
@@ -56,13 +62,6 @@ export default function EditChatroomMemberPage() {
           title="Edit profile"
         />
       </>
-    ),
-    button: {
-      variant: ButtonVariant.WARNING,
-      iconVariant: IconVariant.LOGOUT,
-      onClick: logout,
-      children: 'Logout',
-    },
-  };
-  return <AvatarPageTemplate {...param} />;
+    </AvatarPageTemplate>
+  );
 }

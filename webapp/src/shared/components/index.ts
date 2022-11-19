@@ -32,7 +32,7 @@ export { default as SearchForm } from './Input/SearchForm';
 
 export { default as MainTabTemplate } from './templates/MainTabPageTemplate/MainTabPageTemplate';
 export { default as RowsListTemplate } from './templates/RowsListTemplate/RowsListTemplate';
-export * from './templates/AvatarPageTemplate/AvatarPageTemplate';
+export { default as AvatarPageTemplate } from './templates/AvatarPageTemplate/AvatarPageTemplate';
 export * from './templates/MainTabPageTemplate/MainTabPageTemplate';
 
 export { default as EditableAvatar } from './Avatar/EditableAvatar';
