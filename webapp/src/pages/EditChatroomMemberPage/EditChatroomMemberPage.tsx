@@ -7,27 +7,42 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { useAuth } from '../../shared/hooks/UseAuth';
-import { AVATAR_EP_URL } from '../../shared/urls';
+import { CHATROOM_EP_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import { useParams } from 'react-router-dom';
+import { useCallback } from 'react';
+import { chatApi } from '../../shared/services/ApiService';
+import { useData } from '../../shared/hooks/UseData';
+import { Chatroom } from '../../shared/generated/models/Chatroom';
 
 export default function EditChatroomMemberPage() {
-  const { authUser, logout, isLoading: isAuthUserLoading } = useAuth();
+  const { chatroomId, username } = useParams();
+
+  const getChatroom = useCallback(
+    () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
+    [chatroomId],
+  );
+  const { data: chatroom, isLoading: isChatroomLoading } =
+    useData<Chatroom>(getChatroom);
+  console.log(username);
+
   return (
     <AvatarPageTemplate
-      isLoading={isAuthUserLoading}
+      isLoading={isChatroomLoading}
       headerStatusVariant="online"
-      title={authUser?.username ?? ''}
+      title={chatroom?.name ?? ''}
       avatarProps={{
-        url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
-        caption: 'level 4',
-        XCoordinate: authUser?.avatarX,
-        YCoordinate: authUser?.avatarY,
+        url:
+          // TODO: Remove the wildcard avatar when we implement #317
+          chatroom?.avatarId
+            ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${chatroom?.avatarId}`
+            : WILDCARD_AVATAR_URL,
+        XCoordinate: chatroom?.avatarX,
+        YCoordinate: chatroom?.avatarY,
       }}
       button={{
         variant: ButtonVariant.WARNING,
-        iconVariant: IconVariant.LOGOUT,
-        onClick: logout,
-        children: 'Logout',
+        iconVariant: IconVariant.REMOVE,
+        children: 'remove from chat',
       }}
     >
       <>

@@ -12,6 +12,7 @@ import {
   Search,
   Users,
   Send,
+  Remove,
 } from './assets/icons';
 
 export enum IconVariant {
@@ -27,6 +28,7 @@ export enum IconVariant {
   SEARCH = 'SEARCH',
   USERS = 'USERS',
   SEND = 'SEND',
+  REMOVE = 'REMOVE',
 }
 
 type SVGProps = React.SVGProps<SVGSVGElement> & {
@@ -48,6 +50,7 @@ const Icons: { [key in IconVariant]: SVGComponent } = {
   SEARCH: Search,
   USERS: Users,
   SEND: Send,
+  REMOVE: Remove,
 };
 
 export enum IconSize {
