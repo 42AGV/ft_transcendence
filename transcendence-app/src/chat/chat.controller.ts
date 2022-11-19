@@ -42,6 +42,7 @@ import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
+import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -118,6 +119,30 @@ export class ChatController {
     return chatroomMember;
   }
 
+  @Delete('room/:chatroomId/members/:userId')
+  @ApiOkResponse({
+    description: 'Chatroom admin removes chatroom member',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async removeChatroomMember(
+    @GetUser() user: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
+  ): Promise<ChatroomMember> {
+    const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
+      chatroomId,
+      user.id,
+      toDeleteUserId,
+    );
+    if (!chatroomMember) {
+      throw new ServiceUnavailableException();
+    }
+    return chatroomMember;
+  }
+
   @Get('room')
   @ApiOkResponse({
     description: `Lists all chatrooms (max ${MAX_ENTRIES_PER_PAGE})`,
@@ -175,8 +200,8 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   async getChatroomMember(
-    @Param('chatroomId') chatroomId: string,
-    @Param('userId') userId: string,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,
@@ -184,6 +209,32 @@ export class ChatController {
     );
     if (!chatroomMember) {
       throw new NotFoundException();
+    }
+    return chatroomMember;
+  }
+
+  @Patch('room/:chatroomId/members/:userId')
+  @ApiOkResponse({
+    description: 'Update a chatroom member',
+    type: ChatroomMember,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async updateChatroomMember(
+    @GetUser() userMe: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Body() updateChatroomMemberDto: UpdateChatroomMemberDto,
+  ): Promise<ChatroomMember> {
+    const chatroomMember = await this.chatService.updateChatroomMember(
+      userMe,
+      chatroomId,
+      userId,
+      updateChatroomMemberDto,
+    );
+    if (!chatroomMember) {
+      throw new ServiceUnavailableException();
     }
     return chatroomMember;
   }

@@ -5,10 +5,10 @@
 SETUP_DIR=/var/lib/postgresql/setup
 TABLES=schema.sql
 
-echo "$0: running $TABLES"; psql -d "$POSTGRES_DB" -f "$SETUP_DIR/$TABLES";
+echo "$0: running $TABLES"; psql -d "$POSTGRES_DB" -U "$POSTGRES_USER" -f "$SETUP_DIR/$TABLES";
 
 for f in $SETUP_DIR/*.sql; do
     if [ "$f" != "$SETUP_DIR/$TABLES" ] ; then
-        echo "$0: running $f"; psql -d "$POSTGRES_DB" -f "$f";
+        echo "$0: running $f"; psql -d "$POSTGRES_DB" -U "$POSTGRES_USER" -f "$f";
     fi
 done

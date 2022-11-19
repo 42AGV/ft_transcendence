@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
@@ -12,6 +13,7 @@ import { IChatroomRepository } from '../infrastructure/db/chatroom.repository';
 import { MAX_ENTRIES_PER_PAGE } from '../../../shared/constants';
 import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
 import { BooleanString } from '../../../shared/enums/boolean-string.enum';
+import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -47,6 +49,65 @@ export class ChatroomMemberService {
       userId,
     );
     return chatMember && !chatMember.banned ? chatMember : null;
+  }
+
+  updateById(
+    chatId: string,
+    userId: string,
+    updateChatroomMemberDto: UpdateChatroomMemberDto,
+  ): Promise<ChatroomMember | null> {
+    return this.chatroomMemberRepository.updateById(
+      chatId,
+      userId,
+      updateChatroomMemberDto,
+    );
+  }
+
+  async removeFromChatroom(
+    chatroomId: string,
+    authUserId: string,
+    toDeleteUserId: string,
+  ): Promise<ChatroomMember | null> {
+    const foundChatroom = await this.chatroomRepository.getById(chatroomId);
+    if (!foundChatroom) {
+      throw new NotFoundException();
+    }
+    const foundChatroomAuthMember = await this.chatroomMemberRepository.getById(
+      chatroomId,
+      authUserId,
+    );
+    if (!foundChatroomAuthMember) {
+      throw new NotFoundException();
+    }
+    if (
+      !(foundChatroomAuthMember.admin || foundChatroom.ownerId === authUserId)
+    ) {
+      throw new ForbiddenException();
+    }
+    const foundChatroomMemberToDelete =
+      await this.chatroomMemberRepository.getById(chatroomId, toDeleteUserId);
+    if (!foundChatroomMemberToDelete) {
+      throw new NotFoundException();
+    }
+    if (
+      foundChatroom.ownerId === toDeleteUserId ||
+      (foundChatroomAuthMember.admin && foundChatroomMemberToDelete.admin)
+    ) {
+      throw new ForbiddenException();
+    }
+    if (
+      foundChatroomMemberToDelete.banned ||
+      foundChatroomMemberToDelete.muted
+    ) {
+      return this.chatroomMemberRepository.updateById(
+        chatroomId,
+        toDeleteUserId,
+        {
+          joinedAt: null,
+        },
+      );
+    }
+    return this.chatroomMemberRepository.deleteById(chatroomId, toDeleteUserId);
   }
 
   async leaveChatroom(

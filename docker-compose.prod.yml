@@ -5,19 +5,28 @@ services:
       - "80:80"
 
   webapp:
+    image: ft_transcendence/webapp-prod
     build:
       context: ./webapp
       target: production
       args:
         - REACT_APP_NAME=webapp-prod
+    volumes:
+      - ./nginx/webapp.conf:/etc/nginx/conf.d/default.conf:ro
 
   transcendence-app:
+    image: ft_transcendence/transcendence-app-prod
     build:
       context: ./transcendence-app
       target: production
     environment:
-      - POSTGRES_USER={POSTGRES_USER:?required}
-      - POSTGRES_PASSWORD={POSTGRES_PASSWORD:?required}
+      - POSTGRES_USER=${POSTGRES_USER:?required}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
+      - FORTYTWO_APP_ID=${FORTYTWO_APP_ID:?required}
+      - FORTYTWO_APP_SECRET=${FORTYTWO_APP_SECRET:?required}
+      - FORTYTWO_APP_CALLBACK_URL=${FORTYTWO_APP_CALLBACK_URL:?required}
+      - SESSION_SECRET=${SESSION_SECRET:?required}
+      - MEMCACHED_SECRET=${MEMCACHED_SECRET:?required}
 
   db:
     environment:
