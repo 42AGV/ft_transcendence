@@ -20,7 +20,8 @@
 }
 
 .avatar-page-template .center-element-wrapper {
-  height: 100%;
+  overflow-y: scroll;
+  overflow-x: clip;
   display: flex;
   gap: var(--row-gap);
   flex-direction: column;
