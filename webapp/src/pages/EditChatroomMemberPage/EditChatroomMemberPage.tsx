@@ -9,6 +9,7 @@ import './EditChatroomMemberPage.css';
 import {
   AVATAR_EP_URL,
   CHATROOM_EP_URL,
+  CHATROOM_URL,
   USER_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
@@ -17,11 +18,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
-import { ChatControllerUpdateChatroomMemberRequest } from '../../shared/generated/apis/ChatApi';
+import { UpdateChatroomMemberDto } from '../../shared/generated/models/UpdateChatroomMemberDto';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { ResponseError } from '../../shared/generated';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
-
+  const { warn } = useNotificationContext();
+  const { navigate } = useNavigation();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
@@ -43,34 +48,57 @@ export default function EditChatroomMemberPage() {
   );
   const { data: crMember, isLoading: isCrMemberUserLoading } =
     useData(getChatroomMember);
-  const removeChatMember = useCallback(
-    () =>
-      chatApi.chatControllerRemoveChatroomMember({
+  const removeChatMember = useCallback(async () => {
+    try {
+      await chatApi.chatControllerRemoveChatroomMember({
         chatroomId: chatroomId!,
         userId: user?.id ?? '',
-      }),
-    [chatroomId, user],
-  );
+      });
+      navigate(`${CHATROOM_URL}/${chatroomId}/details`);
+    } catch (error: unknown) {
+      if (error instanceof ResponseError) {
+        const responseBody = await error.response.json();
+        if (responseBody.message) {
+          warn(responseBody.message);
+        } else {
+          warn(error.response.statusText);
+        }
+      } else if (error instanceof Error) {
+        warn(error.message);
+      } else {
+        warn('Could not remove the chat member');
+      }
+    }
+  }, [chatroomId, user]);
   const [updateChatroomMember, setUpdateChatroomMember] =
-    useState<ChatControllerUpdateChatroomMemberRequest | null>(null);
+    useState<UpdateChatroomMemberDto | null>(null);
   useEffect(() => {
-    if (!chatroomId || !user || !crMember) return;
+    if (!crMember) return;
     setUpdateChatroomMember({
-      chatroomId: chatroomId,
-      userId: user.id,
-      updateChatroomMemberDto: {
-        admin: crMember.admin,
-        muted: crMember.muted,
-        banned: crMember.banned,
-      },
+      admin: crMember.admin,
+      muted: crMember.muted,
+      banned: crMember.banned,
     });
-  }, [user, crMember, chatroomId]);
+  }, [crMember, chatroomId]);
+  const genericOnToggle = (dto?: UpdateChatroomMemberDto): (() => void) => {
+    return async () => {
+      if (dto === undefined || !user || !chatroomId) {
+        return;
+      }
+      await chatApi.chatControllerUpdateChatroomMember({
+        chatroomId: chatroomId,
+        userId: user.id,
+        updateChatroomMemberDto: dto,
+      });
+      setUpdateChatroomMember(dto);
+    };
+  };
   return (
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
         isLoading={isChatroomLoading && isCrMemberUserLoading && isUserLoading}
         headerStatusVariant="online"
-        title="chatroom member"
+        title="chat user"
         avatarProps={{
           url:
             // TODO: Remove the wildcard avatar when we implement #317
@@ -102,88 +130,28 @@ export default function EditChatroomMemberPage() {
             subtitle="level x"
           />
           <ToggleSwitch
-            label="admin"
-            isToggled={
-              updateChatroomMember?.updateChatroomMemberDto.admin ?? false
-            }
-            onToggle={async () => {
-              if (
-                !updateChatroomMember?.chatroomId ||
-                updateChatroomMember?.updateChatroomMemberDto.admin ===
-                  undefined ||
-                !user
-              ) {
-                return;
-              }
-              await chatApi.chatControllerUpdateChatroomMember({
-                ...updateChatroomMember,
-                updateChatroomMemberDto: {
-                  admin: !updateChatroomMember.updateChatroomMemberDto.admin,
-                },
-              });
-              setUpdateChatroomMember({
-                ...updateChatroomMember,
-                updateChatroomMemberDto: {
-                  admin: !updateChatroomMember.updateChatroomMemberDto.admin,
-                },
-              });
-            }}
+            label="Admin"
+            isToggled={updateChatroomMember?.admin ?? false}
+            onToggle={genericOnToggle({
+              ...updateChatroomMember,
+              admin: !updateChatroomMember?.admin,
+            })}
           />
           <ToggleSwitch
-            label="muted"
-            isToggled={
-              updateChatroomMember?.updateChatroomMemberDto.muted ?? false
-            }
-            onToggle={async () => {
-              if (
-                !updateChatroomMember?.chatroomId ||
-                updateChatroomMember?.updateChatroomMemberDto.muted ===
-                  undefined ||
-                !user
-              ) {
-                return;
-              }
-              await chatApi.chatControllerUpdateChatroomMember({
-                ...updateChatroomMember,
-                updateChatroomMemberDto: {
-                  muted: !updateChatroomMember.updateChatroomMemberDto.muted,
-                },
-              });
-              setUpdateChatroomMember({
-                ...updateChatroomMember,
-                updateChatroomMemberDto: {
-                  muted: !updateChatroomMember.updateChatroomMemberDto.muted,
-                },
-              });
-            }}
+            label="Muted"
+            isToggled={updateChatroomMember?.muted ?? false}
+            onToggle={genericOnToggle({
+              ...updateChatroomMember,
+              muted: !updateChatroomMember?.muted,
+            })}
           />
           <ToggleSwitch
-            label="banned"
-            isToggled={
-              updateChatroomMember?.updateChatroomMemberDto.banned ?? false
-            }
-            onToggle={async () => {
-              if (
-                !updateChatroomMember?.chatroomId ||
-                updateChatroomMember?.updateChatroomMemberDto.banned ===
-                  undefined ||
-                !user
-              ) {
-                return;
-              }
-              await chatApi.chatControllerUpdateChatroomMember({
-                ...updateChatroomMember,
-                updateChatroomMemberDto: {
-                  banned: !updateChatroomMember.updateChatroomMemberDto.banned,
-                },
-              });
-              setUpdateChatroomMember({
-                ...updateChatroomMember,
-                updateChatroomMemberDto: {
-                  banned: !updateChatroomMember.updateChatroomMemberDto.banned,
-                },
-              });
-            }}
+            label="Banned"
+            isToggled={updateChatroomMember?.banned ?? false}
+            onToggle={genericOnToggle({
+              ...updateChatroomMember,
+              banned: !updateChatroomMember?.banned,
+            })}
           />
         </>
       </AvatarPageTemplate>
