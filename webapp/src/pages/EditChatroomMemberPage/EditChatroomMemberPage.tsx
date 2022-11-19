@@ -1,5 +1,6 @@
 import {
   AvatarPageTemplate,
+  ButtonProps,
   ButtonVariant,
   IconVariant,
   Row,
@@ -22,6 +23,7 @@ import { UpdateChatroomMemberDto } from '../../shared/generated/models/UpdateCha
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
+import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
@@ -38,16 +40,29 @@ export default function EditChatroomMemberPage() {
     [username],
   );
   const { data: user, isLoading: isUserLoading } = useData(getUserByUserName);
-  const getChatroomMember = useCallback(
-    () =>
-      chatApi.chatControllerGetChatroomMember({
-        chatroomId: chatroomId!,
-        userId: user?.id ?? '',
-      }),
-    [user, chatroomId],
+  const useGetChatroomMember = (id?: string) =>
+    useCallback(
+      () =>
+        chatApi.chatControllerGetChatroomMember({
+          chatroomId: chatroomId!,
+          userId: id ?? '',
+        }),
+      [id],
+    );
+  const { data: crMember, isLoading: isCrMemberUserLoading } = useData(
+    useGetChatroomMember(user?.id),
   );
-  const { data: crMember, isLoading: isCrMemberUserLoading } =
-    useData(getChatroomMember);
+
+  const { authUser, isLoading: isAuthUserLoading } = useAuth();
+  const { data: authCrMember, isLoading: isAuthCrMemberUserLoading } = useData(
+    useGetChatroomMember(authUser?.id),
+  );
+
+  const shouldShowButton =
+    (authCrMember?.admin ?? false) ||
+    ((authUser?.id === chatroom?.ownerId ?? false) &&
+      (chatroom?.ownerId !== user?.id ?? false));
+
   const removeChatMember = useCallback(async () => {
     try {
       await chatApi.chatControllerRemoveChatroomMember({
@@ -69,7 +84,7 @@ export default function EditChatroomMemberPage() {
         warn('Could not remove the chat member');
       }
     }
-  }, [chatroomId, user]);
+  }, [chatroomId, user, navigate, warn]);
   const [updateChatroomMember, setUpdateChatroomMember] =
     useState<UpdateChatroomMemberDto | null>(null);
   useEffect(() => {
@@ -93,10 +108,24 @@ export default function EditChatroomMemberPage() {
       setUpdateChatroomMember(dto);
     };
   };
+  const button: ButtonProps | undefined = shouldShowButton
+    ? {
+        variant: ButtonVariant.WARNING,
+        iconVariant: IconVariant.REMOVE,
+        children: 'remove from chat',
+        onClick: removeChatMember,
+      }
+    : undefined;
   return (
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
-        isLoading={isChatroomLoading && isCrMemberUserLoading && isUserLoading}
+        isLoading={
+          isChatroomLoading ||
+          isCrMemberUserLoading ||
+          isUserLoading ||
+          isAuthUserLoading ||
+          isAuthCrMemberUserLoading
+        }
         headerStatusVariant="online"
         title="chat user"
         avatarProps={{
@@ -109,12 +138,7 @@ export default function EditChatroomMemberPage() {
           YCoordinate: chatroom?.avatarY,
           caption: chatroom?.name ?? '',
         }}
-        button={{
-          variant: ButtonVariant.WARNING,
-          iconVariant: IconVariant.REMOVE,
-          children: 'remove from chat',
-          onClick: removeChatMember,
-        }}
+        button={button}
       >
         <>
           <Row

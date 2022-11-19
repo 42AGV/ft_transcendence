@@ -1,5 +1,6 @@
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './ToggleSwitch.css';
+import React from 'react';
 
 type ToggleSwitchProps = {
   isToggled: boolean;
