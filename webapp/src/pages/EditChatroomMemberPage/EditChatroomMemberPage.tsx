@@ -2,14 +2,13 @@ import {
   AvatarPageTemplate,
   ButtonVariant,
   IconVariant,
-  Row,
   Text,
   TextColor,
   TextVariant,
   TextWeight,
 } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { AVATAR_EP_URL, EDIT_USER_URL } from '../../shared/urls';
+import { AVATAR_EP_URL } from '../../shared/urls';
 
 export default function EditChatroomMemberPage() {
   const { authUser, logout, isLoading: isAuthUserLoading } = useAuth();
@@ -37,20 +36,8 @@ export default function EditChatroomMemberPage() {
           color={TextColor.LIGHT}
           weight={TextWeight.MEDIUM}
         >
-          {authUser?.fullName ?? ''}
+          Test
         </Text>
-        <Text
-          variant={TextVariant.PARAGRAPH}
-          color={TextColor.LIGHT}
-          weight={TextWeight.MEDIUM}
-        >
-          {authUser?.email ?? ''}
-        </Text>
-        <Row
-          iconVariant={IconVariant.USERS}
-          url={EDIT_USER_URL}
-          title="Edit profile"
-        />
       </>
     </AvatarPageTemplate>
   );
