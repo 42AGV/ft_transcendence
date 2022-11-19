@@ -76,7 +76,7 @@ export default function ChatroomDetailsPage() {
         warn('Could not leave the chatroom');
       }
     }
-  }, [isOwner, warn, chatroomId, navigate]);
+  }, [warn, chatroomId, navigate]);
 
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;

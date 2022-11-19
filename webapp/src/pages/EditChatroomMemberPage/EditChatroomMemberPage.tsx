@@ -2,7 +2,6 @@ import {
   AvatarPageTemplate,
   ButtonVariant,
   IconVariant,
-  Loading,
   Row,
   Text,
   TextColor,
@@ -14,15 +13,6 @@ import { AVATAR_EP_URL, EDIT_USER_URL } from '../../shared/urls';
 
 export default function EditChatroomMemberPage() {
   const { authUser, logout, isLoading: isAuthUserLoading } = useAuth();
-  if (isAuthUserLoading) {
-    return (
-      <div className="auth-user-page">
-        <div className="auth-user-page-loading">
-          <Loading />
-        </div>
-      </div>
-    );
-  }
   return (
     <AvatarPageTemplate
       isLoading={isAuthUserLoading}
