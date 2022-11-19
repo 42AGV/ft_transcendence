@@ -61,6 +61,7 @@
   }
 
   .avatar-page-template .center-element-wrapper {
+    min-height: 110%;
     grid-column: 2 / calc(var(--column-end) - 1);
     grid-row: 3/4;
     display: grid;
@@ -82,7 +83,6 @@
     grid-row: 1/-1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
 
   .avatar-page-template .button {
