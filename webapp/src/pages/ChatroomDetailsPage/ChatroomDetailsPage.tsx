@@ -15,7 +15,7 @@ import {
 import { AVATAR_EP_URL, CHAT_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import './ChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
@@ -41,7 +41,6 @@ export default function ChatroomDetailsPage() {
   const { data: chatroom } = useData<Chatroom>(getChatroom);
   const { authUser } = useAuth();
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
-  const [ownerHasBeenWarned, setOwnerHasBeenWarned] = useState(false);
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     return {
       iconVariant: IconVariant.EDIT,
@@ -77,7 +76,7 @@ export default function ChatroomDetailsPage() {
         warn('Could not leave the chatroom');
       }
     }
-  }, [isOwner, warn, ownerHasBeenWarned, chatroomId, navigate]);
+  }, [isOwner, warn, chatroomId, navigate]);
 
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
