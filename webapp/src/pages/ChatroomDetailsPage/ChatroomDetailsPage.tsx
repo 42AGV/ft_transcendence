@@ -61,15 +61,6 @@ export default function ChatroomDetailsPage() {
   const leaveChatroom = useCallback(async () => {
     if (!chatroomId) return;
     try {
-      if (isOwner && !ownerHasBeenWarned) {
-        warn(
-          'You are the owner of this chatroom. If you leave, the chatroom ' +
-            'will be deleted. If you attempt to leave again, it will happen. ' +
-            'This is the first and only warning.',
-        );
-        setOwnerHasBeenWarned(true);
-        return;
-      }
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
       navigate(`${CHAT_URL}`);
     } catch (error: unknown) {
