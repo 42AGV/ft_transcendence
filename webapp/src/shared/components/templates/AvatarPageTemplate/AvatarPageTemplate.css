@@ -35,16 +35,12 @@
   margin: 0;
 }
 
-.avatar-page-template .center-element-wrapper .generic-content-wrapper > * {
+.generic-content-wrapper > *:not(:last-child) {
+  margin: 0 0 calc(var(--row-gap));
+}
+
+.generic-content-wrapper > *:last-child {
   margin: 0;
-}
-
-.generic-content-wrapper > *:first-child {
-  margin-top: 0;
-}
-
-.generic-content-wrapper > *:not(:first-child) {
-  margin-top: 1rem;
 }
 
 .avatar-page-template .button {
@@ -65,7 +61,6 @@
   }
 
   .avatar-page-template .center-element-wrapper {
-    height: 110%;
     grid-column: 2 / calc(var(--column-end) - 1);
     grid-row: 3/4;
     display: grid;
