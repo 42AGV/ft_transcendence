@@ -58,10 +58,15 @@ export default function EditChatroomMemberPage() {
     useGetChatroomMember(authUser?.id),
   );
 
+  const isAuthOwner = authUser?.id === chatroom?.ownerId ?? false;
+  const isAuthAdmin = authCrMember?.admin ?? false;
+  const isAuthBanned = authCrMember?.banned ?? true;
+  const isDestOwner = chatroom?.ownerId === user?.id ?? true;
+  const isDestAdmin = crMember?.admin ?? true;
+
   const canEdit =
-    ((authCrMember?.admin ?? false) ||
-      (authUser?.id === chatroom?.ownerId ?? false)) &&
-    (chatroom?.ownerId !== user?.id ?? false);
+    (isAuthOwner || (isAuthAdmin && !isAuthBanned && !isDestAdmin)) &&
+    !isDestOwner;
 
   const removeChatMember = useCallback(async () => {
     try {
@@ -95,19 +100,24 @@ export default function EditChatroomMemberPage() {
       banned: crMember.banned,
     });
   }, [crMember]);
-  const genericOnToggle = (dto?: UpdateChatroomMemberDto): (() => void) => {
+  const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
     return async () => {
-      if (dto === undefined || !user || !chatroomId || !canEdit) {
-        if (!canEdit) warn("You don't have permission to modify this setting");
+      if (!user || !chatroomId || !canEdit) {
+        if (!canEdit) warn("You can't modify this setting");
         return;
       }
       try {
+        if (!isAuthOwner && dto.admin !== undefined) {
+          warn('You cannot make new admins');
+          return;
+        }
+        const oldUpdateChatroomMember = updateChatroomMember;
         await chatApi.chatControllerUpdateChatroomMember({
           chatroomId: chatroomId,
           userId: user.id,
-          updateChatroomMemberDto: dto,
+          updateChatroomMemberDto: { ...dto },
         });
-        setUpdateChatroomMember(dto);
+        setUpdateChatroomMember({ ...oldUpdateChatroomMember, ...dto });
       } catch (error: unknown) {
         if (error instanceof ResponseError) {
           const responseBody = await error.response.json();
@@ -173,7 +183,6 @@ export default function EditChatroomMemberPage() {
             label="Admin"
             isToggled={updateChatroomMember?.admin ?? false}
             onToggle={genericOnToggle({
-              ...updateChatroomMember,
               admin: !updateChatroomMember?.admin,
             })}
           />
@@ -181,7 +190,6 @@ export default function EditChatroomMemberPage() {
             label="Muted"
             isToggled={updateChatroomMember?.muted ?? false}
             onToggle={genericOnToggle({
-              ...updateChatroomMember,
               muted: !updateChatroomMember?.muted,
             })}
           />
@@ -189,7 +197,6 @@ export default function EditChatroomMemberPage() {
             label="Banned"
             isToggled={updateChatroomMember?.banned ?? false}
             onToggle={genericOnToggle({
-              ...updateChatroomMember,
               banned: !updateChatroomMember?.banned,
             })}
           />
