@@ -20,26 +20,58 @@ import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { UpdateChatroomMemberDto } from '../../shared/generated/models/UpdateChatroomMemberDto';
+import { ChatroomMember } from '../../shared/generated/models/ChatroomMember';
+import { User } from '../../shared/generated/models/User';
+
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 
+type CanEditParams = {
+  chatroom: Chatroom | null;
+  destCrMember: ChatroomMember | null;
+  destUser: User | null;
+  authCrMember: ChatroomMember | null;
+};
+
+function CanEdit({
+  chatroom,
+  destCrMember,
+  destUser,
+  authCrMember,
+}: CanEditParams): boolean[] {
+  const isAuthOwner = destUser?.id === chatroom?.ownerId ?? false;
+  const isAuthAdmin = authCrMember?.admin ?? false;
+  const isAuthBanned = authCrMember?.banned ?? true;
+  const isDestOwner = chatroom?.ownerId === destUser?.id ?? true;
+  const isDestAdmin = destCrMember?.admin ?? true;
+  return [
+    (isAuthOwner || (isAuthAdmin && !isAuthBanned && !isDestAdmin)) &&
+      !isDestOwner,
+    isAuthOwner,
+  ];
+}
+
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
   const { warn } = useNotificationContext();
   const { navigate } = useNavigation();
+
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
   );
   const { data: chatroom, isLoading: isChatroomLoading } =
     useData<Chatroom>(getChatroom);
+
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
-  const { data: user, isLoading: isUserLoading } = useData(getUserByUserName);
+  const { data: destUser, isLoading: isUserLoading } =
+    useData(getUserByUserName);
+
   const useGetChatroomMember = (id?: string) =>
     useCallback(
       () =>
@@ -49,8 +81,8 @@ export default function EditChatroomMemberPage() {
         }),
       [id],
     );
-  const { data: crMember, isLoading: isCrMemberUserLoading } = useData(
-    useGetChatroomMember(user?.id),
+  const { data: destCrMember, isLoading: isCrMemberUserLoading } = useData(
+    useGetChatroomMember(destUser?.id),
   );
 
   const { authUser, isLoading: isAuthUserLoading } = useAuth();
@@ -58,21 +90,29 @@ export default function EditChatroomMemberPage() {
     useGetChatroomMember(authUser?.id),
   );
 
-  const isAuthOwner = authUser?.id === chatroom?.ownerId ?? false;
-  const isAuthAdmin = authCrMember?.admin ?? false;
-  const isAuthBanned = authCrMember?.banned ?? true;
-  const isDestOwner = chatroom?.ownerId === user?.id ?? true;
-  const isDestAdmin = crMember?.admin ?? true;
+  const [updateChatroomMemberDto, setUpdateChatroomMemberDto] =
+    useState<UpdateChatroomMemberDto | null>(null);
+  useEffect(() => {
+    if (!destCrMember) return;
+    setUpdateChatroomMemberDto({
+      admin: destCrMember.admin,
+      muted: destCrMember.muted,
+      banned: destCrMember.banned,
+    });
+  }, [destCrMember]);
 
-  const canEdit =
-    (isAuthOwner || (isAuthAdmin && !isAuthBanned && !isDestAdmin)) &&
-    !isDestOwner;
+  const [canEdit, isAuthOwner] = CanEdit({
+    chatroom,
+    destCrMember,
+    destUser,
+    authCrMember,
+  });
 
   const removeChatMember = useCallback(async () => {
     try {
       await chatApi.chatControllerRemoveChatroomMember({
         chatroomId: chatroomId!,
-        userId: user?.id ?? '',
+        userId: destUser?.id ?? '',
       });
       navigate(`${CHATROOM_URL}/${chatroomId}/details`);
     } catch (error: unknown) {
@@ -89,20 +129,11 @@ export default function EditChatroomMemberPage() {
         warn('Could not remove the chat member');
       }
     }
-  }, [chatroomId, user, navigate, warn]);
-  const [updateChatroomMember, setUpdateChatroomMember] =
-    useState<UpdateChatroomMemberDto | null>(null);
-  useEffect(() => {
-    if (!crMember) return;
-    setUpdateChatroomMember({
-      admin: crMember.admin,
-      muted: crMember.muted,
-      banned: crMember.banned,
-    });
-  }, [crMember]);
+  }, [chatroomId, destUser, navigate, warn]);
+
   const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
     return async () => {
-      if (!user || !chatroomId || !canEdit) {
+      if (!destUser || !chatroomId || !canEdit) {
         if (!canEdit) warn("You can't modify this setting");
         return;
       }
@@ -111,13 +142,13 @@ export default function EditChatroomMemberPage() {
           warn('You cannot make new admins');
           return;
         }
-        const oldUpdateChatroomMember = updateChatroomMember;
+        const oldUpdateChatroomMember = updateChatroomMemberDto;
         await chatApi.chatControllerUpdateChatroomMember({
           chatroomId: chatroomId,
-          userId: user.id,
+          userId: destUser.id,
           updateChatroomMemberDto: dto,
         });
-        setUpdateChatroomMember({ ...oldUpdateChatroomMember, ...dto });
+        setUpdateChatroomMemberDto({ ...oldUpdateChatroomMember, ...dto });
       } catch (error: unknown) {
         if (error instanceof ResponseError) {
           const responseBody = await error.response.json();
@@ -134,6 +165,7 @@ export default function EditChatroomMemberPage() {
       }
     };
   };
+
   const button: ButtonProps | undefined = canEdit
     ? {
         variant: ButtonVariant.WARNING,
@@ -169,10 +201,10 @@ export default function EditChatroomMemberPage() {
         <>
           <Row
             avatarProps={{
-              url: `${AVATAR_EP_URL}/${user?.avatarId ?? ''}`,
+              url: `${AVATAR_EP_URL}/${destUser?.avatarId ?? ''}`,
               status: 'offline',
-              XCoordinate: user?.avatarX ?? 0,
-              YCoordinate: user?.avatarY ?? 0,
+              XCoordinate: destUser?.avatarX ?? 0,
+              YCoordinate: destUser?.avatarY ?? 0,
             }}
             iconVariant={IconVariant.USERS}
             url={`${USER_URL}/${username}`}
@@ -181,23 +213,23 @@ export default function EditChatroomMemberPage() {
           />
           <ToggleSwitch
             label="Admin"
-            isToggled={updateChatroomMember?.admin ?? false}
+            isToggled={updateChatroomMemberDto?.admin ?? false}
             onToggle={genericOnToggle({
-              admin: !updateChatroomMember?.admin,
+              admin: !updateChatroomMemberDto?.admin,
             })}
           />
           <ToggleSwitch
             label="Muted"
-            isToggled={updateChatroomMember?.muted ?? false}
+            isToggled={updateChatroomMemberDto?.muted ?? false}
             onToggle={genericOnToggle({
-              muted: !updateChatroomMember?.muted,
+              muted: !updateChatroomMemberDto?.muted,
             })}
           />
           <ToggleSwitch
             label="Banned"
-            isToggled={updateChatroomMember?.banned ?? false}
+            isToggled={updateChatroomMemberDto?.banned ?? false}
             onToggle={genericOnToggle({
-              banned: !updateChatroomMember?.banned,
+              banned: !updateChatroomMemberDto?.banned,
             })}
           />
         </>
