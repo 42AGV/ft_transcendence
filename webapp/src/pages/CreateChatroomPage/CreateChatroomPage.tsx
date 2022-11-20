@@ -1,54 +1,32 @@
 import {
-  Button,
+  AvatarPageTemplate,
   ButtonVariant,
-  Header,
-  IconVariant,
   Input,
   InputVariant,
-  MediumAvatar,
   Text,
   TextColor,
   TextVariant,
   TextWeight,
 } from '../../shared/components';
 import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
-import { useNavigate } from 'react-router-dom';
-import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { useEffect, useState } from 'react';
-import { CreateChatroomDto, ResponseError } from '../../shared/generated';
 import './CreateChatroomPage.css';
+import React, { useState } from 'react';
+import { CreateChatroomDto, ResponseError } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
-
-type FormStatus = {
-  type: 'success' | 'error' | 'pending';
-  message: string;
-};
-
-const initialSubmitFormStatus: FormStatus = {
-  type: 'pending',
-  message: '',
-};
+import { Chatroom } from '../../shared/generated/models/Chatroom';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 export default function CreateChatroomPage() {
+  const { warn, notify } = useNotificationContext();
   const initialFormValues: CreateChatroomDto = {
     name: '',
     password: '',
     confirmationPassword: '',
   };
-  const navigate = useNavigate();
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
   const [formValues, setFormValues] =
     useState<CreateChatroomDto>(initialFormValues);
-  const [status, setStatus] = useState<FormStatus>({
-    type: 'pending',
-    message: '',
-  });
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setStatus(initialSubmitFormStatus);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [status]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,16 +37,10 @@ export default function CreateChatroomPage() {
 
   function hasValidFormValues() {
     if (formValues.name === '') {
-      setStatus({
-        type: 'error',
-        message: 'Chat room name can not be empty',
-      });
+      warn('Chat room name can not be empty');
       return false;
     } else if (formValues.password !== formValues.confirmationPassword) {
-      setStatus({
-        type: 'error',
-        message: 'Passwords are different',
-      });
+      warn('Passwords are different');
       return false;
     }
     return true;
@@ -85,18 +57,13 @@ export default function CreateChatroomPage() {
           confirmationPassword: formValues.confirmationPassword || null,
         },
       });
-      setStatus({
-        type: 'success',
-        message: 'Registration complete',
-      });
-      setTimeout(() => {
-        navigate(CHAT_URL);
-      }, 2000);
+      notify('Registration complete');
+      navigate(CHAT_URL);
     } catch (error) {
       if (error instanceof ResponseError) {
-        setStatus({ type: 'error', message: `${error.response.statusText}` });
+        warn(error.response.statusText);
       } else if (error instanceof Error) {
-        setStatus({ type: 'error', message: `${error.message}` });
+        warn(error.message);
       }
     }
   }
@@ -105,85 +72,76 @@ export default function CreateChatroomPage() {
     register().catch((e) => console.error(e));
   };
 
+  const chatroom: Partial<Chatroom> = {};
   return (
-    <div className="create-chat-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-        add chat
-      </Header>
-      <div className="create-chat-page-avatar-properties">
-        <div className="create-chat-page-avatar">
-          {/* TODO: make chatroom avatar not null*/}
-          <MediumAvatar url={WILDCARD_AVATAR_URL} />
-        </div>
+    <AvatarPageTemplate
+      isLoading={false}
+      title="create chatroom"
+      avatarProps={{
+        url:
+          // TODO: Remove the wildcard avatar when we implement #317
+          WILDCARD_AVATAR_URL,
+        XCoordinate: chatroom?.avatarX ?? 0,
+        YCoordinate: chatroom?.avatarY ?? 0,
+        caption: `${
+          formValues.password ? 'private channel' : 'public channel'
+        }`,
+        editUrl: WILDCARD_AVATAR_URL,
+      }}
+      button={{
+        form: 'create-chat-page-form',
+        children: 'Save',
+        variant: ButtonVariant.SUBMIT,
+      }}
+    >
+      <>
         <div className="create-chat-page-properties">
           <Text
-            variant={TextVariant.PARAGRAPH}
+            variant={TextVariant.SUBTITLE}
             color={TextColor.LIGHT}
             weight={TextWeight.REGULAR}
           >
-            {formValues.name ? formValues.name : 'chat room name'}
-          </Text>
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={TextColor.LIGHT}
-            weight={TextWeight.REGULAR}
-          >
-            {formValues.password ? 'private channel' : 'public channel'}
+            {formValues.name ? formValues.name : 'chatroom name'}
           </Text>
         </div>
-      </div>
-      <form
-        id="create-chat-page-form"
-        className="create-chat-page-form"
-        onSubmit={handleOnSubmit}
-      >
-        <div className="create-chat-page-form-inputs-container">
-          <Input
-            variant={InputVariant.LIGHT}
-            label="Chat Room Name"
-            placeholder="chat room name"
-            value={formValues.name}
-            name="name"
-            onChange={handleInputChange}
-          />
-          <Input
-            variant={InputVariant.LIGHT}
-            label="Password"
-            placeholder="password"
-            value={formValues.password ? formValues.password : ''}
-            name="password"
-            type="password"
-            onChange={handleInputChange}
-          />
-          <Input
-            variant={InputVariant.LIGHT}
-            placeholder="repeat password"
-            value={
-              formValues.confirmationPassword
-                ? formValues.confirmationPassword
-                : ''
-            }
-            name="confirmationPassword"
-            type="password"
-            onChange={handleInputChange}
-          />
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={
-              status.type === 'success' ? TextColor.ONLINE : TextColor.OFFLINE
-            }
-          >
-            {status.message}
-          </Text>
-        </div>
-      </form>
-      <div className="create-chat-page-buttons">
-        <Button
-          form="create-chat-page-form"
-          children="Save"
-          variant={ButtonVariant.SUBMIT}
-        />
-      </div>
-    </div>
+        <form
+          id="create-chat-page-form"
+          className="create-chat-page-form"
+          onSubmit={handleOnSubmit}
+        >
+          <div className="create-chat-page-form-inputs-container">
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Name"
+              placeholder="chatroom name"
+              value={formValues.name}
+              name="name"
+              onChange={handleInputChange}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Password"
+              placeholder="password"
+              value={formValues.password ? formValues.password : ''}
+              name="password"
+              type="password"
+              onChange={handleInputChange}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              placeholder="repeat password"
+              value={
+                formValues.confirmationPassword
+                  ? formValues.confirmationPassword
+                  : ''
+              }
+              name="confirmationPassword"
+              type="password"
+              onChange={handleInputChange}
+            />
+          </div>
+        </form>
+      </>
+    </AvatarPageTemplate>
   );
 }
