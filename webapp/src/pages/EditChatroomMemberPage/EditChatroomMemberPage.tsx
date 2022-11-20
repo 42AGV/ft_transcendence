@@ -14,11 +14,10 @@ import {
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
-import { UpdateChatroomMemberDto } from '../../shared/generated/models/UpdateChatroomMemberDto';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
@@ -61,17 +60,6 @@ export default function EditChatroomMemberPage() {
   const { data: authCrMember, isLoading: isAuthCrMemberUserLoading } = useData(
     useGetChatroomMember(authUser?.id),
   );
-
-  const [updateChatroomMemberDto, setUpdateChatroomMemberDto] =
-    useState<UpdateChatroomMemberDto | null>(null);
-  useEffect(() => {
-    if (!destCrMember) return;
-    setUpdateChatroomMemberDto({
-      admin: destCrMember.admin,
-      muted: destCrMember.muted,
-      banned: destCrMember.banned,
-    });
-  }, [destCrMember]);
 
   const [canEdit] = CanEdit({
     chatroom,
@@ -150,8 +138,6 @@ export default function EditChatroomMemberPage() {
             subtitle="level x"
           />
           <ToggleSwitchSet
-            updateChatroomMemberDto={updateChatroomMemberDto}
-            setUpdateChatroomMemberDto={setUpdateChatroomMemberDto}
             isLoading={isLoading}
             chatroomId={chatroomId ?? ''}
             canEditParams={{

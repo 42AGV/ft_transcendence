@@ -1,7 +1,7 @@
 import { ToggleSwitch } from '../../../shared/components';
 import { UpdateChatroomMemberDto } from '../../../shared/generated/models/UpdateChatroomMemberDto';
 import { ResponseError } from '../../../shared/generated';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { chatApi } from '../../../shared/services/ApiService';
 import { useNotificationContext } from '../../../shared/context/NotificationContext';
 import { ChatroomMember } from '../../../shared/generated/models/ChatroomMember';
@@ -17,10 +17,6 @@ type CanEditParams = {
 };
 
 type ToggleSwitchSetProps = {
-  updateChatroomMemberDto: UpdateChatroomMemberDto | null;
-  setUpdateChatroomMemberDto: React.Dispatch<
-    React.SetStateAction<UpdateChatroomMemberDto | null>
-  >;
   isLoading: boolean;
   chatroomId: string;
   canEditParams: CanEditParams;
@@ -46,12 +42,20 @@ export function CanEdit({
 }
 
 export default function ToggleSwitchSet({
-  updateChatroomMemberDto,
-  setUpdateChatroomMemberDto,
   canEditParams,
   isLoading,
   chatroomId,
 }: ToggleSwitchSetProps) {
+  const [updateChatroomMemberDto, setUpdateChatroomMemberDto] =
+    useState<UpdateChatroomMemberDto | null>(null);
+  useEffect(() => {
+    if (!canEditParams.destCrMember) return;
+    setUpdateChatroomMemberDto({
+      admin: canEditParams.destCrMember.admin,
+      muted: canEditParams.destCrMember.muted,
+      banned: canEditParams.destCrMember.banned,
+    });
+  }, [canEditParams.destCrMember]);
   const { warn } = useNotificationContext();
 
   const [canEdit, isAuthOwner] = CanEdit(canEditParams);
