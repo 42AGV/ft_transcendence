@@ -16,7 +16,7 @@ type CanEditParams = {
   authUserId: string;
 };
 
-export type ToggleSwitchSetProps = {
+type ToggleSwitchSetProps = {
   updateChatroomMemberDto: UpdateChatroomMemberDto | null;
   setUpdateChatroomMemberDto: React.Dispatch<
     React.SetStateAction<UpdateChatroomMemberDto | null>

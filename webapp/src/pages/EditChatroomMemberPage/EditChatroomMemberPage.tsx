@@ -150,18 +150,16 @@ export default function EditChatroomMemberPage() {
             subtitle="level x"
           />
           <ToggleSwitchSet
-            {...{
-              updateChatroomMemberDto,
-              setUpdateChatroomMemberDto,
-              isLoading,
-              chatroomId: chatroomId ?? '',
-              canEditParams: {
-                chatroom,
-                destCrMember,
-                destUser,
-                authCrMember,
-                authUserId: authUser?.id ?? '',
-              },
+            updateChatroomMemberDto={updateChatroomMemberDto}
+            setUpdateChatroomMemberDto={setUpdateChatroomMemberDto}
+            isLoading={isLoading}
+            chatroomId={chatroomId ?? ''}
+            canEditParams={{
+              chatroom,
+              destCrMember,
+              destUser,
+              authCrMember,
+              authUserId: authUser?.id ?? '',
             }}
           />
         </>
