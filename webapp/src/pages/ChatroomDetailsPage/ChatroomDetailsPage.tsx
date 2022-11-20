@@ -31,6 +31,9 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 import { Query } from '../../shared/types';
 
 export default function ChatroomDetailsPage() {
+  // TODO: is the authUser is not a chatroom member, maybe this should return
+  // a notfound. Otherwise, the api will return error responses, but we will
+  // still draw the page. Check such authentication validation in other pages
   const { warn } = useNotificationContext();
   const { chatroomId } = useParams();
   const { goBack, navigate } = useNavigation();
