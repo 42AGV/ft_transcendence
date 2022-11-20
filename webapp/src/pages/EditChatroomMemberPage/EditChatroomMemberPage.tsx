@@ -115,7 +115,7 @@ export default function EditChatroomMemberPage() {
         await chatApi.chatControllerUpdateChatroomMember({
           chatroomId: chatroomId,
           userId: user.id,
-          updateChatroomMemberDto: { ...dto },
+          updateChatroomMemberDto: dto,
         });
         setUpdateChatroomMember({ ...oldUpdateChatroomMember, ...dto });
       } catch (error: unknown) {
