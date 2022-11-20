@@ -1,6 +1,6 @@
 import { UpdateChatroomDto } from '../../dto/update-chatroom.dto';
 import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
-import { Chatroom } from '../../infrastructure/db/chatroom.entity';
+import { Chatroom } from "./chatroom.entity";
 import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
 
 export abstract class IChatroomRepository {
@@ -14,6 +14,10 @@ export abstract class IChatroomRepository {
   ): Promise<Chatroom | null>;
   abstract addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null>;
   abstract getPaginatedChatrooms(
+    queryDto: Required<PaginationWithSearchQueryDto>,
+  ): Promise<Chatroom[] | null>;
+  abstract getAuthUserPaginatedChatrooms(
+    authUserId: string,
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Chatroom[] | null>;
   abstract addAvatarAndAddChatroom(

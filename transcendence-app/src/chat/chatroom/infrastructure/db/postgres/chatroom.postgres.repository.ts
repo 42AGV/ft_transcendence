@@ -93,6 +93,13 @@ export class ChatroomPostgresRepository
       : null;
   }
 
+  async getAuthUserPaginatedChatrooms(
+    authUserId: string,
+    queryDto: Required<PaginationWithSearchQueryDto>,
+  ): Promise<Chatroom[] | null> {
+    return null;
+  }
+
   async addAvatarAndAddChatroom(
     avatar: LocalFile,
     chatroom: Chatroom,
