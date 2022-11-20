@@ -4,7 +4,6 @@ import {
   ButtonVariant,
   IconVariant,
   Row,
-  ToggleSwitch,
 } from '../../shared/components';
 import './EditChatroomMemberPage.css';
 import {
@@ -20,38 +19,11 @@ import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { UpdateChatroomMemberDto } from '../../shared/generated/models/UpdateChatroomMemberDto';
-import { ChatroomMember } from '../../shared/generated/models/ChatroomMember';
-import { User } from '../../shared/generated/models/User';
-
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
-
-type CanEditParams = {
-  chatroom: Chatroom | null;
-  destCrMember: ChatroomMember | null;
-  destUser: User | null;
-  authCrMember: ChatroomMember | null;
-};
-
-function CanEdit({
-  chatroom,
-  destCrMember,
-  destUser,
-  authCrMember,
-}: CanEditParams): boolean[] {
-  const isAuthOwner = destUser?.id === chatroom?.ownerId ?? false;
-  const isAuthAdmin = authCrMember?.admin ?? false;
-  const isAuthBanned = authCrMember?.banned ?? true;
-  const isDestOwner = chatroom?.ownerId === destUser?.id ?? true;
-  const isDestAdmin = destCrMember?.admin ?? true;
-  return [
-    (isAuthOwner || (isAuthAdmin && !isAuthBanned && !isDestAdmin)) &&
-      !isDestOwner,
-    isAuthOwner,
-  ];
-}
+import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
@@ -101,11 +73,12 @@ export default function EditChatroomMemberPage() {
     });
   }, [destCrMember]);
 
-  const [canEdit, isAuthOwner] = CanEdit({
+  const [canEdit] = CanEdit({
     chatroom,
     destCrMember,
     destUser,
     authCrMember,
+    authUserId: authUser?.id ?? '',
   });
 
   const removeChatMember = useCallback(async () => {
@@ -131,41 +104,6 @@ export default function EditChatroomMemberPage() {
     }
   }, [chatroomId, destUser, navigate, warn]);
 
-  const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
-    return async () => {
-      if (!destUser || !chatroomId || !canEdit) {
-        if (!canEdit) warn("You can't modify this setting");
-        return;
-      }
-      try {
-        if (!isAuthOwner && dto.admin !== undefined) {
-          warn('You cannot make new admins');
-          return;
-        }
-        const oldUpdateChatroomMember = updateChatroomMemberDto;
-        await chatApi.chatControllerUpdateChatroomMember({
-          chatroomId: chatroomId,
-          userId: destUser.id,
-          updateChatroomMemberDto: dto,
-        });
-        setUpdateChatroomMemberDto({ ...oldUpdateChatroomMember, ...dto });
-      } catch (error: unknown) {
-        if (error instanceof ResponseError) {
-          const responseBody = await error.response.json();
-          if (responseBody.message) {
-            warn(responseBody.message);
-          } else {
-            warn(error.response.statusText);
-          }
-        } else if (error instanceof Error) {
-          warn(error.message);
-        } else {
-          warn('Could not update the chat member');
-        }
-      }
-    };
-  };
-
   const button: ButtonProps | undefined = canEdit
     ? {
         variant: ButtonVariant.WARNING,
@@ -174,16 +112,16 @@ export default function EditChatroomMemberPage() {
         onClick: removeChatMember,
       }
     : undefined;
+  const isLoading: boolean =
+    isChatroomLoading ||
+    isCrMemberUserLoading ||
+    isUserLoading ||
+    isAuthUserLoading ||
+    isAuthCrMemberUserLoading;
   return (
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
-        isLoading={
-          isChatroomLoading ||
-          isCrMemberUserLoading ||
-          isUserLoading ||
-          isAuthUserLoading ||
-          isAuthCrMemberUserLoading
-        }
+        isLoading={isLoading}
         headerStatusVariant="online"
         title="chat user"
         avatarProps={{
@@ -211,26 +149,20 @@ export default function EditChatroomMemberPage() {
             title={username}
             subtitle="level x"
           />
-          <ToggleSwitch
-            label="Admin"
-            isToggled={updateChatroomMemberDto?.admin ?? false}
-            onToggle={genericOnToggle({
-              admin: !updateChatroomMemberDto?.admin,
-            })}
-          />
-          <ToggleSwitch
-            label="Muted"
-            isToggled={updateChatroomMemberDto?.muted ?? false}
-            onToggle={genericOnToggle({
-              muted: !updateChatroomMemberDto?.muted,
-            })}
-          />
-          <ToggleSwitch
-            label="Banned"
-            isToggled={updateChatroomMemberDto?.banned ?? false}
-            onToggle={genericOnToggle({
-              banned: !updateChatroomMemberDto?.banned,
-            })}
+          <ToggleSwitchSet
+            {...{
+              updateChatroomMemberDto,
+              setUpdateChatroomMemberDto,
+              isLoading,
+              chatroomId: chatroomId ?? '',
+              canEditParams: {
+                chatroom,
+                destCrMember,
+                destUser,
+                authCrMember,
+                authUserId: authUser?.id ?? '',
+              },
+            }}
           />
         </>
       </AvatarPageTemplate>
