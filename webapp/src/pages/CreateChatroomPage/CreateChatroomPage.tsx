@@ -8,7 +8,11 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { CHAT_URL, WILDCARD_AVATAR_URL } from '../../shared/urls';
+import {
+  CHAT_URL,
+  EDIT_AVATAR_URL,
+  WILDCARD_AVATAR_URL,
+} from '../../shared/urls';
 import './CreateChatroomPage.css';
 import React, { useState } from 'react';
 import { CreateChatroomDto, ResponseError } from '../../shared/generated';
@@ -45,6 +49,7 @@ export default function CreateChatroomPage() {
     }
     return true;
   }
+
   async function register() {
     if (!hasValidFormValues()) {
       return;
@@ -67,6 +72,7 @@ export default function CreateChatroomPage() {
       }
     }
   }
+
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     register().catch((e) => console.error(e));
@@ -87,7 +93,7 @@ export default function CreateChatroomPage() {
           caption: `${
             formValues.password ? 'private channel' : 'public channel'
           }`,
-          editUrl: WILDCARD_AVATAR_URL,
+          editUrl: EDIT_AVATAR_URL,
         }}
         button={{
           form: 'create-chat-page-form',
