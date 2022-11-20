@@ -74,74 +74,76 @@ export default function CreateChatroomPage() {
 
   const chatroom: Partial<Chatroom> = {};
   return (
-    <AvatarPageTemplate
-      isLoading={false}
-      title="create chatroom"
-      avatarProps={{
-        url:
-          // TODO: Remove the wildcard avatar when we implement #317
-          WILDCARD_AVATAR_URL,
-        XCoordinate: chatroom?.avatarX ?? 0,
-        YCoordinate: chatroom?.avatarY ?? 0,
-        caption: `${
-          formValues.password ? 'private channel' : 'public channel'
-        }`,
-        editUrl: WILDCARD_AVATAR_URL,
-      }}
-      button={{
-        form: 'create-chat-page-form',
-        children: 'Save',
-        variant: ButtonVariant.SUBMIT,
-      }}
-    >
-      <>
-        <div className="create-chat-page-properties">
-          <Text
-            variant={TextVariant.SUBTITLE}
-            color={TextColor.LIGHT}
-            weight={TextWeight.REGULAR}
-          >
-            {formValues.name ? formValues.name : 'chatroom name'}
-          </Text>
-        </div>
-        <form
-          id="create-chat-page-form"
-          className="create-chat-page-form"
-          onSubmit={handleOnSubmit}
-        >
-          <div className="create-chat-page-form-inputs-container">
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Name"
-              placeholder="chatroom name"
-              value={formValues.name}
-              name="name"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Password"
-              placeholder="password"
-              value={formValues.password ? formValues.password : ''}
-              name="password"
-              type="password"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              placeholder="repeat password"
-              value={
-                formValues.confirmationPassword
-                  ? formValues.confirmationPassword
-                  : ''
-              }
-              name="confirmationPassword"
-              type="password"
-              onChange={handleInputChange}
-            />
+    <div className="create-chatroom-page">
+      <AvatarPageTemplate
+        isLoading={false}
+        title="create chatroom"
+        avatarProps={{
+          url:
+            // TODO: Remove the wildcard avatar when we implement #317
+            WILDCARD_AVATAR_URL,
+          XCoordinate: chatroom?.avatarX ?? 0,
+          YCoordinate: chatroom?.avatarY ?? 0,
+          caption: `${
+            formValues.password ? 'private channel' : 'public channel'
+          }`,
+          editUrl: WILDCARD_AVATAR_URL,
+        }}
+        button={{
+          form: 'create-chat-page-form',
+          children: 'Save',
+          variant: ButtonVariant.SUBMIT,
+        }}
+      >
+        <>
+          <div className="create-chat-page-properties">
+            <Text
+              variant={TextVariant.HEADING}
+              color={TextColor.LIGHT}
+              weight={TextWeight.REGULAR}
+            >
+              {formValues.name ? formValues.name : 'chatroom name'}
+            </Text>
           </div>
-        </form>
-      </>
-    </AvatarPageTemplate>
+          <form
+            id="create-chat-page-form"
+            className="create-chat-page-form"
+            onSubmit={handleOnSubmit}
+          >
+            <div className="create-chat-page-form-inputs-container">
+              <Input
+                variant={InputVariant.LIGHT}
+                label="Name"
+                placeholder="chatroom name"
+                value={formValues.name}
+                name="name"
+                onChange={handleInputChange}
+              />
+              <Input
+                variant={InputVariant.LIGHT}
+                label="Password"
+                placeholder="password"
+                value={formValues.password ? formValues.password : ''}
+                name="password"
+                type="password"
+                onChange={handleInputChange}
+              />
+              <Input
+                variant={InputVariant.LIGHT}
+                placeholder="repeat password"
+                value={
+                  formValues.confirmationPassword
+                    ? formValues.confirmationPassword
+                    : ''
+                }
+                name="confirmationPassword"
+                type="password"
+                onChange={handleInputChange}
+              />
+            </div>
+          </form>
+        </>
+      </AvatarPageTemplate>
+    </div>
   );
 }

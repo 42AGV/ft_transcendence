@@ -1,7 +1,8 @@
-.create-chat-page-form .create-chat-page-form-inputs-container > .input {
+.create-chat-page-form-inputs-container > .input {
   margin-bottom: 0.875rem;
 }
 
-.create-chat-page-properties h2 {
+.create-chatroom-page .create-chat-page-properties,
+.create-chatroom-page .create-chat-page-properties h3 {
   margin: 0;
 }
