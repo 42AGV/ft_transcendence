@@ -178,7 +178,7 @@ export class ChatController {
       chatroomId,
       user.id,
     );
-    if (!isChatMember) {
+    if (!isChatMember || isChatMember.banned) {
       throw new ForbiddenException();
     }
     const chatroomsMembers =
@@ -277,7 +277,7 @@ export class ChatController {
       chatroomId,
       user.id,
     );
-    if (!isChatMember) {
+    if (!isChatMember || isChatMember.banned) {
       throw new ForbiddenException();
     }
     const messages = await this.chatService.getChatroomMessagesWithUser(

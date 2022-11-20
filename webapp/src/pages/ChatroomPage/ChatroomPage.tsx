@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { ChatroomMessageInput, ChatroomMessages } from './components';
 import { Header, IconVariant, Loading } from '../../shared/components';
-import { CHATROOM_URL } from '../../shared/urls';
+import { CHAT_URL, CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import './ChatroomPage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
@@ -47,7 +47,8 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   );
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
-  const enableNotifications = chatroom !== null && chatroomMember !== null;
+  const enableNotifications =
+    chatroom !== null && chatroomMember !== null && !chatroomMember.banned;
 
   useEffect(() => {
     socket.emit('joinChatroom', { chatroomId });
@@ -85,6 +86,9 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
 
   if (!chatroomMember) {
     return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
+  }
+  if (chatroomMember.banned) {
+    return <Navigate to={`${CHAT_URL}`} replace />;
   }
 
   return (
