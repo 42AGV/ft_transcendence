@@ -210,13 +210,13 @@ export default function CreateChatroomPage() {
           XCoordinate: chatroom?.avatarX,
           YCoordinate: chatroom?.avatarY,
         }}
-        secondaryButton={{
+        button={{
           iconVariant: IconVariant.REMOVE,
           children: 'Delete chatroom',
           variant: ButtonVariant.WARNING,
           onClick: deleteChatoom,
         }}
-        button={{
+        secondaryButton={{
           iconVariant: IconVariant.EDIT,
           form: 'edit-chatroom-details-form',
           children: 'Save',
@@ -224,55 +224,62 @@ export default function CreateChatroomPage() {
         }}
         isNotFound={false}
       >
-        <form
-          id="edit-chatroom-details-form"
-          className="edit-chatroom-details-form"
-          onSubmit={handleOnSubmit}
-        >
-          <div className="edit-chatroom-details-form-inputs-container">
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Chat Room Name"
-              placeholder="name"
-              value={formValues.name}
-              name="name"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Old password"
-              placeholder="old password"
-              value={formValues.oldPassword ? formValues.oldPassword : ''}
-              name="oldPassword"
-              type="password"
-              onChange={handleInputChange}
-              disabled={chatroom.isPublic}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="New password"
-              placeholder="new password"
-              value={formValues.password ? formValues.password : ''}
-              name="password"
-              type="password"
-              onChange={handleInputChange}
-              disabled={isPublic}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              placeholder="repeat password"
-              value={
-                formValues.confirmationPassword
-                  ? formValues.confirmationPassword
-                  : ''
-              }
-              name="confirmationPassword"
-              type="password"
-              onChange={handleInputChange}
-              disabled={isPublic}
-            />
-          </div>
-        </form>
+        <>
+          <ToggleSwitch
+            isToggled={!isPublic}
+            onToggle={() => setIsPublic(!isPublic)}
+            label={isPublic ? 'public channel' : 'private channel'}
+          />
+          <form
+            id="edit-chatroom-details-form"
+            className="edit-chatroom-details-form"
+            onSubmit={handleOnSubmit}
+          >
+            <div className="edit-chatroom-details-form-inputs-container">
+              <Input
+                variant={InputVariant.LIGHT}
+                label="Chat Room Name"
+                placeholder="name"
+                value={formValues.name}
+                name="name"
+                onChange={handleInputChange}
+              />
+              <Input
+                variant={InputVariant.LIGHT}
+                label="Old password"
+                placeholder="old password"
+                value={formValues.oldPassword ? formValues.oldPassword : ''}
+                name="oldPassword"
+                type="password"
+                onChange={handleInputChange}
+                disabled={chatroom.isPublic}
+              />
+              <Input
+                variant={InputVariant.LIGHT}
+                label="New password"
+                placeholder="new password"
+                value={formValues.password ? formValues.password : ''}
+                name="password"
+                type="password"
+                onChange={handleInputChange}
+                disabled={isPublic}
+              />
+              <Input
+                variant={InputVariant.LIGHT}
+                placeholder="repeat password"
+                value={
+                  formValues.confirmationPassword
+                    ? formValues.confirmationPassword
+                    : ''
+                }
+                name="confirmationPassword"
+                type="password"
+                onChange={handleInputChange}
+                disabled={isPublic}
+              />
+            </div>
+          </form>
+        </>
       </AvatarPageTemplate>
     </div>
   );
