@@ -1,6 +1,6 @@
 import { UpdateChatroomDto } from '../../dto/update-chatroom.dto';
 import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
-import { Chatroom } from "./chatroom.entity";
+import { Chatroom } from './chatroom.entity';
 import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
 
 export abstract class IChatroomRepository {
