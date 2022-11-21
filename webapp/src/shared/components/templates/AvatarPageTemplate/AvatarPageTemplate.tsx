@@ -10,9 +10,11 @@ import {
   StatusVariant,
 } from '../../index';
 import { useNavigation } from '../../../hooks/UseNavigation';
+import NotFoundPage from '../../../../pages/NotFoundPage/NotFoundPage';
 
 type AvatarPageTemplateProps = {
   isLoading: boolean;
+  isNotFound: boolean;
   headerStatusVariant?: StatusVariant;
   title: string;
   avatarProps: LargeAvatarProps;
@@ -27,6 +29,7 @@ export default function AvatarPageTemplate({
   button,
   title,
   headerStatusVariant,
+  isNotFound,
 }: AvatarPageTemplateProps) {
   const { goBack } = useNavigation();
 
@@ -38,6 +41,10 @@ export default function AvatarPageTemplate({
         </div>
       </div>
     );
+  }
+
+  if (isNotFound) {
+    return <NotFoundPage />;
   }
 
   return (

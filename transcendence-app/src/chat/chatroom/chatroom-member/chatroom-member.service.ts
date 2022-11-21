@@ -48,7 +48,7 @@ export class ChatroomMemberService {
       chatId,
       userId,
     );
-    return chatMember && !chatMember.banned ? chatMember : null;
+    return chatMember ?? null;
   }
 
   updateById(
@@ -78,6 +78,9 @@ export class ChatroomMemberService {
     );
     if (!foundChatroomAuthMember) {
       throw new NotFoundException();
+    }
+    if (foundChatroomAuthMember.banned) {
+      throw new ForbiddenException();
     }
     if (
       !(foundChatroomAuthMember.admin || foundChatroom.ownerId === authUserId)
