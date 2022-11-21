@@ -26,6 +26,7 @@
 
 .avatar-large {
   margin: 0;
+  width: 10rem;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -64,10 +65,10 @@
 .avatar-small__image,
 .avatar-medium__image {
   object-fit: cover;
-  -webkit-transform: scale(
+  transform: scale(
     1.55
   ); /* TODO: maybe we would like to save this into another parameter */
-  -webkit-mask-image: radial-gradient(
+  mask-image: radial-gradient(
     circle var(--radius) at center,
     #000 0,
     #000 97%,

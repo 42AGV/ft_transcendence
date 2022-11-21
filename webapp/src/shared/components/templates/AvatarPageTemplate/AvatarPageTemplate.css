@@ -27,6 +27,10 @@
   flex-direction: column;
 }
 
+.avatar-page-template .center-element-wrapper .avatar-large {
+  align-self: center;
+}
+
 .avatar-page-template .center-element-wrapper .generic-content-wrapper {
   width: 100%;
   gap: var(--row-gap);
