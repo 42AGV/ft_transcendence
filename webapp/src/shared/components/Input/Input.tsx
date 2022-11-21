@@ -16,6 +16,7 @@ type InputProps = {
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   name?: string;
   type?: string;
+  disabled?: boolean;
 };
 
 export default function Input({
@@ -27,11 +28,16 @@ export default function Input({
   onChange,
   name,
   type,
+  disabled = false,
 }: InputProps) {
   return (
     <div className="input">
       <label className="subheading-bold">{label}</label>
-      <div className={`input-container input-container-${variant}`}>
+      <div
+        className={`input-container input-container-${variant} ${
+          disabled ? 'input-container-disabled' : ''
+        }`}
+      >
         {iconVariant && (
           <Icon
             variant={iconVariant}
@@ -40,13 +46,16 @@ export default function Input({
           ></Icon>
         )}
         <input
-          className={`input-form input-form-${variant} paragraph-regular `}
+          className={`input-form input-form-${variant} paragraph-regular ${
+            disabled ? 'input-form-disabled' : ''
+          }`}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
           name={name}
           type={type}
           autoComplete="off"
+          disabled={disabled}
         />
       </div>
     </div>
