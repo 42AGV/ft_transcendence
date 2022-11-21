@@ -1,8 +1,8 @@
+import './EditUserPage.css';
 import { AvatarPageTemplate, EditUserForm } from '../../shared/components';
 import { EDIT_AVATAR_URL, AVATAR_EP_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import './EditUserPage.css';
 
 export default function EditUserPage() {
   const { username } = useParams();
@@ -10,7 +10,8 @@ export default function EditUserPage() {
 
   return (
     <AvatarPageTemplate
-      isLoading={isLoading && !authUser}
+      isLoading={isLoading}
+      isNotFound={!authUser}
       title="edit profile"
       avatarProps={{
         url: `${AVATAR_EP_URL}/${authUser!.avatarId}`,
