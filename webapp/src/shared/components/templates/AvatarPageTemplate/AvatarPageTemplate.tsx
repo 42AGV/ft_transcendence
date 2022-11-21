@@ -20,6 +20,7 @@ type AvatarPageTemplateProps = {
   avatarProps: LargeAvatarProps;
   children: JSX.Element;
   button?: ButtonProps;
+  secondaryButton?: ButtonProps;
 };
 
 export default function AvatarPageTemplate({
@@ -27,6 +28,7 @@ export default function AvatarPageTemplate({
   avatarProps,
   children,
   button,
+  secondaryButton,
   title,
   headerStatusVariant,
   isNotFound,
@@ -60,7 +62,10 @@ export default function AvatarPageTemplate({
         <LargeAvatar {...avatarProps} />
         <div className="generic-content-wrapper">{children}</div>
       </div>
-      {button && <Button {...button} />}
+      <div className="avatar-page-buttons-wrapper">
+        {button && <Button {...button} />}
+        {secondaryButton && <Button {...secondaryButton} />}
+      </div>
     </div>
   );
 }
