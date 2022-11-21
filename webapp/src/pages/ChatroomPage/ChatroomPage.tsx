@@ -10,8 +10,8 @@ import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
-import { useAuth } from '../../shared/hooks/UseAuth';
 import { User } from '../../shared/generated';
+import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 export default function ChatroomPage() {
