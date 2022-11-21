@@ -1,6 +1,6 @@
 export enum ChatroomMessageKeys {
   ID = '"id"',
-  SUCCESSION = 'succession',
+  SEQUENCE = '"sequence"',
   USER_ID = '"userId"',
   CHATROOM_ID = '"chatroomId"',
   CONTENT = '"content"',
@@ -9,7 +9,7 @@ export enum ChatroomMessageKeys {
 
 export interface ChatroomMessageData {
   id: string;
-  succession: string;
+  sequence: string;
   chatroomId: string;
   userId: string;
   content: string;
@@ -18,7 +18,7 @@ export interface ChatroomMessageData {
 
 export class ChatroomMessage {
   id: string;
-  succession: string;
+  sequence: string;
   chatroomId: string;
   userId: string;
   content: string;
@@ -26,7 +26,7 @@ export class ChatroomMessage {
 
   constructor(data: ChatroomMessageData) {
     this.id = data.id;
-    this.succession = data.succession;
+    this.sequence = data.sequence;
     this.userId = data.userId;
     this.chatroomId = data.chatroomId;
     this.content = data.content;

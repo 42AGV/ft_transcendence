@@ -57,7 +57,7 @@ export class ChatroomMessagePostgresRepository
         ON (${this.table}.${ChatroomMessageKeys.USER_ID} =
             ${table.USERS}.${userKeys.ID})
       WHERE ${ChatroomMessageKeys.CHATROOM_ID} = $1
-      ORDER BY ${ChatroomMessageKeys.SUCCESSION} DESC
+      ORDER BY ${ChatroomMessageKeys.SEQUENCE} DESC
       LIMIT $2
       OFFSET $3;`,
         values: [chatRoomId, limit, offset],
