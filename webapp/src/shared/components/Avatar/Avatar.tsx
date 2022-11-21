@@ -12,7 +12,7 @@ export type AvatarProps = {
   YCoordinate?: number;
 };
 
-type LargeAvatarProps = AvatarProps & {
+export type LargeAvatarProps = AvatarProps & {
   caption?: string;
   editUrl?: string;
 };

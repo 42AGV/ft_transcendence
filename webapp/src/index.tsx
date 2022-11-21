@@ -19,6 +19,7 @@ import {
   EditChatroomDetailsPage,
   ChatroomDetailsPage,
   JoinChatroomPage,
+  EditChatroomMemberPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -130,6 +131,14 @@ root.render(
               element={
                 <RequireAuth>
                   <EditChatroomDetailsPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={`${CHATROOM_URL}/:chatroomId/member/:username/edit`}
+              element={
+                <RequireAuth>
+                  <EditChatroomMemberPage />
                 </RequireAuth>
               }
             />
