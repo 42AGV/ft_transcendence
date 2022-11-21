@@ -64,15 +64,3 @@
     grid-column: 1 / var(--column-end);
   }
 }
-
-@media (min-width: 1200px) {
-  .edit-user-avatar {
-    grid-column: 3/6;
-    justify-self: flex-start;
-  }
-
-  .edit-user-form {
-    grid-column: 7/11;
-    justify-self: flex-start;
-  }
-}

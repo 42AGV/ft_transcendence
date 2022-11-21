@@ -16,6 +16,7 @@ import {
   ChatroomPage,
   CreateChatroomPage,
   AuthUserPage,
+  EditChatroomDetailsPage,
   ChatroomDetailsPage,
   JoinChatroomPage,
   EditChatroomMemberPage,
@@ -122,6 +123,14 @@ root.render(
               element={
                 <RequireAuth>
                   <ChatroomPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={`${CHATROOM_URL}/:chatroomId/edit`}
+              element={
+                <RequireAuth>
+                  <EditChatroomDetailsPage />
                 </RequireAuth>
               }
             />
