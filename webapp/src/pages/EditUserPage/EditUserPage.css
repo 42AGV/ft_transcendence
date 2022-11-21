@@ -1,5 +1,6 @@
 .edit-user-page-content {
   min-width: 15rem;
+  width: 100%;
   max-width: 20rem;
   align-self: center;
 }
