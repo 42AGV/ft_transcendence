@@ -2,6 +2,7 @@ import { AvatarPageTemplate, EditUserForm } from '../../shared/components';
 import { EDIT_AVATAR_URL, AVATAR_EP_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import './EditUserPage.css';
 
 export default function EditUserPage() {
   const { username } = useParams();
@@ -18,11 +19,13 @@ export default function EditUserPage() {
         YCoordinate: authUser!.avatarY,
       }}
     >
-      <EditUserForm
-        origUsername={authUser!.username}
-        origFullName={authUser!.fullName}
-        origEmail={authUser!.email}
-      />
+      <div className="edit-user-page-content">
+        <EditUserForm
+          origUsername={authUser!.username}
+          origFullName={authUser!.fullName}
+          origEmail={authUser!.email}
+        />
+      </div>
     </AvatarPageTemplate>
   );
 }

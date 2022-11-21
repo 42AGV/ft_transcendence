@@ -1,0 +1,11 @@
+.edit-user-page-content {
+  min-width: 15rem;
+  max-width: 20rem;
+  align-self: center;
+}
+
+@media all and (min-width: 768px) {
+  .edit-user-page-content {
+    align-self: unset;
+  }
+}
