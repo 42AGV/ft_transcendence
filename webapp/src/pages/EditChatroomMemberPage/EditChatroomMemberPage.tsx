@@ -44,14 +44,15 @@ export default function EditChatroomMemberPage() {
     useData(getUserByUserName);
 
   const useGetChatroomMember = (id?: string) =>
-    useCallback(
-      () =>
-        chatApi.chatControllerGetChatroomMember({
-          chatroomId: chatroomId!,
-          userId: id ?? '',
-        }),
-      [id],
-    );
+    useCallback(() => {
+      if (!id) {
+        return Promise.reject(new Error('The chatroom member could not load'));
+      }
+      return chatApi.chatControllerGetChatroomMember({
+        chatroomId: chatroomId!,
+        userId: id,
+      });
+    }, [id]);
   const { data: destCrMember, isLoading: isDestCrMemberLoading } = useData(
     useGetChatroomMember(destUser?.id),
   );
@@ -66,14 +67,17 @@ export default function EditChatroomMemberPage() {
     destCrMember,
     destUser,
     authCrMember,
-    authUserId: authUser?.id ?? '',
+    authUserId: authUser?.id ?? null,
   });
 
   const removeChatMember = useCallback(async () => {
     try {
+      if (!(destUser && chatroomId)) {
+        return;
+      }
       await chatApi.chatControllerRemoveChatroomMember({
-        chatroomId: chatroomId!,
-        userId: destUser?.id ?? '',
+        chatroomId: chatroomId,
+        userId: destUser.id,
       });
       navigate(`${CHATROOM_URL}/${chatroomId}/details`);
     } catch (error: unknown) {

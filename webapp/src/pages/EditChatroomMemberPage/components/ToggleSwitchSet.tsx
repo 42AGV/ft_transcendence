@@ -13,7 +13,7 @@ type CanEditParams = {
   destCrMember: ChatroomMember | null;
   destUser: User | null;
   authCrMember: ChatroomMember | null;
-  authUserId: string;
+  authUserId: string | null;
 };
 
 type ToggleSwitchSetProps = {
@@ -29,13 +29,13 @@ export function CanEdit({
   authCrMember,
   authUserId,
 }: CanEditParams): boolean[] {
-  const isAuthOwner = authUserId === chatroom?.ownerId ?? false;
-  const isAuthAdmin = authCrMember?.admin ?? false;
-  const isAuthBanned = authCrMember?.banned ?? true;
-  const isDestOwner = chatroom?.ownerId === destUser?.id ?? true;
-  const isDestAdmin = destCrMember?.admin ?? true;
+  if (!(chatroom && destCrMember && destUser && authCrMember && authUserId))
+    return [false, false];
+  const isAuthOwner = authUserId === chatroom.ownerId;
+  const isDestOwner = chatroom.ownerId === destUser.id;
   return [
-    (isAuthOwner || (isAuthAdmin && !isAuthBanned && !isDestAdmin)) &&
+    (isAuthOwner ||
+      (authCrMember.admin && !authCrMember.banned && !destCrMember.admin)) &&
       !isDestOwner,
     isAuthOwner,
   ];
