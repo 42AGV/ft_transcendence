@@ -104,13 +104,13 @@ export class ChatroomPostgresRepository
         ? ChatroomMemberKeys.JOINED_AT
         : ChatroomKeys.NAME;
     const chatroomsData = await makeQuery<Chatroom>(this.pool, {
-      text: `SELECT *
+      text: `SELECT c.*
              FROM ${this.table} c
                     INNER JOIN ${table.CHATROOM_MEMBERS} cm
                                ON cm.${ChatroomMemberKeys.USERID} = $4
                                  AND cm.${ChatroomMemberKeys.CHATID} = c.${ChatroomKeys.ID}
-                                 AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
-             WHERE c.${ChatroomKeys.NAME} ILIKE $1
+             WHERE cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
+               AND c.${ChatroomKeys.NAME} ILIKE $1
              ORDER BY ${orderBy}
              LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset, authUserId],
