@@ -10,14 +10,17 @@ import {
   StatusVariant,
 } from '../../index';
 import { useNavigation } from '../../../hooks/UseNavigation';
+import NotFoundPage from '../../../../pages/NotFoundPage/NotFoundPage';
 
 type AvatarPageTemplateProps = {
   isLoading: boolean;
+  isNotFound: boolean;
   headerStatusVariant?: StatusVariant;
   title: string;
   avatarProps: LargeAvatarProps;
   children: JSX.Element;
   button?: ButtonProps;
+  secondaryButton?: ButtonProps;
 };
 
 export default function AvatarPageTemplate({
@@ -25,8 +28,10 @@ export default function AvatarPageTemplate({
   avatarProps,
   children,
   button,
+  secondaryButton,
   title,
   headerStatusVariant,
+  isNotFound,
 }: AvatarPageTemplateProps) {
   const { goBack } = useNavigation();
 
@@ -38,6 +43,10 @@ export default function AvatarPageTemplate({
         </div>
       </div>
     );
+  }
+
+  if (isNotFound) {
+    return <NotFoundPage />;
   }
 
   return (
@@ -53,7 +62,10 @@ export default function AvatarPageTemplate({
         <LargeAvatar {...avatarProps} />
         <div className="generic-content-wrapper">{children}</div>
       </div>
-      {button && <Button {...button} />}
+      <div className="avatar-page-buttons-wrapper">
+        {button && <Button {...button} />}
+        {secondaryButton && <Button {...secondaryButton} />}
+      </div>
     </div>
   );
 }

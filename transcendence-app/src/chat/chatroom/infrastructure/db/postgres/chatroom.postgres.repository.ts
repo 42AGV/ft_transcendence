@@ -12,6 +12,7 @@ import { Chatroom, ChatroomKeys } from '../chatroom.entity';
 import { IChatroomRepository } from '../chatroom.repository';
 import { UpdateChatroomDto } from '../../../dto/update-chatroom.dto';
 import { PaginationWithSearchQueryDto } from '../../../../../shared/dtos/pagination-with-search.query.dto';
+import { ChatroomMemberKeys } from '../../../chatroom-member/infrastructure/db/chatroom-member.entity';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -21,6 +22,7 @@ export class ChatroomPostgresRepository
   constructor(protected pool: PostgresPool) {
     super(pool, table.CHATROOM, Chatroom);
   }
+
   async addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null> {
     const chatroomData = await makeTransactionalQuery<Chatroom>(
       this.pool,
@@ -81,12 +83,37 @@ export class ChatroomPostgresRepository
       sort === BooleanString.True ? ChatroomKeys.NAME : ChatroomKeys.ID;
     const chatroomsData = await makeQuery<Chatroom>(this.pool, {
       text: `SELECT *
-      FROM ${this.table}
-      WHERE ${ChatroomKeys.NAME} ILIKE $1
-      ORDER BY ${orderBy}
-      LIMIT $2
-      OFFSET $3;`,
+             FROM ${this.table}
+             WHERE ${ChatroomKeys.NAME} ILIKE $1
+             ORDER BY ${orderBy}
+             LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
+    });
+    return chatroomsData
+      ? chatroomsData.map((chatroom) => new this.ctor(chatroom))
+      : null;
+  }
+
+  async getAuthUserPaginatedChatrooms(
+    authUserId: string,
+    queryDto: Required<PaginationWithSearchQueryDto>,
+  ): Promise<Chatroom[] | null> {
+    const { limit, offset, sort, search } = queryDto;
+    const orderBy =
+      sort === BooleanString.True
+        ? ChatroomMemberKeys.JOINED_AT
+        : ChatroomKeys.NAME;
+    const chatroomsData = await makeQuery<Chatroom>(this.pool, {
+      text: `SELECT c.*
+             FROM ${this.table} c
+                    INNER JOIN ${table.CHATROOM_MEMBERS} cm
+                               ON cm.${ChatroomMemberKeys.USERID} = $4
+                                 AND cm.${ChatroomMemberKeys.CHATID} = c.${ChatroomKeys.ID}
+             WHERE cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
+               AND c.${ChatroomKeys.NAME} ILIKE $1
+             ORDER BY ${orderBy}
+             LIMIT $2 OFFSET $3;`,
+      values: [`%${search}%`, limit, offset, authUserId],
     });
     return chatroomsData
       ? chatroomsData.map((chatroom) => new this.ctor(chatroom))
