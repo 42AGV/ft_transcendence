@@ -30,6 +30,7 @@ export default function AuthUserPage() {
         onClick: logout,
         children: 'Logout',
       }}
+      isNotFound={authUser === null}
     >
       <>
         <Text

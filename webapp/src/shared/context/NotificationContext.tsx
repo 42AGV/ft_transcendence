@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { SnackBar, SnackbarType, SnackbarPosition } from '../components';
 
-const NOTIFICATION_SPAN_MS = 6000;
+const NOTIFICATION_SPAN_MS = 4000;
 
 type Context = {
   notify: (message: string) => void;

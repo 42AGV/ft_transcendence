@@ -97,6 +97,7 @@ export default function CreateChatroomPage() {
           children: 'Save',
           variant: ButtonVariant.SUBMIT,
         }}
+        isNotFound={false}
       >
         <>
           <div className="create-chat-page-properties">
