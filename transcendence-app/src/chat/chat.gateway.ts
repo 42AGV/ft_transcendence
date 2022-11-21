@@ -44,7 +44,7 @@ export class ChatGateway {
       chatroomId,
       user.id,
     );
-    if (!chatroomMember) {
+    if (!chatroomMember || chatroomMember.banned) {
       throw new WsException('Not a chatroom member. Forbidden.');
     }
     if (chatroomMember.muted) {
@@ -75,7 +75,7 @@ export class ChatGateway {
       chatroomId,
       client.request.user.id,
     );
-    if (!chatroomMember) {
+    if (!chatroomMember || chatroomMember.banned) {
       throw new WsException('Not a chatroom member. Forbidden.');
     }
     client.join(chatroomId);
