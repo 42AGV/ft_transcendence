@@ -9,6 +9,7 @@ import { EnvironmentVariables } from '../src/config/env.validation';
 import { ILocalFileRepository } from '../src/shared/local-file/infrastructure/db/local-file.repository';
 import { LocalFilePostgresRepository } from '../src/shared/local-file/infrastructure/db/postgres/local-file.postgres.repository';
 import { PostgresPool } from '../src/shared/db/postgres/postgresConnection.provider';
+import { Password } from '../src/shared/password';
 
 config({ path: `.env.${process.env.NODE_ENV}` });
 
@@ -43,6 +44,17 @@ const createRandomUser = (avatarId: string) => {
   };
 };
 
+const createUserWithPassword = async (username: string, avatarId: string) => {
+  const hashedPassword = await Password.toHash(username);
+  return {
+    username,
+    email: `${username}@${username}.com`,
+    fullName: username,
+    avatarId: avatarId,
+    password: hashedPassword,
+  };
+};
+
 export async function seed(knex: Knex): Promise<void> {
   // Save avatar data to delete later
   const avatarsData = await knex
@@ -67,4 +79,19 @@ export async function seed(knex: Knex): Promise<void> {
   // Inserts seed entries
   await knex('localfile').insert(avatars);
   await knex('users').insert(users);
+
+  // Create users with default password
+  const usernames = 'abcdefghijklmnopqrstuvwxyz'.split('');
+  const defaultAvatars = await Promise.all(
+    Array.from({ length: usernames.length }, createRandomAvatar),
+  );
+  const usersWithPassword = await Promise.all(
+    usernames.map((username, index) =>
+      createUserWithPassword(username, defaultAvatars[index].id),
+    ),
+  );
+
+  // Inserts seed entries
+  await knex('localfile').insert(defaultAvatars);
+  await knex('users').insert(usersWithPassword);
 }
