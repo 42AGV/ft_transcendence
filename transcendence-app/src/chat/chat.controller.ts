@@ -162,6 +162,27 @@ export class ChatController {
     return chatrooms;
   }
 
+  @Get('room/member')
+  @ApiOkResponse({
+    description: `Lists all chatrooms the auth user is subscribed to (max ${MAX_ENTRIES_PER_PAGE})`,
+    type: [Chatroom],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getAuthChatrooms(
+    @GetUser() user: User,
+    @Query() chatsPaginationQueryDto: PaginationWithSearchQueryDto,
+  ): Promise<Chatroom[]> {
+    const chatrooms = await this.chatService.retrieveChatroomsforAuthUser(
+      user,
+      chatsPaginationQueryDto,
+    );
+    if (!chatrooms) {
+      throw new ServiceUnavailableException();
+    }
+    return chatrooms;
+  }
+
   @Get('room/:chatroomId/members')
   @ApiOkResponse({
     description: `Lists chat members for a given room (max ${MAX_ENTRIES_PER_PAGE})`,
