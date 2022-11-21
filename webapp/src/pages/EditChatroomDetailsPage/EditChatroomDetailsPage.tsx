@@ -1,11 +1,9 @@
 import {
-  Button,
+  AvatarPageTemplate,
   ButtonVariant,
-  Header,
   IconVariant,
   Input,
   InputVariant,
-  LargeAvatar,
   Loading,
   ToggleSwitch,
 } from '../../shared/components';
@@ -15,11 +13,10 @@ import {
   EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ResponseError, UpdateChatroomDto } from '../../shared/generated';
-import './EditChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
@@ -27,8 +24,7 @@ import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 export default function CreateChatroomPage() {
   const { chatroomId } = useParams();
-  const navigate = useNavigate();
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
 
   const getChatRoomById = useCallback(
@@ -166,6 +162,7 @@ export default function CreateChatroomPage() {
       handleRequestError(error);
     }
   }
+
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     updateChatroomDetails().catch((e) => console.error(e));
@@ -199,95 +196,84 @@ export default function CreateChatroomPage() {
   }
 
   return (
-    <div className="edit-chatroom-details">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-        {`edit/${chatroom.name}`}
-      </Header>
-      <div className="edit-chatroom-details-avatar-properties">
-        <div className="edit-chatroom-details-avatar">
-          <LargeAvatar
+    <div className="edit-chatroom-member-page">
+      <AvatarPageTemplate
+        isLoading={isLoading}
+        title={`edit/${chatroom.name}`}
+        avatarProps={{
+          url:
             // TODO: Remove the wildcard avatar when we implement #317
-            url={
-              chatroom.avatarId
-                ? `${CHATROOM_EP_URL}/${chatroom.id}/avatars/${chatroom.avatarId}`
-                : WILDCARD_AVATAR_URL
-            }
-            //TODO: update url to EDIT_CHAT_AVATAR_URL or a common page
-            editUrl={EDIT_AVATAR_URL}
-            XCoordinate={chatroom.avatarX}
-            YCoordinate={chatroom.avatarY}
-          />
-        </div>
-        <div className="edit-chatroom-details-properties">
-          <ToggleSwitch
-            isToggled={!isPublic}
-            onToggle={() => setIsPublic(!isPublic)}
-            label={isPublic ? 'public channel' : 'private channel'}
-          />
-        </div>
-      </div>
-      <form
-        id="edit-chatroom-details-form"
-        className="edit-chatroom-details-form"
-        onSubmit={handleOnSubmit}
+            chatroom?.avatarId
+              ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${chatroom?.avatarId}`
+              : WILDCARD_AVATAR_URL,
+          editUrl: EDIT_AVATAR_URL,
+          XCoordinate: chatroom?.avatarX,
+          YCoordinate: chatroom?.avatarY,
+        }}
+        secondaryButton={{
+          iconVariant: IconVariant.REMOVE,
+          children: 'Delete chatroom',
+          variant: ButtonVariant.WARNING,
+          onClick: deleteChatoom,
+        }}
+        button={{
+          iconVariant: IconVariant.EDIT,
+          form: 'edit-chatroom-details-form',
+          children: 'Save',
+          variant: ButtonVariant.SUBMIT,
+        }}
+        isNotFound={false}
       >
-        <div className="edit-chatroom-details-form-inputs-container">
-          <Input
-            variant={InputVariant.LIGHT}
-            label="Chat Room Name"
-            placeholder="name"
-            value={formValues.name}
-            name="name"
-            onChange={handleInputChange}
-          />
-          <Input
-            variant={InputVariant.LIGHT}
-            label="Old password"
-            placeholder="old password"
-            value={formValues.oldPassword ? formValues.oldPassword : ''}
-            name="oldPassword"
-            type="password"
-            onChange={handleInputChange}
-            disabled={chatroom.isPublic}
-          />
-          <Input
-            variant={InputVariant.LIGHT}
-            label="New password"
-            placeholder="new password"
-            value={formValues.password ? formValues.password : ''}
-            name="password"
-            type="password"
-            onChange={handleInputChange}
-            disabled={isPublic}
-          />
-          <Input
-            variant={InputVariant.LIGHT}
-            placeholder="repeat password"
-            value={
-              formValues.confirmationPassword
-                ? formValues.confirmationPassword
-                : ''
-            }
-            name="confirmationPassword"
-            type="password"
-            onChange={handleInputChange}
-            disabled={isPublic}
-          />
-        </div>
-      </form>
-      <div className="edit-chatroom-details-buttons">
-        <Button
-          iconVariant={IconVariant.EDIT}
-          children="Delete chatroom"
-          variant={ButtonVariant.WARNING}
-          onClick={deleteChatoom}
-        />
-        <Button
-          form="edit-chatroom-details-form"
-          children="Save"
-          variant={ButtonVariant.SUBMIT}
-        />
-      </div>
+        <form
+          id="edit-chatroom-details-form"
+          className="edit-chatroom-details-form"
+          onSubmit={handleOnSubmit}
+        >
+          <div className="edit-chatroom-details-form-inputs-container">
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Chat Room Name"
+              placeholder="name"
+              value={formValues.name}
+              name="name"
+              onChange={handleInputChange}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Old password"
+              placeholder="old password"
+              value={formValues.oldPassword ? formValues.oldPassword : ''}
+              name="oldPassword"
+              type="password"
+              onChange={handleInputChange}
+              disabled={chatroom.isPublic}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              label="New password"
+              placeholder="new password"
+              value={formValues.password ? formValues.password : ''}
+              name="password"
+              type="password"
+              onChange={handleInputChange}
+              disabled={isPublic}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              placeholder="repeat password"
+              value={
+                formValues.confirmationPassword
+                  ? formValues.confirmationPassword
+                  : ''
+              }
+              name="confirmationPassword"
+              type="password"
+              onChange={handleInputChange}
+              disabled={isPublic}
+            />
+          </div>
+        </form>
+      </AvatarPageTemplate>
     </div>
   );
 }
