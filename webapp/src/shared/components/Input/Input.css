@@ -30,6 +30,11 @@
   color: var(--color-dark);
 }
 
+.input-container-disabled {
+  background-color: grey;
+  color: grey;
+}
+
 .input-form-light {
   border: 0;
   background-color: var(--color-light);
@@ -55,6 +60,11 @@
 .input-form-light {
   background-color: var(--color-light);
   color: var(--color-dark);
+}
+
+.input-form-disabled {
+  background-color: grey;
+  color: grey;
 }
 
 .input-form:focus {

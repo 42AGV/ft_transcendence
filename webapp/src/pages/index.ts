@@ -10,6 +10,7 @@ export { default as LoginPage } from './LoginPage/LoginPage';
 export { default as RegisterPage } from './RegisterPage/RegisterPage';
 export { default as ChatroomPage } from './ChatroomPage/ChatroomPage';
 export { default as CreateChatroomPage } from './CreateChatroomPage/CreateChatroomPage';
+export { default as EditChatroomDetailsPage } from './EditChatroomDetailsPage/EditChatroomDetailsPage';
 export { default as AuthUserPage } from './AuthUserPage/AuthUserPage';
 export { default as ChatroomDetailsPage } from './ChatroomDetailsPage/ChatroomDetailsPage';
 export { default as JoinChatroomPage } from './JoinChatroomPage/JoinChatroomPage';
