@@ -40,7 +40,7 @@ export default function EditChatroomMemberPage() {
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
-  const { data: destUser, isLoading: isUserLoading } =
+  const { data: destUser, isLoading: isDestUserLoading } =
     useData(getUserByUserName);
 
   const useGetChatroomMember = (id?: string) =>
@@ -52,12 +52,12 @@ export default function EditChatroomMemberPage() {
         }),
       [id],
     );
-  const { data: destCrMember, isLoading: isCrMemberUserLoading } = useData(
+  const { data: destCrMember, isLoading: isDestCrMemberLoading } = useData(
     useGetChatroomMember(destUser?.id),
   );
 
   const { authUser, isLoading: isAuthUserLoading } = useAuth();
-  const { data: authCrMember, isLoading: isAuthCrMemberUserLoading } = useData(
+  const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
     useGetChatroomMember(authUser?.id),
   );
 
@@ -102,10 +102,10 @@ export default function EditChatroomMemberPage() {
     : undefined;
   const isLoading: boolean =
     isChatroomLoading ||
-    isCrMemberUserLoading ||
-    isUserLoading ||
+    isDestCrMemberLoading ||
+    isDestUserLoading ||
     isAuthUserLoading ||
-    isAuthCrMemberUserLoading;
+    isAuthCrMemberLoading;
   return (
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
@@ -123,6 +123,15 @@ export default function EditChatroomMemberPage() {
           caption: chatroom?.name ?? '',
         }}
         button={button}
+        isNotFound={
+          !(
+            chatroom &&
+            destUser &&
+            authCrMember &&
+            destCrMember &&
+            authCrMember
+          )
+        }
       >
         <>
           <Row
