@@ -90,9 +90,6 @@ export default function CreateChatroomPage() {
             WILDCARD_AVATAR_URL,
           XCoordinate: chatroom?.avatarX ?? 0,
           YCoordinate: chatroom?.avatarY ?? 0,
-          caption: `${
-            formValues.password ? 'private channel' : 'public channel'
-          }`,
           editUrl: EDIT_AVATAR_URL,
         }}
         button={{
@@ -104,11 +101,18 @@ export default function CreateChatroomPage() {
         <>
           <div className="create-chat-page-properties">
             <Text
-              variant={TextVariant.HEADING}
+              variant={TextVariant.SUBHEADING}
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
               {formValues.name ? formValues.name : 'chatroom name'}
+            </Text>
+            <Text
+              variant={TextVariant.PARAGRAPH}
+              color={TextColor.LIGHT}
+              weight={TextWeight.REGULAR}
+            >
+              {formValues.password ? 'private chatroom' : 'public chatroom'}
             </Text>
           </div>
           <form
