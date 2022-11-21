@@ -1,34 +1,10 @@
 import { Knex } from 'knex';
 import { faker } from '@faker-js/faker';
-import { rmSync } from 'fs';
-import { v4 as uuidv4 } from 'uuid';
-import { ConfigService } from '@nestjs/config';
-import { config } from 'dotenv';
-import { LocalFileService } from '../src/shared/local-file/local-file.service';
-import { EnvironmentVariables } from '../src/config/env.validation';
-import { ILocalFileRepository } from '../src/shared/local-file/infrastructure/db/local-file.repository';
-import { LocalFilePostgresRepository } from '../src/shared/local-file/infrastructure/db/postgres/local-file.postgres.repository';
-import { PostgresPool } from '../src/shared/db/postgres/postgresConnection.provider';
 import { User } from '../src/user/infrastructure/db/user.entity';
+import { createRandomAvatar, defaultUsernames } from './utils';
 
-config({ path: `.env.${process.env.NODE_ENV}` });
-
-const configService = new ConfigService<EnvironmentVariables>();
 const CHATROOMS_NUMBER = 100;
 const MESSAGES_PER_USER = 5;
-
-const createRandomAvatar = async () => {
-  const postgresPool = new PostgresPool(configService);
-  const localFileRepository: ILocalFileRepository =
-    new LocalFilePostgresRepository(postgresPool);
-  const localFileService = new LocalFileService(
-    configService,
-    localFileRepository,
-  );
-  const avatarDto = await localFileService.createRandomSVGFile(12, 512);
-
-  return { id: uuidv4(), ...avatarDto };
-};
 
 const createRandomChatroom = (user: User, avatarId: string) => {
   const name = faker.helpers.unique(faker.random.words);
@@ -48,31 +24,14 @@ const createRandomChatroomMessage = (chatroomId: string, userId: string) => {
 };
 
 export async function seed(knex: Knex): Promise<void> {
-  // Save avatar data to delete later
-  const avatarsData = await knex
-    .select('localfile.id', 'localfile.path')
-    .from('chatroom')
-    .innerJoin('localfile', 'chatroom.avatarId', 'localfile.id');
-
-  // Deletes ALL existing entries and local files
-  await knex('chatroom').del();
-  for (let i = 0; i < avatarsData.length; i++) {
-    await knex('localfile').where('id', avatarsData[i].id).del();
-    rmSync(avatarsData[i].path, {
-      recursive: true,
-      force: true,
-    });
-  }
-
   // Create chatroom seed entries
   const avatars = await Promise.all(
     Array.from({ length: CHATROOMS_NUMBER }, createRandomAvatar),
   );
-  const usernames = 'abcdefghijklmnopqrstuvwxyz'.split('');
   const users = await knex
     .select('*')
     .from('users')
-    .whereIn('username', usernames);
+    .whereIn('username', defaultUsernames);
   const getRandomUser = () => users[Math.floor(Math.random() * users.length)];
   const chatrooms = avatars.map((avatar) =>
     createRandomChatroom(getRandomUser(), avatar.id),
@@ -91,7 +50,7 @@ export async function seed(knex: Knex): Promise<void> {
     .select('chatroom.id as chatId', 'users.id as userId')
     .from('chatroom')
     .crossJoin('users' as any)
-    .whereIn('users.username', usernames);
+    .whereIn('users.username', defaultUsernames);
   await knex('chatroommembers')
     .insert(chatroomsAndUsers)
     .onConflict(['chatId', 'userId'])
