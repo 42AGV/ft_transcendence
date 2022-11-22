@@ -65,7 +65,6 @@ CREATE TABLE
 CREATE TABLE
   IF NOT EXISTS ChatroomMessage (
     "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
-    "sequence" BIGINT GENERATED ALWAYS AS IDENTITY,
     "chatroomId" UUID NOT NULL REFERENCES Chatroom (id) ON DELETE CASCADE,
     "userId" UUID NOT NULL REFERENCES Users (id) ON DELETE CASCADE,
     "content" TEXT NOT NULL,
@@ -75,7 +74,6 @@ CREATE TABLE
 CREATE TABLE
   IF NOT EXISTS ChatMessage (
     "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
-    "sequence" BIGINT GENERATED ALWAYS AS IDENTITY,
     "senderId" UUID NOT NULL REFERENCES Users (id) ON DELETE CASCADE,
     "recipientId" UUID NOT NULL REFERENCES Users (id) ON DELETE CASCADE,
     "content" TEXT NOT NULL,

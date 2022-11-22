@@ -137,8 +137,8 @@ export class ChatroomMemberPostgresRepository
 
     const orderBy =
       sort === BooleanString.True
-        ? userKeys.USERNAME
-        : ChatroomMemberKeys.USERID;
+        ? ChatroomMemberKeys.JOINED_AT
+        : userKeys.USERNAME;
     const users = await makeQuery<ChatroomMemberWithUser>(this.pool, {
       text: `SELECT u.${userKeys.USERNAME},
                     u.${userKeys.AVATAR_ID},
@@ -158,7 +158,7 @@ export class ChatroomMemberPostgresRepository
              WHERE cm.${ChatroomMemberKeys.CHATID} = $1
                AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
                AND ${userKeys.USERNAME} ILIKE $2
-             ORDER BY ${orderBy}
+             ORDER BY ${orderBy} DESC, u.${userKeys.ID}
              LIMIT $3 OFFSET $4;`,
       values: [chatroomId, `%${search}%`, limit, offset],
     });

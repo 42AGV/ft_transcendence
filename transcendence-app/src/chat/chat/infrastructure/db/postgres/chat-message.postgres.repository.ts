@@ -27,7 +27,7 @@ export class ChatMessagePostgresRepository
       text: `SELECT * FROM ${this.table}
       WHERE ("senderId" = $1 AND "recipientId" = $2)
         OR  ("senderId" = $2 AND "recipientId" = $1)
-      ORDER BY ${chatMessageKeys.SEQUENCE} DESC
+      ORDER BY ${chatMessageKeys.CREATED_AT} DESC, ${chatMessageKeys.ID}
       LIMIT $3
       OFFSET $4;`,
       values: [userMeId, recipientId, limit, offset],

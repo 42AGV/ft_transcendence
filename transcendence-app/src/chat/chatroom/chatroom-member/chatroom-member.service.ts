@@ -149,7 +149,7 @@ export class ChatroomMemberService {
       search = '',
       limit = MAX_ENTRIES_PER_PAGE,
       offset = 0,
-      sort = BooleanString.False,
+      sort = BooleanString.True,
     }: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[] | null> {
     return this.chatroomMemberRepository.getPaginatedChatroomMembers(
