@@ -5,6 +5,7 @@ import { createRandomAvatar, defaultUsernames } from './utils';
 
 const CHATROOMS_NUMBER = 100;
 const MESSAGES_PER_USER = 5;
+const EXTRA_CHATROOM_MEMBERS = 100;
 
 const createRandomChatroom = (user: User, avatarId: string) => {
   const name = faker.helpers.unique(faker.random.words);
@@ -80,8 +81,31 @@ const seedChatroomMessages = async (knex: Knex) => {
   await knex('chatroommessage').insert(messages);
 };
 
+const seedExtraChatroomMembers = async (knex: Knex) => {
+  // Select extra users and chatrooms
+  const usersAndChatrooms = await knex
+    .with('extra_users', (queryBuilder) => {
+      queryBuilder
+        .select('*')
+        .from('users')
+        .whereNotIn('users.username', defaultUsernames)
+        .orderBy('users.id')
+        .limit(EXTRA_CHATROOM_MEMBERS);
+    })
+    .select('chatroom.id as chatId', 'extra_users.id as userId')
+    .from('extra_users')
+    .crossJoin('chatroom' as any);
+
+  // Insert the chatroom members seed entries
+  await knex('chatroommembers')
+    .insert(usersAndChatrooms)
+    .onConflict(['chatId', 'userId'])
+    .ignore();
+};
+
 export async function seed(knex: Knex): Promise<void> {
   await seedChatrooms(knex);
   await seedDefaultChatroomMembers(knex);
   await seedChatroomMessages(knex);
+  await seedExtraChatroomMembers(knex);
 }
