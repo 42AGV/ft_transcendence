@@ -15,11 +15,11 @@ export interface ChatroomMessageData {
 }
 
 export class ChatroomMessage {
-  id!: string;
-  chatroomId!: string;
-  userId!: string;
-  content!: string;
-  createdAt!: Date;
+  id: string;
+  chatroomId: string;
+  userId: string;
+  content: string;
+  createdAt: Date;
 
   constructor(data: ChatroomMessageData) {
     this.id = data.id;
