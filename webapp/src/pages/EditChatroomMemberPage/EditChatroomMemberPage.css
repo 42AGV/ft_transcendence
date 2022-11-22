@@ -2,7 +2,14 @@
   display: contents;
 }
 
+.edit-chatroom-member-page .avatar-page-caption-like-wrapper p {
+  text-align: right;
+}
+
 @media all and (max-width: 768px) {
+  .edit-chatroom-member-page .avatar-page-caption-like-wrapper p {
+    text-align: center;
+  }
   .edit-chatroom-member-page .avatar-page-content-wrapper {
     align-items: center;
   }

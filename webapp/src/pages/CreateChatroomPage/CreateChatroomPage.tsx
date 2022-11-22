@@ -80,85 +80,82 @@ export default function CreateChatroomPage() {
 
   const chatroom: Partial<Chatroom> = {};
   return (
-    <div className="create-chatroom-page">
-      <AvatarPageTemplate
-        isLoading={false}
-        title="create chatroom"
-        avatarProps={{
-          url:
-            // TODO: Remove the wildcard avatar when we implement #317
-            WILDCARD_AVATAR_URL,
-          XCoordinate: chatroom?.avatarX ?? 0,
-          YCoordinate: chatroom?.avatarY ?? 0,
-          editUrl: EDIT_AVATAR_URL,
-        }}
-        button={{
-          form: 'create-chat-page-form',
-          children: 'Save',
-          variant: ButtonVariant.SUBMIT,
-        }}
-        isNotFound={false}
-        variant={AvatarPageVariants.WITH_CAPTION}
-        captionLikeElement={
-          <>
-            {' '}
-            <Text
-              variant={TextVariant.SUBHEADING}
-              color={TextColor.LIGHT}
-              weight={TextWeight.REGULAR}
-            >
-              {formValues.name ? formValues.name : 'chatroom name'}
-            </Text>
-            <Text
-              variant={TextVariant.PARAGRAPH}
-              color={TextColor.LIGHT}
-              weight={TextWeight.REGULAR}
-            >
-              {formValues.password ? 'private chatroom' : 'public chatroom'}
-            </Text>
-          </>
-        }
-      >
-        <div className="create-chat-page-content">
-          <form
-            id="create-chat-page-form"
-            className="create-chat-page-form"
-            onSubmit={handleOnSubmit}
+    <AvatarPageTemplate
+      isLoading={false}
+      title="create chatroom"
+      avatarProps={{
+        url:
+          // TODO: Remove the wildcard avatar when we implement #317
+          WILDCARD_AVATAR_URL,
+        XCoordinate: chatroom?.avatarX ?? 0,
+        YCoordinate: chatroom?.avatarY ?? 0,
+        editUrl: EDIT_AVATAR_URL,
+      }}
+      button={{
+        form: 'create-chat-page-form',
+        children: 'Save',
+        variant: ButtonVariant.SUBMIT,
+      }}
+      isNotFound={false}
+      variant={AvatarPageVariants.WITH_CAPTION}
+      captionLikeElement={
+        <>
+          <Text
+            variant={TextVariant.SUBHEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.REGULAR}
           >
-            <div className="create-chat-page-form-inputs-container">
-              <Input
-                variant={InputVariant.LIGHT}
-                label="Name"
-                placeholder="chatroom name"
-                value={formValues.name}
-                name="name"
-                onChange={handleInputChange}
-              />
-              <Input
-                variant={InputVariant.LIGHT}
-                label="Password"
-                placeholder="password"
-                value={formValues.password ? formValues.password : ''}
-                name="password"
-                type="password"
-                onChange={handleInputChange}
-              />
-              <Input
-                variant={InputVariant.LIGHT}
-                placeholder="repeat password"
-                value={
-                  formValues.confirmationPassword
-                    ? formValues.confirmationPassword
-                    : ''
-                }
-                name="confirmationPassword"
-                type="password"
-                onChange={handleInputChange}
-              />
-            </div>
-          </form>
-        </div>
-      </AvatarPageTemplate>
-    </div>
+            {formValues.name ? formValues.name : 'chatroom name'}
+          </Text>
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.REGULAR}
+          >
+            {formValues.password ? 'private chatroom' : 'public chatroom'}
+          </Text>
+        </>
+      }
+    >
+      <>
+        <form
+          id="create-chat-page-form"
+          className="create-chat-page-form"
+          onSubmit={handleOnSubmit}
+        >
+          <div className="create-chat-page-form-inputs-container">
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Name"
+              placeholder="chatroom name"
+              value={formValues.name}
+              name="name"
+              onChange={handleInputChange}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              label="Password"
+              placeholder="password"
+              value={formValues.password ? formValues.password : ''}
+              name="password"
+              type="password"
+              onChange={handleInputChange}
+            />
+            <Input
+              variant={InputVariant.LIGHT}
+              placeholder="repeat password"
+              value={
+                formValues.confirmationPassword
+                  ? formValues.confirmationPassword
+                  : ''
+              }
+              name="confirmationPassword"
+              type="password"
+              onChange={handleInputChange}
+            />
+          </div>
+        </form>
+      </>
+    </AvatarPageTemplate>
   );
 }

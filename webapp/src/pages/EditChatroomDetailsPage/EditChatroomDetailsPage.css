@@ -1,3 +1,8 @@
 .edit-chatroom-details-form {
   display: contents;
 }
+
+.edit-chatroom-member-page .avatar-page-content-wrapper {
+  margin-top: var(--row-gap);
+  gap: 0;
+}

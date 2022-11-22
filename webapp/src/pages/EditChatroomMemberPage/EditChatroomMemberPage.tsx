@@ -4,6 +4,9 @@ import {
   ButtonVariant,
   IconVariant,
   Row,
+  TextColor,
+  TextVariant,
+  TextWeight,
 } from '../../shared/components';
 import './EditChatroomMemberPage.css';
 import {
@@ -23,6 +26,8 @@ import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
+import { AvatarPageVariants } from '../../shared/components/templates/AvatarPageTemplate/AvatarPageTemplate';
+import Text from '../../shared/components/Text/Text';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
@@ -124,8 +129,26 @@ export default function EditChatroomMemberPage() {
               : WILDCARD_AVATAR_URL,
           XCoordinate: chatroom?.avatarX,
           YCoordinate: chatroom?.avatarY,
-          caption: chatroom?.name ?? '',
         }}
+        variant={AvatarPageVariants.WITH_CAPTION}
+        captionLikeElement={
+          <>
+            <Text
+              variant={TextVariant.PARAGRAPH}
+              color={TextColor.LIGHT}
+              weight={TextWeight.MEDIUM}
+            >
+              {chatroom?.name ?? ''}
+            </Text>
+            <Text
+              variant={TextVariant.CAPTION}
+              color={TextColor.LIGHT}
+              weight={TextWeight.MEDIUM}
+            >
+              {chatroom?.isPublic ? 'public chatroom' : 'private chatroom'}
+            </Text>
+          </>
+        }
         button={button}
         isNotFound={
           !(
