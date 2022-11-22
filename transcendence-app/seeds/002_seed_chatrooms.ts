@@ -23,7 +23,7 @@ const createRandomChatroomMessage = (chatroomId: string, userId: string) => {
   };
 };
 
-export async function seed(knex: Knex): Promise<void> {
+const seedChatrooms = async (knex: Knex) => {
   // Create chatroom seed entries
   const avatars = await Promise.all(
     Array.from({ length: CHATROOMS_NUMBER }, createRandomAvatar),
@@ -46,17 +46,29 @@ export async function seed(knex: Knex): Promise<void> {
   await knex('chatroommembers').insert(
     owners.map((owner) => ({ ...owner, admin: true })),
   );
+};
 
-  // Insert chatroom members seed entries
+const seedDefaultChatroomMembers = async (knex: Knex) => {
+  // Select chatrooms and default users
   const chatroomsAndDefaultUsers = await knex
     .select('chatroom.id as chatId', 'users.id as userId')
     .from('chatroom')
     .crossJoin('users' as any)
     .whereIn('users.username', defaultUsernames);
+
+  // Insert the default chatroom members seed entries
   await knex('chatroommembers')
     .insert(chatroomsAndDefaultUsers)
     .onConflict(['chatId', 'userId'])
     .ignore();
+};
+
+const seedChatroomMessages = async (knex: Knex) => {
+  const chatroomsAndDefaultUsers = await knex
+    .select('chatroom.id as chatId', 'users.id as userId')
+    .from('chatroom')
+    .crossJoin('users' as any)
+    .whereIn('users.username', defaultUsernames);
 
   // Insert chatroom messages seed entries
   const messages = chatroomsAndDefaultUsers.reduce((accumulator, current) => {
@@ -66,4 +78,10 @@ export async function seed(knex: Knex): Promise<void> {
     return [...accumulator, ...memberMessages];
   }, []);
   await knex('chatroommessage').insert(messages);
+};
+
+export async function seed(knex: Knex): Promise<void> {
+  await seedChatrooms(knex);
+  await seedDefaultChatroomMembers(knex);
+  await seedChatroomMessages(knex);
 }
