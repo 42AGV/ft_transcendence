@@ -3,7 +3,7 @@
 }
 
 @media all and (max-width: 768px) {
-  .edit-chatroom-member-page .generic-content-wrapper > * {
-    align-self: center;
+  .edit-chatroom-member-page .avatar-page-content-wrapper {
+    align-items: center;
   }
 }

@@ -15,8 +15,10 @@ export default function ToggleSwitch({
   return (
     <div className="toggle-switch">
       <label className="toggle-switch-label">
-        <input type="checkbox" checked={isToggled} onChange={onToggle} />
-        <span className="switch" />
+        <div className="toggle-switch-figure">
+          <input type="checkbox" checked={isToggled} onChange={onToggle} />
+          <span className="switch" />
+        </div>
         {label && (
           <div className="toggle-switch-text">
             <Text

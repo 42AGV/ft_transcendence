@@ -13,13 +13,13 @@ import {
   EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import './CreateChatroomPage.css';
 import React, { useState } from 'react';
 import { CreateChatroomDto, ResponseError } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { AvatarPageVariants } from '../../shared/components/templates/AvatarPageTemplate/AvatarPageTemplate';
 
 export default function CreateChatroomPage() {
   const { warn, notify } = useNotificationContext();
@@ -98,9 +98,10 @@ export default function CreateChatroomPage() {
           variant: ButtonVariant.SUBMIT,
         }}
         isNotFound={false}
-      >
-        <>
-          <div className="create-chat-page-properties">
+        variant={AvatarPageVariants.WITH_CAPTION}
+        captionLikeElement={
+          <>
+            {' '}
             <Text
               variant={TextVariant.SUBHEADING}
               color={TextColor.LIGHT}
@@ -115,7 +116,10 @@ export default function CreateChatroomPage() {
             >
               {formValues.password ? 'private chatroom' : 'public chatroom'}
             </Text>
-          </div>
+          </>
+        }
+      >
+        <div className="create-chat-page-content">
           <form
             id="create-chat-page-form"
             className="create-chat-page-form"
@@ -153,7 +157,7 @@ export default function CreateChatroomPage() {
               />
             </div>
           </form>
-        </>
+        </div>
       </AvatarPageTemplate>
     </div>
   );

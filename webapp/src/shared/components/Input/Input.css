@@ -2,6 +2,7 @@
   width: 100%;
   min-width: 200px;
   color: var(--color-light);
+  margin-bottom: 0.875rem;
 }
 
 .input-container {

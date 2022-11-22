@@ -8,8 +8,8 @@ import {
   ToggleSwitch,
 } from '../../shared/components';
 import {
-  CHATROOM_EP_URL,
   CHAT_URL,
+  CHATROOM_EP_URL,
   EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
@@ -21,6 +21,8 @@ import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
+import { AvatarPageVariants } from '../../shared/components/templates/AvatarPageTemplate/AvatarPageTemplate';
+import './EditChatroomDetailsPage.css';
 
 export default function CreateChatroomPage() {
   const { chatroomId } = useParams();
@@ -223,63 +225,62 @@ export default function CreateChatroomPage() {
           variant: ButtonVariant.SUBMIT,
         }}
         isNotFound={false}
-      >
-        <>
+        variant={AvatarPageVariants.WITH_CAPTION}
+        captionLikeElement={
           <ToggleSwitch
             isToggled={!isPublic}
             onToggle={() => setIsPublic(!isPublic)}
             label={isPublic ? 'public channel' : 'private channel'}
           />
-          <form
-            id="edit-chatroom-details-form"
-            className="edit-chatroom-details-form"
-            onSubmit={handleOnSubmit}
-          >
-            <div className="edit-chatroom-details-form-inputs-container">
-              <Input
-                variant={InputVariant.LIGHT}
-                label="Chat Room Name"
-                placeholder="name"
-                value={formValues.name}
-                name="name"
-                onChange={handleInputChange}
-              />
-              <Input
-                variant={InputVariant.LIGHT}
-                label="Old password"
-                placeholder="old password"
-                value={formValues.oldPassword ? formValues.oldPassword : ''}
-                name="oldPassword"
-                type="password"
-                onChange={handleInputChange}
-                disabled={chatroom.isPublic}
-              />
-              <Input
-                variant={InputVariant.LIGHT}
-                label="New password"
-                placeholder="new password"
-                value={formValues.password ? formValues.password : ''}
-                name="password"
-                type="password"
-                onChange={handleInputChange}
-                disabled={isPublic}
-              />
-              <Input
-                variant={InputVariant.LIGHT}
-                placeholder="repeat password"
-                value={
-                  formValues.confirmationPassword
-                    ? formValues.confirmationPassword
-                    : ''
-                }
-                name="confirmationPassword"
-                type="password"
-                onChange={handleInputChange}
-                disabled={isPublic}
-              />
-            </div>
-          </form>
-        </>
+        }
+      >
+        <form
+          id="edit-chatroom-details-form"
+          className="edit-chatroom-details-form"
+          onSubmit={handleOnSubmit}
+        >
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Chat Room Name"
+            placeholder="name"
+            value={formValues.name}
+            name="name"
+            onChange={handleInputChange}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Old password"
+            placeholder="old password"
+            value={formValues.oldPassword ? formValues.oldPassword : ''}
+            name="oldPassword"
+            type="password"
+            onChange={handleInputChange}
+            disabled={chatroom.isPublic}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            label="New password"
+            placeholder="new password"
+            value={formValues.password ? formValues.password : ''}
+            name="password"
+            type="password"
+            onChange={handleInputChange}
+            disabled={isPublic}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            placeholder="repeat password"
+            value={
+              formValues.confirmationPassword
+                ? formValues.confirmationPassword
+                : ''
+            }
+            name="confirmationPassword"
+            type="password"
+            onChange={handleInputChange}
+            disabled={isPublic}
+          />
+        </form>
       </AvatarPageTemplate>
     </div>
   );
