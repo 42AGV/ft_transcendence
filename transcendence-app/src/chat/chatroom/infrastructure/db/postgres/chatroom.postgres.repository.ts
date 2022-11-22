@@ -12,7 +12,10 @@ import { Chatroom, ChatroomKeys } from '../chatroom.entity';
 import { IChatroomRepository } from '../chatroom.repository';
 import { UpdateChatroomDto } from '../../../dto/update-chatroom.dto';
 import { PaginationWithSearchQueryDto } from '../../../../../shared/dtos/pagination-with-search.query.dto';
-import { ChatroomMemberKeys } from '../../../chatroom-member/infrastructure/db/chatroom-member.entity';
+import {
+  ChatroomMember,
+  ChatroomMemberKeys,
+} from '../../../chatroom-member/infrastructure/db/chatroom-member.entity';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -32,11 +35,12 @@ export class ChatroomPostgresRepository
           table.CHATROOM,
           chatroom,
         );
-        const chatmember = {
+        const owner: Partial<ChatroomMember> = {
           chatId: chatroom.id,
           userId: chatroom.ownerId,
+          admin: true,
         };
-        await this.insertWithClient(client, table.CHATROOM_MEMBERS, chatmember);
+        await this.insertWithClient(client, table.CHATROOM_MEMBERS, owner);
         return chatroomData.rows[0];
       },
     );

@@ -147,7 +147,8 @@ export class ChatroomMemberPostgresRepository
                     c.${ChatroomKeys.OWNERID} IS NOT NULL as owner,
                     cm.${ChatroomMemberKeys.ADMIN},
                     cm.${ChatroomMemberKeys.MUTED},
-                    cm.${ChatroomMemberKeys.BANNED}
+                    cm.${ChatroomMemberKeys.BANNED},
+                    cm.${ChatroomMemberKeys.USERID}
              FROM ${table.USERS} u
                     INNER JOIN ${this.table} cm
                                ON cm.${ChatroomMemberKeys.USERID} = u.${userKeys.ID}
@@ -157,7 +158,7 @@ export class ChatroomMemberPostgresRepository
              WHERE cm.${ChatroomMemberKeys.CHATID} = $1
                AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
                AND ${userKeys.USERNAME} ILIKE $2
-             ORDER BY ${orderBy} DESC
+             ORDER BY ${orderBy} DESC, u.${userKeys.ID}
              LIMIT $3 OFFSET $4;`,
       values: [chatroomId, `%${search}%`, limit, offset],
     });

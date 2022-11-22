@@ -44,6 +44,7 @@ export interface ChatroomMemberWithUserData {
   admin: boolean;
   muted: boolean;
   banned: boolean;
+  userId: string;
 }
 
 export class ChatroomMemberWithUser {
@@ -55,6 +56,7 @@ export class ChatroomMemberWithUser {
   admin: boolean = false;
   muted: boolean = false;
   banned: boolean = false;
+  userId: string;
 
   constructor(chatroomMemberWithUserData: ChatroomMemberWithUserData) {
     this.username = chatroomMemberWithUserData.username;
@@ -65,5 +67,6 @@ export class ChatroomMemberWithUser {
     this.admin = chatroomMemberWithUserData.admin;
     this.muted = chatroomMemberWithUserData.muted;
     this.banned = chatroomMemberWithUserData.banned;
+    this.userId = chatroomMemberWithUserData.userId;
   }
 }

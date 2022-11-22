@@ -45,6 +45,21 @@ export default function ChatroomDetailsPage() {
   const { authUser } = useAuth();
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
+    const memberDetails = () => {
+      if (member.owner) {
+        return 'owner';
+      }
+      if (member.banned) {
+        return 'banned';
+      }
+      if (member.admin) {
+        return 'admin';
+      }
+      if (member.muted) {
+        return 'muted';
+      }
+      return '';
+    };
     return {
       iconVariant: IconVariant.EDIT,
       avatarProps: {
@@ -56,8 +71,8 @@ export default function ChatroomDetailsPage() {
       // TODO: Decide where does this url point to when the auth user is not an owner or admin
       url: `${CHATROOM_URL}/${chatroomId}/member/${member.username}/edit`,
       title: member.username,
-      subtitle: 'level x',
-      key: member.username,
+      subtitle: memberDetails(),
+      key: member.userId,
     };
   };
   const leaveChatroom = useCallback(async () => {
