@@ -57,7 +57,7 @@ export default function ChatroomDetailsPage() {
       url: `${CHATROOM_URL}/${chatroomId}/member/${member.username}/edit`,
       title: member.username,
       subtitle: 'level x',
-      key: member.username,
+      key: member.userId,
     };
   };
   const leaveChatroom = useCallback(async () => {

@@ -137,8 +137,8 @@ export class ChatroomMemberPostgresRepository
 
     const orderBy =
       sort === BooleanString.True
-        ? ChatroomMemberKeys.JOINED_AT
-        : userKeys.USERNAME;
+        ? userKeys.USERNAME
+        : ChatroomMemberKeys.USERID;
     const users = await makeQuery<ChatroomMemberWithUser>(this.pool, {
       text: `SELECT u.${userKeys.USERNAME},
                     u.${userKeys.AVATAR_ID},
@@ -147,7 +147,8 @@ export class ChatroomMemberPostgresRepository
                     c.${ChatroomKeys.OWNERID} IS NOT NULL as owner,
                     cm.${ChatroomMemberKeys.ADMIN},
                     cm.${ChatroomMemberKeys.MUTED},
-                    cm.${ChatroomMemberKeys.BANNED}
+                    cm.${ChatroomMemberKeys.BANNED},
+                    cm.${ChatroomMemberKeys.USERID}
              FROM ${table.USERS} u
                     INNER JOIN ${this.table} cm
                                ON cm.${ChatroomMemberKeys.USERID} = u.${userKeys.ID}
