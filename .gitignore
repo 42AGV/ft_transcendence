@@ -14,7 +14,8 @@ build
 dist
 
 # generated code
-transcendence-app/swagger-spec.yaml
+transcendence-app/swagger-spec/swagger-spec.yaml
+transcendence-app/swagger-spec/swagger-spec.test.yaml
 webapp/src/shared/generated
 
 # misc

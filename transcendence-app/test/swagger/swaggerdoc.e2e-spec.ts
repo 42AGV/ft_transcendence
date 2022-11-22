@@ -28,6 +28,7 @@ import { DbModule } from '../../src/shared/db/db.module';
 
 describe('[Feature] Swagger works', () => {
   let app: INestApplication;
+  const specFilePath = './swagger-spec/swagger-spec.test.yaml';
   const canActivate = jest.fn(() => true);
 
   beforeAll(async () => {
@@ -87,10 +88,11 @@ describe('[Feature] Swagger works', () => {
       .build();
     const document = SwaggerModule.createDocument(app, options);
     const yamlString: string = yaml.stringify(document, {});
-    fs.writeFileSync('./swagger-spec.yaml', yamlString);
+    fs.writeFileSync(specFilePath, yamlString);
   });
 
   afterAll(async () => {
     await app.close();
+    fs.rmSync(specFilePath, { force: true });
   });
 });

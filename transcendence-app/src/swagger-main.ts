@@ -21,7 +21,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   const yamlString: string = yaml.stringify(document, {});
-  writeFileSync('./swagger-spec.yaml', yamlString);
+  writeFileSync('./swagger-spec/swagger-spec.yaml', yamlString);
   app.close();
 }
 bootstrap();

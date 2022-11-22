@@ -22,8 +22,9 @@ services:
       context: ./transcendence-app
       target: development
     volumes:
-      - ./transcendence-app:/transcendence-app
-      - /transcendence-app/node_modules
+      - ./transcendence-app/src:/transcendence-app/src:ro
+      - ./transcendence-app/test:/transcendence-app/test:ro
+      - ./transcendence-app/seeds:/transcendence-app/seeds:ro
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
