@@ -158,7 +158,7 @@ export class ChatroomMemberPostgresRepository
              WHERE cm.${ChatroomMemberKeys.CHATID} = $1
                AND cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
                AND ${userKeys.USERNAME} ILIKE $2
-             ORDER BY ${orderBy} DESC
+             ORDER BY ${orderBy}
              LIMIT $3 OFFSET $4;`,
       values: [chatroomId, `%${search}%`, limit, offset],
     });
