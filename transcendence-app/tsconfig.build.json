@@ -7,7 +7,6 @@
     "knexfile.ts",
     "test",
     "dist",
-    "src/swagger-main.ts",
     "**/*spec.ts"
   ]
 }
