@@ -2,15 +2,13 @@
   display: contents;
 }
 
-.edit-chatroom-member-page .avatar-page-caption-like-wrapper p {
-  text-align: right;
+.edit-chatroom-member-page .avatar-page-content-wrapper {
+  align-items: center;
 }
 
-@media all and (max-width: 768px) {
-  .edit-chatroom-member-page .avatar-page-caption-like-wrapper p {
-    text-align: center;
-  }
+@media all and (min-width: 768px) {
   .edit-chatroom-member-page .avatar-page-content-wrapper {
-    align-items: center;
+    gap: calc(var(--row-gap) * 2);
+    align-items: flex-start;
   }
 }

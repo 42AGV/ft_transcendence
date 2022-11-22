@@ -198,7 +198,7 @@ export default function CreateChatroomPage() {
   }
 
   return (
-    <div className="edit-chatroom-member-page">
+    <div className="edit-chatroom-details-page">
       <AvatarPageTemplate
         isLoading={isLoading}
         title={`edit/${chatroom.name}`}

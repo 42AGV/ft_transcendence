@@ -54,3 +54,9 @@
   width: fit-content;
   white-space: nowrap;
 }
+
+.toggle-switch-text p {
+  margin-top: 0;
+  margin-bottom: 0;
+  width: fit-content;
+}
