@@ -50,14 +50,15 @@ export class ChatroomMessagePostgresRepository
     const messagesData = await makeQuery<ChatroomMessageWithUserData>(
       this.pool,
       {
-        text: `SELECT ${this.table}.*,
-        ${this.renameWithPrefix(table.USERS, Object.values(userKeys), 'user')}
-      FROM ${this.table}
-      INNER JOIN ${table.USERS}
-        ON (${this.table}.${ChatroomMessageKeys.USER_ID} =
-            ${table.USERS}.${userKeys.ID})
-      WHERE ${ChatroomMessageKeys.CHATROOM_ID} = $1
-      ORDER BY ${ChatroomMessageKeys.CREATED_AT} DESC
+        text: `SELECT m.*,
+        ${this.renameWithPrefix('u', Object.values(userKeys), 'user')}
+      FROM ${this.table} m
+      INNER JOIN ${table.USERS} u
+        ON (m.${ChatroomMessageKeys.USER_ID} =
+            u.${userKeys.ID})
+      WHERE m.${ChatroomMessageKeys.CHATROOM_ID} = $1
+      ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC,
+               m.${ChatroomMessageKeys.ID}
       LIMIT $2
       OFFSET $3;`,
         values: [chatRoomId, limit, offset],

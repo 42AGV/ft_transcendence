@@ -40,7 +40,10 @@ const mapChatToRow = (chatroom: Chatroom): RowItem => {
 export default function ChatPage() {
   const getChats = useCallback(
     (requestParameters: ChatControllerGetChatroomsRequest) =>
-      chatApi.chatControllerGetChatrooms(requestParameters),
+      chatApi.chatControllerGetChatrooms({
+        ...requestParameters,
+        limit: ENTRIES_LIMIT,
+      }),
     [],
   );
   const navigate = useNavigate();
