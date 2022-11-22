@@ -52,11 +52,11 @@ export default function ChatroomDetailsPage() {
       if (member.banned) {
         return 'banned';
       }
-      if (member.muted) {
-        return 'muted';
-      }
       if (member.admin) {
         return 'admin';
+      }
+      if (member.muted) {
+        return 'muted';
       }
       return '';
     };
