@@ -1,6 +1,6 @@
 #!/bin/sh
 set -ux
-docker-entrypoint.sh generate -i /local/transcendence-app/swagger-spec.yaml \
+docker-entrypoint.sh generate -i /local/transcendence-app/swagger-spec/swagger-spec.yaml \
   -g typescript-fetch \
   -o /local/webapp/src/shared/generated || exit
 useradd -U -ms /bin/sh "${MY_USER}"

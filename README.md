@@ -54,24 +54,6 @@ What things do you need to install the software, and how to install them.
 
 A step-by-step series of examples that tell you how to get a development environment running.
 
-Clone the GitHub repository
-
-```shell
-git clone https://github.com/42AGV/ft_transcendence.git
-```
-
-Change the current working directory to `transcendence-app`
-
-```shell
-cd ft_transcendence/transcendence-app
-```
-
-Copy the `.env.sample` to `.env.development`
-
-```shell
-cp .env.sample .env.development
-```
-
 Register a new OAuth application on the [42 intranet](https://profile.intra.42.fr/oauth/applications/new)
 
 Set the Redirect URIs
@@ -81,17 +63,36 @@ http://localhost:3000/api/v1/auth/login
 http://localhost/api/v1/auth/login
 ```
 
-Open the `.env.development` file with your favorite text editor and replace the ID and SECRET with the ones from the OAuth application you create in the previous step
-
-```
-FORTYTWO_APP_ID=42-intra-app-id
-FORTYTWO_APP_SECRET=42-intra-app-secret
-```
-
-Change the working directory to the root directory
+Clone the GitHub repository
 
 ```shell
-cd ..
+git clone https://github.com/42AGV/ft_transcendence.git
+```
+
+Change the current working directory to `ft_transcendence`
+
+```shell
+cd ft_transcendence
+```
+
+Either create a `.env` file in the root directory containing the following environment variables (replace the FORTYTWO_APP_ID and FORTYTWO_APP_SECRET with the ones from the OAuth application you created in the previous step):
+
+> **_NOTE:_**  You can generate UUIDs using the `uuidgen` command
+
+```
+FORTYTWO_APP_ID=your-42-app-id
+FORTYTWO_APP_SECRET=your-42-app-secret
+SESSION_SECRET=your-session-secret-uuid
+MEMCACHED_SECRET=your-memcached-secret-uuid
+```
+
+Or export them from the shell like:
+
+```shell
+export FORTYTWO_APP_ID=your-42-app-id
+export FORTYTWO_APP_SECRET=your-42-app-secret
+export SESSION_SECRET=your-session-secret-uuid
+export MEMCACHED_SECRET=your-memcached-secret-uuid
 ```
 
 Start the application using make
@@ -140,15 +141,13 @@ make re
 
 ### OpenAPI
 
-We use Swagger to autogenerate the OpenAPI specification `transcendence-app/swagger-spec.yaml` file. This file is generated automatically by the transcendence-app at startup whenever the OpenAPI spec changes, or manually upon running the `./scripts/generate-openapi.sh` script or equivalent `make` rules as described below.
-
-#### generate-openapi
-
-We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the `swagger-spec.yaml`.
+We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the OpenAPI specifications at `transcendence-app/swagger-spec/swagger-spec.yaml`.
 
 Please don't modify these files manually.
 
-If you change code that impacts the swagger specs in transcendence-app, you will have to regenerate the generated files. The file `swagger-spec.yaml` will update itself when modified, since our server runs on hot reload, if the app is running. To run the script, from the root directory, run:
+#### generate-openapi
+
+To generate the files, run the following command from the root directory:
 ```shell
 make gen
 ```
@@ -165,11 +164,13 @@ To run seed files, run the following command from the root directory:
 make seed
 ```
 
-To create a seed file, run the following command from the transcendence-app directory (replace `seed_name` with the name you want)
+To create a seed file, run the following command from the transcendence-app directory (replace `00X_seed_name` with the name you want)
 
 ```shell
-npx knex seed:make seed_name
+npx knex seed:make 00X_seed_name
 ```
+
+> **_NOTE:_**  Knex executes the seed files in alphabetical order
 
 ## 🔧 Running the tests <a name = "tests"></a>
 

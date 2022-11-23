@@ -22,11 +22,7 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?required}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
-      - FORTYTWO_APP_ID=${FORTYTWO_APP_ID:?required}
-      - FORTYTWO_APP_SECRET=${FORTYTWO_APP_SECRET:?required}
       - FORTYTWO_APP_CALLBACK_URL=${FORTYTWO_APP_CALLBACK_URL:?required}
-      - SESSION_SECRET=${SESSION_SECRET:?required}
-      - MEMCACHED_SECRET=${MEMCACHED_SECRET:?required}
 
   db:
     environment:
