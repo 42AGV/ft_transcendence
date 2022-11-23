@@ -35,5 +35,5 @@ ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["node", "dist/main"]
 
 FROM development AS swagger
-WORKDIR  /transcendence-app
+RUN npm install --location=global @nestjs/cli
 ENTRYPOINT ["nest", "start", "-c", "swagger.nest-cli.json"]
