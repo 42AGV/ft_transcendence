@@ -1,0 +1,13 @@
+.auth-user-page {
+  display: contents;
+}
+
+.auth-user-page .avatar-page-center-element-wrapper {
+  gap: 0;
+}
+
+@media all and (max-width: 768px) {
+  .auth-user-page .avatar-page-content-wrapper p {
+    margin: 0 0 0 1rem;
+  }
+}

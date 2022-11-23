@@ -2,6 +2,12 @@
   display: contents;
 }
 
-.user-page .avatar-page-content-wrapper > * {
-  margin: 0 0 0 1rem;
+.user-page .avatar-page-center-element-wrapper {
+  gap: 0;
+}
+
+@media all and (max-width: 768px) {
+  .user-page .avatar-page-content-wrapper > * {
+    margin: 0 0 0 1rem;
+  }
 }
