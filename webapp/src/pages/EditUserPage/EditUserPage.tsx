@@ -1,4 +1,3 @@
-import './EditUserPage.css';
 import { AvatarPageTemplate, EditUserForm } from '../../shared/components';
 import { EDIT_AVATAR_URL, AVATAR_EP_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';

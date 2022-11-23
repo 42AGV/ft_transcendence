@@ -2,8 +2,13 @@
   display: contents;
 }
 
-@media all and (max-width: 768px) {
-  .edit-chatroom-member-page .generic-content-wrapper > * {
-    align-self: center;
+.edit-chatroom-member-page .avatar-page-right-column {
+  align-items: center;
+}
+
+@media all and (min-width: 768px) {
+  .edit-chatroom-member-page .avatar-page-right-column {
+    gap: calc(var(--row-gap) * 2);
+    align-items: flex-start;
   }
 }

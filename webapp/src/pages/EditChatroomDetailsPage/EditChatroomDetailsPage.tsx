@@ -1,34 +1,31 @@
 import {
-  Button,
+  AvatarPageTemplate,
   ButtonVariant,
-  Header,
   IconVariant,
   Input,
   InputVariant,
-  LargeAvatar,
   Loading,
   ToggleSwitch,
 } from '../../shared/components';
 import {
-  CHATROOM_EP_URL,
   CHAT_URL,
+  CHATROOM_EP_URL,
   EDIT_AVATAR_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ResponseError, UpdateChatroomDto } from '../../shared/generated';
-import './EditChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
+import './EditChatroomDetailsPage.css';
 
 export default function CreateChatroomPage() {
   const { chatroomId } = useParams();
-  const navigate = useNavigate();
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
 
   const getChatRoomById = useCallback(
@@ -166,6 +163,7 @@ export default function CreateChatroomPage() {
       handleRequestError(error);
     }
   }
+
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     updateChatroomDetails().catch((e) => console.error(e));
@@ -199,39 +197,46 @@ export default function CreateChatroomPage() {
   }
 
   return (
-    <div className="edit-chatroom-details">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-        {`edit/${chatroom.name}`}
-      </Header>
-      <div className="edit-chatroom-details-avatar-properties">
-        <div className="edit-chatroom-details-avatar">
-          <LargeAvatar
+    <div className="edit-chatroom-details-page">
+      <AvatarPageTemplate
+        isLoading={isLoading}
+        title={`edit/${chatroom.name}`}
+        avatarProps={{
+          url:
             // TODO: Remove the wildcard avatar when we implement #317
-            url={
-              chatroom.avatarId
-                ? `${CHATROOM_EP_URL}/${chatroom.id}/avatars/${chatroom.avatarId}`
-                : WILDCARD_AVATAR_URL
-            }
-            //TODO: update url to EDIT_CHAT_AVATAR_URL or a common page
-            editUrl={EDIT_AVATAR_URL}
-            XCoordinate={chatroom.avatarX}
-            YCoordinate={chatroom.avatarY}
-          />
-        </div>
-        <div className="edit-chatroom-details-properties">
+            chatroom?.avatarId
+              ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${chatroom?.avatarId}`
+              : WILDCARD_AVATAR_URL,
+          editUrl: EDIT_AVATAR_URL,
+          XCoordinate: chatroom?.avatarX,
+          YCoordinate: chatroom?.avatarY,
+        }}
+        button={{
+          iconVariant: IconVariant.REMOVE,
+          children: 'Delete chatroom',
+          variant: ButtonVariant.WARNING,
+          onClick: deleteChatoom,
+        }}
+        secondaryButton={{
+          iconVariant: IconVariant.EDIT,
+          form: 'edit-chatroom-details-form',
+          children: 'Save',
+          variant: ButtonVariant.SUBMIT,
+        }}
+        isNotFound={false}
+        captionLikeElement={
           <ToggleSwitch
             isToggled={!isPublic}
             onToggle={() => setIsPublic(!isPublic)}
             label={isPublic ? 'public channel' : 'private channel'}
           />
-        </div>
-      </div>
-      <form
-        id="edit-chatroom-details-form"
-        className="edit-chatroom-details-form"
-        onSubmit={handleOnSubmit}
+        }
       >
-        <div className="edit-chatroom-details-form-inputs-container">
+        <form
+          id="edit-chatroom-details-form"
+          className="edit-chatroom-details-form"
+          onSubmit={handleOnSubmit}
+        >
           <Input
             variant={InputVariant.LIGHT}
             label="Chat Room Name"
@@ -273,21 +278,8 @@ export default function CreateChatroomPage() {
             onChange={handleInputChange}
             disabled={isPublic}
           />
-        </div>
-      </form>
-      <div className="edit-chatroom-details-buttons">
-        <Button
-          iconVariant={IconVariant.EDIT}
-          children="Delete chatroom"
-          variant={ButtonVariant.WARNING}
-          onClick={deleteChatoom}
-        />
-        <Button
-          form="edit-chatroom-details-form"
-          children="Save"
-          variant={ButtonVariant.SUBMIT}
-        />
-      </div>
+        </form>
+      </AvatarPageTemplate>
     </div>
   );
 }

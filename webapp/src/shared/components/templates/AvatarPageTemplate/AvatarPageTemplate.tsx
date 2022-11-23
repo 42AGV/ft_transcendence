@@ -21,6 +21,7 @@ type AvatarPageTemplateProps = {
   children: JSX.Element;
   button?: ButtonProps;
   secondaryButton?: ButtonProps;
+  captionLikeElement?: JSX.Element;
 };
 
 export default function AvatarPageTemplate({
@@ -32,6 +33,7 @@ export default function AvatarPageTemplate({
   title,
   headerStatusVariant,
   isNotFound,
+  captionLikeElement,
 }: AvatarPageTemplateProps) {
   const { goBack } = useNavigation();
 
@@ -58,9 +60,14 @@ export default function AvatarPageTemplate({
       >
         {title}
       </Header>
-      <div className="center-element-wrapper">
-        <LargeAvatar {...avatarProps} />
-        <div className="generic-content-wrapper">{children}</div>
+      <div className="avatar-page-center-element-wrapper">
+        <div className="avatar-page-left-column">
+          <LargeAvatar {...avatarProps} />
+          <div className="avatar-page-caption-like-wrapper">
+            {captionLikeElement && captionLikeElement}
+          </div>
+        </div>
+        <div className="avatar-page-right-column">{children}</div>
       </div>
       <div className="avatar-page-buttons-wrapper">
         {button && <Button {...button} />}
