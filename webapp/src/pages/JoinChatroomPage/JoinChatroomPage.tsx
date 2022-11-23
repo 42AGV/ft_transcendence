@@ -1,14 +1,11 @@
+import './JoinChatroomPage.css';
 import { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Button,
+  AvatarPageTemplate,
   ButtonVariant,
-  Header,
-  IconVariant,
   Input,
   InputVariant,
-  LargeAvatar,
-  Loading,
   Text,
   TextVariant,
 } from '../../shared/components';
@@ -22,8 +19,6 @@ import {
   CHATROOM_URL,
   WILDCARD_AVATAR_URL,
 } from '../../shared/urls';
-import NotFoundPage from '../NotFoundPage/NotFoundPage';
-import './JoinChatroomPage.css';
 
 export default function JoinChatroomPage() {
   const { chatroomId } = useParams();
@@ -39,7 +34,7 @@ type JoinChatroomProps = {
 };
 
 function JoinChatroom({ chatroomId }: JoinChatroomProps) {
-  const { goBack, navigate } = useNavigation();
+  const { navigate } = useNavigation();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
     [chatroomId],
@@ -78,64 +73,54 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
     }
   };
 
-  if (isChatroomLoading) {
-    return (
-      <div className="join-chatroom">
-        <div className="join-chatroom-loading">
-          <Loading />
-        </div>
-      </div>
-    );
-  }
-
-  if (!chatroom) {
-    return <NotFoundPage />;
-  }
-
   return (
-    <div className="join-chatroom">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
-        {`channel/${chatroom.name}`}
-      </Header>
-      <div className="join-chatroom-avatar">
-        <LargeAvatar
-          url={
+    <div className="join-chatroom-page">
+      <AvatarPageTemplate
+        isLoading={isChatroomLoading}
+        isNotFound={!chatroom}
+        title={`channel/${chatroom?.name ?? ''}`}
+        avatarProps={{
+          url:
             // TODO: Remove the wildcard avatar when we implement #317
-            chatroom.avatarId
-              ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${chatroom.avatarId}`
-              : WILDCARD_AVATAR_URL
-          }
-          XCoordinate={chatroom.avatarX}
-          YCoordinate={chatroom.avatarY}
-        />
-      </div>
-      <div className="join-chatroom-info">
-        <div className="join-chatroom-info-text">
-          <Text variant={TextVariant.PARAGRAPH}>{chatroom.name}</Text>
-          <Text variant={TextVariant.PARAGRAPH}>
-            {chatroom.isPublic ? 'public channel' : 'private channel'}
-          </Text>
+            chatroom?.avatarId ?? false
+              ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${
+                  chatroom?.avatarId ?? ''
+                }`
+              : WILDCARD_AVATAR_URL,
+          XCoordinate: chatroom?.avatarX ?? 0,
+          YCoordinate: chatroom?.avatarY ?? 0,
+        }}
+        button={{
+          variant: ButtonVariant.SUBMIT,
+          form: 'join-chatroom-form',
+          children: 'join',
+        }}
+      >
+        <div className="join-chatroom-info">
+          <div className="join-chatroom-info-text">
+            <Text variant={TextVariant.PARAGRAPH}>{chatroom?.name ?? ''}</Text>
+            <Text variant={TextVariant.PARAGRAPH}>
+              {chatroom?.isPublic ? 'public channel' : 'private channel'}
+            </Text>
+          </div>
+          <form
+            className="join-chatroom-info-form"
+            id="join-chatroom-form"
+            onSubmit={handleSubmit}
+          >
+            {isProtectedChatroom && (
+              <Input
+                variant={InputVariant.LIGHT}
+                label="insert password"
+                placeholder="password"
+                type="password"
+                onChange={(event) => setPassword(event.target.value)}
+                value={password}
+              />
+            )}
+          </form>
         </div>
-        <form
-          className="join-chatroom-info-form"
-          id="join-chatroom-form"
-          onSubmit={handleSubmit}
-        >
-          {isProtectedChatroom && (
-            <Input
-              variant={InputVariant.LIGHT}
-              label="insert password"
-              placeholder="password"
-              type="password"
-              onChange={(event) => setPassword(event.target.value)}
-              value={password}
-            />
-          )}
-        </form>
-      </div>
-      <Button variant={ButtonVariant.SUBMIT} form="join-chatroom-form">
-        join
-      </Button>
+      </AvatarPageTemplate>
     </div>
   );
 }
