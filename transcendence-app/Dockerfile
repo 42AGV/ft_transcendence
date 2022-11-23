@@ -36,4 +36,4 @@ CMD ["node", "dist/main"]
 
 FROM development AS swagger
 RUN npm install --location=global @nestjs/cli
-ENTRYPOINT ["/usr/local/bin/nest", "start", "-c", "swagger.nest-cli.json"]
+ENTRYPOINT ["nest", "start", "-c", "swagger.nest-cli.json"]
