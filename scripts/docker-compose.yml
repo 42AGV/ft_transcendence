@@ -7,8 +7,8 @@ services:
       target: swagger
     volumes:
       - transcendence-app-data:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
-      - ../transcendence-app:/transcendence-app
-      - /transcendence-app/node_modules
+      - ../transcendence-app/src:/transcendence-app/src
+      - ../transcendence-app/swagger-spec:/transcendence-app/swagger-spec
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -28,5 +28,4 @@ services:
       - NODE_ENV=test
 
 volumes:
-  transcendence-db:
   transcendence-app-data:

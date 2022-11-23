@@ -29,7 +29,6 @@ WORKDIR  /transcendence-app
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm clean-install --production
 COPY --from=development --chown=node:node /transcendence-app/dist ./dist
-RUN chown -R node:node /transcendence-app
 USER node
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
@@ -37,4 +36,4 @@ CMD ["node", "dist/main"]
 
 FROM development AS swagger
 RUN npm install --location=global @nestjs/cli
-ENTRYPOINT ["/usr/local/bin/nest", "start", "-c", "swagger.nest-cli.json"]
+ENTRYPOINT ["nest", "start", "-c", "swagger.nest-cli.json"]

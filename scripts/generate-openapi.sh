@@ -11,7 +11,7 @@ PROJECT_ROOT="$(
   pwd -P
 )"
 
-SWAGGER_SPEC_FILE="${PROJECT_ROOT}/transcendence-app/swagger-spec.yaml"
+SWAGGER_SPEC_FILE="${PROJECT_ROOT}/transcendence-app/swagger-spec/swagger-spec.yaml"
 DOCKER_COMPOSE="$("${PROJECT_ROOT}"/scripts/get-docker-compose.sh)"
 NO_SPEC="false"
 NO_GEN="false"
