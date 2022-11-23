@@ -1,5 +1,5 @@
 import './JoinChatroomPage.css';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   AvatarPageTemplate,
@@ -96,9 +96,9 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
           children: 'join',
         }}
       >
-        <div className="join-chatroom-info">
+        <>
           <div className="join-chatroom-info-text">
-            <Text variant={TextVariant.PARAGRAPH}>{chatroom?.name ?? ''}</Text>
+            <Text variant={TextVariant.SUBHEADING}>{chatroom?.name ?? ''}</Text>
             <Text variant={TextVariant.PARAGRAPH}>
               {chatroom?.isPublic ? 'public channel' : 'private channel'}
             </Text>
@@ -119,7 +119,7 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
               />
             )}
           </form>
-        </div>
+        </>
       </AvatarPageTemplate>
     </div>
   );

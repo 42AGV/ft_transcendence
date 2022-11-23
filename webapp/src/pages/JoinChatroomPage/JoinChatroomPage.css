@@ -1,3 +1,13 @@
 .join-chatroom-page .avatar-page-center-element-wrapper {
   height: 120%;
 }
+
+.join-chatroom-info-text > * {
+  text-align: center;
+}
+
+@media all and (min-width: 768px) {
+  .join-chatroom-info-text > * {
+    text-align: left;
+  }
+}
