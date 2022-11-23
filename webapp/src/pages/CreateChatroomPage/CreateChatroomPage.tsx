@@ -8,15 +8,10 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import {
-  CHAT_URL,
-  EDIT_AVATAR_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { CHAT_URL } from '../../shared/urls';
 import React, { useState } from 'react';
 import { CreateChatroomDto, ResponseError } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
-import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
@@ -77,19 +72,10 @@ export default function CreateChatroomPage() {
     register().catch((e) => console.error(e));
   };
 
-  const chatroom: Partial<Chatroom> = {};
   return (
     <AvatarPageTemplate
       isLoading={false}
       title="create chatroom"
-      avatarProps={{
-        url:
-          // TODO: Remove the wildcard avatar when we implement #317
-          WILDCARD_AVATAR_URL,
-        XCoordinate: chatroom?.avatarX ?? 0,
-        YCoordinate: chatroom?.avatarY ?? 0,
-        editUrl: EDIT_AVATAR_URL,
-      }}
       button={{
         form: 'create-chat-page-form',
         children: 'Save',
