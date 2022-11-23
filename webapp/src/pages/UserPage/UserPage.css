@@ -7,7 +7,7 @@
 }
 
 @media all and (max-width: 768px) {
-  .user-page .avatar-page-content-wrapper > * {
+  .user-page .avatar-page-right-column > * {
     margin: 0 0 0 1rem;
   }
 }

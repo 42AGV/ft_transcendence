@@ -26,7 +26,6 @@ import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
-import { AvatarPageVariants } from '../../shared/components/templates/AvatarPageTemplate/AvatarPageTemplate';
 import Text from '../../shared/components/Text/Text';
 
 export default function EditChatroomMemberPage() {
@@ -130,7 +129,6 @@ export default function EditChatroomMemberPage() {
           XCoordinate: chatroom?.avatarX,
           YCoordinate: chatroom?.avatarY,
         }}
-        variant={AvatarPageVariants.WITH_CAPTION}
         captionLikeElement={
           <>
             <Text

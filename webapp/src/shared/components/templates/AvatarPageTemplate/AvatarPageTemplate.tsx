@@ -12,12 +12,7 @@ import {
 import { useNavigation } from '../../../hooks/UseNavigation';
 import NotFoundPage from '../../../../pages/NotFoundPage/NotFoundPage';
 
-export enum AvatarPageVariants {
-  WITH_CAPTION = 'withCaption',
-  REGULAR = 'regular',
-}
-
-type AvatarPageTemplateCommonProps = {
+type AvatarPageTemplateProps = {
   isLoading: boolean;
   isNotFound: boolean;
   headerStatusVariant?: StatusVariant;
@@ -26,21 +21,8 @@ type AvatarPageTemplateCommonProps = {
   children: JSX.Element;
   button?: ButtonProps;
   secondaryButton?: ButtonProps;
+  captionLikeElement?: JSX.Element;
 };
-
-type AvatarPageRegularTemplateProps = AvatarPageTemplateCommonProps & {
-  variant?: AvatarPageVariants;
-  captionLikeElement?: never;
-};
-
-type AvatarPageCaptionLikeTemplateProps = AvatarPageTemplateCommonProps & {
-  variant: AvatarPageVariants;
-  captionLikeElement: JSX.Element;
-};
-
-type AvatarPageTemplateProps =
-  | AvatarPageRegularTemplateProps
-  | AvatarPageCaptionLikeTemplateProps;
 
 export default function AvatarPageTemplate({
   isLoading,
@@ -51,7 +33,6 @@ export default function AvatarPageTemplate({
   title,
   headerStatusVariant,
   isNotFound,
-  variant = AvatarPageVariants.REGULAR,
   captionLikeElement,
 }: AvatarPageTemplateProps) {
   const { goBack } = useNavigation();
@@ -83,10 +64,10 @@ export default function AvatarPageTemplate({
         <div className="avatar-page-left-column">
           <LargeAvatar {...avatarProps} />
           <div className="avatar-page-caption-like-wrapper">
-            {variant === AvatarPageVariants.WITH_CAPTION && captionLikeElement}
+            {captionLikeElement && captionLikeElement}
           </div>
         </div>
-        <div className="avatar-page-content-wrapper">{children}</div>
+        <div className="avatar-page-right-column">{children}</div>
       </div>
       <div className="avatar-page-buttons-wrapper">
         {button && <Button {...button} />}

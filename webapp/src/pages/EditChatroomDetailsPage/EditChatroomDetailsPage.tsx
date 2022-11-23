@@ -21,7 +21,6 @@ import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
-import { AvatarPageVariants } from '../../shared/components/templates/AvatarPageTemplate/AvatarPageTemplate';
 import './EditChatroomDetailsPage.css';
 
 export default function CreateChatroomPage() {
@@ -225,7 +224,6 @@ export default function CreateChatroomPage() {
           variant: ButtonVariant.SUBMIT,
         }}
         isNotFound={false}
-        variant={AvatarPageVariants.WITH_CAPTION}
         captionLikeElement={
           <ToggleSwitch
             isToggled={!isPublic}

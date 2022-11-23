@@ -19,7 +19,6 @@ import { chatApi } from '../../shared/services/ApiService';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { AvatarPageVariants } from '../../shared/components/templates/AvatarPageTemplate/AvatarPageTemplate';
 
 export default function CreateChatroomPage() {
   const { warn, notify } = useNotificationContext();
@@ -97,7 +96,6 @@ export default function CreateChatroomPage() {
         variant: ButtonVariant.SUBMIT,
       }}
       isNotFound={false}
-      variant={AvatarPageVariants.WITH_CAPTION}
       captionLikeElement={
         <>
           <Text
