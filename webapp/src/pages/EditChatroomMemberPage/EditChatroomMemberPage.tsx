@@ -9,13 +9,7 @@ import {
   TextWeight,
 } from '../../shared/components';
 import './EditChatroomMemberPage.css';
-import {
-  AVATAR_EP_URL,
-  CHATROOM_EP_URL,
-  CHATROOM_URL,
-  USER_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { AVATAR_EP_URL, CHATROOM_URL, USER_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useCallback } from 'react';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
@@ -121,11 +115,7 @@ export default function EditChatroomMemberPage() {
         headerStatusVariant="online"
         title="chat user"
         avatarProps={{
-          url:
-            // TODO: Remove the wildcard avatar when we implement #317
-            chatroom?.avatarId
-              ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${chatroom?.avatarId}`
-              : WILDCARD_AVATAR_URL,
+          url: `${AVATAR_EP_URL}/${chatroom?.avatarId}`,
           XCoordinate: chatroom?.avatarX,
           YCoordinate: chatroom?.avatarY,
         }}

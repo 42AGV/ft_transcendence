@@ -20,7 +20,7 @@ export const LOGIN_EP_URL = `${API_ENDPOINT_URL}/auth/login`;
 export const LOGOUT_EP_URL = `${API_ENDPOINT_URL}/auth/logout`;
 export const USERS_EP_URL = `${API_ENDPOINT_URL}${USERS_URL}`;
 export const CHATROOM_EP_URL = `${API_ENDPOINT_URL}/chat/room`;
-export const AVATAR_EP_URL = `${USERS_EP_URL}/avatars`;
+export const AVATAR_EP_URL = `${API_ENDPOINT_URL}/avatar`;
 
 // others
 export const WILDCARD_AVATAR_URL = 'https://i.pravatar.cc/1000';

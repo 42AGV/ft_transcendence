@@ -26,27 +26,6 @@ export class ChatroomPostgresRepository
     super(pool, table.CHATROOM, Chatroom);
   }
 
-  async addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null> {
-    const chatroomData = await makeTransactionalQuery<Chatroom>(
-      this.pool,
-      async (client) => {
-        const chatroomData = await this.insertWithClient(
-          client,
-          table.CHATROOM,
-          chatroom,
-        );
-        const owner: Partial<ChatroomMember> = {
-          chatId: chatroom.id,
-          userId: chatroom.ownerId,
-          admin: true,
-        };
-        await this.insertWithClient(client, table.CHATROOM_MEMBERS, owner);
-        return chatroomData.rows[0];
-      },
-    );
-    return chatroomData ? new this.ctor(chatroomData) : null;
-  }
-
   async getById(id: string): Promise<Chatroom | null> {
     const chats = await this.getByKey(ChatroomKeys.ID, id);
     return chats && chats.length ? chats[0] : null;
@@ -126,7 +105,7 @@ export class ChatroomPostgresRepository
 
   async addAvatarAndAddChatroom(
     avatar: LocalFile,
-    chatroom: Chatroom,
+    chatroom: Omit<Chatroom, 'isPublic'>,
   ): Promise<Chatroom | null> {
     const chatroomData = await makeTransactionalQuery<Chatroom>(
       this.pool,
@@ -141,6 +120,12 @@ export class ChatroomPostgresRepository
           ...chatroom,
           avatarId,
         });
+        const owner: Partial<ChatroomMember> = {
+          chatId: chatroom.id,
+          userId: chatroom.ownerId,
+          admin: true,
+        };
+        await this.insertWithClient(client, table.CHATROOM_MEMBERS, owner);
         return chatRes.rows[0];
       },
     );

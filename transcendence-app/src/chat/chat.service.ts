@@ -25,6 +25,9 @@ import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-membe
 import { User } from '../user/infrastructure/db/user.entity';
 import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
 import { IChatroomMemberRepository } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
+import { LocalFileService } from '../shared/local-file/local-file.service';
+import { LocalFileDto } from '../shared/local-file/local-file.dto';
+import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 
 @Injectable()
 export class ChatService {
@@ -34,6 +37,7 @@ export class ChatService {
     private chatroomMessageRepository: IChatroomMessageRepository,
     private chatroomMemberService: ChatroomMemberService,
     private chatroomMemberRepository: IChatroomMemberRepository,
+    private localFileService: LocalFileService,
   ) {}
 
   async retrieveChatrooms({
@@ -67,20 +71,27 @@ export class ChatService {
     });
   }
 
-  private async addChatroom(
-    chatroom: Partial<Chatroom>,
+  private async addAvatarAndChatroom(
+    avatarId: string,
+    avatarDto: LocalFileDto,
+    chatroom: ChatroomDto,
   ): Promise<Chatroom | null> {
-    return this.chatroomRepository.addChatroom({
-      id: uuidv4(),
-      createdAt: new Date(Date.now()),
-      avatarX: 0,
-      avatarY: 0,
-      ...chatroom,
-    });
+    return this.chatroomRepository.addAvatarAndAddChatroom(
+      { id: avatarId, createdAt: new Date(Date.now()), ...avatarDto },
+      {
+        id: uuidv4(),
+        createdAt: new Date(Date.now()),
+        avatarX: 0,
+        avatarY: 0,
+        ...chatroom,
+      },
+    );
   }
 
   async createChatroom(ownerId: string, chatroom: CreateChatroomDto) {
     const { confirmationPassword: _, ...newChat } = chatroom;
+    const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
+    const avatarId = uuidv4();
     if (chatroom.password) {
       if (chatroom.password !== chatroom.confirmationPassword) {
         throw new BadRequestException(
@@ -89,17 +100,18 @@ export class ChatService {
       }
 
       const hashedPassword = await Password.toHash(chatroom.password);
-      return this.addChatroom({
+      return this.addAvatarAndChatroom(avatarId, avatarDto, {
         ...newChat,
-        avatarId: null,
+        avatarId,
+        ownerId,
         password: hashedPassword,
-        ownerId: ownerId,
       });
     } else {
-      return this.addChatroom({
+      return this.addAvatarAndChatroom(avatarId, avatarDto, {
         ...newChat,
-        avatarId: null,
-        ownerId: ownerId,
+        avatarId,
+        ownerId,
+        password: null,
       });
     }
   }

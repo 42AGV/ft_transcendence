@@ -1,4 +1,8 @@
-import { Injectable, StreamableFile } from '@nestjs/common';
+import {
+  Injectable,
+  StreamableFile,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
@@ -12,12 +16,12 @@ import {
   MAX_ENTRIES_PER_PAGE,
 } from '../shared/constants';
 import { createReadStream } from 'fs';
-import { loadEsmModule } from '../shared/utils';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { AvatarService } from '../shared/avatar/avatar.service';
 
 @Injectable()
 export class UserService {
@@ -25,6 +29,7 @@ export class UserService {
     private userRepository: IUserRepository,
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
+    private avatarService: AvatarService,
   ) {}
 
   retrieveUserWithId(id: string): Promise<User | null> {
@@ -83,25 +88,6 @@ export class UserService {
     return this.userRepository.updateById(userId, updateUserDto);
   }
 
-  async getAvatar(userId: string): Promise<StreamableFile | null> {
-    const user = await this.userRepository.getById(userId);
-
-    if (!user || !user.avatarId) {
-      return null;
-    }
-
-    return this.getAvatarByAvatarId(user.avatarId);
-  }
-
-  async getAvatarByAvatarId(avatarId: string): Promise<StreamableFile | null> {
-    const file = await this.localFileService.getFileById(avatarId);
-
-    if (!file) {
-      return null;
-    }
-    return this.streamAvatarData(file);
-  }
-
   private async getBlockRelation(
     userMeId: string,
     userId: string,
@@ -149,6 +135,16 @@ export class UserService {
     user: User,
     newAvatarFileDto: LocalFileDto,
   ): Promise<UserAvatarResponseDto | null> {
+    const isValid = await this.avatarService.validateAvatarType(
+      newAvatarFileDto.path,
+    );
+    if (!isValid) {
+      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
+      throw new UnprocessableEntityException(
+        `Validation failed (allowed types are ${allowedTypes})`,
+      );
+    }
+
     const previousAvatarId = user.avatarId;
     const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
     if (!avatar) {
@@ -168,22 +164,6 @@ export class UserService {
       disposition: `inline; filename="${fileDto.filename}"`,
       length: fileDto.size,
     });
-  }
-
-  async validateAvatarType(path: string): Promise<boolean | undefined> {
-    /**
-     * Import 'file-type' ES-Module in CommonJS Node.js module
-     */
-    const { fileTypeFromFile } = await loadEsmModule<
-      typeof import('file-type')
-    >('file-type');
-    const fileTypeResult = await fileTypeFromFile(path);
-    const isValid =
-      fileTypeResult && AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
-    if (!isValid) {
-      this.localFileService.deleteFileData(path);
-    }
-    return isValid;
   }
 
   retrieveUserWithAuthProvider(
