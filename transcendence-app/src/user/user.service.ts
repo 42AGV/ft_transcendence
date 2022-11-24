@@ -1,4 +1,9 @@
-import { Injectable, StreamableFile } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  StreamableFile,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
@@ -18,6 +23,7 @@ import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { SocketService } from '../socket/socket.service';
 
 @Injectable()
 export class UserService {
@@ -25,6 +31,7 @@ export class UserService {
     private userRepository: IUserRepository,
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
+    private socketService: SocketService,
   ) {}
 
   retrieveUserWithId(id: string): Promise<User | null> {
@@ -193,15 +200,23 @@ export class UserService {
     return this.userRepository.getByAuthProvider(provider, providerId);
   }
 
-  addBlock(blockerId: string, blockedId: string) {
-    return this.blockRepository.addBlock({ blockerId, blockedId });
+  async addBlock(blockerId: string, blockedId: string) {
+    const block = await this.blockRepository.addBlock({ blockerId, blockedId });
+    if (!block) {
+      throw new UnprocessableEntityException();
+    }
+    this.socketService.addBlock(blockerId, blockedId);
   }
 
-  getBlock(blockerId: string, blockedId: string) {
-    return this.blockRepository.getBlock(blockerId, blockedId);
+  async deleteBlock(blockerId: string, blockedId: string) {
+    const block = await this.blockRepository.deleteBlock(blockerId, blockedId);
+    if (!block) {
+      throw new NotFoundException();
+    }
+    this.socketService.deleteBlock(blockerId, blockedId);
   }
 
-  deleteBlock(blockerId: string, blockedId: string) {
-    return this.blockRepository.deleteBlock(blockerId, blockedId);
+  getBlocks(blockerId: string) {
+    return this.blockRepository.getBlocks(blockerId);
   }
 }

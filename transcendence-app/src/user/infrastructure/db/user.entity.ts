@@ -14,7 +14,7 @@ export enum userKeys {
   AVATAR_Y = '"avatarY"',
 }
 
-interface UserData {
+export interface UserData {
   id: string;
   username: string;
   email: string;

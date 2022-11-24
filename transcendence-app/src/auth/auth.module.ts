@@ -12,7 +12,7 @@ import { HTTP_TIMEOUT_MILLISECONDS } from '../shared/constants';
 import { LocalStrategy } from './local.strategy';
 import { OAuth42Strategy } from './oauth42.strategy';
 import { SessionSerializer } from './session.serializer';
-import { ChatModule } from '../chat/chat.module';
+import { SocketModule } from '../socket/socket.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { ChatModule } from '../chat/chat.module';
     }),
     DbModule,
     UserModule,
-    ChatModule,
+    SocketModule,
     PassportModule.register({ session: true }),
     LocalFileModule,
     AuthProviderModule,
