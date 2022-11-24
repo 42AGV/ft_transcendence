@@ -13,7 +13,7 @@ export class ChatroomDto {
   password!: string | null;
 
   @IsUUID()
-  avatarId!: string | null;
+  avatarId!: string;
 
   @IsUUID()
   ownerId!: string;

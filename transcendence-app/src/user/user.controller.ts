@@ -13,7 +13,6 @@ import {
   Put,
   Query,
   ServiceUnavailableException,
-  StreamableFile,
   UnprocessableEntityException,
   UploadedFile,
   UseGuards,
@@ -117,27 +116,6 @@ export class UserController {
     return users;
   }
 
-  @Get('avatars/:avatarId')
-  @ApiProduces('image/jpeg')
-  @ApiOkResponse({
-    schema: {
-      type: 'file',
-      format: 'binary',
-    },
-  })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  async getAvatarByAvatarId(
-    @Param('avatarId', ParseUUIDPipe) id: string,
-  ): Promise<StreamableFile> {
-    const streamableFile = await this.userService.getAvatarByAvatarId(id);
-
-    if (!streamableFile) {
-      throw new NotFoundException();
-    }
-    return streamableFile;
-  }
-
   @Get(':userName')
   @ApiOkResponse({ description: 'Get a user', type: UserResponseDto })
   @ApiNotFoundResponse({ description: 'Not Found' })
@@ -175,14 +153,6 @@ export class UserController {
   ): Promise<UserAvatarResponseDto> {
     if (!file) {
       throw new UnprocessableEntityException();
-    }
-
-    const isValid = await this.userService.validateAvatarType(file.path);
-    if (!isValid) {
-      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
-      throw new UnprocessableEntityException(
-        `Validation failed (allowed types are ${allowedTypes})`,
-      );
     }
 
     const avatar = await this.userService.addAvatar(user, {

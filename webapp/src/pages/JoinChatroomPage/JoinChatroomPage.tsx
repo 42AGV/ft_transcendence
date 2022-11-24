@@ -14,11 +14,7 @@ import { ResponseError } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { chatApi } from '../../shared/services/ApiService';
-import {
-  CHATROOM_EP_URL,
-  CHATROOM_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
 
 export default function JoinChatroomPage() {
   const { chatroomId } = useParams();
@@ -80,13 +76,7 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
         isNotFound={!chatroom}
         title={`channel/${chatroom?.name ?? ''}`}
         avatarProps={{
-          url:
-            // TODO: Remove the wildcard avatar when we implement #317
-            chatroom?.avatarId ?? false
-              ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${
-                  chatroom?.avatarId ?? ''
-                }`
-              : WILDCARD_AVATAR_URL,
+          url: `${AVATAR_EP_URL}/${chatroom?.avatarId}`,
           XCoordinate: chatroom?.avatarX ?? 0,
           YCoordinate: chatroom?.avatarY ?? 0,
         }}

@@ -12,7 +12,6 @@ export abstract class IChatroomRepository {
     name: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null>;
-  abstract addChatroom(chatroom: Partial<Chatroom>): Promise<Chatroom | null>;
   abstract getPaginatedChatrooms(
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Chatroom[] | null>;
@@ -22,7 +21,7 @@ export abstract class IChatroomRepository {
   ): Promise<Chatroom[] | null>;
   abstract addAvatarAndAddChatroom(
     avatar: LocalFile,
-    chatroom: Chatroom,
+    chatroom: Omit<Chatroom, 'isPublic'>,
   ): Promise<Chatroom | null>;
   abstract addAvatarAndUpdateChatroom(
     avatar: LocalFile,

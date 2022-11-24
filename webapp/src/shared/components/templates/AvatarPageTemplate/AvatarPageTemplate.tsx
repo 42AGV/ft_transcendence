@@ -17,7 +17,7 @@ type AvatarPageTemplateProps = {
   isNotFound: boolean;
   headerStatusVariant?: StatusVariant;
   title: string;
-  avatarProps: LargeAvatarProps;
+  avatarProps?: LargeAvatarProps;
   children: JSX.Element;
   button?: ButtonProps;
   secondaryButton?: ButtonProps;
@@ -62,7 +62,7 @@ export default function AvatarPageTemplate({
       </Header>
       <div className="avatar-page-center-element-wrapper">
         <div className="avatar-page-left-column">
-          <LargeAvatar {...avatarProps} />
+          {avatarProps && <LargeAvatar {...avatarProps} />}
           <div className="avatar-page-caption-like-wrapper">
             {captionLikeElement && captionLikeElement}
           </div>

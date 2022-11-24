@@ -44,7 +44,7 @@ CREATE TABLE
     "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
     "name" VARCHAR(100) NOT NULL UNIQUE,
     "password" TEXT,
-    "avatarId" UUID REFERENCES LocalFile (id) UNIQUE,
+    "avatarId" UUID NOT NULL REFERENCES LocalFile (id) UNIQUE,
     "avatarX" SMALLINT NOT NULL DEFAULT 0,
     "avatarY" SMALLINT NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW (),

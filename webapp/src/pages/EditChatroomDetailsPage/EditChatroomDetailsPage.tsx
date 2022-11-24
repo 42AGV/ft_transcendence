@@ -7,12 +7,7 @@ import {
   Loading,
   ToggleSwitch,
 } from '../../shared/components';
-import {
-  CHAT_URL,
-  CHATROOM_EP_URL,
-  EDIT_AVATAR_URL,
-  WILDCARD_AVATAR_URL,
-} from '../../shared/urls';
+import { CHAT_URL, AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -202,12 +197,8 @@ export default function CreateChatroomPage() {
         isLoading={isLoading}
         title={`edit/${chatroom.name}`}
         avatarProps={{
-          url:
-            // TODO: Remove the wildcard avatar when we implement #317
-            chatroom?.avatarId
-              ? `${CHATROOM_EP_URL}/${chatroomId}/avatars/${chatroom?.avatarId}`
-              : WILDCARD_AVATAR_URL,
-          editUrl: EDIT_AVATAR_URL,
+          url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
+          editUrl: `${CHATROOM_URL}/${chatroom.id}/edit/avatar`,
           XCoordinate: chatroom?.avatarX,
           YCoordinate: chatroom?.avatarY,
         }}

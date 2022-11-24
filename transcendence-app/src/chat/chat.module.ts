@@ -5,10 +5,11 @@ import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { ChatGateway } from './chat.gateway';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
+import { AvatarModule } from '../shared/avatar/avatar.module';
 
 @Global()
 @Module({
-  imports: [DbModule, LocalFileModule],
+  imports: [DbModule, LocalFileModule, AvatarModule],
   providers: [ChatGateway, ChatService, ChatroomMemberService],
   controllers: [ChatController],
   exports: [ChatService],
