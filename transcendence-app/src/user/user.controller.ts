@@ -168,19 +168,30 @@ export class UserController {
     return avatar;
   }
 
+  @Get('block/list')
+  @ApiOkResponse({
+    description: 'List users blocked by the authenticated user',
+    type: [User],
+  })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async getBlocks(@GetUser() user: User): Promise<User[]> {
+    const blockedUsers = await this.userService.getBlocks(user.id);
+    if (!blockedUsers) {
+      throw new ServiceUnavailableException();
+    }
+    return blockedUsers;
+  }
+
   @Post('block/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Block a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
-  async blockUser(
+  blockUser(
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
-    const block = await this.userService.addBlock(user.id, blockedUserId);
-    if (!block) {
-      throw new UnprocessableEntityException();
-    }
+    return this.userService.addBlock(user.id, blockedUserId);
   }
 
   @Delete('block/:userId')
@@ -190,13 +201,10 @@ export class UserController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  async unblockUser(
+  unblockUser(
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
-    const block = await this.userService.deleteBlock(user.id, blockedUserId);
-    if (!block) {
-      throw new NotFoundException();
-    }
+    return this.userService.deleteBlock(user.id, blockedUserId);
   }
 }
