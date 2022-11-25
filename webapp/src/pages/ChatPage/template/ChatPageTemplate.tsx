@@ -29,10 +29,10 @@ const mapChatToRow = (chatroom: Chatroom): RowItem => {
   };
 };
 
-type ChatPageTemplateProps<T> = {
+type ChatPageTemplateProps = {
   fetchFn: <RequestType extends Query>(
     requestParams: RequestType,
-  ) => Promise<T[]>;
+  ) => Promise<Chatroom[]>;
   buttonUrl: string;
   buttonIconVariant: IconVariant;
   buttonLabel: string;
@@ -43,7 +43,7 @@ export default function ChatPageTemplate<T>({
   buttonUrl,
   buttonIconVariant,
   buttonLabel,
-}: ChatPageTemplateProps<T>) {
+}: ChatPageTemplateProps) {
   const navigate = useNavigate();
   const chatButtons = [
     {
