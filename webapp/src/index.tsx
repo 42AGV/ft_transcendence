@@ -20,6 +20,7 @@ import {
   ChatroomDetailsPage,
   JoinChatroomPage,
   EditChatroomMemberPage,
+  DiscoverChatPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -71,7 +72,15 @@ root.render(
               }
             />
             <Route
-              path={CHAT_URL}
+              path={`${CHAT_URL}/discover`}
+              element={
+                <RequireAuth>
+                  <DiscoverChatPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={`${CHAT_URL}`}
               element={
                 <RequireAuth>
                   <ChatPage />

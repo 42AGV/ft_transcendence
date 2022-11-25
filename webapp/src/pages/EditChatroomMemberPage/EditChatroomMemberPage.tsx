@@ -139,13 +139,7 @@ export default function EditChatroomMemberPage() {
         }
         button={button}
         isNotFound={
-          !(
-            chatroom &&
-            destUser &&
-            authCrMember &&
-            destCrMember &&
-            authCrMember
-          )
+          !(chatroom && destCrMember && destUser && authUser && authCrMember)
         }
       >
         <>
@@ -168,8 +162,8 @@ export default function EditChatroomMemberPage() {
               chatroom,
               destCrMember,
               destUser,
-              authCrMember,
               authUserId: authUser?.id ?? '',
+              authCrMember,
             }}
           />
         </>

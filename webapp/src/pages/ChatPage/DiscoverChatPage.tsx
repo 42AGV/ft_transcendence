@@ -1,15 +1,15 @@
 import { IconVariant } from '../../shared/components';
 import { CHAT_URL } from '../../shared/urls';
-import { ChatControllerGetAuthChatroomsRequest } from '../../shared/generated';
+import { ChatControllerGetChatroomsRequest } from '../../shared/generated';
 import { useCallback } from 'react';
 import { chatApi } from '../../shared/services/ApiService';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import ChatPageTemplate from './template/ChatPageTemplate';
 
-export default function ChatPage() {
+export default function DiscoverChatPage() {
   const getChats = useCallback(
-    (requestParameters: ChatControllerGetAuthChatroomsRequest) =>
-      chatApi.chatControllerGetAuthChatrooms({
+    (requestParameters: ChatControllerGetChatroomsRequest) =>
+      chatApi.chatControllerGetChatrooms({
         ...requestParameters,
         limit: ENTRIES_LIMIT,
       }),
@@ -18,9 +18,9 @@ export default function ChatPage() {
   return (
     <ChatPageTemplate
       fetchFn={getChats}
-      buttonIconVariant={IconVariant.ARROW_FORWARD}
-      buttonLabel="Discover"
-      buttonUrl={`${CHAT_URL}/discover`}
+      buttonIconVariant={IconVariant.ARROW_BACK}
+      buttonLabel="Chat"
+      buttonUrl={CHAT_URL}
     />
   );
 }

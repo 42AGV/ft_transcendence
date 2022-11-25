@@ -15,3 +15,4 @@ export { default as AuthUserPage } from './AuthUserPage/AuthUserPage';
 export { default as ChatroomDetailsPage } from './ChatroomDetailsPage/ChatroomDetailsPage';
 export { default as JoinChatroomPage } from './JoinChatroomPage/JoinChatroomPage';
 export { default as EditChatroomMemberPage } from './EditChatroomMemberPage/EditChatroomMemberPage';
+export { default as DiscoverChatPage } from './ChatPage/DiscoverChatPage';
