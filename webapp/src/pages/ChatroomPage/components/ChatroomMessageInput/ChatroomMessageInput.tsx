@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import {
+  Button,
+  ButtonVariant,
+  IconVariant,
+} from '../../../../shared/components';
 import socket from '../../../../shared/socket';
 import './ChatroomMessageInput.css';
 
@@ -8,6 +13,12 @@ type ChatroomMessageInputProps = {
 
 const ChatroomMessageInput = ({ to }: ChatroomMessageInputProps) => {
   const [value, setValue] = useState('');
+
+  const handleButtonSend = (e: React.MouseEvent): void => {
+    e.preventDefault();
+    socket.emit('chatroomMessage', { chatroomId: to, content: value });
+    setValue('');
+  };
 
   const onEnterPress = (e: React.KeyboardEvent) => {
     if (e.code === 'Enter' && !e.shiftKey) {
@@ -35,6 +46,11 @@ const ChatroomMessageInput = ({ to }: ChatroomMessageInputProps) => {
           rows={1}
           onInput={handleOnInput}
           onKeyDown={onEnterPress}
+        />
+        <Button
+          variant={ButtonVariant.SUBMIT}
+          iconVariant={IconVariant.SEND}
+          onClick={handleButtonSend}
         />
       </div>
     </form>
