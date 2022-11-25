@@ -5,6 +5,7 @@ import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.
 import { makeQuery } from '../../../../shared/db/postgres/utils';
 import { Block, BlockKeys } from '../block.entity';
 import { IBlockRepository } from '../block.repository';
+import { User, UserData, userKeys } from '../user.entity';
 
 @Injectable()
 export class BlockPostgresRepository
@@ -41,5 +42,16 @@ export class BlockPostgresRepository
       values: [blockerId, blockedId],
     });
     return blockData && blockData.length ? new this.ctor(blockData[0]) : null;
+  }
+
+  async getBlocks(blockerId: string): Promise<User[] | null> {
+    const usersData = await makeQuery<UserData>(this.pool, {
+      text: `SELECT u.*
+      FROM ${this.table} b
+      JOIN ${table.USERS} u ON (b.${BlockKeys.BLOCKED_ID} = u.${userKeys.ID})
+      WHERE b.${BlockKeys.BLOCKER_ID} = $1`,
+      values: [blockerId],
+    });
+    return usersData ? usersData.map((userData) => new User(userData)) : null;
   }
 }

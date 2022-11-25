@@ -1,5 +1,6 @@
 import {
   Injectable,
+  NotFoundException,
   StreamableFile,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { AvatarService } from '../shared/avatar/avatar.service';
+import { SocketService } from '../socket/socket.service';
 
 @Injectable()
 export class UserService {
@@ -30,6 +32,7 @@ export class UserService {
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
     private avatarService: AvatarService,
+    private socketService: SocketService,
   ) {}
 
   retrieveUserWithId(id: string): Promise<User | null> {
@@ -173,15 +176,23 @@ export class UserService {
     return this.userRepository.getByAuthProvider(provider, providerId);
   }
 
-  addBlock(blockerId: string, blockedId: string) {
-    return this.blockRepository.addBlock({ blockerId, blockedId });
+  async addBlock(blockerId: string, blockedId: string) {
+    const block = await this.blockRepository.addBlock({ blockerId, blockedId });
+    if (!block) {
+      throw new UnprocessableEntityException();
+    }
+    this.socketService.addBlock(blockerId, blockedId);
   }
 
-  getBlock(blockerId: string, blockedId: string) {
-    return this.blockRepository.getBlock(blockerId, blockedId);
+  async deleteBlock(blockerId: string, blockedId: string) {
+    const block = await this.blockRepository.deleteBlock(blockerId, blockedId);
+    if (!block) {
+      throw new NotFoundException();
+    }
+    this.socketService.deleteBlock(blockerId, blockedId);
   }
 
-  deleteBlock(blockerId: string, blockedId: string) {
-    return this.blockRepository.deleteBlock(blockerId, blockedId);
+  getBlocks(blockerId: string) {
+    return this.blockRepository.getBlocks(blockerId);
   }
 }

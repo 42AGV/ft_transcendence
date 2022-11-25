@@ -4,9 +4,10 @@ import { UserController } from './user.controller';
 import { DbModule } from '../shared/db/db.module';
 import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { AvatarModule } from '../shared/avatar/avatar.module';
+import { SocketModule } from '../socket/socket.module';
 
 @Module({
-  imports: [DbModule, LocalFileModule, AvatarModule],
+  imports: [DbModule, LocalFileModule, AvatarModule, SocketModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
