@@ -38,7 +38,7 @@ type ChatPageTemplateProps = {
   buttonLabel: string;
 };
 
-export default function ChatPageTemplate<T>({
+export default function ChatPageTemplate({
   fetchFn,
   buttonUrl,
   buttonIconVariant,
