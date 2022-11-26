@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Button,
+  ButtonSize,
   ButtonVariant,
   IconVariant,
 } from '../../../../shared/components';
@@ -16,7 +17,8 @@ const ChatroomMessageInput = ({ to }: ChatroomMessageInputProps) => {
 
   const handleButtonSend = (e: React.MouseEvent): void => {
     e.preventDefault();
-    socket.emit('chatroomMessage', { chatroomId: to, content: value });
+    value !== '' &&
+      socket.emit('chatroomMessage', { chatroomId: to, content: value });
     setValue('');
   };
 
@@ -51,6 +53,7 @@ const ChatroomMessageInput = ({ to }: ChatroomMessageInputProps) => {
           variant={ButtonVariant.SUBMIT}
           iconVariant={IconVariant.SEND}
           onClick={handleButtonSend}
+          buttonSize={ButtonSize.SMALL}
         />
       </div>
     </form>

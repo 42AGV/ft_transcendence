@@ -52,8 +52,6 @@ export default function RegisterPage() {
 
     if (formValues.username === '') {
       errMessage = 'Username can not be empty';
-    } else if (formValues.username === 'me') {
-      errMessage = 'Invalid username';
     } else if (formValues.email === '') {
       errMessage = 'Email can not be empty';
     } else if (formValues.fullName === '') {

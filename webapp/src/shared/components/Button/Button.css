@@ -6,6 +6,7 @@
   align-items: center;
   cursor: pointer;
   display: flex;
+  gap: 1rem;
   flex-direction: row;
   justify-content: center;
 }
@@ -40,6 +41,12 @@
   color: var(--color-submit);
 }
 
-.button-icon {
+.button-small .button-icon {
   display: flex;
+}
+
+.button-large .button-icon {
+  display: flex;
+  position: absolute;
+  left: 1rem;
 }
