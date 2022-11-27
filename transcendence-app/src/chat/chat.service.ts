@@ -131,7 +131,7 @@ export class ChatService {
   }
 
   async saveOneToOneChatMessage(
-    message: ChatMessage,
+    message: Partial<ChatMessage>,
   ): Promise<ChatMessage | null> {
     return this.chatMessageRepository.add(message);
   }

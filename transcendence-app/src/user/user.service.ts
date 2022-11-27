@@ -91,7 +91,7 @@ export class UserService {
     return this.userRepository.updateById(userId, updateUserDto);
   }
 
-  private async getBlockRelation(
+  async getBlockRelation(
     userMeId: string,
     userId: string,
   ): Promise<UserBlockRelation | null> {
