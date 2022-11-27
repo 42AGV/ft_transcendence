@@ -57,7 +57,7 @@ re:
 
 .PHONY: prod-re
 prod-re:
-  make prod-clean
+	make prod-clean
 	make prod
 
 .PHONY: log-tr
