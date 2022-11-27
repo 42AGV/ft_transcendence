@@ -93,27 +93,6 @@ export class UserController {
     return updatedUser;
   }
 
-  @Patch('/password')
-  @ApiOkResponse({
-    description: 'Update the authenticated user password',
-    type: User,
-  })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
-  async updateCurrentUserPassword(
-    @GetUser() user: User,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    const updatedUser = await this.userService.updateUserPassword(
-      user.id,
-      updateUserDto,
-    );
-    if (!updatedUser) {
-      throw new UnprocessableEntityException();
-    }
-    return updatedUser;
-  }
-
   @Get('me')
   @ApiOkResponse({ description: 'Get the authenticated user', type: User })
   getCurrentUser(@GetUser() user: User) {

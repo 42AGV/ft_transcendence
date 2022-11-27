@@ -86,17 +86,13 @@ export class UserService {
     );
   }
 
-  updateUser(
+  async updateUser(
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
-    return this.userRepository.updateById(userId, updateUserDto);
-  }
-
-  async updateUserPassword(
-    userId: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<User | null> {
+    if (!updateUserDto.oldPassword && !updateUserDto.password) {
+      return this.userRepository.updateById(userId, updateUserDto);
+    }
     const { oldPassword, confirmationPassword, ...updateUserPassword } =
       updateUserDto;
     const user = await this.retrieveUserWithId(userId);

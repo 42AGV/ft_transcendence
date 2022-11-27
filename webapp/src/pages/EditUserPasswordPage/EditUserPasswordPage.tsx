@@ -72,7 +72,7 @@ export default function EditUserPasswordPage() {
       return;
     }
     try {
-      await usersApi.userControllerUpdateCurrentUserPassword({
+      await usersApi.userControllerUpdateCurrentUser({
         updateUserDto: formValues,
       });
       notify('Password successfully updated');
