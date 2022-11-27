@@ -1,0 +1,39 @@
+.chat-template {
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  gap: 1rem;
+  grid-template-areas:
+    'header'
+    'messages'
+    'message-input';
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
+}
+
+.chat-template-loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
+
+.chat-template-header {
+  grid-area: header;
+}
+
+.chat-template-messages {
+  grid-area: messages;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  /* Scroll to the bottom of the messages list using CSS - https://stackoverflow.com/a/72644230 */
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.chat-template-message-input {
+  grid-area: message-input;
+}
