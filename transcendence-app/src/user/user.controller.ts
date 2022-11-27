@@ -68,14 +68,14 @@ export const AvatarFileInterceptor = LocalFileInterceptor({
   },
 });
 
-@Controller('users')
+@Controller()
 @UseGuards(AuthenticatedGuard)
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Patch()
+  @Patch('user')
   @ApiOkResponse({ description: 'Update the authenticated user', type: User })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
@@ -93,13 +93,13 @@ export class UserController {
     return updatedUser;
   }
 
-  @Get('me')
+  @Get('user')
   @ApiOkResponse({ description: 'Get the authenticated user', type: User })
   getCurrentUser(@GetUser() user: User) {
     return user;
   }
 
-  @Get()
+  @Get('users')
   @ApiOkResponse({
     description: `Lists all users (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [User],
@@ -116,7 +116,7 @@ export class UserController {
     return users;
   }
 
-  @Get(':userName')
+  @Get('users/:userName')
   @ApiOkResponse({ description: 'Get a user', type: UserResponseDto })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
@@ -134,7 +134,7 @@ export class UserController {
     return user;
   }
 
-  @Put('avatar')
+  @Put('user/avatar')
   @ApiConsumes('multipart/form-data')
   @ApiFile('file')
   @ApiProduces('image/jpeg')
@@ -168,7 +168,7 @@ export class UserController {
     return avatar;
   }
 
-  @Get('block/list')
+  @Get('user/block')
   @ApiOkResponse({
     description: 'List users blocked by the authenticated user',
     type: [User],
@@ -182,7 +182,7 @@ export class UserController {
     return blockedUsers;
   }
 
-  @Post('block/:userId')
+  @Post('user/block/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Block a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
@@ -194,7 +194,7 @@ export class UserController {
     return this.userService.addBlock(user.id, blockedUserId);
   }
 
-  @Delete('block/:userId')
+  @Delete('user/block/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({
     description: 'Unblock a user',
