@@ -8,6 +8,7 @@ import ChatMessages, {
 import ChatMessagingInput from './components/ChatMessagingInput/ChatMessagingInput';
 import { useData } from '../../../hooks/UseData';
 import socket from '../../../socket';
+import { Loading } from '../../index';
 
 import './ChatMessagingTemplate.css';
 
@@ -25,6 +26,16 @@ type ChatMessagingProps = {
   ) => Promise<ChatMessage[]>;
   chatEvent: ChatEventType;
 };
+
+export function ChatMessagingLoading() {
+  return (
+    <div className="chat-template">
+      <div className="chat-template-loading">
+        <Loading />
+      </div>
+    </div>
+  );
+}
 
 export default function ChatMessagingTemplate({
   title,

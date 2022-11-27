@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { Loading } from '../../shared/components';
 import { CHATS_URL, CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
@@ -10,7 +9,10 @@ import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { ChatroomMessageWithUser, User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import { ChatMessagingTemplate } from '../../shared/components';
+import {
+  ChatMessagingTemplate,
+  ChatMessagingLoading,
+} from '../../shared/components';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { ChatMessage } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
 
@@ -134,13 +136,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   }
 
   if (isChatroomLoading || isChatroomMemberLoading) {
-    return (
-      <div className="chatroom">
-        <div className="chatroom-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <ChatMessagingLoading />;
   }
 
   if (!chatroom) {

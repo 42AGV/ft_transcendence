@@ -4,11 +4,13 @@ import { useParams } from 'react-router-dom';
 import { USER_URL } from '../../shared/urls';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
-import { ChatMessagingTemplate } from '../../shared/components';
+import {
+  ChatMessagingTemplate,
+  ChatMessagingLoading,
+} from '../../shared/components';
 import { ChatMessage, User } from '../../shared/generated';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { useData } from '../../shared/hooks/UseData';
-import { Loading } from '../../shared/components';
 import { ChatMessage as ChatMessageTemplate } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
 
 const messageMapper = (msg: ChatMessage, user: User): ChatMessageTemplate => ({
@@ -49,16 +51,10 @@ function ChatWithUser({ username, authUser }: ChatWithUserProps) {
   );
   const { data: user, isLoading: isUserLoading } = useData(fetchUser);
 
-  // arreglar clases
   if (isUserLoading || !user) {
-    return (
-      <div className="chatroom">
-        <div className="chatroom-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <ChatMessagingLoading />;
   }
+
   return <Chat user={user} authUser={authUser} />;
 }
 
