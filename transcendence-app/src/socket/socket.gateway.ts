@@ -12,12 +12,12 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Socket, Server, RemoteSocket } from 'socket.io';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { SocketService } from './socket.service';
 
 type UserId = string;
-type SocketId = string;
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -46,10 +46,9 @@ export class SocketGateway
       // Join the user ID room to keep track of all the connected clients
       // (one user could connect from multiple private tabs or browsers with different session IDs)
       client.join(user.id);
-      const matchingSockets: Set<SocketId> = await this.server
-        .in(user.id)
-        .allSockets();
-      const isConnectedOnce = matchingSockets.size === 1;
+      const matchingSockets: RemoteSocket<DefaultEventsMap, any>[] =
+        await this.server.in(user.id).fetchSockets();
+      const isConnectedOnce = matchingSockets.length === 1;
       if (isConnectedOnce) {
         this.server.emit('userConnected', user);
       }
@@ -59,10 +58,9 @@ export class SocketGateway
   async handleDisconnect(client: Socket) {
     const user = client.request.user;
     if (user) {
-      const matchingSockets: Set<SocketId> = await this.server
-        .in(user.id)
-        .allSockets();
-      const isDisconnectedAll = matchingSockets.size === 0;
+      const matchingSockets: RemoteSocket<DefaultEventsMap, any>[] =
+        await this.server.in(user.id).fetchSockets();
+      const isDisconnectedAll = matchingSockets.length === 0;
       if (isDisconnectedAll) {
         this.connectedUsers.delete(user.id);
         this.server.emit('userDisconnected', user);
