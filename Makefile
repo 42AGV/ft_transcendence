@@ -43,10 +43,22 @@ clean:
 	rm -rf $(PROJECT_ROOT)/webapp/src/shared/generated || true
 	rm $(PROJECT_ROOT)/transcendence-app/swagger-spec/swagger-spec.yaml || true
 
+.PHONY: prod-clean
+prod-clean:
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml down -v
+	rm -rf $(PROJECT_ROOT)/webapp/src/shared/generated || true
+	rm $(PROJECT_ROOT)/transcendence-app/swagger-spec/swagger-spec.yaml || true
+
+
 .PHONY: re
 re:
 	make clean
 	make all
+
+.PHONY: prod-re
+prod-re:
+	make prod-clean
+	make prod
 
 .PHONY: log-tr
 log-tr:
