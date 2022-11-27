@@ -6,6 +6,7 @@ export const USER_URL = '/user';
 export const USER_ME_URL = '/myprofile';
 export const USERS_URL = '/users';
 export const EDIT_USER_URL = `${USER_ME_URL}/edit`;
+export const EDIT_USER_PASSWORD_URL = `${USER_ME_URL}/edit/password`;
 export const EDIT_AVATAR_URL = `${USER_ME_URL}/edit/avatar`;
 export const PLAY_URL = '/play';
 export const CHAT_URL = '/chat';

@@ -31,4 +31,22 @@ export class UpdateUserDto {
   @IsInt()
   @IsOptional()
   avatarY?: number;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  oldPassword?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  password?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  confirmationPassword?: string;
 }

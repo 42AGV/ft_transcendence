@@ -21,6 +21,7 @@ import {
   JoinChatroomPage,
   EditChatroomMemberPage,
   DiscoverChatPage,
+  EditUserPasswordPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -36,6 +37,7 @@ import {
   REGISTER_URL,
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
+  EDIT_USER_PASSWORD_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -116,6 +118,14 @@ root.render(
               element={
                 <RequireAuth>
                   <EditUserPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path={EDIT_USER_PASSWORD_URL}
+              element={
+                <RequireAuth>
+                  <EditUserPasswordPage />
                 </RequireAuth>
               }
             />
