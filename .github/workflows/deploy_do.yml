@@ -11,8 +11,8 @@ jobs:
       - name: Check out Github repository
         uses: actions/checkout@v2
       - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Deploy the application
         run: doctl compute ssh --ssh-command "cd /srv/ft_transcendence && git pull && make prod-re" transcendence
