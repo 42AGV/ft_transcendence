@@ -1,14 +1,11 @@
 name: Deploy to DigitalOcean
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches: [$default-branch]
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-20.04
     steps:
       - name: Check out Github repository
