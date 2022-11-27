@@ -17,3 +17,4 @@ export { default as JoinChatroomPage } from './JoinChatroomPage/JoinChatroomPage
 export { default as EditChatroomMemberPage } from './EditChatroomMemberPage/EditChatroomMemberPage';
 export { default as DiscoverChatsPage } from './ChatsPage/DiscoverChatsPage';
 export { default as EditUserPasswordPage } from './EditUserPasswordPage/EditUserPasswordPage';
+export { default as ChatPage } from './ChatPage/ChatPage';

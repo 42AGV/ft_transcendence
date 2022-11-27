@@ -12,7 +12,6 @@ import './ChatMessages.css';
 export type ChatMessage = {
   id: string;
   user: User;
-  userId: string;
   content: string;
   createdAt: Date;
 };
@@ -40,7 +39,7 @@ export default function ChatMessages({
   return (
     <ul className="chat-template-messages-list">
       {messages
-        .filter((message) => !blocks.has(message.userId))
+        .filter((message) => !blocks.has(message.user.id))
         .map((message, index, array) => {
           const isConsecutive =
             index !== array.length - 1 &&

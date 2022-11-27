@@ -34,7 +34,6 @@ type BlockedId = string;
 const messageMapper = (msg: ChatroomMessageWithUser): ChatMessage => ({
   id: msg.id,
   user: msg.user,
-  userId: msg.userId,
   content: msg.content,
   createdAt: msg.createdAt,
 });

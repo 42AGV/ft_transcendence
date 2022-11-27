@@ -13,6 +13,7 @@ import {
   EditAvatarPage,
   LoginPage,
   RegisterPage,
+  ChatPage,
   ChatroomPage,
   CreateChatroomPage,
   AuthUserPage,
@@ -25,6 +26,7 @@ import {
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
+  CHAT_URL,
   CHATS_URL,
   PLAY_URL,
   USER_URL,
@@ -142,6 +144,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <EditAvatarPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${CHAT_URL}/:username`}
+        element={
+          <RequireAuth>
+            <ChatPage />
           </RequireAuth>
         }
       />
