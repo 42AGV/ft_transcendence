@@ -2,6 +2,12 @@ import * as React from 'react';
 
 import { ChatEventType } from '../../ChatMessagingTemplate';
 import socket from '../../../../../socket';
+import {
+  Button,
+  ButtonSize,
+  ButtonVariant,
+  IconVariant,
+} from '../../../../index';
 
 import './ChatMessagingInput.css';
 
@@ -25,6 +31,12 @@ export default function ChatMessagingInput({
     }
   };
 
+  const handleButtonSend = (e: React.MouseEvent): void => {
+    e.preventDefault();
+    value !== '' && socket.emit(chatEvent, { chatroomId: to, content: value });
+    setValue('');
+  };
+
   const handleOnInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     setValue(e.currentTarget.value);
   };
@@ -42,6 +54,12 @@ export default function ChatMessagingInput({
           rows={1}
           onInput={handleOnInput}
           onKeyDown={onEnterPress}
+        />
+        <Button
+          variant={ButtonVariant.SUBMIT}
+          iconVariant={IconVariant.SEND}
+          onClick={handleButtonSend}
+          buttonSize={ButtonSize.SMALL}
         />
       </div>
     </form>

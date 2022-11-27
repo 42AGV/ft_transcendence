@@ -11,6 +11,8 @@
   grid-area: message-input;
   /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
   display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
 }
 
 .chat-template-message-input-grow-wrap::after {
