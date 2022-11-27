@@ -8,7 +8,7 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { CHAT_URL } from '../../shared/urls';
+import { CHATS_URL } from '../../shared/urls';
 import React, { useState } from 'react';
 import { CreateChatroomDto, ResponseError } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
@@ -57,7 +57,7 @@ export default function CreateChatroomPage() {
         },
       });
       notify('Registration complete');
-      navigate(CHAT_URL);
+      navigate(CHATS_URL);
     } catch (error) {
       if (error instanceof ResponseError) {
         warn(error.response.statusText);

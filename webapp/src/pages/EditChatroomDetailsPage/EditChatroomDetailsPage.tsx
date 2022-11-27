@@ -7,7 +7,7 @@ import {
   Loading,
   ToggleSwitch,
 } from '../../shared/components';
-import { CHAT_URL, AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
+import { CHATS_URL, AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -153,7 +153,7 @@ export default function CreateChatroomPage() {
         updateChatroomDto,
       });
       notify('Chatroom details successfully updated');
-      navigate(CHAT_URL);
+      navigate(CHATS_URL);
     } catch (error) {
       handleRequestError(error);
     }
@@ -170,7 +170,7 @@ export default function CreateChatroomPage() {
           chatroomId: chatroomId!,
         });
         notify('Chatroom successfully deleted');
-        navigate(CHAT_URL);
+        navigate(CHATS_URL);
       } catch (error) {
         handleRequestError(error);
       }

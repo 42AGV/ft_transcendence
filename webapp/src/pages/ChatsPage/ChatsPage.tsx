@@ -1,12 +1,12 @@
 import { IconVariant } from '../../shared/components';
-import { CHAT_URL } from '../../shared/urls';
+import { CHATS_URL } from '../../shared/urls';
 import { ChatControllerGetAuthChatroomsRequest } from '../../shared/generated';
 import { useCallback } from 'react';
 import { chatApi } from '../../shared/services/ApiService';
 import { ENTRIES_LIMIT } from '../../shared/constants';
-import ChatPageTemplate from './template/ChatPageTemplate';
+import ChatsPageTemplate from './template/ChatsPageTemplate';
 
-export default function ChatPage() {
+export default function ChatsPage() {
   const getChats = useCallback(
     (requestParameters: ChatControllerGetAuthChatroomsRequest) =>
       chatApi.chatControllerGetAuthChatrooms({
@@ -16,11 +16,11 @@ export default function ChatPage() {
     [],
   );
   return (
-    <ChatPageTemplate
+    <ChatsPageTemplate
       fetchFn={getChats}
       buttonIconVariant={IconVariant.ARROW_FORWARD}
       buttonLabel="Discover"
-      buttonUrl={`${CHAT_URL}/discover`}
+      buttonUrl={`${CHATS_URL}/discover`}
     />
   );
 }
