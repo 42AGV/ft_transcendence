@@ -103,12 +103,15 @@ export class UserService {
     if (
       !user.password ||
       !updateUserDto.oldPassword ||
-      (await Password.compare(user.password!, updateUserDto.oldPassword)) ===
+      (await Password.compare(user.password, updateUserDto.oldPassword)) ===
         false
     ) {
       throw new ForbiddenException('Incorrect password');
     }
-    const hashedPassword = await Password.toHash(updateUserPassword.password!);
+    if (!updateUserPassword.password) {
+      throw new UnprocessableEntityException('Password required');
+    }
+    const hashedPassword = await Password.toHash(updateUserPassword.password);
     const ret = this.userRepository.updateById(user.id, {
       ...updateUserPassword,
       password: hashedPassword,
