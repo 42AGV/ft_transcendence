@@ -25,7 +25,7 @@ import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { AvatarService } from '../shared/avatar/avatar.service';
 import { SocketService } from '../socket/socket.service';
-import { Password } from 'src/shared/password';
+import { Password } from '../shared/password';
 
 @Injectable()
 export class UserService {
