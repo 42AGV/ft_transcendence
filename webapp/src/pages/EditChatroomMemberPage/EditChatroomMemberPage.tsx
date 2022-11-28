@@ -21,6 +21,7 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
 import Text from '../../shared/components/Text/Text';
+import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
@@ -59,6 +60,8 @@ export default function EditChatroomMemberPage() {
   const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
     useGetChatroomMember(authUser?.id),
   );
+  const { userStatus } = useUserStatus();
+  const chatroomMemberStatus = userStatus(destCrMember?.userId);
 
   const [canEdit] = CanEdit({
     chatroom,
@@ -112,7 +115,7 @@ export default function EditChatroomMemberPage() {
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
         isLoading={isLoading}
-        headerStatusVariant="online"
+        headerStatusVariant={chatroomMemberStatus}
         title="chat user"
         avatarProps={{
           url: `${AVATAR_EP_URL}/${chatroom?.avatarId}`,
@@ -146,7 +149,7 @@ export default function EditChatroomMemberPage() {
           <Row
             avatarProps={{
               url: `${AVATAR_EP_URL}/${destUser?.avatarId ?? ''}`,
-              status: 'offline',
+              status: chatroomMemberStatus,
               XCoordinate: destUser?.avatarX ?? 0,
               YCoordinate: destUser?.avatarY ?? 0,
             }}

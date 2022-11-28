@@ -96,6 +96,10 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
     };
   }, [from]);
 
+  if (blockedUsers === null) {
+    return null;
+  }
+
   return (
     <ul className="chatroom-messages-list">
       {messages
