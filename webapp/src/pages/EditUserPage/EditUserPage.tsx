@@ -117,6 +117,7 @@ export default function EditUserPage() {
           label="Email"
           placeholder="Email"
           value={formValues.email}
+          type="email"
           name="email"
           onChange={handleInputChange}
         />

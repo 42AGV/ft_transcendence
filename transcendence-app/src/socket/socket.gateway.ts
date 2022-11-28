@@ -12,12 +12,12 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Socket, Server, RemoteSocket } from 'socket.io';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { SocketService } from './socket.service';
 
 type UserId = string;
-type SocketId = string;
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -26,7 +26,7 @@ export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server!: Server;
-  connectedUsers = new Set<UserId>();
+  onlineUserIds = new Set<UserId>();
 
   constructor(private eventsService: SocketService) {}
 
@@ -39,19 +39,18 @@ export class SocketGateway
     if (!user) {
       client.disconnect();
     } else {
-      this.connectedUsers.add(user.id);
+      this.onlineUserIds.add(user.id);
       const sessionId = client.request.session.id;
       // Join the session ID room to keep track of all the clients linked to this session ID
       client.join(sessionId);
       // Join the user ID room to keep track of all the connected clients
       // (one user could connect from multiple private tabs or browsers with different session IDs)
       client.join(user.id);
-      const matchingSockets: Set<SocketId> = await this.server
-        .in(user.id)
-        .allSockets();
-      const isConnectedOnce = matchingSockets.size === 1;
+      const matchingSockets: RemoteSocket<DefaultEventsMap, any>[] =
+        await this.server.in(user.id).fetchSockets();
+      const isConnectedOnce = matchingSockets.length === 1;
       if (isConnectedOnce) {
-        this.server.emit('userConnected', user);
+        this.server.emit('userConnect', user.id);
       }
     }
   }
@@ -59,19 +58,18 @@ export class SocketGateway
   async handleDisconnect(client: Socket) {
     const user = client.request.user;
     if (user) {
-      const matchingSockets: Set<SocketId> = await this.server
-        .in(user.id)
-        .allSockets();
-      const isDisconnectedAll = matchingSockets.size === 0;
+      const matchingSockets: RemoteSocket<DefaultEventsMap, any>[] =
+        await this.server.in(user.id).fetchSockets();
+      const isDisconnectedAll = matchingSockets.length === 0;
       if (isDisconnectedAll) {
-        this.connectedUsers.delete(user.id);
-        this.server.emit('userDisconnected', user);
+        this.onlineUserIds.delete(user.id);
+        this.server.emit('userDisconnect', user.id);
       }
     }
   }
 
-  @SubscribeMessage('getConnectedUsers')
+  @SubscribeMessage('getOnlineUsers')
   handleGetConnectedUsers(@ConnectedSocket() client: Socket) {
-    client.emit('users', [...this.connectedUsers]);
+    client.emit('onlineUsers', [...this.onlineUserIds]);
   }
 }
