@@ -41,6 +41,7 @@ import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { NotificationContextProvider } from './shared/context/NotificationContext';
+import { OnlineUsersProvider } from './shared/context/OnlineUsersContext';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -49,7 +50,9 @@ const developmentMode = process.env.NODE_ENV === 'development';
 function AppContext({ children }: { children: JSX.Element }) {
   return (
     <AuthProvider>
-      <NotificationContextProvider>{children}</NotificationContextProvider>
+      <NotificationContextProvider>
+        <OnlineUsersProvider>{children}</OnlineUsersProvider>
+      </NotificationContextProvider>
     </AuthProvider>
   );
 }

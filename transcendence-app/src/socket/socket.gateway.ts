@@ -26,7 +26,7 @@ export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server!: Server;
-  connectedUsers = new Set<UserId>();
+  onlineUserIds = new Set<UserId>();
 
   constructor(private eventsService: SocketService) {}
 
@@ -39,7 +39,7 @@ export class SocketGateway
     if (!user) {
       client.disconnect();
     } else {
-      this.connectedUsers.add(user.id);
+      this.onlineUserIds.add(user.id);
       const sessionId = client.request.session.id;
       // Join the session ID room to keep track of all the clients linked to this session ID
       client.join(sessionId);
@@ -50,7 +50,7 @@ export class SocketGateway
         await this.server.in(user.id).fetchSockets();
       const isConnectedOnce = matchingSockets.length === 1;
       if (isConnectedOnce) {
-        this.server.emit('userConnected', user);
+        this.server.emit('userConnect', user.id);
       }
     }
   }
@@ -62,14 +62,14 @@ export class SocketGateway
         await this.server.in(user.id).fetchSockets();
       const isDisconnectedAll = matchingSockets.length === 0;
       if (isDisconnectedAll) {
-        this.connectedUsers.delete(user.id);
-        this.server.emit('userDisconnected', user);
+        this.onlineUserIds.delete(user.id);
+        this.server.emit('userDisconnect', user.id);
       }
     }
   }
 
-  @SubscribeMessage('getConnectedUsers')
+  @SubscribeMessage('getOnlineUsers')
   handleGetConnectedUsers(@ConnectedSocket() client: Socket) {
-    client.emit('users', [...this.connectedUsers]);
+    client.emit('onlineUsers', [...this.onlineUserIds]);
   }
 }
