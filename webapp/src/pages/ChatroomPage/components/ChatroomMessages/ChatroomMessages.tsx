@@ -98,37 +98,38 @@ function ChatroomMessages({ from }: ChatroomMessagesProps) {
 
   return (
     <ul className="chatroom-messages-list">
-      {messages
-        .filter((message) => !blocks.has(message.userId))
-        .map((message, index, array) => {
-          const isConsecutive =
-            index !== array.length - 1 &&
-            array[index].user.id === array[index + 1].user.id;
-          const isFirst =
-            index === 0 || array[index].user.id !== array[index - 1].user.id;
-          return (
-            <li
-              key={message.id}
-              ref={index === 0 ? callbackRef : undefined}
-              className="chatroom-messages-list-item"
-            >
-              <ChatBubble
-                variant={
-                  me && me.id === message.user.id
-                    ? ChatBubbleVariant.SELF
-                    : ChatBubbleVariant.OTHER
-                }
-                name={message.user.username}
-                text={message.content}
-                avatar={{
-                  url: `${AVATAR_EP_URL}/${message.user.avatarId}`,
-                }}
-                isConsecutive={isConsecutive}
-                isFirst={isFirst}
-              />
-            </li>
-          );
-        })}
+      {blockedUsers &&
+        messages
+          .filter((message) => !blocks.has(message.userId))
+          .map((message, index, array) => {
+            const isConsecutive =
+              index !== array.length - 1 &&
+              array[index].user.id === array[index + 1].user.id;
+            const isFirst =
+              index === 0 || array[index].user.id !== array[index - 1].user.id;
+            return (
+              <li
+                key={message.id}
+                ref={index === 0 ? callbackRef : undefined}
+                className="chatroom-messages-list-item"
+              >
+                <ChatBubble
+                  variant={
+                    me && me.id === message.user.id
+                      ? ChatBubbleVariant.SELF
+                      : ChatBubbleVariant.OTHER
+                  }
+                  name={message.user.username}
+                  text={message.content}
+                  avatar={{
+                    url: `${AVATAR_EP_URL}/${message.user.avatarId}`,
+                  }}
+                  isConsecutive={isConsecutive}
+                  isFirst={isFirst}
+                />
+              </li>
+            );
+          })}
     </ul>
   );
 }
