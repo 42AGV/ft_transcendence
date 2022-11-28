@@ -15,6 +15,7 @@ import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useBlock } from '../../shared/hooks/UseBlock';
+import { useOnlineUsers } from '../../shared/hooks/UseOnlineUsers';
 
 export default function UserPage() {
   const { username } = useParams();
@@ -24,11 +25,14 @@ export default function UserPage() {
   );
   const { data: user, isLoading } = useData(getUserByUserName);
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
-
+  const { onlineUserIds } = useOnlineUsers();
+  const onlineStatus =
+    user && onlineUserIds.has(user?.id) ? 'online' : 'offline';
   return (
     <div className="user-page">
       <AvatarPageTemplate
         isLoading={isLoading}
+        headerStatusVariant={onlineStatus}
         isNotFound={user === null}
         title={user?.username ?? ''}
         avatarProps={{
