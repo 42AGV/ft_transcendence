@@ -27,7 +27,6 @@ export { default as Row } from './Row/Row';
 export { default as RowsList } from './RowsList/RowsList';
 export * from './RowsList/RowsList';
 
-export { default as EditUserForm } from './Input/EditUserForm';
 export { default as SearchForm } from './Input/SearchForm';
 
 export { default as MainTabTemplate } from './templates/MainTabPageTemplate/MainTabPageTemplate';
