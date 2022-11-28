@@ -1,11 +1,14 @@
 name: Deploy to DigitalOcean
 
 on:
-  push:
-    branches: [$default-branch]
+  pull_request:
+    types:
+      - closed
+    branches: [main]
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-20.04
     steps:
       - name: Deploy the application
