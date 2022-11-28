@@ -26,12 +26,11 @@ export default function UserPage() {
   const { data: user, isLoading } = useData(getUserByUserName);
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
   const { userStatus } = useUserStatus();
-  const onlineStatus = userStatus(user?.id);
   return (
     <div className="user-page">
       <AvatarPageTemplate
         isLoading={isLoading}
-        headerStatusVariant={onlineStatus}
+        headerStatusVariant={userStatus(user?.id)}
         isNotFound={user === null}
         title={user?.username ?? ''}
         avatarProps={{

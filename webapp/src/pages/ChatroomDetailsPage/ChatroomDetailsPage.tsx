@@ -47,7 +47,6 @@ export default function ChatroomDetailsPage() {
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
   const { userStatus } = useUserStatus();
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
-    const onlineStatus = userStatus(member.userId);
     const memberDetails = () => {
       if (member.owner) {
         return 'owner';
@@ -67,7 +66,7 @@ export default function ChatroomDetailsPage() {
       iconVariant: IconVariant.EDIT,
       avatarProps: {
         url: `${AVATAR_EP_URL}/${member.avatarId}`,
-        status: onlineStatus,
+        status: userStatus(member.userId),
         XCoordinate: member.avatarX,
         YCoordinate: member.avatarY,
       },

@@ -61,7 +61,7 @@ export default function EditChatroomMemberPage() {
     useGetChatroomMember(authUser?.id),
   );
   const { userStatus } = useUserStatus();
-  const onlineStatus = userStatus(destCrMember?.userId);
+  const chatroomMemberStatus = userStatus(destCrMember?.userId);
 
   const [canEdit] = CanEdit({
     chatroom,
@@ -115,7 +115,7 @@ export default function EditChatroomMemberPage() {
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
         isLoading={isLoading}
-        headerStatusVariant={onlineStatus}
+        headerStatusVariant={chatroomMemberStatus}
         title="chat user"
         avatarProps={{
           url: `${AVATAR_EP_URL}/${chatroom?.avatarId}`,
@@ -149,7 +149,7 @@ export default function EditChatroomMemberPage() {
           <Row
             avatarProps={{
               url: `${AVATAR_EP_URL}/${destUser?.avatarId ?? ''}`,
-              status: onlineStatus,
+              status: chatroomMemberStatus,
               XCoordinate: destUser?.avatarX ?? 0,
               YCoordinate: destUser?.avatarY ?? 0,
             }}
