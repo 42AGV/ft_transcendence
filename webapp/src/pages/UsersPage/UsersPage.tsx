@@ -6,10 +6,10 @@ import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../shared/constants';
-import { useOnlineUsers } from '../../shared/hooks/UseOnlineUsers';
+import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 
 export default function UsersPage() {
-  const { onlineUserIds } = useOnlineUsers();
+  const { userStatus } = useUserStatus();
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
       usersApi.userControllerGetUsers({
@@ -20,12 +20,11 @@ export default function UsersPage() {
   );
 
   const mapUserToRow = (user: User): RowItem => {
-    const onlineStatus = onlineUserIds.has(user.id) ? 'online' : 'offline';
     return {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: {
         url: `${AVATAR_EP_URL}/${user.avatarId}`,
-        status: onlineStatus,
+        status: userStatus(user.id),
         XCoordinate: user.avatarX,
         YCoordinate: user.avatarY,
       },

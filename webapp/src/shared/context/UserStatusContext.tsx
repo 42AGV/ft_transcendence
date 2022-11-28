@@ -1,16 +1,25 @@
-import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
 
 type UserId = string;
 
-export interface OnlineUsersContextType {
-  onlineUserIds: Set<UserId>;
+export type UserStatus = 'online' | 'offline' | 'playing';
+
+export interface UserStatusContextType {
+  userStatus: (userId: UserId | undefined) => UserStatus;
 }
 
-export const OnlineUsersContext = createContext<OnlineUsersContextType>(null!);
+export const UserStatusContext = createContext<UserStatusContextType>(null!);
 
-export const OnlineUsersProvider = ({ children }: { children: ReactNode }) => {
+export const UserStatusProvider = ({ children }: { children: ReactNode }) => {
   const { authUser } = useAuth();
   const [onlineUserIds, setOnlineUserIds] = useState(new Set<UserId>());
 
@@ -42,16 +51,26 @@ export const OnlineUsersProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [authUser]);
 
-  const contextValue = useMemo(
-    () => ({
-      onlineUserIds,
-    }),
+  const userStatus = useCallback(
+    (userId: UserId | undefined) => {
+      if (!userId) {
+        return 'offline';
+      }
+      return onlineUserIds.has(userId) ? 'online' : 'offline';
+    },
     [onlineUserIds],
   );
 
+  const contextValue = useMemo(
+    () => ({
+      userStatus,
+    }),
+    [userStatus],
+  );
+
   return (
-    <OnlineUsersContext.Provider value={contextValue}>
+    <UserStatusContext.Provider value={contextValue}>
       {children}
-    </OnlineUsersContext.Provider>
+    </UserStatusContext.Provider>
   );
 };

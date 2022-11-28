@@ -29,7 +29,7 @@ import { SearchContextProvider } from '../../shared/context/SearchContext';
 import { ChatControllerGetChatroomMembersRequest } from '../../shared/generated/apis/ChatApi';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { Query } from '../../shared/types';
-import { useOnlineUsers } from '../../shared/hooks/UseOnlineUsers';
+import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 
 export default function ChatroomDetailsPage() {
   // TODO: is the authUser is not a chatroom member, maybe this should return
@@ -45,11 +45,9 @@ export default function ChatroomDetailsPage() {
   const { data: chatroom } = useData<Chatroom>(getChatroom);
   const { authUser } = useAuth();
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
-  const { onlineUserIds } = useOnlineUsers();
+  const { userStatus } = useUserStatus();
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
-    const onlineStatus = onlineUserIds.has(member.userId)
-      ? 'online'
-      : 'offline';
+    const onlineStatus = userStatus(member.userId);
     const memberDetails = () => {
       if (member.owner) {
         return 'owner';

@@ -21,7 +21,7 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
 import Text from '../../shared/components/Text/Text';
-import { useOnlineUsers } from '../../shared/hooks/UseOnlineUsers';
+import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
@@ -60,11 +60,8 @@ export default function EditChatroomMemberPage() {
   const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
     useGetChatroomMember(authUser?.id),
   );
-  const { onlineUserIds } = useOnlineUsers();
-  const onlineStatus =
-    destCrMember && onlineUserIds.has(destCrMember.userId)
-      ? 'online'
-      : 'offline';
+  const { userStatus } = useUserStatus();
+  const onlineStatus = userStatus(destCrMember?.userId);
 
   const [canEdit] = CanEdit({
     chatroom,
