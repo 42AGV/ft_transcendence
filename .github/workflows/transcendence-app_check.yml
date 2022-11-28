@@ -1,8 +1,6 @@
 name: transcendence-app check
 
 on:
-  push:
-    branches: [$default-branch]
   pull_request:
     types: [assigned, opened, synchronize, reopened]
 
