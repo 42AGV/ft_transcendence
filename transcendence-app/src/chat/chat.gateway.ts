@@ -19,6 +19,8 @@ import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { ChatService } from './chat.service';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import { CreateChatroomMessageDto } from './chatroom/chatroom-message/dto/create-chatroom-message.dto';
+import { CreateChatMessageDto } from './chat/dto/create-chat-message.dto';
+import { UserService } from '../user/user.service';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -30,10 +32,45 @@ export class ChatGateway {
   constructor(
     private chatService: ChatService,
     private chatroomMemberService: ChatroomMemberService,
+    private userService: UserService,
   ) {}
 
+  @SubscribeMessage('chatMessage')
+  async handleChatMessage(
+    @MessageBody()
+    createChatMessageDto: CreateChatMessageDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const { userId: recipientId, content } = createChatMessageDto;
+
+    const senderId = client.request.user.id;
+
+    const block = await this.userService.getBlockRelation(
+      recipientId,
+      senderId,
+    );
+
+    if (block?.isUserBlockedByMe || block?.amIBlockedByUser) {
+      throw new WsException('There is an existing blockage. Forbidden.');
+    }
+
+    const message = await this.chatService.saveOneToOneChatMessage({
+      senderId,
+      recipientId,
+      content,
+    });
+
+    if (message) {
+      this.server.to(recipientId).emit('chatMessage', { ...message });
+    } else {
+      throw new WsException(
+        'The message could not be sent. Service Unavailable',
+      );
+    }
+  }
+
   @SubscribeMessage('chatroomMessage')
-  async handleMessage(
+  async handleChatroomMessage(
     @MessageBody()
     createChatroomMessageDto: CreateChatroomMessageDto,
     @ConnectedSocket() client: Socket,

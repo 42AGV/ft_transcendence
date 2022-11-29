@@ -119,7 +119,7 @@ export class UserService {
     return ret;
   }
 
-  private async getBlockRelation(
+  async getBlockRelation(
     userMeId: string,
     userId: string,
   ): Promise<UserBlockRelation | null> {
