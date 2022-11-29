@@ -25,15 +25,14 @@ export default function ChatMessagingInput({
   const onEnterPress = (e: React.KeyboardEvent) => {
     if (e.code === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      value !== '' &&
-        socket.emit(chatEvent, { chatroomId: to, content: value });
+      value !== '' && socket.emit(chatEvent, { id: to, content: value });
       setValue('');
     }
   };
 
   const handleButtonSend = (e: React.MouseEvent): void => {
     e.preventDefault();
-    value !== '' && socket.emit(chatEvent, { chatroomId: to, content: value });
+    value !== '' && socket.emit(chatEvent, { id: to, content: value });
     setValue('');
   };
 

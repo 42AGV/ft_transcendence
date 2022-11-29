@@ -16,15 +16,13 @@ export type ChatEventType = 'chatMessage' | 'chatroomMessage';
 
 type ChatMessagingProps = {
   title: string;
-  titleNavigationUrl: string;
+  titleNavigationUrl?: string;
   to: string;
   from: string;
   blocks?: Set<string>;
-  fetchMessagesCallback: (
-    from: string,
-    offset: number,
-  ) => Promise<ChatMessage[]>;
+  fetchMessagesCallback: (offset: number) => Promise<ChatMessage[]>;
   chatEvent: ChatEventType;
+  messageMapper: (msg: any) => ChatMessage;
 };
 
 export function ChatMessagingLoading() {
@@ -45,14 +43,15 @@ export default function ChatMessagingTemplate({
   blocks = new Set(),
   fetchMessagesCallback,
   chatEvent,
+  messageMapper,
 }: ChatMessagingProps) {
   const { goBack } = useNavigation();
 
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [offset, setOffset] = React.useState(0);
   const getMessages = React.useCallback(
-    () => fetchMessagesCallback(from, offset),
-    [from, offset, fetchMessagesCallback],
+    () => fetchMessagesCallback(offset),
+    [offset, fetchMessagesCallback],
   );
   const { data: newMessages } = useData(getMessages);
 
@@ -64,12 +63,12 @@ export default function ChatMessagingTemplate({
         return messages;
       });
     }
-  }, [newMessages]);
+  }, [newMessages, messageMapper]);
 
   React.useEffect(() => {
     const messageListener = (message: ChatMessage) => {
       setMessages((prevMessages) => {
-        const newMessages = [...prevMessages, message];
+        const newMessages = [...prevMessages, messageMapper(message)];
         return newMessages;
       });
     };
@@ -79,7 +78,7 @@ export default function ChatMessagingTemplate({
     return () => {
       socket.off(chatEvent);
     };
-  }, [from, chatEvent]);
+  }, [from, chatEvent, messageMapper]);
 
   return (
     <div className="chat-template">

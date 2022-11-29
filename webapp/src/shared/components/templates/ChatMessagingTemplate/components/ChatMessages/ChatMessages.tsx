@@ -3,7 +3,6 @@ import * as React from 'react';
 import { ChatBubble, ChatBubbleVariant } from '../../../../index';
 import { AVATAR_EP_URL } from '../../../../../urls';
 import { ENTRIES_LIMIT } from '../../../../../constants';
-import { User } from '../../../../../generated';
 import { useIsElementVisible } from '../../../../../hooks/UseIsElementVisible';
 import { useAuth } from '../../../../../hooks/UseAuth';
 
@@ -11,7 +10,9 @@ import './ChatMessages.css';
 
 export type ChatMessage = {
   id: string;
-  user: User;
+  userId: string;
+  userName: string;
+  avatarId: string;
   content: string;
   createdAt: Date;
 };
@@ -39,13 +40,13 @@ export default function ChatMessages({
   return (
     <ul className="chat-template-messages-list">
       {messages
-        .filter((message) => !blocks.has(message.user.id))
+        .filter((message) => !blocks.has(message.userId))
         .map((message, index, array) => {
           const isConsecutive =
             index !== array.length - 1 &&
-            array[index].user.id === array[index + 1].user.id;
+            array[index].userId === array[index + 1].userId;
           const isFirst =
-            index === 0 || array[index].user.id !== array[index - 1].user.id;
+            index === 0 || array[index].userId !== array[index - 1].userId;
           return (
             <li
               key={message.id}
@@ -54,14 +55,14 @@ export default function ChatMessages({
             >
               <ChatBubble
                 variant={
-                  me && me.id === message.user.id
+                  me && me.id === message.userId
                     ? ChatBubbleVariant.SELF
                     : ChatBubbleVariant.OTHER
                 }
-                name={message.user.username}
+                name={message.userName}
                 text={message.content}
                 avatar={{
-                  url: `${AVATAR_EP_URL}/${message.user.avatarId}`,
+                  url: `${AVATAR_EP_URL}/${message.avatarId}`,
                 }}
                 isConsecutive={isConsecutive}
                 isFirst={isFirst}

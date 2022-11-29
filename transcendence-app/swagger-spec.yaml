@@ -1,0 +1,892 @@
+openapi: 3.0.0
+paths:
+  /api/v1/auth/login:
+    get:
+      operationId: AuthController_oauth42Login
+      parameters: []
+      responses:
+        "200":
+          description: Login successfully
+        "302":
+          description: Redirect to 42 OAuth server
+        "503":
+          description: Service unavailable
+      tags:
+        &a1
+        - auth
+  /api/v1/auth/logout:
+    delete:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        "200":
+          description: Logout successfully
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+      tags: *a1
+  /api/v1/auth/local/register:
+    post:
+      operationId: AuthController_registerLocalUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUserDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+      tags: *a1
+  /api/v1/auth/local/login:
+    post:
+      operationId: AuthController_loginLocalUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUserDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+      tags: *a1
+  /api/v1/users:
+    patch:
+      operationId: UserController_updateCurrentUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: Update the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+        "403":
+          &a2
+          description: Forbidden
+        "422":
+          description: Unprocessable Entity
+      tags:
+        &a3
+        - users
+    get:
+      operationId: UserController_getUsers
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              &a4
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all users (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+        "403": *a2
+        "503":
+          description: Service unavailable
+      tags: *a3
+  /api/v1/users/me:
+    get:
+      operationId: UserController_getCurrentUser
+      parameters: []
+      responses:
+        "200":
+          description: Get the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "403": *a2
+      tags: *a3
+  "/api/v1/users/avatars/{avatarId}":
+    get:
+      operationId: UserController_getAvatarByAvatarId
+      parameters:
+        - name: avatarId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            image/jpeg:
+              schema:
+                type: file
+                format: binary
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+  "/api/v1/users/{userName}":
+    get:
+      operationId: UserController_getUserByUserName
+      parameters:
+        - name: userName
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDto"
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+  /api/v1/users/avatar:
+    put:
+      operationId: UserController_uploadAvatar
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Update a user avatar
+          content:
+            image/jpeg:
+              schema:
+                $ref: "#/components/schemas/UserAvatarResponseDto"
+        "403": *a2
+        "413":
+          description: Payload Too Large
+        "422":
+          description: Unprocessable Entity
+        "503":
+          description: Service Unavailable
+      tags: *a3
+  "/api/v1/users/block/{userId}":
+    post:
+      operationId: UserController_blockUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Block a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "422":
+          description: Unprocessable Entity
+      tags: *a3
+    delete:
+      operationId: UserController_unblockUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Unblock a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+  /api/v1/chat/room:
+    post:
+      operationId: ChatController_createChatroom
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChatroomDto"
+      responses:
+        "201":
+          description: Create a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "400":
+          description: Bad Request
+        "403":
+          &a5
+          description: Forbidden
+        "422":
+          description: Unprocessable entity
+      tags:
+        &a6
+        - chat
+    get:
+      operationId: ChatController_getChatrooms
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum: *a4
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all chatrooms (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Chatroom"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "503":
+          description: Service unavailable
+      tags: *a6
+  "/api/v1/chat/room/{chatroomId}/members":
+    post:
+      operationId: ChatController_createChatroomMember
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinChatroomDto"
+      responses:
+        "201":
+          description: Add a member to a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "422":
+          description: Unprocessable entity
+      tags: *a6
+    delete:
+      operationId: ChatController_leaveChatroom
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Authenticated user leaves the given chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "404":
+          description: Not Found
+        "503":
+          description: Service Unavailable
+      tags: *a6
+    get:
+      operationId: ChatController_retrieveChatroomMembers
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lists all chat members for a given room)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatroomMemberWithUser"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "503":
+          description: Service unavailable
+      tags: *a6
+  "/api/v1/chat/room/{chatroomId}/members/{userId}":
+    get:
+      operationId: ChatController_getChatroomMember
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a chatroom member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "404":
+          description: Not Found
+      tags: *a6
+  "/api/v1/chat/room/{id}":
+    get:
+      operationId: ChatController_getChatroomById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "404":
+          description: Not Found
+      tags: *a6
+  "/api/v1/chat/room/{chatroomId}/messages":
+    get:
+      operationId: ChatController_getChatroomMessages
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all messages in a chatroom (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatroomMessageWithUser"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "404":
+          description: Not Found
+        "503":
+          description: Service unavailable
+      tags: *a6
+  "/api/v1/chat/room/{chatroomId}":
+    patch:
+      operationId: ChatController_updateChatroom
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChatroomDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "422":
+          description: Unprocessable Entity
+      tags: *a6
+  "/api/v1/chat/{userId}/messages":
+    get:
+      operationId: ChatController_getChatMessages
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Get chat messages in a one to one conversation(max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+        "400":
+          description: Bad Request
+        "403": *a5
+        "503":
+          description: Service unavailable
+      tags: *a6
+info:
+  title: transcendence-app
+  description: The transcendence-app API description
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    RegisterUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        confirmationPassword:
+          type: string
+      required:
+        - username
+        - fullName
+        - email
+        - password
+        - confirmationPassword
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        password:
+          type: string
+          nullable: true
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - username
+        - email
+        - fullName
+        - password
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+    LoginUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+    UpdateUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        avatarX:
+          type: number
+        avatarY:
+          type: number
+    UserBlockRelation:
+      type: object
+      properties:
+        isUserBlockedByMe:
+          type: boolean
+        amIBlockedByUser:
+          type: boolean
+      required:
+        - isUserBlockedByMe
+        - amIBlockedByUser
+    UserResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        password:
+          type: string
+          nullable: true
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        blockRelation:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/UserBlockRelation"
+      required:
+        - id
+        - username
+        - email
+        - fullName
+        - password
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - blockRelation
+    StreamableFile:
+      type: object
+      properties: {}
+    UserAvatarResponseDto:
+      type: object
+      properties:
+        avatarId:
+          type: string
+        file:
+          $ref: "#/components/schemas/StreamableFile"
+      required:
+        - avatarId
+        - file
+    CreateChatroomDto:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+          nullable: true
+        confirmationPassword:
+          type: string
+          nullable: true
+      required:
+        - name
+        - password
+        - confirmationPassword
+    Chatroom:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+          nullable: true
+        avatarId:
+          type: string
+          nullable: true
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        ownerId:
+          type: string
+      required:
+        - id
+        - name
+        - password
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - ownerId
+    JoinChatroomDto:
+      type: object
+      properties:
+        password:
+          type: string
+        confirmationPassword:
+          type: string
+      required:
+        - password
+        - confirmationPassword
+    ChatroomMember:
+      type: object
+      properties:
+        chatId:
+          type: string
+        userId:
+          type: string
+        joinedAt:
+          format: date-time
+          type: string
+          nullable: true
+        admin:
+          type: boolean
+          default: false
+        muted:
+          type: boolean
+          default: false
+        banned:
+          type: boolean
+          default: false
+      required:
+        - chatId
+        - userId
+        - joinedAt
+        - admin
+        - muted
+        - banned
+    ChatroomMemberWithUser:
+      type: object
+      properties:
+        username:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        owner:
+          type: boolean
+        admin:
+          type: boolean
+          default: false
+        muted:
+          type: boolean
+          default: false
+        banned:
+          type: boolean
+          default: false
+      required:
+        - username
+        - avatarId
+        - avatarX
+        - avatarY
+        - owner
+        - admin
+        - muted
+        - banned
+    ChatroomMessageWithUser:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        id:
+          type: string
+        chatroomId:
+          type: string
+        userId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+      required:
+        - user
+        - id
+        - chatroomId
+        - userId
+        - content
+        - createdAt
+    UpdateChatroomDto:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+          nullable: true
+        confirmationPassword:
+          type: string
+          nullable: true
+        avatarX:
+          type: number
+        avatarY:
+          type: number
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+        senderId:
+          type: string
+        recipientId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - senderId
+        - recipientId
+        - content
+        - createdAt

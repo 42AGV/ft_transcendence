@@ -1,24 +1,19 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { USER_URL } from '../../shared/urls';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
 import {
   ChatMessagingTemplate,
   ChatMessagingLoading,
 } from '../../shared/components';
-import { ChatMessage, User } from '../../shared/generated';
+import { ChatMessageWithUser, User } from '../../shared/generated';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { useData } from '../../shared/hooks/UseData';
 import { ChatMessage as ChatMessageTemplate } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
-
-const messageMapper = (msg: ChatMessage, user: User): ChatMessageTemplate => ({
-  id: msg.id,
-  user: user,
-  content: msg.content,
-  createdAt: msg.createdAt,
-});
+import socket from '../../shared/socket';
+import { WsException } from '../../shared/types';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 type ChatWithUserProps = {
   username: string;
@@ -47,7 +42,7 @@ function ChatWithUser({ username, authUser }: ChatWithUserProps) {
       usersApi.userControllerGetUserByUserName({
         userName: username,
       }),
-    [],
+    [username],
   );
   const { data: user, isLoading: isUserLoading } = useData(fetchUser);
 
@@ -59,25 +54,52 @@ function ChatWithUser({ username, authUser }: ChatWithUserProps) {
 }
 
 function Chat({ user, authUser }: ChatProps) {
-  const fetchMessagesCallback = React.useCallback(async () => {
-    const msgs = await chatApi.chatControllerGetChatMessages({
-      userId: user.id,
-      limit: ENTRIES_LIMIT,
-      offset: 0,
-    });
-    return msgs.map((msg) => messageMapper(msg, user));
-  }, [user]);
+  const { warn } = useNotificationContext();
 
-  const username = user.username;
+  const messageMapper = React.useCallback(
+    (msg: ChatMessageWithUser): ChatMessageTemplate => ({
+      id: msg.id,
+      userId: msg.senderId,
+      userName: msg.username,
+      avatarId: msg.avatarId,
+      content: msg.content,
+      createdAt: msg.createdAt,
+    }),
+    [],
+  );
+
+  const fetchMessagesCallback = React.useCallback(
+    async (offset: number) => {
+      const msgs = await chatApi.chatControllerGetChatMessages({
+        userId: user.id,
+        limit: ENTRIES_LIMIT,
+        offset,
+      });
+      return msgs.map((msg) => {
+        return messageMapper(msg);
+      });
+    },
+    [user, messageMapper],
+  );
+
+  React.useEffect(() => {
+    socket.on('exception', (wsError: WsException) => {
+      warn(wsError.message);
+    });
+
+    return () => {
+      socket.off('exception');
+    };
+  }, [warn]);
 
   return (
     <ChatMessagingTemplate
-      title={username}
-      titleNavigationUrl={`${USER_URL}/${username}`}
-      to={username}
+      title={user.username}
+      to={user.id}
       from={authUser.username}
       fetchMessagesCallback={fetchMessagesCallback}
       chatEvent="chatMessage"
+      messageMapper={messageMapper}
     />
   );
 }

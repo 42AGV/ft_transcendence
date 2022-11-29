@@ -33,13 +33,6 @@ type ChatroomProps = {
 
 type BlockedId = string;
 
-const messageMapper = (msg: ChatroomMessageWithUser): ChatMessage => ({
-  id: msg.id,
-  user: msg.user,
-  content: msg.content,
-  createdAt: msg.createdAt,
-});
-
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   const [blocks, setBlocks] = useState(new Set<BlockedId>());
 
@@ -59,22 +52,35 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     [chatroomId, authUser.id],
   );
 
+  const messageMapper = useCallback(
+    (msg: ChatroomMessageWithUser): ChatMessage => ({
+      id: msg.id,
+      userId: msg.user.id,
+      userName: msg.user.username,
+      avatarId: msg.user.avatarId,
+      content: msg.content,
+      createdAt: msg.createdAt,
+    }),
+    [],
+  );
+
   const fetchMessagesCallback = useCallback(
-    async (from: string, offset: number) => {
+    async (offset: number) => {
       const msgs = await chatApi.chatControllerGetChatroomMessages({
-        chatroomId: from,
+        chatroomId,
         limit: ENTRIES_LIMIT,
         offset,
       });
       return msgs.map((msg) => messageMapper(msg));
     },
-    [],
+    [chatroomId, messageMapper],
   );
 
   const getBlockedUsers = useCallback(
     () => usersApi.userControllerGetBlocks(),
     [],
   );
+
   const { data: chatroom, isLoading: isChatroomLoading } = useData(getChatroom);
 
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
@@ -159,6 +165,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
       blocks={blocks}
       chatEvent="chatroomMessage"
       fetchMessagesCallback={fetchMessagesCallback}
+      messageMapper={messageMapper}
     />
   );
 }
