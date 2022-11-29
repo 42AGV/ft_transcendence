@@ -3,16 +3,14 @@ import {
   ButtonVariant,
   Input,
   InputVariant,
-  Loading,
 } from '../../shared/components';
-import { AVATAR_EP_URL, USER_ME_URL, USER_URL } from '../../shared/urls';
+import { AVATAR_EP_URL, USER_ME_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useState } from 'react';
 import { ResponseError, UpdateUserDto } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function EditUserPasswordPage() {
