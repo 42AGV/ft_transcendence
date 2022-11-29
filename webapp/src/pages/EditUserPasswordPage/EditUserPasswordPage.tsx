@@ -52,6 +52,7 @@ export default function EditUserPasswordPage() {
     return true;
   }
 
+  // TODO: We can move this function to shared directory
   const handleRequestError = async (error: unknown) => {
     let errMessage = '';
     if (error instanceof ResponseError) {
@@ -78,7 +79,7 @@ export default function EditUserPasswordPage() {
       notify('Password successfully updated');
       navigate(USER_ME_URL);
     } catch (error) {
-      handleRequestError(error);
+      await handleRequestError(error);
     }
   }
 
@@ -87,28 +88,13 @@ export default function EditUserPasswordPage() {
     updatePassword().catch((e) => console.error(e));
   };
 
-  if (isLoading) {
-    return (
-      <div className="edit-user-password">
-        <div className="edit-user-password-loading">
-          <Loading />
-        </div>
-      </div>
-    );
-  }
-
-  if (!authUser) {
-    return <NotFoundPage />;
-  }
-
   return (
     <div className="edit-user-password-page">
       <AvatarPageTemplate
         isLoading={isLoading}
         title={`edit/password`}
         avatarProps={{
-          url: `${AVATAR_EP_URL}/${authUser.avatarId}`,
-          editUrl: `${USER_URL}/${authUser.id}/edit/avatar`,
+          url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
           XCoordinate: authUser?.avatarX,
           YCoordinate: authUser?.avatarY,
         }}
@@ -117,7 +103,7 @@ export default function EditUserPasswordPage() {
           variant: ButtonVariant.SUBMIT,
           form: 'edit-user-password-form',
         }}
-        isNotFound={false}
+        isNotFound={authUser == null}
       >
         <form
           id="edit-user-password-form"
