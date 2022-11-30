@@ -34,6 +34,17 @@ const createUserWithPassword = async (username: string, avatarId: string) => {
   };
 };
 
+const createAdminWithPassword = async (avatarId: string) => {
+	const hashedPassword = await Password.toHash(configService.get('WEBSITE_OWNER_PASSWORD') as string);
+	return {
+	  username: 'admin',
+	  email: `admin@transcendence.live`,
+	  fullName: 'admin',
+	  avatarId: avatarId,
+	  password: hashedPassword,
+	};
+  };
+
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries and local files
   await knex('users').del();
@@ -62,6 +73,21 @@ export async function seed(knex: Knex): Promise<void> {
       createUserWithPassword(username, defaultAvatars[index].id),
     ),
   );
+
+
+  const adminAvatar: {
+    filename: string;
+    path: string;
+    mimetype: string;
+    size: number;
+    id: string;
+} = await createRandomAvatar();
+
+  const adminWithPassword = await createAdminWithPassword(adminAvatar.id);
+
+  // Inserts admin entry
+  await knex('localfile').insert(adminAvatar);
+  await knex('users').insert(adminWithPassword);
 
   // Inserts seed entries
   await knex('localfile').insert(defaultAvatars);
