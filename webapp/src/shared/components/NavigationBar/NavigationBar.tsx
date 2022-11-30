@@ -1,4 +1,4 @@
-import { CHAT_URL, PLAY_URL, USERS_URL } from '../../urls';
+import { CHATS_URL, PLAY_URL, USERS_URL } from '../../urls';
 import { IconVariant } from '../Icon/Icon';
 import NavigationItem from '../NavigationItem/NavigationItem';
 import './NavigationBar.css';
@@ -23,7 +23,7 @@ const NAV_ITEMS_CONTENT: NavItemContent[] = [
   {
     icon: IconVariant.CHAT,
     title: 'Chat',
-    url: CHAT_URL,
+    url: CHATS_URL,
   },
 ];
 

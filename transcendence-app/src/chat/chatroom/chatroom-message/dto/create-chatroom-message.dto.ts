@@ -2,7 +2,7 @@ import { IsString, IsUUID } from 'class-validator';
 
 export class CreateChatroomMessageDto {
   @IsUUID()
-  chatroomId!: string;
+  id!: string;
 
   @IsString()
   content!: string;

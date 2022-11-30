@@ -1,18 +1,20 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import { ChatroomMessageInput, ChatroomMessages } from './components';
-import { Header, IconVariant, Loading } from '../../shared/components';
-import { CHAT_URL, CHATROOM_URL } from '../../shared/urls';
+import { CHATS_URL, CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
-import './ChatroomPage.css';
-import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
-import { chatApi } from '../../shared/services/ApiService';
+import { chatApi, usersApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
-import { User } from '../../shared/generated';
+import { ChatroomMessageWithUser, User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
+import {
+  ChatMessagingTemplate,
+  ChatMessagingLoading,
+} from '../../shared/components';
+import { ENTRIES_LIMIT } from '../../shared/constants';
+import { ChatMessage } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
 
 export default function ChatroomPage() {
   const { chatroomId } = useParams();
@@ -29,14 +31,18 @@ type ChatroomProps = {
   authUser: User;
 };
 
+type BlockedId = string;
+
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
-  const { goBack } = useNavigation();
+  const [blocks, setBlocks] = useState(new Set<BlockedId>());
+
   const { warn } = useNotificationContext();
+
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
     [chatroomId],
   );
-  const { data: chatroom, isLoading: isChatroomLoading } = useData(getChatroom);
+
   const getChatroomMember = useCallback(
     () =>
       chatApi.chatControllerGetChatroomMember({
@@ -45,8 +51,42 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
       }),
     [chatroomId, authUser.id],
   );
+
+  const messageMapper = useCallback(
+    (msg: ChatroomMessageWithUser): ChatMessage => ({
+      id: msg.id,
+      userId: msg.user.id,
+      userName: msg.user.username,
+      avatarId: msg.user.avatarId,
+      content: msg.content,
+      createdAt: msg.createdAt,
+    }),
+    [],
+  );
+
+  const fetchMessagesCallback = useCallback(
+    async (offset: number) => {
+      const msgs = await chatApi.chatControllerGetChatroomMessages({
+        chatroomId,
+        limit: ENTRIES_LIMIT,
+        offset,
+      });
+      return msgs.map((msg) => messageMapper(msg));
+    },
+    [chatroomId, messageMapper],
+  );
+
+  const getBlockedUsers = useCallback(
+    () => usersApi.userControllerGetBlocks(),
+    [],
+  );
+
+  const { data: chatroom, isLoading: isChatroomLoading } = useData(getChatroom);
+
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
+  const { data: blockedUsers } = useData(getBlockedUsers);
+
   const enableNotifications =
     chatroom !== null && chatroomMember !== null && !chatroomMember.banned;
 
@@ -70,14 +110,39 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     };
   }, [warn, enableNotifications]);
 
+  useEffect(() => {
+    if (blockedUsers) {
+      setBlocks(new Set(blockedUsers.map((user) => user.id)));
+    }
+  }, [blockedUsers]);
+
+  useEffect(() => {
+    const handleBlock = (blockedId: BlockedId) => {
+      setBlocks((prevBlocks) => new Set([...prevBlocks, blockedId]));
+    };
+
+    const handleUnblock = (blockedId: BlockedId) => {
+      setBlocks(
+        (prevBlocks) =>
+          new Set([...prevBlocks].filter((userId) => userId !== blockedId)),
+      );
+    };
+
+    socket.on('block', handleBlock);
+    socket.on('unblock', handleUnblock);
+
+    return () => {
+      socket.off('block');
+      socket.off('unblock');
+    };
+  });
+
+  if (blockedUsers === null) {
+    return null;
+  }
+
   if (isChatroomLoading || isChatroomMemberLoading) {
-    return (
-      <div className="chatroom">
-        <div className="chatroom-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <ChatMessagingLoading />;
   }
 
   if (!chatroom) {
@@ -87,27 +152,21 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   if (!chatroomMember) {
     return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
   }
+
   if (chatroomMember.banned) {
-    return <Navigate to={`${CHAT_URL}`} replace />;
+    return <Navigate to={`${CHATS_URL}`} replace />;
   }
 
   return (
-    <div className="chatroom">
-      <div className="chatroom-header">
-        <Header
-          icon={IconVariant.ARROW_BACK}
-          onClick={goBack}
-          titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
-        >
-          {chatroom.name}
-        </Header>
-      </div>
-      <div className="chatroom-messages">
-        <ChatroomMessages from={chatroomId} />
-      </div>
-      <div className="chatroom-message-input">
-        <ChatroomMessageInput to={chatroomId} />
-      </div>
-    </div>
+    <ChatMessagingTemplate
+      title={chatroom.name}
+      titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
+      from={chatroomId}
+      to={chatroomId}
+      blocks={blocks}
+      chatEvent="chatroomMessage"
+      fetchMessagesCallback={fetchMessagesCallback}
+      messageMapper={messageMapper}
+    />
   );
 }
