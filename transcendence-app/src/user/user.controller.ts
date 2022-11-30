@@ -84,7 +84,11 @@ export class UserController {
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    if (user.username === 'admin' && updateUserDto.username !== undefined) {
+    if (
+      user.username === 'admin' &&
+      (updateUserDto.username !== user.username ||
+        updateUserDto.username === undefined)
+    ) {
       throw new ForbiddenException(
         `User ${user.username} cannot change it's username`,
       );
