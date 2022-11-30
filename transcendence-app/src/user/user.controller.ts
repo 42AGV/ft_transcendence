@@ -86,8 +86,8 @@ export class UserController {
   ): Promise<User> {
     if (
       user.username === 'admin' &&
-      (updateUserDto.username !== user.username ||
-        updateUserDto.username === undefined)
+      updateUserDto.username !== user.username &&
+      updateUserDto.username !== undefined
     ) {
       throw new ForbiddenException(
         `User ${user.username} cannot change it's username`,
