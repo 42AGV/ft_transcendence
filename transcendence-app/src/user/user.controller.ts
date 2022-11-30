@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -83,6 +84,11 @@ export class UserController {
     @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
+    if (user.username === 'admin' && updateUserDto.username !== undefined) {
+      throw new ForbiddenException(
+        `User ${user.username} cannot change it's username`,
+      );
+    }
     const updatedUser = await this.userService.updateUser(
       user.id,
       updateUserDto,
