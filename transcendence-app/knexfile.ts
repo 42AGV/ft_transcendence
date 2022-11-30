@@ -6,7 +6,7 @@ config({ path: `.env.${process.env.NODE_ENV}` });
 
 const configService = new ConfigService();
 
-const knexConfig: Knex.Config = {
+const defaultSettings: Knex.Config = {
   client: 'postgresql',
   connection: {
     host: configService.get('POSTGRES_HOST'),
@@ -17,4 +17,21 @@ const knexConfig: Knex.Config = {
   },
 };
 
-module.exports = knexConfig;
+module.exports.production = {
+	...defaultSettings,
+	migrations: {
+		loadExtensions: ['.ts'],
+		extension: 'ts',
+	},
+	seeds: {
+		loadExtensions: ['.ts'],
+	},
+};
+
+module.exports.development = {
+	...defaultSettings,
+};
+
+module.exports.test = {
+	...defaultSettings,
+};
