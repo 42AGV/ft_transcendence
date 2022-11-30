@@ -28,6 +28,7 @@ import { IChatroomMemberRepository } from './chatroom/chatroom-member/infrastruc
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { ChatroomDto } from './chatroom/dto/chatroom.dto';
+import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 
 @Injectable()
 export class ChatService {
@@ -140,7 +141,7 @@ export class ChatService {
     userMeId: string,
     recipientId: string,
     { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
-  ): Promise<ChatMessage[] | null> {
+  ): Promise<ChatMessageWithUser[] | null> {
     return this.chatMessageRepository.getPaginatedMessages(
       userMeId,
       recipientId,

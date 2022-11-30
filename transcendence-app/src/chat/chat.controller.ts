@@ -38,11 +38,11 @@ import {
 } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { PaginationQueryDto } from '../shared/dtos/pagination.query.dto';
 import { ChatroomMessageWithUser } from './chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
-import { ChatMessage } from './chat/infrastructure/db/chat-message.entity';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
+import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -361,7 +361,7 @@ export class ChatController {
   @Get(':userId/messages')
   @ApiOkResponse({
     description: `Get chat messages in a one to one conversation(max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [ChatMessage],
+    type: [ChatMessageWithUser],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
@@ -369,7 +369,7 @@ export class ChatController {
     @GetUser() userMe: User,
     @Param('userId', ParseUUIDPipe) recipientId: string,
     @Query() requestDto: PaginationQueryDto,
-  ): Promise<ChatMessage[]> {
+  ): Promise<ChatMessageWithUser[]> {
     const messages = await this.chatService.getOneToOneChatMessages(
       userMe.id,
       recipientId,

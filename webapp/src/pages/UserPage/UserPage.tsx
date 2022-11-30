@@ -9,16 +9,18 @@ import {
   ButtonVariant,
   AvatarPageTemplate,
 } from '../../shared/components';
-import { AVATAR_EP_URL } from '../../shared/urls';
+import { AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useBlock } from '../../shared/hooks/UseBlock';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 export default function UserPage() {
   const { username } = useParams();
+  const { navigate } = useNavigation();
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
@@ -47,6 +49,7 @@ export default function UserPage() {
             variant: ButtonVariant.SUBMIT,
             iconVariant: IconVariant.SEND,
             children: 'Send message',
+            onClick: () => navigate(`${CHAT_URL}/${user?.username}`),
           }) ||
           undefined
         }

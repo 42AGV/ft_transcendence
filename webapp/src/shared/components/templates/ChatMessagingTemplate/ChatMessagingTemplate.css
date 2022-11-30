@@ -1,4 +1,4 @@
-.chatroom {
+.chat-template {
   padding: var(--padding-top-bottom) var(--padding-sides);
   height: 100vh;
   background-color: var(--color-background);
@@ -13,18 +13,18 @@
   grid-template-columns: 1fr;
 }
 
-.chatroom-loading {
+.chat-template-loading {
   grid-column: 1/-1;
   grid-row: 1/-1;
   align-self: center;
   justify-self: center;
 }
 
-.chatroom-header {
+.chat-template-header {
   grid-area: header;
 }
 
-.chatroom-messages {
+.chat-template-messages {
   grid-area: messages;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -34,6 +34,6 @@
   flex-direction: column-reverse;
 }
 
-.chatroom-message-input {
+.chat-template-message-input {
   grid-area: message-input;
 }

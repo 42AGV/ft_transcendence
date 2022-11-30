@@ -21,6 +21,7 @@ import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-membe
 import { CreateChatroomMessageDto } from './chatroom/chatroom-message/dto/create-chatroom-message.dto';
 import { CreateChatMessageDto } from './chat/dto/create-chat-message.dto';
 import { UserService } from '../user/user.service';
+import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -41,13 +42,13 @@ export class ChatGateway {
     createChatMessageDto: CreateChatMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { userId: recipientId, content } = createChatMessageDto;
+    const { id: recipientId, content } = createChatMessageDto;
 
-    const senderId = client.request.user.id;
+    const sender = client.request.user;
 
     const block = await this.userService.getBlockRelation(
       recipientId,
-      senderId,
+      sender.id,
     );
 
     if (block?.isUserBlockedByMe || block?.amIBlockedByUser) {
@@ -55,13 +56,23 @@ export class ChatGateway {
     }
 
     const message = await this.chatService.saveOneToOneChatMessage({
-      senderId,
+      senderId: sender.id,
       recipientId,
       content,
     });
 
+    const messageWithUser = Object.assign(ChatMessageWithUser, {
+      ...message,
+      userId: sender.id,
+      username: sender.username,
+      avatarId: sender.avatarId,
+      avatarX: sender.avatarX,
+      avatarY: sender.avatarY,
+    });
+
     if (message) {
-      this.server.to(recipientId).emit('chatMessage', { ...message });
+      this.server.to(recipientId).emit('chatMessage', { ...messageWithUser });
+      this.server.to(sender.id).emit('chatMessage', { ...messageWithUser });
     } else {
       throw new WsException(
         'The message could not be sent. Service Unavailable',
@@ -75,7 +86,7 @@ export class ChatGateway {
     createChatroomMessageDto: CreateChatroomMessageDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const { chatroomId, content } = createChatroomMessageDto;
+    const { id: chatroomId, content } = createChatroomMessageDto;
     const user = client.request.user;
     const chatroomMember = await this.chatroomMemberService.getById(
       chatroomId,

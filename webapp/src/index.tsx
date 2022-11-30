@@ -3,7 +3,7 @@ import React from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {
-  ChatPage,
+  ChatsPage,
   LandingPage,
   PlayPage,
   UsersPage,
@@ -13,6 +13,7 @@ import {
   EditAvatarPage,
   LoginPage,
   RegisterPage,
+  ChatPage,
   ChatroomPage,
   CreateChatroomPage,
   AuthUserPage,
@@ -20,12 +21,13 @@ import {
   ChatroomDetailsPage,
   JoinChatroomPage,
   EditChatroomMemberPage,
-  DiscoverChatPage,
+  DiscoverChatsPage,
   EditUserPasswordPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   CHAT_URL,
+  CHATS_URL,
   PLAY_URL,
   USER_URL,
   USER_ME_URL,
@@ -82,18 +84,18 @@ function AppRoutes() {
         }
       />
       <Route
-        path={`${CHAT_URL}/discover`}
+        path={`${CHATS_URL}/discover`}
         element={
           <RequireAuth>
-            <DiscoverChatPage />
+            <DiscoverChatsPage />
           </RequireAuth>
         }
       />
       <Route
-        path={`${CHAT_URL}`}
+        path={`${CHATS_URL}`}
         element={
           <RequireAuth>
-            <ChatPage />
+            <ChatsPage />
           </RequireAuth>
         }
       />
@@ -142,6 +144,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <EditAvatarPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${CHAT_URL}/:username`}
+        element={
+          <RequireAuth>
+            <ChatPage />
           </RequireAuth>
         }
       />

@@ -12,7 +12,7 @@ import {
   Text,
   ButtonProps,
 } from '../../shared/components';
-import { AVATAR_EP_URL, CHAT_URL, CHATROOM_URL } from '../../shared/urls';
+import { AVATAR_EP_URL, CHATS_URL, CHATROOM_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback } from 'react';
@@ -81,7 +81,7 @@ export default function ChatroomDetailsPage() {
     if (!chatroomId) return;
     try {
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
-      navigate(`${CHAT_URL}`);
+      navigate(`${CHATS_URL}`);
     } catch (error: unknown) {
       if (error instanceof ResponseError) {
         const responseBody = await error.response.json();
