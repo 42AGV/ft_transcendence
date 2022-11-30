@@ -6,9 +6,7 @@ import { AppModule } from './app.module';
 import { setupApp } from './setup-app';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule.register(),
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enable('trust proxy');
   app.setGlobalPrefix('api');
   app.enableVersioning({
