@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  ForbiddenException,
   StreamableFile,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -88,6 +89,9 @@ export class UserService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<User | null> {
+    if (updateUserDto.username === 'admin') {
+      throw new ForbiddenException('Admin username is reserved');
+    }
     return this.userRepository.updateById(userId, updateUserDto);
   }
 

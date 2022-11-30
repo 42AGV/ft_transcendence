@@ -35,7 +35,8 @@ const createUserWithPassword = async (username: string, avatarId: string) => {
 };
 
 const createAdminWithPassword = async (avatarId: string) => {
-	const hashedPassword = await Password.toHash(configService.get('WEBSITE_OWNER_PASSWORD') as string);
+	const password = configService.get('WEBSITE_OWNER_PASSWORD') as string;
+	const hashedPassword = await Password.toHash(password);
 	return {
 	  username: 'admin',
 	  email: `admin@transcendence.live`,
