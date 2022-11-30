@@ -23,6 +23,15 @@
   border-radius: 50%;
 }
 
+.button-chip {
+  border-radius: 1rem;
+  height: 1.5rem;
+  min-width: 8rem;
+  max-width: 12rem;
+  padding: 1rem;
+  padding-left: 2rem;
+}
+
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -49,4 +58,10 @@
   display: flex;
   position: absolute;
   left: 1rem;
+}
+
+.button-chip .button-icon {
+  display: flex;
+  position: absolute;
+  left: 0.675rem;
 }

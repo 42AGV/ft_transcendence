@@ -7,7 +7,7 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto auto 1fr auto;
-  gap: 2rem var(--column-gap);
+  gap: 0.5rem var(--column-gap);
 }
 
 .main-tab-template-loading {

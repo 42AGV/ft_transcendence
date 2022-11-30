@@ -1,5 +1,6 @@
 .reactive-button {
-  display: contents;
+  display: flex;
+  align-items: center;
 }
 
 @media all and (max-width: 768px) {
@@ -8,7 +9,7 @@
   }
 }
 @media all and (min-width: 769px) {
-  .reactive-button .button-small {
+  .reactive-button .button-chip {
     display: none;
   }
 }
