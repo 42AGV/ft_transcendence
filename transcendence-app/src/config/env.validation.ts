@@ -67,6 +67,10 @@ export class EnvironmentVariables {
 
   @IsUUID()
   MEMCACHED_SECRET!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  WEBSITE_OWNER_PASSWORD!: string;
 }
 
 export function validate(config: Record<string, unknown>) {
