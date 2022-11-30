@@ -1,7 +1,6 @@
 import {
   Injectable,
   NotFoundException,
-  ForbiddenException,
   StreamableFile,
   UnprocessableEntityException,
 } from '@nestjs/common';
