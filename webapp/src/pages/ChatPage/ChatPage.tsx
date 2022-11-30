@@ -14,6 +14,7 @@ import { ChatMessage as ChatMessageTemplate } from '../../shared/components/temp
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 type ChatWithUserProps = {
   username: string;
@@ -29,8 +30,10 @@ export default function ChatPage() {
   const { username } = useParams();
   const { authUser } = useAuth();
 
-  if (!username || !authUser) {
+  if (!authUser) {
     return null;
+  } else if (!username) {
+    return <NotFoundPage />;
   }
 
   return <ChatWithUser username={username} authUser={authUser} />;
@@ -46,8 +49,10 @@ function ChatWithUser({ username, authUser }: ChatWithUserProps) {
   );
   const { data: user, isLoading: isUserLoading } = useData(fetchUser);
 
-  if (isUserLoading || !user) {
+  if (isUserLoading && !user) {
     return <ChatMessagingLoading />;
+  } else if (!user) {
+    return <NotFoundPage />;
   }
 
   return <Chat user={user} authUser={authUser} />;

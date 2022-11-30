@@ -152,6 +152,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   if (!chatroomMember) {
     return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
   }
+
   if (chatroomMember.banned) {
     return <Navigate to={`${CHATS_URL}`} replace />;
   }
