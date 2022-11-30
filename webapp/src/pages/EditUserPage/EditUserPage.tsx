@@ -20,7 +20,7 @@ import { usersApi } from '../../shared/services/ApiService';
 
 export default function EditUserPage() {
   const { username } = useParams();
-  const { authUser, isLoading } = useAuth(username);
+  const { authUser, setAuthUser, isLoading } = useAuth(username);
   const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
   const initialFormValues: UpdateUserDto = {
@@ -59,7 +59,11 @@ export default function EditUserPage() {
         updateUserDto: formValues,
       });
       notify('Updated successfully');
-      window.location.href = USER_ME_URL;
+      setAuthUser((prevState) => {
+        if (!prevState) return null;
+        return { ...prevState, ...formValues };
+      });
+      navigate(USER_ME_URL);
     } catch (error) {
       handleRequestError(error);
     }
@@ -85,6 +89,7 @@ export default function EditUserPage() {
         variant: ButtonVariant.SUBMIT,
         form: 'edit-user-form',
       }}
+      //TODO: users from oauth42 have null password, disable?
       button={{
         children: 'edit password',
         variant: ButtonVariant.ALTERNATIVE,

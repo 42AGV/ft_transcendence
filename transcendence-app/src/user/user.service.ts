@@ -99,7 +99,11 @@ export class UserService {
     if (!user) {
       throw new NotFoundException();
     }
-
+    if (updateUserDto.password !== updateUserDto.confirmationPassword) {
+      throw new ForbiddenException(
+        'Password and confirmation password must match',
+      );
+    }
     if (
       !user.password ||
       !updateUserDto.oldPassword ||
