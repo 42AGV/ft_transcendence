@@ -47,7 +47,7 @@ clean:
 
 .PHONY: prod-clean
 prod-clean:
-	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml down -v
+	make prod-down
 	rm -rf $(PROJECT_ROOT)/webapp/src/shared/generated || true
 	rm $(PROJECT_ROOT)/transcendence-app/swagger-spec/swagger-spec.yaml || true
 
