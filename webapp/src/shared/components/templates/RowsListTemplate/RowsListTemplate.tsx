@@ -1,4 +1,3 @@
-import * as React from 'react';
 import SearchForm from '../../Input/SearchForm';
 import RowsList, { RowItem } from '../../RowsList/RowsList';
 import Loading from '../../Loading/Loading';

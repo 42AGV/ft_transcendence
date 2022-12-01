@@ -54,6 +54,7 @@ const Icons: { [key in IconVariant]: SVGComponent } = {
 };
 
 export enum IconSize {
+  EXTRA_SMALL = '0.875rem',
   SMALL = '1.25rem',
   LARGE = '1.5rem',
 }
