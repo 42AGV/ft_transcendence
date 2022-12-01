@@ -11,6 +11,7 @@ export enum ButtonVariant {
 export enum ButtonSize {
   SMALL = 'small',
   LARGE = 'large',
+  CHIP = 'chip',
 }
 
 type CommonButtonProps = {
@@ -26,11 +27,15 @@ type LargeButtonProps = CommonButtonProps & {
   children: string;
 };
 
+type ChipButtonProps = CommonButtonProps & {
+  children: string;
+};
+
 type SmallButtonProps = CommonButtonProps & {
   children?: never;
 };
 
-export type ButtonProps = SmallButtonProps | LargeButtonProps;
+export type ButtonProps = SmallButtonProps | LargeButtonProps | ChipButtonProps;
 
 export default function Button({
   variant,
@@ -41,23 +46,42 @@ export default function Button({
   children,
   buttonSize = ButtonSize.LARGE,
 }: ButtonProps) {
+  const getButtonSizeClass = () => {
+    if (children) {
+      switch (buttonSize) {
+        case ButtonSize.SMALL:
+          return 'button-small';
+        case ButtonSize.CHIP:
+          return 'button-chip caption-regular';
+        default:
+          return 'button-large';
+      }
+    }
+    return 'button-small';
+  };
+
   return (
     <button
-      className={`${
-        children && buttonSize === ButtonSize.LARGE
-          ? 'button-large'
-          : 'button-small'
-      } button subheading-bold button-${variant}`}
+      className={`${getButtonSizeClass()} button subheading-bold button-${variant}`}
       disabled={disabled}
       onClick={onClick}
       form={form}
     >
       {iconVariant && (
         <div className="button-icon">
-          {<Icon variant={iconVariant} size={IconSize.SMALL} />}
+          {
+            <Icon
+              variant={iconVariant}
+              size={
+                buttonSize === ButtonSize.CHIP
+                  ? IconSize.EXTRA_SMALL
+                  : IconSize.SMALL
+              }
+            />
+          }
         </div>
       )}
-      {children && buttonSize === ButtonSize.LARGE && children}
+      {children && buttonSize !== ButtonSize.SMALL && children}
     </button>
   );
 }
