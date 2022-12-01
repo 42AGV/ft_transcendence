@@ -24,6 +24,7 @@ services:
         - TRANSCENDENCE_APP_DATA=${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
     volumes:
       - transcendence-app-data:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
+      - ./transcendence-app/migrations:/transcendence-app/migrations:ro
     environment:
       - FORTYTWO_APP_AUTHORIZATION_URL=https://api.intra.42.fr/oauth/authorize
       - FORTYTWO_APP_TOKEN_URL=https://api.intra.42.fr/oauth/token
@@ -44,8 +45,6 @@ services:
     user: postgres
     volumes:
       - transcendence-db:/var/lib/postgresql/data
-      - ./db/fill-db.sh:/docker-entrypoint-initdb.d/fill-db.sh
-      - ./db/setup/:/var/lib/postgresql/setup/
     environment:
       - POSTGRES_DB=ft_transcendence
 

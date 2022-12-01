@@ -7,6 +7,7 @@ DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 .PHONY: all
 all: gen
 	$(DOCKER_COMPOSE) up --build -d
+	make migrate
 	make seed
 
 .PHONY: down
@@ -16,6 +17,7 @@ down:
 .PHONY: prod
 prod: gen
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+	make migrate
 
 .PHONY: prod-down
 prod-down:
@@ -83,4 +85,8 @@ get-ip:
 
 .PHONY: seed
 seed:
-	$(DOCKER_COMPOSE) exec -it transcendence-app npx knex seed:run
+	$(DOCKER_COMPOSE) exec transcendence-app npx knex seed:run
+
+.PHONY: migrate
+migrate:
+	$(DOCKER_COMPOSE) exec transcendence-app npx knex migrate:latest
