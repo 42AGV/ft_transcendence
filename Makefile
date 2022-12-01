@@ -17,7 +17,7 @@ down:
 .PHONY: prod
 prod: gen
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
-	make migrate
+	make prod-migrate
 
 .PHONY: prod-down
 prod-down:
@@ -90,3 +90,7 @@ seed:
 .PHONY: migrate
 migrate:
 	$(DOCKER_COMPOSE) exec transcendence-app npx knex migrate:latest
+
+.PHONY: prod-migrate
+prod-migrate:
+	$(DOCKER_COMPOSE) exec transcendence-app npx knex --knexfile ./dist/knexfile.js  migrate:latest

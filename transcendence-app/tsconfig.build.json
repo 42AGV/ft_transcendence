@@ -1,12 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": [
-    "node_modules",
-    "types",
-    "seeds",
-    "knexfile.ts",
-    "test",
-    "dist",
-    "**/*spec.ts"
-  ]
+  "exclude": ["node_modules", "types", "seeds", "test", "dist", "**/*spec.ts"]
 }
