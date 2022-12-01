@@ -18,8 +18,18 @@ const defaultConfig: Knex.Config = {
 };
 
 module.exports = {
-  development: defaultConfig,
-  test: defaultConfig,
+  development: {
+    ...defaultConfig,
+    migrations: {
+      loadExtensions: ['.ts'],
+    },
+  },
+  test: {
+    ...defaultConfig,
+    migrations: {
+      loadExtensions: ['.ts'],
+    },
+  },
   production: {
     ...defaultConfig,
     migrations: {

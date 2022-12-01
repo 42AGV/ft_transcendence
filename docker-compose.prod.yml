@@ -19,12 +19,20 @@ services:
     build:
       context: ./transcendence-app
       target: production
+    volumes:
+      - transcendence-app-data-prod:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?required}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
       - FORTYTWO_APP_CALLBACK_URL=${FORTYTWO_APP_CALLBACK_URL:?required}
 
   db:
+    volumes:
+      - transcendence-db-prod:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?required}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
+
+volumes:
+  transcendence-db-prod:
+  transcendence-app-data-prod:
