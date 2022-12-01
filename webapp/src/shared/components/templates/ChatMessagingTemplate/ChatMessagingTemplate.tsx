@@ -19,7 +19,6 @@ type ChatMessagingProps = {
   titleNavigationUrl?: string;
   to: string;
   from: string;
-  blocks?: Set<string>;
   fetchMessagesCallback: (offset: number) => Promise<ChatMessage[]>;
   chatEvent: ChatEventType;
   messageMapper: (msg: any) => ChatMessage;
@@ -40,7 +39,6 @@ export default function ChatMessagingTemplate({
   titleNavigationUrl,
   to,
   from,
-  blocks = new Set(),
   fetchMessagesCallback,
   chatEvent,
   messageMapper,
@@ -92,11 +90,7 @@ export default function ChatMessagingTemplate({
         </Header>
       </div>
       <div className="chat-template-messages">
-        <ChatMessages
-          messages={messages}
-          blocks={blocks}
-          setOffset={setOffset}
-        />
+        <ChatMessages messages={messages} setOffset={setOffset} />
       </div>
       <div className="chat-template-message-input">
         <ChatMessagingInput to={to} chatEvent={chatEvent} />

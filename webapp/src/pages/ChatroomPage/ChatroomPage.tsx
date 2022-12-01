@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { CHATS_URL, CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
-import { chatApi, usersApi } from '../../shared/services/ApiService';
+import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { ChatroomMessageWithUser, User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
@@ -31,11 +31,7 @@ type ChatroomProps = {
   authUser: User;
 };
 
-type BlockedId = string;
-
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
-  const [blocks, setBlocks] = useState(new Set<BlockedId>());
-
   const { warn } = useNotificationContext();
 
   const getChatroom = useCallback(
@@ -76,16 +72,10 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     [chatroomId, messageMapper],
   );
 
-  const getBlockedUsers = useCallback(
-    () => usersApi.userControllerGetBlocks(),
-    [],
-  );
-
   const { data: chatroom, isLoading: isChatroomLoading } = useData(getChatroom);
 
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
-  const { data: blockedUsers } = useData(getBlockedUsers);
 
   const enableNotifications =
     chatroom !== null && chatroomMember !== null && !chatroomMember.banned;
@@ -110,37 +100,6 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     };
   }, [warn, enableNotifications]);
 
-  useEffect(() => {
-    if (blockedUsers) {
-      setBlocks(new Set(blockedUsers.map((user) => user.id)));
-    }
-  }, [blockedUsers]);
-
-  useEffect(() => {
-    const handleBlock = (blockedId: BlockedId) => {
-      setBlocks((prevBlocks) => new Set([...prevBlocks, blockedId]));
-    };
-
-    const handleUnblock = (blockedId: BlockedId) => {
-      setBlocks(
-        (prevBlocks) =>
-          new Set([...prevBlocks].filter((userId) => userId !== blockedId)),
-      );
-    };
-
-    socket.on('block', handleBlock);
-    socket.on('unblock', handleUnblock);
-
-    return () => {
-      socket.off('block');
-      socket.off('unblock');
-    };
-  });
-
-  if (blockedUsers === null) {
-    return null;
-  }
-
   if (isChatroomLoading || isChatroomMemberLoading) {
     return <ChatMessagingLoading />;
   }
@@ -163,7 +122,6 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
       titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
       from={chatroomId}
       to={chatroomId}
-      blocks={blocks}
       chatEvent="chatroomMessage"
       fetchMessagesCallback={fetchMessagesCallback}
       messageMapper={messageMapper}
