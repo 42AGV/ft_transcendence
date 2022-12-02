@@ -3,8 +3,8 @@ import {
   AVATARS_PATH,
   AVATAR_MAX_SIZE,
   AVATAR_MIMETYPE_WHITELIST,
-} from '../constants';
-import LocalFileInterceptor from '../local-file/local-file.interceptor';
+} from '../../constants';
+import LocalFileInterceptor from '../../local-file/local-file.interceptor';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',

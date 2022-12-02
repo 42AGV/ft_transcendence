@@ -38,7 +38,7 @@ import { User } from './infrastructure/db/user.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
-import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
+import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
@@ -115,7 +115,7 @@ export class UserController {
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     description: 'Update a user avatar',
-    type: UserAvatarResponseDto,
+    type: AvatarResponseDto,
   })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   @ApiPayloadTooLargeResponse({ description: 'Payload Too Large' })
@@ -125,7 +125,7 @@ export class UserController {
     @GetUser() user: User,
     @UploadedFile()
     file: Express.Multer.File,
-  ): Promise<UserAvatarResponseDto> {
+  ): Promise<AvatarResponseDto> {
     if (!file) {
       throw new UnprocessableEntityException();
     }

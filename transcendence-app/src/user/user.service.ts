@@ -19,7 +19,7 @@ import {
 } from '../shared/constants';
 import { createReadStream } from 'fs';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
-import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
+import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
@@ -143,7 +143,7 @@ export class UserService {
   private async addAvatarAndUpdateUser(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<UserAvatarResponseDto | null> {
+  ): Promise<AvatarResponseDto | null> {
     const avatarUUID = uuidv4();
     const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
       { id: avatarUUID, createdAt: new Date(Date.now()), ...newAvatarFileDto },
@@ -169,7 +169,7 @@ export class UserService {
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<UserAvatarResponseDto | null> {
+  ): Promise<AvatarResponseDto | null> {
     const isValid = await this.avatarService.validateAvatarType(
       newAvatarFileDto.path,
     );

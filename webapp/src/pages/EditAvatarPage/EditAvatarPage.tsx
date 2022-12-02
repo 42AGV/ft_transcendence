@@ -18,7 +18,7 @@ import {
   EDITABLE_AVATAR_SCALE,
   EDITABLE_AVATAR_SCALE_REVERSE,
 } from '../../shared/components/Avatar/EditableAvatar';
-import { UserAvatarResponseDto } from '../../shared/generated';
+import {AvatarResponseDto } from '../../shared/generated';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 
@@ -76,7 +76,7 @@ export default function EditAvatarPage() {
     if (imgFile !== null) {
       usersApi
         .userControllerUploadAvatar({ file: imgFile })
-        .then((res: UserAvatarResponseDto) => {
+        .then((res: AvatarResponseDto) => {
           notify('Image uploaded correctly.');
           setAuthUser((prevState) => {
             if (!prevState) return null;
