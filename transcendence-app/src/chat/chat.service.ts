@@ -29,6 +29,8 @@ import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
+import { AvatarService } from '../shared/avatar/avatar.service';
+import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 
 @Injectable()
 export class ChatService {
@@ -39,6 +41,7 @@ export class ChatService {
     private chatroomMemberService: ChatroomMemberService,
     private chatroomMemberRepository: IChatroomMemberRepository,
     private localFileService: LocalFileService,
+    private avatarService: AvatarService,
   ) {}
 
   async retrieveChatrooms({
@@ -282,5 +285,56 @@ export class ChatService {
       userId,
       updateChatroomMemberDto,
     );
+  }
+
+  private async addAvatarAndUpdateChatroom(
+    chatroom: Chatroom,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<AvatarResponseDto | null> {
+    const avatarUUID = uuidv4();
+    const updatedChatroom =
+      await this.chatroomRepository.addAvatarAndUpdateChatroom(
+        {
+          id: avatarUUID,
+          createdAt: new Date(Date.now()),
+          ...newAvatarFileDto,
+        },
+        chatroom,
+      );
+    if (!updatedChatroom) {
+      this.localFileService.deleteFileData(newAvatarFileDto.path);
+      return null;
+    }
+    return {
+      avatarId: avatarUUID,
+      file: this.avatarService.streamAvatarData(newAvatarFileDto),
+    };
+  }
+
+  async addAvatar(
+    chatroomId: string,
+    user: User,
+    newAvatarFileDto: LocalFileDto,
+  ): Promise<AvatarResponseDto | null> {
+    await this.avatarService.validateAvatarType(newAvatarFileDto.path);
+    const chatroom = await this.chatroomRepository.getById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    if (chatroom.ownerId !== user.id) {
+      throw new ForbiddenException();
+    }
+    const previousAvatarId = user.avatarId;
+    const avatar = await this.addAvatarAndUpdateChatroom(
+      chatroom,
+      newAvatarFileDto,
+    );
+    if (!avatar) {
+      return null;
+    }
+    if (previousAvatarId) {
+      await this.avatarService.deleteAvatar(previousAvatarId);
+    }
+    return avatar;
   }
 }

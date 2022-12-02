@@ -2,7 +2,6 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
-  StreamableFile,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,11 +12,7 @@ import { User } from './infrastructure/db/user.entity';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
-import {
-  AVATAR_MIMETYPE_WHITELIST,
-  MAX_ENTRIES_PER_PAGE,
-} from '../shared/constants';
-import { createReadStream } from 'fs';
+import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
 import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
@@ -155,50 +150,24 @@ export class UserService {
     }
     return {
       avatarId: avatarUUID,
-      file: this.streamAvatarData(newAvatarFileDto),
+      file: this.avatarService.streamAvatarData(newAvatarFileDto),
     };
-  }
-
-  private async deleteAvatar(avatarId: string) {
-    const avatarFile = await this.localFileService.deleteFileById(avatarId);
-    if (avatarFile) {
-      this.localFileService.deleteFileData(avatarFile.path);
-    }
   }
 
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
   ): Promise<AvatarResponseDto | null> {
-    const isValid = await this.avatarService.validateAvatarType(
-      newAvatarFileDto.path,
-    );
-    if (!isValid) {
-      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
-      throw new UnprocessableEntityException(
-        `Validation failed (allowed types are ${allowedTypes})`,
-      );
-    }
-
+    await this.avatarService.validateAvatarType(newAvatarFileDto.path);
     const previousAvatarId = user.avatarId;
     const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
     if (!avatar) {
       return null;
     }
     if (previousAvatarId) {
-      await this.deleteAvatar(previousAvatarId);
+      await this.avatarService.deleteAvatar(previousAvatarId);
     }
     return avatar;
-  }
-
-  private streamAvatarData(fileDto: LocalFileDto): StreamableFile {
-    const stream = createReadStream(fileDto.path);
-
-    return new StreamableFile(stream, {
-      type: fileDto.mimetype,
-      disposition: `inline; filename="${fileDto.filename}"`,
-      length: fileDto.size,
-    });
   }
 
   retrieveUserWithAuthProvider(

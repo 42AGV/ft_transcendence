@@ -1,4 +1,8 @@
-import { Injectable, StreamableFile } from '@nestjs/common';
+import {
+  Injectable,
+  StreamableFile,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { AVATAR_MIMETYPE_WHITELIST } from '../constants';
 import { LocalFileDto } from '../local-file/local-file.dto';
@@ -18,7 +22,7 @@ export class AvatarService {
     return this.streamAvatarData(file);
   }
 
-  private streamAvatarData(fileDto: LocalFileDto): StreamableFile {
+  streamAvatarData(fileDto: LocalFileDto): StreamableFile {
     const stream = createReadStream(fileDto.path);
 
     return new StreamableFile(stream, {
@@ -28,7 +32,7 @@ export class AvatarService {
     });
   }
 
-  async validateAvatarType(path: string): Promise<boolean | undefined> {
+  async validateAvatarType(path: string): Promise<void> {
     /**
      * Import 'file-type' ES-Module in CommonJS Node.js module
      */
@@ -40,7 +44,17 @@ export class AvatarService {
       fileTypeResult && AVATAR_MIMETYPE_WHITELIST.includes(fileTypeResult.mime);
     if (!isValid) {
       this.localFileService.deleteFileData(path);
+      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
+      throw new UnprocessableEntityException(
+        `Validation failed (allowed types are ${allowedTypes})`,
+      );
     }
-    return isValid;
+  }
+
+  async deleteAvatar(avatarId: string) {
+    const avatarFile = await this.localFileService.deleteFileById(avatarId);
+    if (avatarFile) {
+      this.localFileService.deleteFileData(avatarFile.path);
+    }
   }
 }
