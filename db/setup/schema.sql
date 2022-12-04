@@ -79,3 +79,11 @@ CREATE TABLE
     "content" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW ()
   );
+
+CREATE TABLE
+  IF NOT EXISTS Friend (
+    "followerId" UUID REFERENCES Users (id) ON DELETE CASCADE,
+    "followedId" UUID REFERENCES Users (id) ON DELETE CASCADE,
+    CHECK ("followerId" != "followedId"),
+    PRIMARY KEY ("followerId", "followedId")
+  );

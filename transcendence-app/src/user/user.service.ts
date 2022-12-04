@@ -26,6 +26,7 @@ import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-sea
 import { AvatarService } from '../shared/avatar/avatar.service';
 import { SocketService } from '../socket/socket.service';
 import { Password } from '../shared/password';
+import { IFriendRepository } from './infrastructure/db/friend.repository';
 
 @Injectable()
 export class UserService {
@@ -33,6 +34,7 @@ export class UserService {
     private userRepository: IUserRepository,
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
+    private friendRepository: IFriendRepository,
     private avatarService: AvatarService,
     private socketService: SocketService,
   ) {}
@@ -226,5 +228,35 @@ export class UserService {
 
   getBlocks(blockerId: string) {
     return this.blockRepository.getBlocks(blockerId);
+  }
+
+  async addFriend(followerId: string, followedId: string) {
+    const friend = await this.friendRepository.addFriend({
+      followerId,
+      followedId,
+    });
+    if (!friend) {
+      throw new UnprocessableEntityException();
+    }
+    return friend;
+  }
+
+  async deleteFriend(followerId: string, followedId: string) {
+    const friend = await this.friendRepository.deleteFriend(
+      followerId,
+      followedId,
+    );
+    if (!friend) {
+      throw new NotFoundException();
+    }
+    return friend;
+  }
+
+  async getFriends(followerId: string) {
+    const friends = await this.friendRepository.getFriends(followerId);
+    if (!friends) {
+      throw new UnprocessableEntityException();
+    }
+    return friends;
   }
 }

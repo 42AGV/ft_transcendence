@@ -47,6 +47,7 @@ import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
 import { UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { Friend } from './infrastructure/db/friend.entity';
 
 export const AvatarFileInterceptor = LocalFileInterceptor({
   fieldName: 'file',
@@ -206,5 +207,45 @@ export class UserController {
     @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
     return this.userService.deleteBlock(user.id, blockedUserId);
+  }
+
+  @Get('user/friend')
+  @ApiOkResponse({
+    description: 'List users followed by the authenticated user',
+    type: [User],
+  })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async getFriends(@GetUser() user: User): Promise<User[]> {
+    const friends = await this.userService.getFriends(user.id);
+    if (!friends) {
+      throw new ServiceUnavailableException();
+    }
+    return friends;
+  }
+
+  @Post('user/friend/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Follow a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  followUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) followedUserId: string,
+  ): Promise<Friend> {
+    return this.userService.addFriend(user.id, followedUserId);
+  }
+
+  @Delete('user/friend/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Unfollow a user',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  unfollowUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) followedUserId: string,
+  ): Promise<Friend> {
+    return this.userService.deleteFriend(user.id, followedUserId);
   }
 }
