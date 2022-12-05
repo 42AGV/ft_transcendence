@@ -3,7 +3,6 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
@@ -61,12 +60,9 @@ export const UserStatusProvider = ({ children }: { children: ReactNode }) => {
     [onlineUserIds],
   );
 
-  const contextValue = useMemo(
-    () => ({
-      userStatus,
-    }),
-    [userStatus],
-  );
+  const contextValue = {
+    userStatus,
+  };
 
   return (
     <UserStatusContext.Provider value={contextValue}>

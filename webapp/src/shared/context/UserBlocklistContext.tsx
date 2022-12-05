@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { createContext } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import { useData } from '../hooks/UseData';
@@ -67,12 +67,9 @@ export const UserBlocklistProvider = ({
     [blockedUsers, blocks],
   );
 
-  const contextValue = useMemo(
-    () => ({
-      userBlocks,
-    }),
-    [userBlocks],
-  );
+  const contextValue = {
+    userBlocks,
+  };
 
   return (
     <UserBlocklistContext.Provider value={contextValue}>
