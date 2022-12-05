@@ -32,7 +32,7 @@ COPY --from=development --chown=node:node /transcendence-app/dist ./dist
 USER node
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main"]
 
 FROM development AS swagger
 RUN npm install --location=global @nestjs/cli
