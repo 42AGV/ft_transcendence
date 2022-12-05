@@ -9,19 +9,25 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Query,
   ServiceUnavailableException,
   UnprocessableEntityException,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import {
   ApiBadRequestResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiPayloadTooLargeResponse,
+  ApiProduces,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -43,6 +49,9 @@ import { UpdateChatroomDto } from './chatroom/dto/update-chatroom.dto';
 import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
+import { ApiFile } from '../shared/decorators/api-file.decorator';
+import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
+import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -379,5 +388,41 @@ export class ChatController {
       throw new ServiceUnavailableException();
     }
     return messages;
+  }
+
+  @Put('room/:chatroomId/avatar')
+  @ApiConsumes('multipart/form-data')
+  @ApiFile('file')
+  @ApiProduces('image/jpeg')
+  @ApiOkResponse({
+    description: 'Update a chatroom avatar',
+    type: AvatarResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  @ApiPayloadTooLargeResponse({ description: 'Payload Too Large' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  @UseInterceptors(AvatarFileInterceptor)
+  async uploadAvatar(
+    @GetUser() user: User,
+    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @UploadedFile()
+    file: Express.Multer.File,
+  ): Promise<AvatarResponseDto> {
+    if (!file) {
+      throw new UnprocessableEntityException();
+    }
+
+    const avatar = await this.chatService.addAvatar(chatroomId, user, {
+      filename: file.filename,
+      path: file.path,
+      mimetype: file.mimetype,
+      size: file.size,
+    });
+
+    if (!avatar) {
+      throw new ServiceUnavailableException();
+    }
+    return avatar;
   }
 }

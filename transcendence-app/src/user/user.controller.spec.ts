@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AvatarFileInterceptor, UserController } from './user.controller';
+import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './infrastructure/db/user.entity';
+import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
 
 const testUserMe = new User(
   new User({
