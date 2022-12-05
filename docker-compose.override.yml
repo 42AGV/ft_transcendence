@@ -22,6 +22,7 @@ services:
       context: ./transcendence-app
       target: development
     volumes:
+      - transcendence-app-data-dev:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
       - ./transcendence-app/src:/transcendence-app/src:ro
       - ./transcendence-app/test:/transcendence-app/test:ro
       - ./transcendence-app/seeds:/transcendence-app/seeds:ro
@@ -32,6 +33,12 @@ services:
       - FORTYTWO_APP_CALLBACK_URL=http://localhost:3000/api/v1/auth/login
 
   db:
+    volumes:
+      - transcendence-db-dev:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+volumes:
+  transcendence-db-dev:
+  transcendence-app-data-dev:

@@ -5,6 +5,7 @@ import { AVATAR_EP_URL } from '../../../../../urls';
 import { ENTRIES_LIMIT } from '../../../../../constants';
 import { useIsElementVisible } from '../../../../../hooks/UseIsElementVisible';
 import { useAuth } from '../../../../../hooks/UseAuth';
+import { useBlocklist } from '../../../../../hooks/UseBlocklist';
 
 import './ChatMessages.css';
 
@@ -19,17 +20,16 @@ export type ChatMessage = {
 
 type ChatMessagesProps = {
   messages: ChatMessage[];
-  blocks: Set<string>;
   setOffset: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export default function ChatMessages({
   messages,
-  blocks,
   setOffset,
 }: ChatMessagesProps) {
   const { ref: callbackRef, isVisible } = useIsElementVisible();
   const { authUser: me } = useAuth();
+  const { userBlocks } = useBlocklist();
 
   React.useEffect(() => {
     if (isVisible) {
@@ -40,7 +40,7 @@ export default function ChatMessages({
   return (
     <ul className="chat-template-messages-list">
       {messages
-        .filter((message) => !blocks.has(message.userId))
+        .filter((message) => !userBlocks(message.userId))
         .map((message, index, array) => {
           const isConsecutive =
             index !== array.length - 1 &&

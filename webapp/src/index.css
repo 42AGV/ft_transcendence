@@ -16,7 +16,7 @@
   --heading-font-size: 1.5rem;
   --subheading-font-size: 1.15rem;
   --paragraph-font-size: 1rem;
-  --caption-font-size: 0.875rem;
+  --caption-font-size: 0.75rem;
 
   --gradient-game: linear-gradient(
     269.73deg,
@@ -27,7 +27,7 @@
 
   --primary-font: 'DM Sans', sans-serif;
 
-  font-size: 16px;
+  font-size: 14px;
   --column-number: 4;
   --column-end: calc(var(--column-number) + 1);
   --padding-sides: 1.25rem;

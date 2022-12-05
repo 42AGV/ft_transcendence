@@ -36,38 +36,13 @@ import {
 } from '@nestjs/swagger';
 import { User as GetUser } from './decorators/user.decorator';
 import { User } from './infrastructure/db/user.entity';
-import LocalFileInterceptor from '../shared/local-file/local-file.interceptor';
-import {
-  AVATARS_PATH,
-  AVATAR_MAX_SIZE,
-  AVATAR_MIMETYPE_WHITELIST,
-  MAX_ENTRIES_PER_PAGE,
-} from '../shared/constants';
+import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
-import { UserAvatarResponseDto } from './dto/user.avatar.response.dto';
+import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
-
-export const AvatarFileInterceptor = LocalFileInterceptor({
-  fieldName: 'file',
-  path: AVATARS_PATH,
-  fileFilter: (request, file, callback) => {
-    if (!AVATAR_MIMETYPE_WHITELIST.includes(file.mimetype)) {
-      const allowedTypes = AVATAR_MIMETYPE_WHITELIST.join(', ');
-      return callback(
-        new UnprocessableEntityException(
-          `Validation failed (allowed types are ${allowedTypes})`,
-        ),
-        false,
-      );
-    }
-    callback(null, true);
-  },
-  limits: {
-    fileSize: AVATAR_MAX_SIZE,
-  },
-});
+import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
 
 @Controller()
 @UseGuards(AuthenticatedGuard)
@@ -150,7 +125,7 @@ export class UserController {
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     description: 'Update a user avatar',
-    type: UserAvatarResponseDto,
+    type: AvatarResponseDto,
   })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   @ApiPayloadTooLargeResponse({ description: 'Payload Too Large' })
@@ -160,7 +135,7 @@ export class UserController {
     @GetUser() user: User,
     @UploadedFile()
     file: Express.Multer.File,
-  ): Promise<UserAvatarResponseDto> {
+  ): Promise<AvatarResponseDto> {
     if (!file) {
       throw new UnprocessableEntityException();
     }

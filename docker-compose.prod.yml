@@ -19,6 +19,8 @@ services:
     build:
       context: ./transcendence-app
       target: production
+    volumes:
+      - transcendence-app-data-prod:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?required}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
@@ -26,6 +28,12 @@ services:
       - WEBSITE_OWNER_PASSWORD=123
 
   db:
+    volumes:
+      - transcendence-db-prod:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER:?required}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
+
+volumes:
+  transcendence-db-prod:
+  transcendence-app-data-prod:
