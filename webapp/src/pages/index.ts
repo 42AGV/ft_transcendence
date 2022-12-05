@@ -18,3 +18,4 @@ export { default as EditChatroomMemberPage } from './EditChatroomMemberPage/Edit
 export { default as DiscoverChatsPage } from './ChatsPage/DiscoverChatsPage';
 export { default as EditUserPasswordPage } from './EditUserPasswordPage/EditUserPasswordPage';
 export { default as ChatPage } from './ChatPage/ChatPage';
+export { default as FriendsPage } from './UsersPage/FriendsPage';
