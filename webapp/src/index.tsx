@@ -10,7 +10,7 @@ import {
   UserPage,
   ComponentsBookPage,
   EditUserPage,
-  EditAvatarPage,
+  EditUserAvatarPage,
   LoginPage,
   RegisterPage,
   ChatPage,
@@ -23,6 +23,7 @@ import {
   EditChatroomMemberPage,
   DiscoverChatsPage,
   EditUserPasswordPage,
+  EditChatroomAvatarPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -34,12 +35,13 @@ import {
   USERS_URL,
   COMPONENTS_BOOK_URL,
   EDIT_USER_URL,
-  EDIT_AVATAR_URL,
+  EDIT_USER_AVATAR_URL,
   LOGIN_OPTIONS_URL,
   REGISTER_URL,
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
   EDIT_USER_PASSWORD_URL,
+  EDIT_CHATROOM_AVATAR_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -143,10 +145,10 @@ function AppRoutes() {
         }
       />
       <Route
-        path={EDIT_AVATAR_URL}
+        path={EDIT_USER_AVATAR_URL}
         element={
           <RequireAuth>
-            <EditAvatarPage />
+            <EditUserAvatarPage />
           </RequireAuth>
         }
       />
@@ -171,6 +173,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <EditChatroomDetailsPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={EDIT_CHATROOM_AVATAR_URL}
+        element={
+          <RequireAuth>
+            <EditChatroomAvatarPage />
           </RequireAuth>
         }
       />
