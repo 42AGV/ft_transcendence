@@ -15,7 +15,6 @@ import {
   EDITABLE_AVATAR_SCALE_REVERSE,
 } from '../../../components/Avatar/EditableAvatar';
 import { useNavigation } from '../../../hooks/UseNavigation';
-import { useNotificationContext } from '../../../context/NotificationContext';
 import NotFoundPage from '../../../../pages/NotFoundPage/NotFoundPage';
 import { Avatar } from '../../../types';
 
@@ -46,7 +45,6 @@ export default function EditAvatarPage<T extends Avatar>({
     imgFile: null,
     imgSrc: '',
   });
-  const { notify, warn } = useNotificationContext();
   const reverseTransform = useCallback(
     (value: number) => -value * EDITABLE_AVATAR_SCALE,
     [],
@@ -63,22 +61,16 @@ export default function EditAvatarPage<T extends Avatar>({
   const avatarY = FormatNumber(picturePosition.y);
 
   const handleSubmitPlacement = async () => {
-    submitPlacement(avatarX, avatarY)
-      .then(() => notify('Image visible area saved correctly.'))
-      .catch((e) => warn(e.response.statusText));
+    await submitPlacement(avatarX, avatarY);
   };
 
   const handleUploadAvatar = async () => {
-    uploadAvatar(imgFile)
-      .then(() => notify('Image uploaded correctly.'))
-      .catch((e) => warn(e.response.statusText))
-      .finally(() => {
-        setImgData({
-          imgName: null,
-          imgFile: null,
-          imgSrc: '',
-        });
-      });
+    await uploadAvatar(imgFile);
+    setImgData({
+      imgName: null,
+      imgFile: null,
+      imgSrc: '',
+    });
   };
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {

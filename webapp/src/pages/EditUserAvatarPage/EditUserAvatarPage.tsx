@@ -1,4 +1,5 @@
 import EditAvatarPage from '../../shared/components/templates/EditAvatarPageTemplate/EditAvatarPageTemplate';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { AvatarResponseDto } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
@@ -7,6 +8,7 @@ import { AVATAR_EP_URL } from '../../shared/urls';
 export default function EditUserAvatarPage() {
   const { authUser, setAuthUser, isLoading } = useAuth();
   const avatarUrl = `${AVATAR_EP_URL}/${authUser?.avatarId}`;
+  const { notify, warn } = useNotificationContext();
 
   const submitPlacement = async (avatarX: number, avatarY: number) => {
     usersApi
@@ -17,11 +19,13 @@ export default function EditUserAvatarPage() {
         },
       })
       .then(() => {
+        notify('Image visible area saved correctly.');
         setAuthUser((prevState) => {
           if (!prevState) return null;
           return { ...prevState, avatarX, avatarY };
         });
-      });
+      })
+      .catch((e) => warn(e.response.statusText));
   };
 
   const uploadAvatar = async (file: File | null) => {
@@ -29,12 +33,14 @@ export default function EditUserAvatarPage() {
       usersApi
         .userControllerUploadAvatar({ file })
         .then((res: AvatarResponseDto) => {
+          notify('Image uploaded correctly.');
           setAuthUser((prevState) => {
             if (!prevState) return null;
             const { avatarId } = res;
             return { ...prevState, avatarId };
           });
-        });
+        })
+        .catch((e) => warn(e.response.statusText));
     }
   };
 
