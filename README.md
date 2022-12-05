@@ -48,6 +48,10 @@ What things do you need to install the software, and how to install them.
 
 [node](https://nodejs.dev/learn/how-to-install-nodejs)
 
+[nestjs](https://docs.nestjs.com/)
+
+[knex](https://knexjs.org/guide/migrations.html)
+
 [make](https://www.gnu.org/software/make/)
 
 ### Installing
@@ -153,6 +157,22 @@ make gen
 ```
 
 `make gen` creates both yaml file and generated webapp files. To generate only webapp generated files run `make gen-webapp`. To generate only swagger spec run `make spec`.
+
+### Migrate the database schema
+
+We use knex to migrate the database schema, more info [here](https://knexjs.org/guide/migrations.html#migration-cli).
+
+To run the migrations, execute the following command from the root directory:
+
+```shell
+make migrate
+```
+
+To create a migration, run the following command from the transcendence-app directory (replace `migration_name` with the name you want)
+
+```shell
+npx knex migrate:make migration_name
+```
 
 ### Seed the database
 
