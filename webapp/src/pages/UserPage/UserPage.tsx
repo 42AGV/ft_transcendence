@@ -11,7 +11,7 @@ import {
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useBlock } from '../../shared/hooks/UseBlock';
@@ -22,14 +22,44 @@ export default function UserPage() {
   const { username } = useParams();
   const { navigate } = useNavigation();
   const getUserByUserName = useCallback(
-    () => usersApi.userControllerGetUserByUserName({ userName: username! }),
+    async () =>
+      await usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
   const { data: user, isLoading } = useData(getUserByUserName);
+  const getfriend = useCallback(
+    () =>
+      usersApi.userControllerGetFriend(
+        user ? { userId: user.id } : { userId: '' },
+      ),
+    [username],
+  );
+  const { data: friend, isLoading: isFriendLoading } = useData(getfriend);
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
   const { userStatus } = useUserStatus();
   const [isToggled, setIsToggled] = useState(false);
-  const onToggle = () => setIsToggled(!isToggled);
+
+  useEffect(() => {
+    if (user) {
+      if (friend) {
+        setIsToggled(true);
+      }
+    }
+  }, [user]);
+  const onToggle = async () => {
+    setIsToggled(!isToggled);
+    if (user) {
+      try {
+        if (!isToggled) {
+          await usersApi.userControllerFollowUser({ userId: user.id });
+        } else {
+          usersApi.userControllerUnfollowUser({ userId: user.id });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
   return (
     <div className="user-page">
       <AvatarPageTemplate

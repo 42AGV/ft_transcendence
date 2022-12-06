@@ -1,10 +1,5 @@
 import { ButtonVariant, IconVariant, RowItem } from '../../shared/components';
-import {
-  AVATAR_EP_URL,
-  FRIENDS_URL,
-  USERS_URL,
-  USER_URL,
-} from '../../shared/urls';
+import { AVATAR_EP_URL, FRIENDS_URL, USER_URL } from '../../shared/urls';
 import { User, UserControllerGetUsersRequest } from '../../shared/generated';
 import { MainTabTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';

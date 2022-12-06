@@ -12,14 +12,7 @@ import { useNavigate } from 'react-router-dom';
 export default function FriendsPage() {
   const { userStatus } = useUserStatus();
   const navigate = useNavigate();
-  const getFriends = useCallback(
-    (requestParameters: any) =>
-      usersApi.userControllerGetFriends({
-        ...requestParameters,
-      }),
-    [],
-  );
-
+  const getFriends = useCallback(() => usersApi.userControllerGetFriends(), []);
   const usersButton = [
     {
       variant: ButtonVariant.SUBMIT,

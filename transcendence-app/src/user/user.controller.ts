@@ -215,6 +215,23 @@ export class UserController {
     type: [User],
   })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async getFriend(
+    @GetUser() user: User,
+    followedUserId: string,
+  ): Promise<Friend> {
+    const friend = await this.userService.getFriend(user.id, followedUserId);
+    if (!friend) {
+      throw new ServiceUnavailableException();
+    }
+    return friend;
+  }
+
+  @Get('user/friends')
+  @ApiOkResponse({
+    description: 'List users followed by the authenticated user',
+    type: [User],
+  })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async getFriends(@GetUser() user: User): Promise<User[]> {
     const friends = await this.userService.getFriends(user.id);
     if (!friends) {

@@ -251,6 +251,16 @@ export class UserService {
     }
     return friend;
   }
+  async getFriend(followerId: string, followedId: string) {
+    const friend = await this.friendRepository.getFriend(
+      followerId,
+      followedId,
+    );
+    if (!friend) {
+      throw new UnprocessableEntityException();
+    }
+    return friend;
+  }
 
   async getFriends(followerId: string) {
     const friends = await this.friendRepository.getFriends(followerId);

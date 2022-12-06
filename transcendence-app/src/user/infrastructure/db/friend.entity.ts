@@ -1,6 +1,6 @@
 export enum FriendKeys {
   FOLLOWER_ID = '"followerId"',
-  FOLLOWED_ID = '"followeDId"',
+  FOLLOWED_ID = '"followedId"',
 }
 
 interface FriendData {
