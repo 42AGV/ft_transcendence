@@ -209,7 +209,7 @@ export class UserController {
     return this.userService.deleteBlock(user.id, blockedUserId);
   }
 
-  @Get('user/friend')
+  @Get('user/friend/:userId')
   @ApiOkResponse({
     description: 'List users followed by the authenticated user',
     type: [User],
@@ -217,7 +217,7 @@ export class UserController {
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async getFriend(
     @GetUser() user: User,
-    followedUserId: string,
+    @Param('userId', ParseUUIDPipe) followedUserId: string,
   ): Promise<Friend> {
     const friend = await this.userService.getFriend(user.id, followedUserId);
     if (!friend) {
