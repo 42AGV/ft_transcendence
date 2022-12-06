@@ -30,6 +30,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - WEBSITE_OWNER_PASSWORD=123
+      - WEBSITE_OWNER_USERNAME=admin
       - FORTYTWO_APP_CALLBACK_URL=http://localhost:3000/api/v1/auth/login
 
   db:

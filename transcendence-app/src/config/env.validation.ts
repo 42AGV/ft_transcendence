@@ -71,6 +71,10 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   WEBSITE_OWNER_PASSWORD!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  WEBSITE_OWNER_USERNAME!: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -26,6 +26,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
       - FORTYTWO_APP_CALLBACK_URL=${FORTYTWO_APP_CALLBACK_URL:?required}
       - WEBSITE_OWNER_PASSWORD=123
+      - WEBSITE_OWNER_USERNAME=admin
 
   db:
     volumes:

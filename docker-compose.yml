@@ -37,6 +37,7 @@ services:
       - FORTYTWO_APP_SECRET=${FORTYTWO_APP_SECRET:?required}
       - SESSION_SECRET=${SESSION_SECRET:?required}
       - MEMCACHED_SECRET=${MEMCACHED_SECRET:?required}
+      - WEBSITE_OWNER_USERNAME=admin
 
   db:
     image: postgres:14.4-alpine3.16
