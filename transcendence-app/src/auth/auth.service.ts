@@ -40,10 +40,6 @@ export class AuthService {
   }
 
   async registerLocalUser(user: RegisterUserDto): Promise<User | null> {
-    if (user.username === 'admin') {
-      throw new ForbiddenException('Admin username is reserved');
-    }
-
     const existingUser = await this.userRepository.getByUsername(user.username);
 
     if (existingUser) {
