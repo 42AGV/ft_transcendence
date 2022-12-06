@@ -63,6 +63,8 @@ jobs:
           FORTYTWO_APP_CALLBACK_URL: ${{ secrets.FORTYTWO_APP_CALLBACK_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           MEMCACHED_SECRET: ${{ secrets.MEMCACHED_SECRET }}
+          WEBSITE_OWNER_PASSWORD: ${{ secrets.WEBSITE_OWNER_PASSWORD }}
+          WEBSITE_OWNER_USERNAME: ${{ secrets.WEBSITE_OWNER_USERNAME }}
       - # Temp fix
         # https://github.com/docker/build-push-action/issues/252
         # https://github.com/moby/buildkit/issues/1896

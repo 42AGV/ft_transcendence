@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { faker } from '@faker-js/faker';
-import { rmSync } from 'fs';
+import { readdir, unlink } from 'fs';
 import { Password } from '../src/shared/password';
 import { configService, createRandomAvatar, defaultUsernames } from './utils';
 import { join } from 'path';
@@ -35,13 +35,28 @@ const createUserWithPassword = async (username: string, avatarId: string) => {
 };
 
 export async function seed(knex: Knex): Promise<void> {
-  // Deletes ALL existing entries and local files
-  await knex('users').del();
+  const adminUsername = await configService.get('WEBSITE_OWNER_USERNAME');
+  const [admin, _] = await knex('users')
+    .select('*')
+    .where('username', adminUsername);
+  const [adminAvatarFile, __] = await knex('localfile')
+    .select('*')
+    .where('id', admin.avatarId);
+  // Deletes ALL existing entries and local files, except website owner
+  await knex('users').delete().whereNot('id', admin.id);
+  await knex('localfile').delete().whereNot('id', admin.avatarId);
   const appDataPath = configService.get('TRANSCENDENCE_APP_DATA') as string;
   const avatarsPath = join(appDataPath, AVATARS_PATH);
-  rmSync(avatarsPath, {
-    recursive: true,
-    force: true,
+
+  readdir(avatarsPath, (err, files) => {
+    if (err) throw err;
+    for (const file of files) {
+      if (file !== adminAvatarFile.filename) {
+        unlink(join(avatarsPath, file), (err) => {
+          if (err) throw err;
+        });
+      }
+    }
   });
 
   const avatars = await Promise.all(
