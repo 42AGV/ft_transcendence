@@ -1,0 +1,2 @@
+db:5432:postgres:postgres:postgres
+db:5432:ft_transcendence:postgres:postgres
