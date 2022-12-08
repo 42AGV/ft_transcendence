@@ -39,7 +39,7 @@ services:
       - MEMCACHED_SECRET=${MEMCACHED_SECRET:?required}
 
   db:
-    image: postgres:15.1-alpine3.17
+    image: postgres:14.6-alpine3.17
     restart: always
     user: postgres
     environment:
