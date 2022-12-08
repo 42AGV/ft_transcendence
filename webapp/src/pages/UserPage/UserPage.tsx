@@ -22,28 +22,17 @@ export default function UserPage() {
   const { username } = useParams();
   const { navigate } = useNavigation();
   const getUserByUserName = useCallback(
-    async () =>
-      await usersApi.userControllerGetUserByUserName({ userName: username! }),
+    () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
   const { data: user, isLoading } = useData(getUserByUserName);
-  const getfriend = useCallback(
-    () =>
-      usersApi.userControllerGetFriend(
-        user ? { userId: user.id } : { userId: '' },
-      ),
-    [username],
-  );
-  const { data: friend, isLoading: isFriendLoading } = useData(getfriend);
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
   const { userStatus } = useUserStatus();
   const [isToggled, setIsToggled] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      if (friend) {
-        setIsToggled(true);
-      }
+    if (user && user.isFriend) {
+      setIsToggled(true);
     }
   }, [user]);
   const onToggle = async () => {

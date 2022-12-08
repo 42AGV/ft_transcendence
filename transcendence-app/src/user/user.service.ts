@@ -65,7 +65,8 @@ export class UserService {
 
     if (user && userMe) {
       const blockRelation = await this.getBlockRelation(userMe.id, user.id);
-      return new UserResponseDto(user, blockRelation);
+      const friend = await this.getFriend(userMe.id, user.id);
+      return new UserResponseDto(user, blockRelation, friend ? true : false);
     }
     return null;
   }
@@ -251,14 +252,12 @@ export class UserService {
     }
     return friend;
   }
+
   async getFriend(followerId: string, followedId: string) {
     const friend = await this.friendRepository.getFriend(
       followerId,
       followedId,
     );
-    if (!friend) {
-      throw new UnprocessableEntityException();
-    }
     return friend;
   }
 
