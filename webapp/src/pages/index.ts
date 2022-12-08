@@ -5,7 +5,7 @@ export { default as EditUserPage } from './EditUserPage/EditUserPage';
 export { default as PlayPage } from './PlayPage/PlayPage';
 export { default as ChatsPage } from './ChatsPage/ChatsPage';
 export { default as ComponentsBookPage } from './ComponentsBookPage/ComponentsBookPage';
-export { default as EditAvatarPage } from './EditAvatarPage/EditAvatarPage';
+export { default as EditUserAvatarPage } from './EditUserAvatarPage/EditUserAvatarPage';
 export { default as LoginPage } from './LoginPage/LoginPage';
 export { default as RegisterPage } from './RegisterPage/RegisterPage';
 export { default as ChatroomPage } from './ChatroomPage/ChatroomPage';
@@ -18,3 +18,4 @@ export { default as EditChatroomMemberPage } from './EditChatroomMemberPage/Edit
 export { default as DiscoverChatsPage } from './ChatsPage/DiscoverChatsPage';
 export { default as EditUserPasswordPage } from './EditUserPasswordPage/EditUserPasswordPage';
 export { default as ChatPage } from './ChatPage/ChatPage';
+export { default as EditChatroomAvatarPage } from './EditChatroomAvatarPage/EditChatroomAvatarPage';
