@@ -8,12 +8,13 @@ export const USERS_URL = '/users';
 export const FRIENDS_URL = '/users/friends';
 export const EDIT_USER_URL = `${USER_ME_URL}/edit`;
 export const EDIT_USER_PASSWORD_URL = `${USER_ME_URL}/edit/password`;
-export const EDIT_AVATAR_URL = `${USER_ME_URL}/edit/avatar`;
+export const EDIT_USER_AVATAR_URL = `${USER_ME_URL}/edit/avatar`;
 export const PLAY_URL = '/play';
 export const CHAT_URL = '/chat';
 export const CHATS_URL = '/chats';
 export const CHATROOM_URL = '/chatroom';
 export const CREATE_CHATROOM_URL = `${CHATROOM_URL}/createchatroom`;
+export const EDIT_CHATROOM_AVATAR_URL = `${CHATROOM_URL}/:chatroomId/edit/avatar`;
 export const COMPONENTS_BOOK_URL = '/components-book';
 export const DEFAULT_LOGIN_REDIRECT_URL = `${USERS_URL}`;
 
