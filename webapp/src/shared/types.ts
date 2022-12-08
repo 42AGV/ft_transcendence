@@ -22,3 +22,9 @@ export type Query = {
   search?: string;
   offset?: number;
 };
+
+export type Avatar = {
+  avatarId: string;
+  avatarX: number;
+  avatarY: number;
+};
