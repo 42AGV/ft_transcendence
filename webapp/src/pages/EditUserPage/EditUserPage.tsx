@@ -5,7 +5,7 @@ import {
   InputVariant,
 } from '../../shared/components';
 import {
-  EDIT_AVATAR_URL,
+  EDIT_USER_AVATAR_URL,
   AVATAR_EP_URL,
   EDIT_USER_PASSWORD_URL,
   USER_ME_URL,
@@ -80,7 +80,7 @@ export default function EditUserPage() {
       title="edit profile"
       avatarProps={{
         url: `${AVATAR_EP_URL}/${authUser!.avatarId}`,
-        editUrl: EDIT_AVATAR_URL,
+        editUrl: EDIT_USER_AVATAR_URL,
         XCoordinate: authUser!.avatarX,
         YCoordinate: authUser!.avatarY,
       }}
