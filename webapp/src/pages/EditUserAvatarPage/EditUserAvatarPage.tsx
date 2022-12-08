@@ -1,6 +1,6 @@
 import EditAvatarPage from '../../shared/components/templates/EditAvatarPageTemplate/EditAvatarPageTemplate';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import { AvatarResponseDto } from '../../shared/generated';
+import { User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { AVATAR_EP_URL } from '../../shared/urls';
@@ -32,13 +32,9 @@ export default function EditUserAvatarPage() {
     if (file !== null) {
       usersApi
         .userControllerUploadAvatar({ file })
-        .then((res: AvatarResponseDto) => {
+        .then((updatedUser: User) => {
           notify('Image uploaded correctly.');
-          setAuthUser((prevState) => {
-            if (!prevState) return null;
-            const { avatarId } = res;
-            return { ...prevState, avatarId };
-          });
+          setAuthUser(updatedUser);
         })
         .catch((e) => warn(e.response.statusText));
     }
