@@ -18,7 +18,7 @@ ARG REACT_APP_NAME
 ENV REACT_APP_NAME=${REACT_APP_NAME}
 WORKDIR /webapp
 COPY ["package.json", "package-lock.json", "./"]
-RUN npm clean-install --production
+RUN npm clean-install --omit=dev
 COPY . .
 RUN npm run build
 
