@@ -186,7 +186,7 @@ export class UserController {
 
   @Get('user/friend/:userId')
   @ApiOkResponse({
-    description: 'List users followed by the authenticated user',
+    description: 'Check if the current user follows another one',
     type: [User],
   })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
@@ -203,12 +203,18 @@ export class UserController {
 
   @Get('user/friends')
   @ApiOkResponse({
-    description: 'List users followed by the authenticated user',
+    description: 'List friends of the current user',
     type: [User],
   })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
-  async getFriends(@GetUser() user: User): Promise<User[]> {
-    const friends = await this.userService.getFriends(user.id);
+  async getFriends(
+    @GetUser() user: User,
+    @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
+  ): Promise<User[]> {
+    const friends = await this.userService.getFriends(
+      user.id,
+      usersPaginationQueryDto,
+    );
     if (!friends) {
       throw new ServiceUnavailableException();
     }

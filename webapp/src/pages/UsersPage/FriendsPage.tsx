@@ -1,6 +1,6 @@
 import { ButtonVariant, IconVariant, RowItem } from '../../shared/components';
 import { AVATAR_EP_URL, USERS_URL, USER_URL } from '../../shared/urls';
-import { User } from '../../shared/generated';
+import { User, UserControllerGetFriendsRequest } from '../../shared/generated';
 import { MainTabTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
@@ -12,7 +12,14 @@ import { useNavigate } from 'react-router-dom';
 export default function FriendsPage() {
   const { userStatus } = useUserStatus();
   const navigate = useNavigate();
-  const getFriends = useCallback(() => usersApi.userControllerGetFriends(), []);
+  const getFriends = useCallback(
+    (requestParameters: UserControllerGetFriendsRequest) =>
+      usersApi.userControllerGetFriends({
+        ...requestParameters,
+        limit: ENTRIES_LIMIT,
+      }),
+    [],
+  );
   const usersButton = [
     {
       variant: ButtonVariant.SUBMIT,

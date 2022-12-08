@@ -230,8 +230,21 @@ export class UserService {
     return friend;
   }
 
-  async getFriends(followerId: string) {
-    const friends = await this.friendRepository.getFriends(followerId);
+  async getFriends(
+    followerId: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ): Promise<User[] | null> {
+    const friends = this.friendRepository.getPaginatedFriends(followerId, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
     if (!friends) {
       throw new UnprocessableEntityException();
     }
