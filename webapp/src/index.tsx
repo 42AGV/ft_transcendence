@@ -48,6 +48,7 @@ import RequireAuth from './shared/components/RequireAuth/RequireAuth';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { NotificationContextProvider } from './shared/context/NotificationContext';
 import { UserStatusProvider } from './shared/context/UserStatusContext';
+import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -57,7 +58,9 @@ function AppContext({ children }: { children: JSX.Element }) {
   return (
     <AuthProvider>
       <NotificationContextProvider>
-        <UserStatusProvider>{children}</UserStatusProvider>
+        <UserStatusProvider>
+          <UserBlocklistProvider>{children}</UserBlocklistProvider>
+        </UserStatusProvider>
       </NotificationContextProvider>
     </AuthProvider>
   );
