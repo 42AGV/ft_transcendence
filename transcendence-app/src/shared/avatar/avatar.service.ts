@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Logger,
   StreamableFile,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -12,8 +11,6 @@ import { loadEsmModule } from '../utils';
 
 @Injectable()
 export class AvatarService {
-  private readonly logger = new Logger(AvatarService.name);
-
   constructor(private localFileService: LocalFileService) {}
 
   async getAvatarById(avatarId: string): Promise<StreamableFile | null> {
@@ -32,7 +29,7 @@ export class AvatarService {
       type: fileDto.mimetype,
       disposition: `inline; filename="${fileDto.filename}"`,
       length: fileDto.size,
-    }).setErrorHandler((err) => err && this.logger.log(err.message));
+    });
   }
 
   async validateAvatarType(path: string): Promise<void> {
