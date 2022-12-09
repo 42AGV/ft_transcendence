@@ -26,6 +26,8 @@ services:
       - FORTYTWO_APP_ID=42-intra-app-id
       - FORTYTWO_APP_SECRET=42-intra-app-secret
       - NODE_ENV=test
+      - WEBSITE_OWNER_PASSWORD=admin
+      - WEBSITE_OWNER_USERNAME=admin
 
 volumes:
   transcendence-app-data:
