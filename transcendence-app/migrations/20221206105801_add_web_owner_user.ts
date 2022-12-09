@@ -1,8 +1,6 @@
 import { Knex } from 'knex';
 import { configService, createRandomAvatar } from '../seeds/utils';
 import { Password } from '../src/shared/password';
-import { AVATARS_PATH } from '../src/shared/constants';
-import { join } from 'path';
 import { unlinkSync } from 'fs';
 
 const createAdminWithPassword = async (avatarId: string) => {
@@ -32,9 +30,6 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  const appDataPath = (await configService.get(
-    'TRANSCENDENCE_APP_DATA',
-  )) as string;
   const adminUsername = await configService.get('WEBSITE_OWNER_USERNAME');
   const [admin, _] = await knex('users')
     .select('*')
@@ -44,6 +39,5 @@ export async function down(knex: Knex): Promise<void> {
     .where('id', admin.avatarId);
   await knex('users').where('username', adminUsername).delete();
   await knex('localfile').where('id', admin.avatarId).delete();
-  const avatarsPath = join(appDataPath, AVATARS_PATH);
-  await unlinkSync(join(avatarsPath, adminAvatarFile.filename));
+  await unlinkSync(adminAvatarFile.path);
 }
