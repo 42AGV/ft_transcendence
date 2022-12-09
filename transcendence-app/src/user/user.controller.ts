@@ -187,16 +187,16 @@ export class UserController {
   @Get('user/friend/:userId')
   @ApiOkResponse({
     description: 'Check if the current user follows another one',
-    type: [User],
+    type: [Friend],
   })
-  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  @ApiNotFoundResponse({ description: 'Service Unavailable' })
   async getFriend(
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) followedUserId: string,
   ): Promise<Friend> {
     const friend = await this.userService.getFriend(user.id, followedUserId);
     if (!friend) {
-      throw new ServiceUnavailableException();
+      throw new NotFoundException();
     }
     return friend;
   }

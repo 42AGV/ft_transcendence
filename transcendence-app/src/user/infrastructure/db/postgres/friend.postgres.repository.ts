@@ -38,15 +38,15 @@ export class FriendPostgresRepository
   }
 
   async deleteFriend(
-    blockerId: string,
-    blockedId: string,
+    followerId: string,
+    followedId: string,
   ): Promise<Friend | null> {
     const friendData = await makeQuery<Friend>(this.pool, {
       text: `DELETE
       FROM ${this.table}
       WHERE ${FriendKeys.FOLLOWER_ID} = $1 AND ${FriendKeys.FOLLOWED_ID} = $2
       RETURNING *;`,
-      values: [blockerId, blockedId],
+      values: [followerId, followedId],
     });
     return friendData && friendData.length
       ? new this.ctor(friendData[0])
@@ -56,9 +56,9 @@ export class FriendPostgresRepository
   async getFriends(followerId: string): Promise<User[] | null> {
     const usersData = await makeQuery<UserData>(this.pool, {
       text: `SELECT u.*
-      FROM ${this.table} b
+      FROM ${this.table} f
       JOIN ${table.USERS} u ON (b.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
-      WHERE b.${FriendKeys.FOLLOWER_ID} = $1`,
+      WHERE f.${FriendKeys.FOLLOWER_ID} = $1`,
       values: [followerId],
     });
     return usersData ? usersData.map((userData) => new User(userData)) : null;
@@ -73,9 +73,9 @@ export class FriendPostgresRepository
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
     const usersData = await makeQuery<User>(this.pool, {
       text: `SELECT u.*
-      FROM ${this.table} b
-      JOIN ${table.USERS} u ON (b.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
-      WHERE b.${FriendKeys.FOLLOWER_ID} = $1 AND u.${userKeys.USERNAME} ILIKE $2
+      FROM ${this.table} f
+      JOIN ${table.USERS} u ON (f.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
+      WHERE f.${FriendKeys.FOLLOWER_ID} = $1 AND u.${userKeys.USERNAME} ILIKE $2
       ORDER BY ${orderBy}
       LIMIT $3
       OFFSET $4;`,
