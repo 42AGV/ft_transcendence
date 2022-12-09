@@ -41,6 +41,7 @@ import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { Friend } from './infrastructure/db/friend.entity';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
 
 @Controller()
@@ -181,5 +182,68 @@ export class UserController {
     @Param('userId', ParseUUIDPipe) blockedUserId: string,
   ): Promise<void> {
     return this.userService.deleteBlock(user.id, blockedUserId);
+  }
+
+  @Get('user/friend/:userId')
+  @ApiOkResponse({
+    description: 'Check if the current user follows another one',
+    type: [Friend],
+  })
+  @ApiNotFoundResponse({ description: 'Service Unavailable' })
+  async getFriend(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) followedUserId: string,
+  ): Promise<Friend> {
+    const friend = await this.userService.getFriend(user.id, followedUserId);
+    if (!friend) {
+      throw new NotFoundException();
+    }
+    return friend;
+  }
+
+  @Get('user/friends')
+  @ApiOkResponse({
+    description: 'List friends of the current user',
+    type: [User],
+  })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async getFriends(
+    @GetUser() user: User,
+    @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
+  ): Promise<User[]> {
+    const friends = await this.userService.getFriends(
+      user.id,
+      usersPaginationQueryDto,
+    );
+    if (!friends) {
+      throw new ServiceUnavailableException();
+    }
+    return friends;
+  }
+
+  @Post('user/friend/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Follow a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  followUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) followedUserId: string,
+  ): Promise<Friend> {
+    return this.userService.addFriend(user.id, followedUserId);
+  }
+
+  @Delete('user/friend/:userId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'Unfollow a user',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  unfollowUser(
+    @GetUser() user: User,
+    @Param('userId', ParseUUIDPipe) followedUserId: string,
+  ): Promise<Friend> {
+    return this.userService.deleteFriend(user.id, followedUserId);
   }
 }

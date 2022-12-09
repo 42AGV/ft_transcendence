@@ -21,6 +21,7 @@ import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-sea
 import { AvatarService } from '../shared/avatar/avatar.service';
 import { SocketService } from '../socket/socket.service';
 import { Password } from '../shared/password';
+import { IFriendRepository } from './infrastructure/db/friend.repository';
 
 @Injectable()
 export class UserService {
@@ -28,6 +29,7 @@ export class UserService {
     private userRepository: IUserRepository,
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
+    private friendRepository: IFriendRepository,
     private avatarService: AvatarService,
     private socketService: SocketService,
   ) {}
@@ -58,7 +60,8 @@ export class UserService {
 
     if (user && userMe) {
       const blockRelation = await this.getBlockRelation(userMe.id, user.id);
-      return new UserResponseDto(user, blockRelation);
+      const friend = await this.getFriend(userMe.id, user.id);
+      return new UserResponseDto(user, blockRelation, friend ? true : false);
     }
     return null;
   }
@@ -195,5 +198,56 @@ export class UserService {
 
   getBlocks(blockerId: string) {
     return this.blockRepository.getBlocks(blockerId);
+  }
+
+  async addFriend(followerId: string, followedId: string) {
+    const friend = await this.friendRepository.addFriend({
+      followerId,
+      followedId,
+    });
+    if (!friend) {
+      throw new UnprocessableEntityException();
+    }
+    return friend;
+  }
+
+  async deleteFriend(followerId: string, followedId: string) {
+    const friend = await this.friendRepository.deleteFriend(
+      followerId,
+      followedId,
+    );
+    if (!friend) {
+      throw new NotFoundException();
+    }
+    return friend;
+  }
+
+  async getFriend(followerId: string, followedId: string) {
+    const friend = await this.friendRepository.getFriend(
+      followerId,
+      followedId,
+    );
+    return friend;
+  }
+
+  async getFriends(
+    followerId: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ): Promise<User[] | null> {
+    const friends = this.friendRepository.getPaginatedFriends(followerId, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
+    if (!friends) {
+      throw new UnprocessableEntityException();
+    }
+    return friends;
   }
 }
