@@ -88,6 +88,8 @@ FORTYTWO_APP_ID=your-42-app-id
 FORTYTWO_APP_SECRET=your-42-app-secret
 SESSION_SECRET=your-session-secret-uuid
 MEMCACHED_SECRET=your-memcached-secret-uuid
+WEBSITE_OWNER_PASSWORD=your-owner-password
+WEBSITE_OWNER_USERNAME=your-owner-username
 ```
 
 Or export them from the shell like:
@@ -97,6 +99,8 @@ export FORTYTWO_APP_ID=your-42-app-id
 export FORTYTWO_APP_SECRET=your-42-app-secret
 export SESSION_SECRET=your-session-secret-uuid
 export MEMCACHED_SECRET=your-memcached-secret-uuid
+export WEBSITE_OWNER_PASSWORD=your-owner-password
+export WEBSITE_OWNER_USERNAME=your-owner-username
 ```
 
 Start the application using make
