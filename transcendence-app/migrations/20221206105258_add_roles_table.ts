@@ -3,17 +3,15 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.raw(`
       CREATE TABLE
-          IF NOT EXISTS UserToRole
+          IF NOT EXISTS Roles
       (
-          "id"   UUID REFERENCES Users (id) ON DELETE CASCADE,
-          "role" RoleType NOT NULL,
-          PRIMARY KEY ("id", "role")
+          "name" VARCHAR(20) NOT NULL UNIQUE PRIMARY KEY
       )
   `);
 }
 
 export async function down(knex: Knex): Promise<void> {
   return knex.raw(`
-    DROP TABLE UserToRole
+      DROP TABLE Roles
   `);
 }
