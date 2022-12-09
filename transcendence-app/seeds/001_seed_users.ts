@@ -53,7 +53,7 @@ export async function seed(knex: Knex): Promise<void> {
       .filter((file) => file !== adminAvatarFile.filename)
       .map((file) => unlinkSync(join(avatarsPath, file)));
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 
   const avatars = await Promise.all(
