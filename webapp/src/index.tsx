@@ -23,6 +23,7 @@ import {
   EditChatroomMemberPage,
   DiscoverChatsPage,
   EditUserPasswordPage,
+  FriendsPage,
   EditChatroomAvatarPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -41,6 +42,7 @@ import {
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
   EDIT_USER_PASSWORD_URL,
+  FRIENDS_URL,
   EDIT_CHATROOM_AVATAR_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
@@ -77,6 +79,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <UsersPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={FRIENDS_URL}
+        element={
+          <RequireAuth>
+            <FriendsPage />
           </RequireAuth>
         }
       />

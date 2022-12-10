@@ -5,6 +5,7 @@ export const REGISTER_URL = '/register';
 export const USER_URL = '/user';
 export const USER_ME_URL = '/myprofile';
 export const USERS_URL = '/users';
+export const FRIENDS_URL = '/users/friends';
 export const EDIT_USER_URL = `${USER_ME_URL}/edit`;
 export const EDIT_USER_PASSWORD_URL = `${USER_ME_URL}/edit/password`;
 export const EDIT_USER_AVATAR_URL = `${USER_ME_URL}/edit/avatar`;

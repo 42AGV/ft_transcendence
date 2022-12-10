@@ -48,6 +48,7 @@ describe('UserController', () => {
             isUserBlockedByMe: false,
             amIBlockedByUser: false,
           },
+          isFriend: true,
         });
       },
     };

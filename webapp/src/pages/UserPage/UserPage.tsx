@@ -11,7 +11,7 @@ import {
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useBlock } from '../../shared/hooks/UseBlock';
@@ -28,6 +28,27 @@ export default function UserPage() {
   const { data: user, isLoading } = useData(getUserByUserName);
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
   const { userStatus } = useUserStatus();
+  const [isToggled, setIsToggled] = useState(false);
+
+  useEffect(() => {
+    if (user && user.isFriend) {
+      setIsToggled(true);
+    }
+  }, [user]);
+  const onToggle = async () => {
+    setIsToggled(!isToggled);
+    if (user) {
+      try {
+        if (!isToggled) {
+          await usersApi.userControllerFollowUser({ userId: user.id });
+        } else {
+          usersApi.userControllerUnfollowUser({ userId: user.id });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
   return (
     <div className="user-page">
       <AvatarPageTemplate
@@ -76,6 +97,11 @@ export default function UserPage() {
               onToggle={blockRelation.isUserBlocked ? unblockUser : blockUser}
             />
           )}
+          <ToggleSwitch
+            label={isToggled ? 'Unfollow' : 'Follow'}
+            isToggled={isToggled}
+            onToggle={onToggle}
+          />
         </>
       </AvatarPageTemplate>
     </div>

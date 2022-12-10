@@ -1,6 +1,6 @@
 import { ButtonVariant, IconVariant, RowItem } from '../../shared/components';
-import { AVATAR_EP_URL, FRIENDS_URL, USER_URL } from '../../shared/urls';
-import { User, UserControllerGetUsersRequest } from '../../shared/generated';
+import { AVATAR_EP_URL, USERS_URL, USER_URL } from '../../shared/urls';
+import { User, UserControllerGetFriendsRequest } from '../../shared/generated';
 import { MainTabTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
@@ -9,24 +9,23 @@ import { ENTRIES_LIMIT } from '../../shared/constants';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigate } from 'react-router-dom';
 
-export default function UsersPage() {
+export default function FriendsPage() {
   const { userStatus } = useUserStatus();
   const navigate = useNavigate();
-  const getUsers = useCallback(
-    (requestParameters: UserControllerGetUsersRequest) =>
-      usersApi.userControllerGetUsers({
+  const getFriends = useCallback(
+    (requestParameters: UserControllerGetFriendsRequest) =>
+      usersApi.userControllerGetFriends({
         ...requestParameters,
         limit: ENTRIES_LIMIT,
       }),
     [],
   );
-
-  const friendsButton = [
+  const usersButton = [
     {
       variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.ARROW_FORWARD,
-      onClick: () => navigate(FRIENDS_URL),
-      children: 'Friends',
+      iconVariant: IconVariant.ARROW_BACK,
+      onClick: () => navigate(USERS_URL),
+      children: 'Users',
     },
   ];
 
@@ -47,8 +46,8 @@ export default function UsersPage() {
   };
 
   return (
-    <SearchContextProvider fetchFn={getUsers} maxEntries={ENTRIES_LIMIT}>
-      <MainTabTemplate dataMapper={mapUserToRow} buttons={friendsButton} />
+    <SearchContextProvider fetchFn={getFriends} maxEntries={ENTRIES_LIMIT}>
+      <MainTabTemplate dataMapper={mapUserToRow} buttons={usersButton} />
     </SearchContextProvider>
   );
 }
