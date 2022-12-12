@@ -215,6 +215,10 @@ cd transcendence-app
 npm run style
 ```
 
+## 🗄️ Exploring DB <a name = "tests"></a>
+
+You may want to make some test DB queries when developing. Just go to `localhost:5050` and log in with `admin@admin.com`, `admin` to access the [pg-admin](https://www.pgadmin.org/) client.
+
 ## 🎈 Usage <a name="usage"></a>
 
 TODO: Add notes about how to use the system.
