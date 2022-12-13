@@ -22,6 +22,9 @@ import { AvatarService } from '../shared/avatar/avatar.service';
 import { SocketService } from '../socket/socket.service';
 import { Password } from '../shared/password';
 import { IFriendRepository } from './infrastructure/db/friend.repository';
+import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
+import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
+import { UserToRole } from './infrastructure/db/user-to-role.entity';
 
 @Injectable()
 export class UserService {
@@ -30,6 +33,7 @@ export class UserService {
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
     private friendRepository: IFriendRepository,
+    private userToRoleRepository: IUserToRoleRepository,
     private avatarService: AvatarService,
     private socketService: SocketService,
   ) {}
@@ -249,5 +253,25 @@ export class UserService {
       throw new UnprocessableEntityException();
     }
     return friends;
+  }
+
+  async getUserWithRolesFromUsername(
+    username: string,
+  ): Promise<UserWithRoles | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) return null;
+    return this.userToRoleRepository.getUserWithRoles(user.id);
+  }
+
+  async getUserWithRolesFromId(id: string): Promise<UserWithRoles | null> {
+    return this.userToRoleRepository.getUserWithRoles(id);
+  }
+
+  async addUserWithRole(user: UserToRole): Promise<UserToRole | null> {
+    return this.userToRoleRepository.addUserToRole(user);
+  }
+
+  async deleteUserWithRole(user: UserToRole): Promise<UserToRole | null> {
+    return this.userToRoleRepository.deleteUserToRole(user);
   }
 }

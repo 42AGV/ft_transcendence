@@ -14,7 +14,7 @@ export class UserToRolePostgresRepository
   implements IUserToRoleRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.USERTOROLE, UserToRole);
+    super(pool, table.USER_TO_ROLE, UserToRole);
   }
 
   async addUserToRole(userToRole: UserToRole): Promise<UserToRole | null> {
@@ -31,7 +31,9 @@ export class UserToRolePostgresRepository
              GROUP BY u.${userKeys.ID};`,
       values: [id],
     });
-    return userData ? new UserWithRoles(userData[0]) : null;
+    return userData && userData.length > 0
+      ? new UserWithRoles(userData[0])
+      : null;
   }
 
   async deleteUserToRole({ id, role }: UserToRole): Promise<UserToRole | null> {
@@ -43,6 +45,6 @@ export class UserToRolePostgresRepository
              RETURNING *;`,
       values: [id, role],
     });
-    return roleData ? new UserToRole(roleData[0]) : null;
+    return roleData && roleData.length > 0 ? new UserToRole(roleData[0]) : null;
   }
 }
