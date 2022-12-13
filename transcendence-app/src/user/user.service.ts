@@ -25,6 +25,7 @@ import { IFriendRepository } from './infrastructure/db/friend.repository';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
 import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
+import { Role } from '../shared/enums/role.enum';
 
 @Injectable()
 export class UserService {
@@ -275,6 +276,24 @@ export class UserService {
 
   async addUserToRole(user: UserToRole): Promise<UserToRole | null> {
     const userToRole = await this.userToRoleRepository.addUserToRole(user);
+    if (!userToRole) {
+      throw new UnprocessableEntityException();
+    }
+    return userToRole;
+  }
+
+  async addUserToRoleFromUsername(
+    username: string,
+    role: Role,
+  ): Promise<UserToRole | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
+    const userToRole = await this.userToRoleRepository.addUserToRole({
+      id: user.id,
+      role: role,
+    });
     if (!userToRole) {
       throw new UnprocessableEntityException();
     }
