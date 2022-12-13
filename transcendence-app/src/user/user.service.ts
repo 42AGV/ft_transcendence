@@ -65,7 +65,7 @@ export class UserService {
     if (user && userMe) {
       const blockRelation = await this.getBlockRelation(userMe.id, user.id);
       const friend = await this.getFriend(userMe.id, user.id);
-      return new UserResponseDto(user, blockRelation, friend ? true : false);
+      return new UserResponseDto(user, blockRelation, !!friend);
     }
     return null;
   }
@@ -109,8 +109,7 @@ export class UserService {
     if (
       !user.password ||
       !updateUserDto.oldPassword ||
-      (await Password.compare(user.password, updateUserDto.oldPassword)) ===
-        false
+      !(await Password.compare(user.password, updateUserDto.oldPassword))
     ) {
       throw new ForbiddenException('Incorrect password');
     }
@@ -118,11 +117,10 @@ export class UserService {
       throw new UnprocessableEntityException('Password required');
     }
     const hashedPassword = await Password.toHash(updateUserPassword.password);
-    const ret = this.userRepository.updateById(user.id, {
+    return this.userRepository.updateById(user.id, {
       ...updateUserPassword,
       password: hashedPassword,
     });
-    return ret;
   }
 
   async getBlockRelation(
@@ -227,11 +225,10 @@ export class UserService {
   }
 
   async getFriend(followerId: string, followedId: string) {
-    const friend = await this.friendRepository.getFriend(
+    return await this.friendRepository.getFriend(
       followerId,
       followedId,
     );
-    return friend;
   }
 
   async getFriends(
@@ -259,12 +256,24 @@ export class UserService {
     username: string,
   ): Promise<UserWithRoles | null> {
     const user = await this.userRepository.getByUsername(username);
-    if (!user) return null;
-    return this.userToRoleRepository.getUserWithRoles(user.id);
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
+    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(
+      user.id,
+    );
+    if (!userWithRoles) {
+      throw new UnprocessableEntityException();
+    }
+    return userWithRoles;
   }
 
   async getUserWithRolesFromId(id: string): Promise<UserWithRoles | null> {
-    return this.userToRoleRepository.getUserWithRoles(id);
+    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
+    if (!userWithRoles) {
+      throw new UnprocessableEntityException();
+    }
+    return userWithRoles;
   }
 
   async addUserToRole(user: UserToRole): Promise<UserToRole | null> {
@@ -276,10 +285,10 @@ export class UserService {
   }
 
   async deleteUserToRole(user: UserToRole): Promise<UserToRole | null> {
-    const userTorole = await this.userToRoleRepository.deleteUserToRole(user);
-    if (!userTorole) {
+    const userToRole = await this.userToRoleRepository.deleteUserToRole(user);
+    if (!userToRole) {
       throw new UnprocessableEntityException();
     }
-    return userTorole;
+    return userToRole;
   }
 }
