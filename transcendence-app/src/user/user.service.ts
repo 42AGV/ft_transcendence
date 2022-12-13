@@ -284,7 +284,7 @@ export class UserService {
 
   async addUserToRoleFromUsername(
     username: string,
-    role: Role,
+    role: string,
   ): Promise<UserToRole | null> {
     const user = await this.userRepository.getByUsername(username);
     if (!user) {
@@ -292,7 +292,7 @@ export class UserService {
     }
     const userToRole = await this.userToRoleRepository.addUserToRole({
       id: user.id,
-      role: role,
+      role: role as Role,
     });
     if (!userToRole) {
       throw new UnprocessableEntityException();
@@ -310,7 +310,7 @@ export class UserService {
 
   async deleteUserToRoleFromUsername(
     username: string,
-    role: Role,
+    role: string,
   ): Promise<UserToRole | null> {
     const user = await this.userRepository.getByUsername(username);
     if (!user) {
@@ -318,7 +318,7 @@ export class UserService {
     }
     const userToRole = await this.userToRoleRepository.deleteUserToRole({
       id: user.id,
-      role: role,
+      role: role as Role,
     });
     if (!userToRole) {
       throw new UnprocessableEntityException();
