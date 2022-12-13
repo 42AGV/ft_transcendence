@@ -307,4 +307,22 @@ export class UserService {
     }
     return userToRole;
   }
+
+  async deleteUserToRoleFromUsername(
+    username: string,
+    role: Role,
+  ): Promise<UserToRole | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
+    const userToRole = await this.userToRoleRepository.deleteUserToRole({
+      id: user.id,
+      role: role,
+    });
+    if (!userToRole) {
+      throw new UnprocessableEntityException();
+    }
+    return userToRole;
+  }
 }
