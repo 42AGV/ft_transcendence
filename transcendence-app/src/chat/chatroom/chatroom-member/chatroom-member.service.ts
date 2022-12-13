@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
@@ -79,24 +78,10 @@ export class ChatroomMemberService {
     if (!foundChatroomAuthMember) {
       throw new NotFoundException();
     }
-    if (foundChatroomAuthMember.banned) {
-      throw new ForbiddenException();
-    }
-    if (
-      !(foundChatroomAuthMember.admin || foundChatroom.ownerId === authUserId)
-    ) {
-      throw new ForbiddenException();
-    }
     const foundChatroomMemberToDelete =
       await this.chatroomMemberRepository.getById(chatroomId, toDeleteUserId);
     if (!foundChatroomMemberToDelete) {
       throw new NotFoundException();
-    }
-    if (
-      foundChatroom.ownerId === toDeleteUserId ||
-      (foundChatroomAuthMember.admin && foundChatroomMemberToDelete.admin)
-    ) {
-      throw new ForbiddenException();
     }
     if (
       foundChatroomMemberToDelete.banned ||
@@ -143,7 +128,7 @@ export class ChatroomMemberService {
     return this.chatroomMemberRepository.deleteById(chatroomId, userId);
   }
 
-  getChatroomMembers(
+  async getChatroomMembers(
     chatroomId: string,
     {
       search = '',
@@ -161,5 +146,29 @@ export class ChatroomMemberService {
         sort,
       },
     );
+  }
+
+  async getAllChatroomMembers(
+    chatroomId: string,
+  ): Promise<ChatroomMember[] | null> {
+    const membersWithUser = await this.getChatroomMembers(chatroomId, {
+      limit: 'ALL',
+    });
+    if (!membersWithUser || membersWithUser.length < 1) {
+      return null;
+    }
+    return [
+      ...membersWithUser.map((crm) => {
+        return {
+          chatId: chatroomId,
+          userId: crm.userId,
+          joinedAt: null,
+          owner: crm.owner,
+          admin: crm.admin,
+          muted: crm.muted,
+          banned: crm.banned,
+        };
+      }),
+    ];
   }
 }

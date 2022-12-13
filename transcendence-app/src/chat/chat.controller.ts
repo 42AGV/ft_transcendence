@@ -52,6 +52,12 @@ import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
+import {
+  CaslAbilityFactory,
+  ChatroomWithMembers,
+} from '../shared/casl/casl-ability.factory';
+import { UserService } from '../user/user.service';
+import { Action } from '../shared/enums/action.enum';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -61,6 +67,8 @@ export class ChatController {
   constructor(
     private chatService: ChatService,
     private chatroomMemberService: ChatroomMemberService,
+    private caslAbilityFactory: CaslAbilityFactory,
+    private readonly userService: UserService,
   ) {}
 
   @Post('room')
@@ -141,6 +149,26 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
   ): Promise<ChatroomMember> {
+    const userWithRole = await this.userService.getUserWithRolesFromId(user.id);
+    if (!userWithRole) {
+      throw new NotFoundException();
+    }
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(
+      userWithRole,
+    );
+    const chatroomMembers =
+      await this.chatroomMemberService.getAllChatroomMembers(chatroomId);
+    if (!chatroomMembers) {
+      throw new NotFoundException();
+    }
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!chatroom) {
+      throw new NotFoundException();
+    }
+    const crm = new ChatroomWithMembers(chatroom, chatroomMembers);
+    if (!ability.can(Action.Delete, crm)) {
+      throw new ForbiddenException();
+    }
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
       chatroomId,
       user.id,
