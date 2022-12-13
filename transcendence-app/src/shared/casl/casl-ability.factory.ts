@@ -19,14 +19,14 @@ export class ChatroomWithMembers extends Chatroom {
 export class CaslAbilityFactory {
   defineAbilitiesFor(user: UserWithRoles) {
     const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
-    can(Action.Manage, ChatroomWithMembers, { ownerId: user.id });
-    can(Action.Manage, ChatroomWithMembers, {
+    can(Action.Manage, 'ChatroomWithMembers', { ownerId: user.id });
+    can(Action.Manage, 'ChatroomWithMembers', {
       chatroomMembers: { userId: user.id, admin: true },
     });
-    can(Action.Read, ChatroomWithMembers, {
+    can(Action.Read, 'ChatroomWithMembers', {
       chatroomMembers: { userId: user.id },
     });
-    cannot(Action.Manage, ChatroomWithMembers, {
+    cannot(Action.Manage, 'ChatroomWithMembers', {
       chatroomMembers: { userId: user.id, banned: true },
     });
     if (

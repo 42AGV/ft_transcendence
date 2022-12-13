@@ -12,7 +12,7 @@ import { CaslAbilityFactory } from '../shared/casl/casl-ability.factory';
 
 @Global()
 @Module({
-  imports: [DbModule, LocalFileModule, AvatarModule, CaslModule, UserService],
+  imports: [DbModule, LocalFileModule, AvatarModule, CaslModule],
   providers: [
     ChatGateway,
     ChatService,

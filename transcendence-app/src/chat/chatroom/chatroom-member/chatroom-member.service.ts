@@ -152,7 +152,7 @@ export class ChatroomMemberService {
     chatroomId: string,
   ): Promise<ChatroomMember[] | null> {
     const membersWithUser = await this.getChatroomMembers(chatroomId, {
-      limit: 'ALL',
+      limit: 2147483648,
     });
     if (!membersWithUser || membersWithUser.length < 1) {
       return null;
