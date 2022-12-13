@@ -267,11 +267,19 @@ export class UserService {
     return this.userToRoleRepository.getUserWithRoles(id);
   }
 
-  async addUserWithRole(user: UserToRole): Promise<UserToRole | null> {
-    return this.userToRoleRepository.addUserToRole(user);
+  async addUserToRole(user: UserToRole): Promise<UserToRole | null> {
+    const userToRole = await this.userToRoleRepository.addUserToRole(user);
+    if (!userToRole) {
+      throw new UnprocessableEntityException();
+    }
+    return userToRole;
   }
 
-  async deleteUserWithRole(user: UserToRole): Promise<UserToRole | null> {
-    return this.userToRoleRepository.deleteUserToRole(user);
+  async deleteUserToRole(user: UserToRole): Promise<UserToRole | null> {
+    const userTorole = await this.userToRoleRepository.deleteUserToRole(user);
+    if (!userTorole) {
+      throw new UnprocessableEntityException();
+    }
+    return userTorole;
   }
 }
