@@ -1,5 +1,5 @@
 import { User, UserData } from './user.entity';
-import { Role } from '../../../shared/enums/roles.enum';
+import { Role } from '../../../shared/enums/role.enum';
 
 export interface UserWithRolesData extends UserData {
   roles: Role[] | null;
