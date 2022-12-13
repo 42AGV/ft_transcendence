@@ -225,7 +225,7 @@ export class UserService {
   }
 
   async getFriend(followerId: string, followedId: string) {
-    return await this.friendRepository.getFriend(followerId, followedId);
+    return this.friendRepository.getFriend(followerId, followedId);
   }
 
   async getFriends(
