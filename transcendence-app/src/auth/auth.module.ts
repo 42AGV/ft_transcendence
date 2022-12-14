@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { Api42Service } from '../user/api42.service';
@@ -20,7 +20,7 @@ import { SocketModule } from '../socket/socket.module';
       timeout: HTTP_TIMEOUT_MILLISECONDS,
     }),
     DbModule,
-    UserModule,
+    forwardRef(() => UserModule),
     SocketModule,
     PassportModule.register({ session: true }),
     LocalFileModule,

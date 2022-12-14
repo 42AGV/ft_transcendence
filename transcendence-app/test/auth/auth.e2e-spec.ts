@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../../src/auth/auth.controller';
-import { HttpStatus, INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication, forwardRef } from '@nestjs/common';
 import { AuthModule } from '../../src/auth/auth.module';
 import * as request from 'supertest';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -30,7 +30,7 @@ describe('[Feature] Auth - /auth', () => {
         }),
         DbModule,
         AuthModule,
-        UserModule,
+        forwardRef(() => UserModule),
         SocketModule,
         LocalFileModule,
       ],

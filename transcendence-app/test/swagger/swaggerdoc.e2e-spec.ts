@@ -44,7 +44,7 @@ describe('[Feature] Swagger works', () => {
           validate,
         }),
         UserModule,
-        AuthModule,
+        forwardRef(() => AuthModule),
         SocketModule,
         ChatModule,
         DbModule,
