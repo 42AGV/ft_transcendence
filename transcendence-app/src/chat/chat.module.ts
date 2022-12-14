@@ -10,8 +10,6 @@ import { AvatarModule } from '../shared/avatar/avatar.module';
 import { AuthorizationModule } from '../shared/authorization/authorization.module';
 import { CaslAbilityFactory } from '../shared/authorization/casl-ability.factory';
 import { AuthorizationService } from '../shared/authorization/authorization.service';
-import { IChatroomMemberRepository } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
-import { ChatroomMemberPostgresRepository } from './chatroom/chatroom-member/infrastructure/db/postgres/chatroom-member.postgres.repository';
 
 @Global()
 @Module({
