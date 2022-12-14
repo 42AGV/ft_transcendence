@@ -8,6 +8,7 @@ import {
   INestApplication,
   ValidationPipe,
   VersioningType,
+  forwardRef,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from '../../src/user/user.module';
@@ -48,7 +49,7 @@ describe('[Feature] Swagger works', () => {
         ChatModule,
         DbModule,
         LocalFileModule,
-        AuthorizationModule,
+        forwardRef(() => AuthModule),
         AvatarModule,
       ],
       providers: [
