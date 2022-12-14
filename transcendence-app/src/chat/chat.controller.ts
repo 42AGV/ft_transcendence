@@ -52,9 +52,9 @@ import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
-import { CaslAbilityFactory } from '../shared/casl/casl-ability.factory';
+import { CaslAbilityFactory } from '../shared/authorization/casl-ability.factory';
 import { Action } from '../shared/enums/action.enum';
-import { AuthorizationService } from '../shared/casl/authorization.service';
+import { AuthorizationService } from '../shared/authorization/authorization.service';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -146,13 +146,9 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
   ): Promise<ChatroomMember> {
-    const chatroom = await this.chatService.getChatroomById(chatroomId);
-    if (!chatroom) {
-      throw new NotFoundException();
-    }
     const userWithAuth = await this.authorizationService.GetUserAuthContext(
       user,
-      chatroom,
+      chatroomId,
     );
     if (!userWithAuth) {
       throw new NotFoundException();

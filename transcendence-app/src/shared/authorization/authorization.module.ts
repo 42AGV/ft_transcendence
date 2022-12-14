@@ -8,6 +8,7 @@ import { ChatModule } from '../../chat/chat.module';
 import { DbModule } from '../db/db.module';
 import { LocalFileModule } from '../local-file/local-file.module';
 import { AvatarModule } from '../avatar/avatar.module';
+import { ChatService } from '../../chat/chat.service';
 
 @Module({
   providers: [
@@ -15,6 +16,7 @@ import { AvatarModule } from '../avatar/avatar.module';
     ChatroomMemberService,
     AuthorizationService,
     UserService,
+    ChatService,
   ],
   imports: [
     UserModule,

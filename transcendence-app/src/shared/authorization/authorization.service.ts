@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserService } from '../../user/user.service';
-import { Chatroom } from '../../chat/chatroom/infrastructure/db/chatroom.entity';
 import { ChatroomMemberService } from '../../chat/chatroom/chatroom-member/chatroom-member.service';
 import { User } from '../../user/infrastructure/db/user.entity';
 import { Role } from '../enums/role.enum';
+import { ChatService } from '../../chat/chat.service';
 
-type Game = { isHighLevel?: boolean }; // this is an example
+class Game {
+  isHighLevel?: boolean;
+} // this is an example
 
 export type AuthUserCtx = {
   g_isOwner: boolean;
@@ -22,27 +24,32 @@ export class AuthorizationService {
   constructor(
     private userService: UserService,
     private chatroomMemberService: ChatroomMemberService,
+    private chatService: ChatService,
   ) {}
 
   async GetUserAuthContext(
     user: User,
-    chatroomOrGame?: Chatroom | Game,
+    chatroomIdOrGame: string | Game,
   ): Promise<AuthUserCtx | null> {
     const g_user = await this.userService.getUserWithRolesFromId(user.id);
     if (!g_user) {
       return null;
     }
-    if (chatroomOrGame instanceof Chatroom) {
+    if (!(chatroomIdOrGame instanceof Game)) {
+      const cr = await this.chatService.getChatroomById(chatroomIdOrGame);
       const crm = await this.chatroomMemberService.getById(
-        chatroomOrGame.id,
+        chatroomIdOrGame,
         user.id,
       );
+      if (!cr) {
+        throw new NotFoundException();
+      }
       const isMember = !!crm && crm.joinedAt !== null;
       return {
         g_isOwner: g_user.roles.includes(Role.owner),
         g_isModerator: g_user.roles.includes(Role.moderator),
         g_isBanned: g_user.roles.includes(Role.banned),
-        crm_isOwner: user.id === chatroomOrGame.ownerId,
+        crm_isOwner: user.id === cr.ownerId,
         crm_isMember: isMember,
         crm_isAdmin: (isMember && crm.admin) || undefined,
         crm_isMuted: (isMember && crm.muted) || undefined,

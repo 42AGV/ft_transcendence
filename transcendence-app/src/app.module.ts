@@ -5,7 +5,7 @@ import { validate } from './config/env.validation';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SocketModule } from './socket/socket.module';
 import { ChatModule } from './chat/chat.module';
-import { AuthorizationModule } from './shared/casl/authorization.module';
+import { AuthorizationModule } from './shared/authorization/authorization.module';
 
 @Module({
   imports: [
