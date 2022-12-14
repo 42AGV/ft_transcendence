@@ -94,7 +94,13 @@ export class ChatroomMemberService {
     if (!toDeleteChatroomMember) {
       throw new NotFoundException();
     }
-
+    console.log(userWithAuth);
+    console.log(toDeleteChatroomMember);
+    console.log(ability.can(Action.Manage, toDeleteChatroomMember));
+    console.log(ability.can(Action.Create, toDeleteChatroomMember));
+    console.log(ability.can(Action.Read, toDeleteChatroomMember));
+    console.log(ability.can(Action.Update, toDeleteChatroomMember));
+    console.log(ability.can(Action.Delete, toDeleteChatroomMember));
     if (!ability.can(Action.Delete, toDeleteChatroomMember)) {
       throw new ForbiddenException();
     }

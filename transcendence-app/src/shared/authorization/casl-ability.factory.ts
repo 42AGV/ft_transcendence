@@ -11,13 +11,7 @@ import { AuthUserCtxForChatroom } from './authorizationContext/authuser.chatroom
 
 @Injectable()
 export class CaslAbilityFactory {
-  private readonly abilityCtx: AbilityBuilder<AnyMongoAbility>;
-
-  constructor() {
-    this.abilityCtx = new AbilityBuilder(createMongoAbility);
-  }
-  private setGlobalAbilities(globalUserAuthCtx: GlobalAuthUserCtx) {
-    const { can, cannot } = this.abilityCtx;
+  private setGlobalAbilities({ can, cannot }: AbilityBuilder<AnyMongoAbility> , globalUserAuthCtx: GlobalAuthUserCtx) {
     if (globalUserAuthCtx.g_isModerator || globalUserAuthCtx.g_isOwner) {
       can(Action.Manage, 'all');
     } else if (globalUserAuthCtx.g_isBanned) {
@@ -25,7 +19,8 @@ export class CaslAbilityFactory {
     }
   }
   defineAbilitiesForCrm(chatroomMember: AuthUserCtxForChatroomMember) {
-    const { can, cannot, build } = this.abilityCtx;
+    const abilityCtx = new AbilityBuilder(createMongoAbility);
+    const { can, cannot, build } = abilityCtx;
     if (chatroomMember.crm_isMember) {
       can(Action.Read, 'ChatroomMember');
     } else {
@@ -41,12 +36,13 @@ export class CaslAbilityFactory {
     if (chatroomMember.crm_isMember && chatroomMember.crm_isOwner) {
       can(Action.Manage, 'ChatroomMember');
     }
-    this.setGlobalAbilities(chatroomMember);
+    this.setGlobalAbilities(abilityCtx, chatroomMember);
     return build();
   }
 
   defineAbilitiesForCr(chatroomMember: AuthUserCtxForChatroom) {
-    const { can, cannot, build } = this.abilityCtx;
+    const abilityCtx = new AbilityBuilder(createMongoAbility);
+    const { can, cannot, build } = abilityCtx;
     if (chatroomMember.crm_isMember && chatroomMember.crm_isOwner) {
       can(Action.Manage, 'Chatroom');
     } else {
@@ -63,7 +59,7 @@ export class CaslAbilityFactory {
     if (!chatroomMember.g_isBanned) {
       can(Action.Create, 'Chatroom');
     }
-    this.setGlobalAbilities(chatroomMember);
+    this.setGlobalAbilities(abilityCtx, chatroomMember);
     return build();
   }
 }
