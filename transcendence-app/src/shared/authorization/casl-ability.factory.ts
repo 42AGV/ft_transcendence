@@ -1,8 +1,6 @@
 import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
 import { Action } from '../enums/action.enum';
-import { ChatroomMember } from '../../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
-import { Chatroom } from '../../chat/chatroom/infrastructure/db/chatroom.entity';
 import { AuthUserCtx } from './authorization.service';
 
 @Injectable()
