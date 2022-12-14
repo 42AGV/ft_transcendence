@@ -52,9 +52,6 @@ import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
-import { CaslAbilityFactory } from '../shared/authorization/casl-ability.factory';
-import { Action } from '../shared/enums/action.enum';
-import { AuthorizationService } from '../shared/authorization/authorization.service';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)

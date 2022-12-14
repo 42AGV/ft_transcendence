@@ -58,7 +58,7 @@ export class AuthorizationService {
     const crm = await this.chatroomMemberService.getById(chatroomId, userId);
     return new AuthUserCtxForChatroom({
       ...crmclass,
-      cr_isMuted: crmclass.crm_isMember ? crm!.muted : undefined,
+      cr_isMuted: crmclass.crm_isMember && crm ? crm.muted : undefined,
     });
   }
 }
