@@ -1,65 +1,64 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { UserService } from '../../user/user.service';
 import { ChatroomMemberService } from '../../chat/chatroom/chatroom-member/chatroom-member.service';
-import { User } from '../../user/infrastructure/db/user.entity';
 import { Role } from '../enums/role.enum';
 import { ChatService } from '../../chat/chat.service';
+import { AuthUserCtxForChatroomMember } from './authorizationContext/authuser.chatroom-member';
+import { AuthUserCtxForChatroom } from './authorizationContext/authuser.chatroom';
 
-class Game {
-  isHighLevel?: boolean;
-} // this is an example
-
-export type AuthUserCtx = {
-  g_isOwner: boolean;
-  g_isModerator: boolean;
-  g_isBanned: boolean;
-  crm_isMember?: boolean;
-  crm_isOwner?: boolean;
-  crm_isAdmin?: boolean;
-  crm_isMuted?: boolean;
-  crm_isBanned?: boolean;
-};
 @Injectable()
 export class AuthorizationService {
   constructor(
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
+    @Inject(forwardRef(() => ChatroomMemberService))
     private chatroomMemberService: ChatroomMemberService,
+    @Inject(forwardRef(() => ChatService))
     private chatService: ChatService,
   ) {}
 
-  async GetUserAuthContext(
-    user: User,
-    chatroomIdOrGame: string | Game,
-  ): Promise<AuthUserCtx | null> {
-    const g_user = await this.userService.getUserWithRolesFromId(user.id);
+  async GetUserAuthContextForChatroomMember(
+    userId: string,
+    chatroomId: string,
+  ): Promise<AuthUserCtxForChatroomMember> {
+    const g_user = await this.userService.getUserWithRolesFromId(userId);
     if (!g_user) {
-      return null;
+      throw new UnprocessableEntityException();
     }
-    if (!(chatroomIdOrGame instanceof Game)) {
-      const cr = await this.chatService.getChatroomById(chatroomIdOrGame);
-      const crm = await this.chatroomMemberService.getById(
-        chatroomIdOrGame,
-        user.id,
-      );
-      if (!cr) {
-        throw new NotFoundException();
-      }
-      const isMember = !!crm && crm.joinedAt !== null;
-      return {
-        g_isOwner: g_user.roles.includes(Role.owner),
-        g_isModerator: g_user.roles.includes(Role.moderator),
-        g_isBanned: g_user.roles.includes(Role.banned),
-        crm_isOwner: user.id === cr.ownerId,
-        crm_isMember: isMember,
-        crm_isAdmin: (isMember && crm.admin) || undefined,
-        crm_isMuted: (isMember && crm.muted) || undefined,
-        crm_isBanned: (isMember && crm?.banned) || undefined,
-      };
+    const cr = await this.chatService.getChatroomById(chatroomId);
+    if (!cr) {
+      throw new NotFoundException();
     }
-    return {
+    const crm = await this.chatroomMemberService.getById(chatroomId, userId);
+    const isMember = !!crm && crm.joinedAt !== null;
+    return new AuthUserCtxForChatroomMember({
       g_isOwner: g_user.roles.includes(Role.owner),
       g_isModerator: g_user.roles.includes(Role.moderator),
       g_isBanned: g_user.roles.includes(Role.banned),
-    };
-  } //
+      crm_isOwner: userId === cr.ownerId,
+      crm_isMember: isMember,
+      crm_isAdmin: isMember ? crm.admin : undefined,
+      crm_isBanned: isMember ? crm.banned : undefined,
+    });
+  }
+  async GetUserAuthContextForChatroom(
+    userId: string,
+    chatroomId: string,
+  ): Promise<AuthUserCtxForChatroom> {
+    const crmclass = await this.GetUserAuthContextForChatroomMember(
+      userId,
+      chatroomId,
+    );
+    const crm = await this.chatroomMemberService.getById(chatroomId, userId);
+    return new AuthUserCtxForChatroom({
+      ...crmclass,
+      cr_isMuted: crmclass.crm_isMember ? crm!.muted : undefined,
+    });
+  }
 }

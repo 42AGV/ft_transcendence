@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { DbModule } from '../shared/db/db.module';
 import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { ChatController } from './chat.controller';
@@ -13,7 +13,12 @@ import { AuthorizationService } from '../shared/authorization/authorization.serv
 
 @Global()
 @Module({
-  imports: [DbModule, LocalFileModule, AvatarModule, AuthorizationModule],
+  imports: [
+    DbModule,
+    LocalFileModule,
+    AvatarModule,
+    forwardRef(() => AuthorizationModule),
+  ],
   providers: [
     ChatGateway,
     ChatService,

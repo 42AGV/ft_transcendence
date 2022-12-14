@@ -19,7 +19,7 @@ import { ChatService } from '../../chat/chat.service';
     ChatService,
   ],
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     forwardRef(() => ChatModule),
     DbModule,
     LocalFileModule,

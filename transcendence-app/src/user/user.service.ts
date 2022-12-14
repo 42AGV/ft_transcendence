@@ -1,5 +1,7 @@
 import {
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -26,6 +28,7 @@ import { IUserToRoleRepository } from './infrastructure/db/user-to-role.reposito
 import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { Role } from '../shared/enums/role.enum';
+import { AuthorizationService } from '../shared/authorization/authorization.service';
 
 @Injectable()
 export class UserService {
@@ -37,6 +40,8 @@ export class UserService {
     private userToRoleRepository: IUserToRoleRepository,
     private avatarService: AvatarService,
     private socketService: SocketService,
+    @Inject(forwardRef(() => AuthorizationService))
+    private authorizationService: AuthorizationService,
   ) {}
 
   retrieveUserWithId(id: string): Promise<User | null> {

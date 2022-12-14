@@ -64,8 +64,6 @@ export class ChatController {
   constructor(
     private chatService: ChatService,
     private chatroomMemberService: ChatroomMemberService,
-    private caslAbilityFactory: CaslAbilityFactory,
-    private readonly authorizationService: AuthorizationService,
   ) {}
 
   @Post('room')
@@ -146,27 +144,6 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
   ): Promise<ChatroomMember> {
-    const userWithAuth = await this.authorizationService.GetUserAuthContext(
-      user,
-      chatroomId,
-    );
-    if (!userWithAuth) {
-      throw new NotFoundException();
-    }
-    const ability = await this.caslAbilityFactory.defineAbilitiesFor(
-      userWithAuth,
-    );
-    const toDeleteChatroomMember = await this.chatroomMemberService.getById(
-      chatroomId,
-      toDeleteUserId,
-    );
-    if (!toDeleteChatroomMember) {
-      throw new NotFoundException();
-    }
-
-    if (!ability.can(Action.Delete, toDeleteChatroomMember)) {
-      throw new ForbiddenException();
-    }
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
       chatroomId,
       user.id,

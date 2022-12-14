@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -31,6 +33,7 @@ import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { AvatarService } from '../shared/avatar/avatar.service';
 import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
+import { AuthorizationService } from '../shared/authorization/authorization.service';
 
 @Injectable()
 export class ChatService {
@@ -42,6 +45,8 @@ export class ChatService {
     private chatroomMemberRepository: IChatroomMemberRepository,
     private localFileService: LocalFileService,
     private avatarService: AvatarService,
+    @Inject(forwardRef(() => AuthorizationService))
+    private authorizationService: AuthorizationService,
   ) {}
 
   async retrieveChatrooms({
