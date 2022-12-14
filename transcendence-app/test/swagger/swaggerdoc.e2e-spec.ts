@@ -49,7 +49,7 @@ describe('[Feature] Swagger works', () => {
         ChatModule,
         DbModule,
         LocalFileModule,
-        forwardRef(() => AuthModule),
+        forwardRef(() => AuthorizationModule),
         AvatarModule,
       ],
       providers: [
