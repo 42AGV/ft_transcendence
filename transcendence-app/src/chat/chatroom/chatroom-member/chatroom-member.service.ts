@@ -147,28 +147,4 @@ export class ChatroomMemberService {
       },
     );
   }
-
-  async getAllChatroomMembers(
-    chatroomId: string,
-  ): Promise<ChatroomMember[] | null> {
-    const membersWithUser = await this.getChatroomMembers(chatroomId, {
-      limit: 2147483648,
-    });
-    if (!membersWithUser || membersWithUser.length < 1) {
-      return null;
-    }
-    return [
-      ...membersWithUser.map((crm) => {
-        return {
-          chatId: chatroomId,
-          userId: crm.userId,
-          joinedAt: null,
-          owner: crm.owner,
-          admin: crm.admin,
-          muted: crm.muted,
-          banned: crm.banned,
-        };
-      }),
-    ];
-  }
 }

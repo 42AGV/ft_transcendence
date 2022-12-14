@@ -1,39 +1,49 @@
 import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
-import { UserWithRoles } from '../../user/infrastructure/db/user-with-role.entity';
 import { Action } from '../enums/action.enum';
-import { Role } from '../enums/role.enum';
 import { ChatroomMember } from '../../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { Chatroom } from '../../chat/chatroom/infrastructure/db/chatroom.entity';
-
-export class ChatroomWithMembers extends Chatroom {
-  public readonly chatroomMembers: ChatroomMember[];
-
-  constructor(chatroom: Chatroom, chatroomMembers: ChatroomMember[]) {
-    super(chatroom);
-    this.chatroomMembers = [...chatroomMembers];
-  }
-}
+import { AuthUserCtx } from './authorization.service';
 
 @Injectable()
 export class CaslAbilityFactory {
-  defineAbilitiesFor(user: UserWithRoles) {
+  defineAbilitiesFor(user: AuthUserCtx) {
     const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
-    can(Action.Manage, 'ChatroomWithMembers', { ownerId: user.id });
-    can(Action.Manage, 'ChatroomWithMembers', {
-      chatroomMembers: { userId: user.id, admin: true },
-    });
-    can(Action.Read, 'ChatroomWithMembers', {
-      chatroomMembers: { userId: user.id },
-    });
-    cannot(Action.Manage, 'ChatroomWithMembers', {
-      chatroomMembers: { userId: user.id, banned: true },
-    });
-    if (
-      user.roles.includes(Role.moderator) ||
-      user.roles.includes(Role.owner)
-    ) {
+    if (user.crm_isMember && user.crm_isOwner) {
+      can(Action.Manage, 'Chatroom');
+    } else {
+      can(Action.Read, 'Chatroom');
+    }
+    if (user.crm_isMember && user.crm_isBanned) {
+      cannot(Action.enterCr, 'Chatroom');
+    }
+    if (user.crm_isMember) {
+      cannot(Action.JoinCr, 'Chatroom');
+    } else {
+      can(Action.JoinCr, 'Chatroom');
+    }
+    if (!user.g_isBanned) {
+      can(Action.Create, 'Chatroom');
+    }
+    if (user.crm_isMember) {
+      can(Action.Read, 'ChatroomMember');
+    } else {
+      cannot(Action.Manage, 'ChatroomMember');
+    }
+    if (user.crm_isMember && user.crm_isAdmin) {
+      can(Action.Update, 'ChatroomMember', ['muted', 'banned'], {
+        admin: false,
+      });
+      can(Action.Delete, 'ChatroomMember', { admin: false });
+      cannot(Action.Manage, 'ChatroomMember', { admin: true });
+    }
+    if (user.crm_isMember && user.crm_isOwner) {
+      can(Action.Manage, 'ChatroomMember');
+    }
+    if (user.g_isModerator || user.g_isOwner) {
       can(Action.Manage, 'all');
+    } else if (user.g_isBanned) {
+      cannot(Action.Manage, 'all');
     }
     return build();
   }

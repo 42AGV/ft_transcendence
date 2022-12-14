@@ -9,7 +9,7 @@ export class PaginationQueryDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  @Max(2147483648)
+  @Max(MAX_ENTRIES_PER_PAGE)
   limit?: number;
 
   @IsOptional()

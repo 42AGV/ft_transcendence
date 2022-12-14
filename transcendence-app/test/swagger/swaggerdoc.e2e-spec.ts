@@ -26,7 +26,7 @@ import { ChatService } from '../../src/chat/chat.service';
 import { ChatroomMemberService } from '../../src/chat/chatroom/chatroom-member/chatroom-member.service';
 import { DbModule } from '../../src/shared/db/db.module';
 import { AvatarModule } from '../../src/shared/avatar/avatar.module';
-import { CaslModule } from '../../src/shared/casl/casl.module';
+import { AuthorizationModule } from '../../src/shared/casl/authorization.module';
 
 describe('[Feature] Swagger works', () => {
   let app: INestApplication;
@@ -48,7 +48,7 @@ describe('[Feature] Swagger works', () => {
         ChatModule,
         DbModule,
         LocalFileModule,
-        CaslModule,
+        AuthorizationModule,
         AvatarModule,
       ],
       providers: [
