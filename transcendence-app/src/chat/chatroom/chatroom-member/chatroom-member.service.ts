@@ -82,36 +82,10 @@ export class ChatroomMemberService {
     if (!toDeleteChatroomMember) {
       throw new NotFoundException();
     }
-    console.log(toDeleteChatroomMember);
-    console.log(ability.can(Action.Manage, toDeleteChatroomMember));
-    console.log(ability.can(Action.Create, toDeleteChatroomMember));
-    console.log(ability.can(Action.Read, toDeleteChatroomMember));
-    console.log(ability.can(Action.Update, toDeleteChatroomMember));
-    console.log(ability.can(Action.Delete, toDeleteChatroomMember));
     if (!ability.can(Action.Delete, toDeleteChatroomMember)) {
       throw new ForbiddenException();
     }
-
-    const foundChatroom = await this.chatroomRepository.getById(chatroomId);
-    if (!foundChatroom) {
-      throw new NotFoundException();
-    }
-    const foundChatroomAuthMember = await this.chatroomMemberRepository.getById(
-      chatroomId,
-      authUserId,
-    );
-    if (!foundChatroomAuthMember) {
-      throw new NotFoundException();
-    }
-    const foundChatroomMemberToDelete =
-      await this.chatroomMemberRepository.getById(chatroomId, toDeleteUserId);
-    if (!foundChatroomMemberToDelete) {
-      throw new NotFoundException();
-    }
-    if (
-      foundChatroomMemberToDelete.banned ||
-      foundChatroomMemberToDelete.muted
-    ) {
+    if (toDeleteChatroomMember.banned || toDeleteChatroomMember.muted) {
       return this.chatroomMemberRepository.updateById(
         chatroomId,
         toDeleteUserId,
