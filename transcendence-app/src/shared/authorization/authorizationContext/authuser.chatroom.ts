@@ -10,6 +10,7 @@ export interface AuthUserCtxForChatroomData
 export class AuthUserCtxForChatroom extends AuthUserCtxForChatroomMember {
   public readonly cr_isMuted?: boolean;
   constructor({
+    userId,
     g_isOwner,
     g_isModerator,
     g_isBanned,
@@ -20,6 +21,7 @@ export class AuthUserCtxForChatroom extends AuthUserCtxForChatroomMember {
     cr_isMuted,
   }: AuthUserCtxForChatroomData) {
     super({
+      userId,
       g_isOwner,
       g_isModerator,
       g_isBanned,

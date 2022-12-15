@@ -34,7 +34,6 @@ export class CaslAbilityFactory {
     if (!chatroomMember) {
       throw new NotFoundException();
     }
-    console.log(chatroomMember);
     const abilityCtx = new AbilityBuilder(createMongoAbility);
     const { can, cannot, build } = abilityCtx;
     if (!chatroomMember.crm_isMember || chatroomMember.crm_isBanned) {
@@ -42,6 +41,10 @@ export class CaslAbilityFactory {
       await this.setGlobalAbilities(abilityCtx, chatroomMember);
       return build();
     }
+    can(Action.Read, 'ChatroomMember');
+    can(Action.Delete, 'ChatroomMember', {
+      userId: chatroomMember.userId,
+    });
     if (chatroomMember.crm_isAdmin) {
       can(Action.Update, 'ChatroomMember', ['muted', 'banned'], {
         admin: false,
@@ -50,8 +53,10 @@ export class CaslAbilityFactory {
     }
     if (chatroomMember.crm_isOwner) {
       can(Action.Manage, 'ChatroomMember');
+      cannot(Action.Delete, 'ChatroomMember', {
+        userId: chatroomMember.userId,
+      });
     }
-    can(Action.Read, 'ChatroomMember');
     await this.setGlobalAbilities(abilityCtx, chatroomMember);
     return build();
   }

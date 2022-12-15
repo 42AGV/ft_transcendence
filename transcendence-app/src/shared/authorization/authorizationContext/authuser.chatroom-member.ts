@@ -13,6 +13,7 @@ export class AuthUserCtxForChatroomMember extends GlobalAuthUserCtx {
   public readonly crm_isAdmin?: boolean;
   public readonly crm_isBanned?: boolean;
   constructor({
+    userId,
     g_isOwner,
     g_isModerator,
     g_isBanned,
@@ -21,7 +22,7 @@ export class AuthUserCtxForChatroomMember extends GlobalAuthUserCtx {
     crm_isAdmin,
     crm_isBanned,
   }: AuthUserCtxForChatroomMemberData) {
-    super({ g_isOwner, g_isModerator, g_isBanned });
+    super({ userId, g_isOwner, g_isModerator, g_isBanned });
     this.crm_isMember = crm_isMember;
     this.crm_isOwner = crm_isOwner;
     this.crm_isAdmin = crm_isAdmin;

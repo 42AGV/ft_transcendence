@@ -1,8 +1,6 @@
 import {
   BadRequestException,
   ForbiddenException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -45,8 +43,6 @@ export class ChatService {
     private chatroomMemberRepository: IChatroomMemberRepository,
     private localFileService: LocalFileService,
     private avatarService: AvatarService,
-    @Inject(forwardRef(() => AuthorizationService))
-    private authorizationService: AuthorizationService,
   ) {}
 
   async retrieveChatrooms({

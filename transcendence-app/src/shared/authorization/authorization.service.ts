@@ -38,6 +38,7 @@ export class AuthorizationService {
     const crm = await this.chatroomMemberService.getById(chatroomId, userId);
     const isMember = !!crm && crm.joinedAt !== null;
     return new AuthUserCtxForChatroomMember({
+      userId,
       g_isOwner: g_user.roles.includes(Role.owner),
       g_isModerator: g_user.roles.includes(Role.moderator),
       g_isBanned: g_user.roles.includes(Role.banned),
