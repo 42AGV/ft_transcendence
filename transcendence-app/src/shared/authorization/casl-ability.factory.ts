@@ -3,15 +3,16 @@ import {
   AnyMongoAbility,
   createMongoAbility,
 } from '@casl/ability';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Action } from '../enums/action.enum';
-import { AuthUserCtxForChatroomMember } from './authorizationContext/authuser.chatroom-member';
 import { GlobalAuthUserCtx } from './authorizationContext/authuser.global';
 import { AuthUserCtxForChatroom } from './authorizationContext/authuser.chatroom';
+import { AuthorizationService } from './authorization.service';
 
 @Injectable()
 export class CaslAbilityFactory {
-  private setGlobalAbilities(
+  constructor(private authorizationService: AuthorizationService) {}
+  private async setGlobalAbilities(
     { can, cannot }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: GlobalAuthUserCtx,
   ) {
@@ -21,7 +22,16 @@ export class CaslAbilityFactory {
       can(Action.Manage, 'all');
     }
   }
-  defineAbilitiesForCrm(chatroomMember: AuthUserCtxForChatroomMember) {
+  async defineAbilitiesForCrm(authUserId: string, chatroomId: string) {
+    const chatroomMember =
+      await this.authorizationService.GetUserAuthContextForChatroomMember(
+        authUserId,
+        chatroomId,
+      );
+    if (!chatroomMember) {
+      throw new NotFoundException();
+    }
+    console.log(chatroomMember);
     const abilityCtx = new AbilityBuilder(createMongoAbility);
     const { can, cannot, build } = abilityCtx;
     if (chatroomMember.crm_isMember) {
@@ -40,11 +50,11 @@ export class CaslAbilityFactory {
     if (chatroomMember.crm_isMember && chatroomMember.crm_isOwner) {
       can(Action.Manage, 'ChatroomMember');
     }
-    this.setGlobalAbilities(abilityCtx, chatroomMember);
+    await this.setGlobalAbilities(abilityCtx, chatroomMember);
     return build();
   }
 
-  defineAbilitiesForCr(chatroomMember: AuthUserCtxForChatroom) {
+  async defineAbilitiesForCr(chatroomMember: AuthUserCtxForChatroom) {
     const abilityCtx = new AbilityBuilder(createMongoAbility);
     const { can, cannot, build } = abilityCtx;
     if (chatroomMember.crm_isMember && chatroomMember.crm_isOwner) {
@@ -60,7 +70,7 @@ export class CaslAbilityFactory {
     } else {
       can(Action.JoinCr, 'Chatroom');
     }
-    this.setGlobalAbilities(abilityCtx, chatroomMember);
+    await this.setGlobalAbilities(abilityCtx, chatroomMember);
     return build();
   }
 }

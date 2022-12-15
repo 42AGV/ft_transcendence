@@ -1,7 +1,5 @@
 import {
   ForbiddenException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
@@ -18,7 +16,6 @@ import { BooleanString } from '../../../shared/enums/boolean-string.enum';
 import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 import { Action } from '../../../shared/enums/action.enum';
 import { CaslAbilityFactory } from '../../../shared/authorization/casl-ability.factory';
-import { AuthorizationService } from '../../../shared/authorization/authorization.service';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -26,8 +23,6 @@ export class ChatroomMemberService {
     private chatroomMemberRepository: IChatroomMemberRepository,
     private chatroomRepository: IChatroomRepository,
     private readonly caslAbilityFactory: CaslAbilityFactory,
-    @Inject(forwardRef(() => AuthorizationService))
-    private authorizationService: AuthorizationService,
   ) {}
 
   async addChatroomMember(
@@ -76,16 +71,9 @@ export class ChatroomMemberService {
     authUserId: string,
     toDeleteUserId: string,
   ): Promise<ChatroomMember | null> {
-    const userWithAuth =
-      await this.authorizationService.GetUserAuthContextForChatroomMember(
-        authUserId,
-        chatroomId,
-      );
-    if (!userWithAuth) {
-      throw new NotFoundException();
-    }
     const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
-      userWithAuth,
+      authUserId,
+      chatroomId,
     );
     const toDeleteChatroomMember = await this.getById(
       chatroomId,
@@ -94,7 +82,6 @@ export class ChatroomMemberService {
     if (!toDeleteChatroomMember) {
       throw new NotFoundException();
     }
-    console.log(userWithAuth);
     console.log(toDeleteChatroomMember);
     console.log(ability.can(Action.Manage, toDeleteChatroomMember));
     console.log(ability.can(Action.Create, toDeleteChatroomMember));

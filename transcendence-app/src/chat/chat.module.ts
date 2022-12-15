@@ -9,7 +9,6 @@ import { UserService } from '../user/user.service';
 import { AvatarModule } from '../shared/avatar/avatar.module';
 import { AuthorizationModule } from '../shared/authorization/authorization.module';
 import { CaslAbilityFactory } from '../shared/authorization/casl-ability.factory';
-import { AuthorizationService } from '../shared/authorization/authorization.service';
 
 @Global()
 @Module({
@@ -25,7 +24,6 @@ import { AuthorizationService } from '../shared/authorization/authorization.serv
     ChatroomMemberService,
     UserService,
     CaslAbilityFactory,
-    AuthorizationService,
   ],
   controllers: [ChatController],
   exports: [ChatService, ChatroomMemberService],
