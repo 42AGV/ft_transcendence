@@ -255,13 +255,13 @@ export class UserService {
   ): Promise<UserWithRoles | null> {
     const user = await this.userRepository.getByUsername(username);
     if (!user) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     const userWithRoles = await this.userToRoleRepository.getUserWithRoles(
       user.id,
     );
     if (!userWithRoles) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     return userWithRoles;
   }
@@ -269,7 +269,7 @@ export class UserService {
   async getUserWithRolesFromId(id: string): Promise<UserWithRoles | null> {
     const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
     if (!userWithRoles) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     return userWithRoles;
   }
@@ -277,7 +277,7 @@ export class UserService {
   async addUserToRole(user: UserToRole): Promise<UserToRole | null> {
     const userToRole = await this.userToRoleRepository.addUserToRole(user);
     if (!userToRole) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     return userToRole;
   }
@@ -288,14 +288,14 @@ export class UserService {
   ): Promise<UserToRole | null> {
     const user = await this.userRepository.getByUsername(username);
     if (!user) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     const userToRole = await this.userToRoleRepository.addUserToRole({
       id: user.id,
-      role: role as Role,
+      role: role,
     });
     if (!userToRole) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     return userToRole;
   }
@@ -303,7 +303,7 @@ export class UserService {
   async deleteUserToRole(user: UserToRole): Promise<UserToRole | null> {
     const userToRole = await this.userToRoleRepository.deleteUserToRole(user);
     if (!userToRole) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     return userToRole;
   }
@@ -314,14 +314,14 @@ export class UserService {
   ): Promise<UserToRole | null> {
     const user = await this.userRepository.getByUsername(username);
     if (!user) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     const userToRole = await this.userToRoleRepository.deleteUserToRole({
       id: user.id,
       role: role as Role,
     });
     if (!userToRole) {
-      throw new UnprocessableEntityException();
+      throw new NotFoundException();
     }
     return userToRole;
   }
