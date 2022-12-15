@@ -24,7 +24,7 @@ export class UserToRolePostgresRepository
   async getUserWithRoles(id: string): Promise<UserWithRoles | null> {
     const userData = await makeQuery<UserWithRolesData>(this.pool, {
       text: `SELECT u.*,
-                    array_agg(ur.${userToRoleKeys.ROLE}) FILTER (WHERE ur.${userToRoleKeys.ROLE} IS NOT NULL) as roles
+                    coalesce( array_agg(ur.${userToRoleKeys.ROLE}) FILTER (WHERE ur.${userToRoleKeys.ROLE} IS NOT NULL), '{}' ) as roles
              FROM ${table.USERS} u
                     LEFT JOIN ${this.table} ur ON ur.${userToRoleKeys.ID} = u.${userKeys.ID}
              WHERE u.${userKeys.ID} = $1

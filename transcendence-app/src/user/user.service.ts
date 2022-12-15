@@ -284,7 +284,7 @@ export class UserService {
 
   async addUserToRoleFromUsername(
     username: string,
-    role: string,
+    role: Role,
   ): Promise<UserToRole | null> {
     const user = await this.userRepository.getByUsername(username);
     if (!user) {
