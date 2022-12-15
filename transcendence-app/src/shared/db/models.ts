@@ -8,6 +8,7 @@ export enum table {
   CHATROOM_MEMBERS = 'ChatroomMembers',
   CHATROOM_MESSAGE = 'ChatroomMessage',
   FRIEND = 'Friend',
+  USER_TO_ROLE = 'UserToRole',
 }
 
 export interface Query {
