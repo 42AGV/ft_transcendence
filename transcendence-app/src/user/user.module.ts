@@ -8,13 +8,7 @@ import { SocketModule } from '../socket/socket.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [
-    DbModule,
-    LocalFileModule,
-    AvatarModule,
-    SocketModule,
-    forwardRef(() => AuthModule),
-  ],
+  imports: [DbModule, LocalFileModule, AvatarModule, SocketModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
