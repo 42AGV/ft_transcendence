@@ -13,8 +13,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16.16.0'
-          cache: 'npm'
+          node-version: "18.12.1"
+          cache: "npm"
           cache-dependency-path: |
             transcendence-app/package-lock.json
       - name: Install dependencies

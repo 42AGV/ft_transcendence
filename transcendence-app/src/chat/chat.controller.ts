@@ -50,7 +50,6 @@ import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
-import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
 
 @Controller('chat')
@@ -393,7 +392,7 @@ export class ChatController {
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     description: 'Update a chatroom avatar',
-    type: AvatarResponseDto,
+    type: Chatroom,
   })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
@@ -405,21 +404,21 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @UploadedFile()
     file: Express.Multer.File,
-  ): Promise<AvatarResponseDto> {
+  ): Promise<Chatroom> {
     if (!file) {
       throw new UnprocessableEntityException();
     }
 
-    const avatar = await this.chatService.addAvatar(chatroomId, user, {
+    const updatedChatroom = await this.chatService.addAvatar(chatroomId, user, {
       filename: file.filename,
       path: file.path,
       mimetype: file.mimetype,
       size: file.size,
     });
 
-    if (!avatar) {
+    if (!updatedChatroom) {
       throw new ServiceUnavailableException();
     }
-    return avatar;
+    return updatedChatroom;
   }
 }

@@ -14,7 +14,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
-import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
@@ -144,7 +143,7 @@ export class UserService {
   private async addAvatarAndUpdateUser(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<AvatarResponseDto | null> {
+  ): Promise<User | null> {
     const avatarUUID = uuidv4();
     const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
       { id: avatarUUID, createdAt: new Date(Date.now()), ...newAvatarFileDto },
@@ -154,26 +153,26 @@ export class UserService {
       this.localFileService.deleteFileData(newAvatarFileDto.path);
       return null;
     }
-    return {
-      avatarId: avatarUUID,
-      file: this.avatarService.streamAvatarData(newAvatarFileDto),
-    };
+    return updatedUser;
   }
 
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<AvatarResponseDto | null> {
+  ): Promise<User | null> {
     await this.avatarService.validateAvatarType(newAvatarFileDto.path);
     const previousAvatarId = user.avatarId;
-    const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
-    if (!avatar) {
+    const updatedUser = await this.addAvatarAndUpdateUser(
+      user,
+      newAvatarFileDto,
+    );
+    if (!updatedUser) {
       return null;
     }
     if (previousAvatarId) {
       await this.avatarService.deleteAvatar(previousAvatarId);
     }
-    return avatar;
+    return updatedUser;
   }
 
   retrieveUserWithAuthProvider(

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import EditAvatarPage from '../../shared/components/templates/EditAvatarPageTemplate/EditAvatarPageTemplate';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import { AvatarResponseDto, Chatroom } from '../../shared/generated';
+import { Chatroom } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import { AVATAR_EP_URL } from '../../shared/urls';
@@ -41,13 +41,9 @@ export default function EditChatroomAvatarPage() {
     if (file !== null) {
       chatApi
         .chatControllerUploadAvatar({ chatroomId: chatroomId!, file })
-        .then((res: AvatarResponseDto) => {
+        .then((updatedChatroom: Chatroom) => {
           notify('Image uploaded correctly.');
-          setChatroom((prevState) => {
-            if (!prevState) return null;
-            const { avatarId } = res;
-            return { ...prevState, avatarId };
-          });
+          setChatroom(updatedChatroom);
         })
         .catch((e) => warn(e.response.statusText));
     }

@@ -38,7 +38,6 @@ import { User } from './infrastructure/db/user.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
-import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { Friend } from './infrastructure/db/friend.entity';
@@ -116,7 +115,7 @@ export class UserController {
   @ApiProduces('image/jpeg')
   @ApiOkResponse({
     description: 'Update a user avatar',
-    type: AvatarResponseDto,
+    type: User,
   })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   @ApiPayloadTooLargeResponse({ description: 'Payload Too Large' })
@@ -126,22 +125,22 @@ export class UserController {
     @GetUser() user: User,
     @UploadedFile()
     file: Express.Multer.File,
-  ): Promise<AvatarResponseDto> {
+  ): Promise<User> {
     if (!file) {
       throw new UnprocessableEntityException();
     }
 
-    const avatar = await this.userService.addAvatar(user, {
+    const updatedUser = await this.userService.addAvatar(user, {
       filename: file.filename,
       path: file.path,
       mimetype: file.mimetype,
       size: file.size,
     });
 
-    if (!avatar) {
+    if (!updatedUser) {
       throw new ServiceUnavailableException();
     }
-    return avatar;
+    return updatedUser;
   }
 
   @Get('user/block')
