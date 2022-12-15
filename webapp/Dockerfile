@@ -1,6 +1,6 @@
-ARG NODE_VERSION=16.16.0
+ARG NODE_VERSION=18.12.1
 ARG ALPINE_VERSION=3.16
-ARG NGINX_VERSION=1.22.0
+ARG NGINX_VERSION=1.22.1
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS development
 ENV NODE_ENV=development
@@ -18,7 +18,7 @@ ARG REACT_APP_NAME
 ENV REACT_APP_NAME=${REACT_APP_NAME}
 WORKDIR /webapp
 COPY ["package.json", "package-lock.json", "./"]
-RUN npm clean-install --production
+RUN npm clean-install --omit=dev
 COPY . .
 RUN npm run build
 

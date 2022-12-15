@@ -46,7 +46,7 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     return this.localFileService.saveFileDataFromStream(
       response.data,
       AVATARS_PATH,
-      response.headers['content-type'],
+      response.headers['content-type'] || 'application/octet-stream',
     );
   }
 
