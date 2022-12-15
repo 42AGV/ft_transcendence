@@ -118,10 +118,12 @@ export class ChatController {
     @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
   ): Promise<ChatroomMember> {
-    const chatroomMember = await this.chatroomMemberService.leaveChatroom(
+    const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
       chatroomId,
       user.id,
+      user.id,
     );
+
     if (!chatroomMember) {
       throw new ServiceUnavailableException();
     }

@@ -97,36 +97,6 @@ export class ChatroomMemberService {
     return this.chatroomMemberRepository.deleteById(chatroomId, toDeleteUserId);
   }
 
-  async leaveChatroom(
-    chatroomId: string,
-    userId: string,
-  ): Promise<ChatroomMember | null> {
-    const foundChatroom = await this.chatroomRepository.getById(chatroomId);
-    if (!foundChatroom) {
-      throw new NotFoundException();
-    }
-    const foundChatroomMember = await this.chatroomMemberRepository.getById(
-      chatroomId,
-      userId,
-    );
-    if (!foundChatroomMember) {
-      throw new NotFoundException();
-    }
-    if (foundChatroom.ownerId === userId) {
-      const chatroom = await this.chatroomRepository.deleteById(chatroomId);
-      if (!chatroom) {
-        throw new ServiceUnavailableException();
-      }
-      return foundChatroomMember;
-    }
-    if (foundChatroomMember.banned || foundChatroomMember.muted) {
-      return this.chatroomMemberRepository.updateById(chatroomId, userId, {
-        joinedAt: null,
-      });
-    }
-    return this.chatroomMemberRepository.deleteById(chatroomId, userId);
-  }
-
   async getChatroomMembers(
     chatroomId: string,
     {
