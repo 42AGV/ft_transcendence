@@ -23,7 +23,6 @@ import { JoinChatroomDto } from './chatroom/dto/join-chatroom.dto';
 import { ChatroomMember } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import { User } from '../user/infrastructure/db/user.entity';
-import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-chatroom-member.dto';
 import { IChatroomMemberRepository } from './chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { LocalFileDto } from '../shared/local-file/local-file.dto';

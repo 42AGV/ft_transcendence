@@ -2,7 +2,6 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import { IChatroomMemberRepository } from './infrastructure/db/chatroom-member.repository';
 import {
@@ -17,8 +16,6 @@ import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 import { Action } from '../../../shared/enums/action.enum';
 import { CaslAbilityFactory } from '../../../shared/authorization/casl-ability.factory';
 import { User } from '../../../user/infrastructure/db/user.entity';
-import { JoinChatroomDto } from '../dto/join-chatroom.dto';
-import { Password } from '../../../shared/password';
 
 @Injectable()
 export class ChatroomMemberService {
