@@ -60,11 +60,20 @@ export class ChatroomMemberService {
     userId: string,
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
+    const toUpdateChatroomMember = await this.getById(chatroomId, userId);
+    if (!toUpdateChatroomMember) {
+      throw new NotFoundException();
+    }
     const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
       authUser.id,
       chatroomId,
     );
-    if (ability.cannot(Action.Update, updateChatroomMemberDto)) {
+    if (
+      !(
+        ability.can(Action.Update, updateChatroomMemberDto) &&
+        ability.can(Action.Update, toUpdateChatroomMember)
+      )
+    ) {
       throw new ForbiddenException();
     }
     return this.chatroomMemberRepository.updateById(

@@ -46,8 +46,11 @@ export class CaslAbilityFactory {
       userId: chatroomMember.userId,
     });
     if (chatroomMember.crm_isAdmin) {
-      can(Action.Update, 'UpdateChatroomMemberDto', ['muted', 'banned'], {
-        admin: false,
+      can(Action.Update, 'ChatroomMember');
+      cannot(Action.Update, 'ChatroomMember', { admin: true });
+      can(Action.Update, 'UpdateChatroomMemberDto');
+      cannot(Action.Update, 'UpdateChatroomMemberDto', {
+        admin: { $exists: true },
       });
       can(Action.Delete, 'ChatroomMember', { admin: false });
     }
