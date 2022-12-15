@@ -235,56 +235,11 @@ export class ChatService {
     const { password } = joinChatroomDto;
     if (
       foundChatroom.password &&
-      (!password ||
-        (await Password.compare(foundChatroom.password, password)) === false)
+      (!password || !(await Password.compare(foundChatroom.password, password)))
     ) {
       throw new ForbiddenException('Incorrect password');
     }
     return this.chatroomMemberService.addChatroomMember(chatroomId, userId);
-  }
-
-  async updateChatroomMember(
-    authUser: User,
-    chatroomId: string,
-    userId: string,
-    updateChatroomMemberDto: UpdateChatroomMemberDto,
-  ): Promise<ChatroomMember | null> {
-    const authChatroomMember =
-      await this.chatroomMemberRepository.getByIdWithUser(
-        chatroomId,
-        authUser.id,
-      );
-    const chatroomMember = await this.chatroomMemberRepository.getByIdWithUser(
-      chatroomId,
-      userId,
-    );
-    if (!authChatroomMember || !chatroomMember) {
-      throw new NotFoundException();
-    }
-    if (chatroomMember.owner) {
-      throw new ForbiddenException();
-    }
-    if (authChatroomMember.owner) {
-      return this.chatroomMemberService.updateById(
-        chatroomId,
-        userId,
-        updateChatroomMemberDto,
-      );
-    }
-    if (
-      !authChatroomMember.admin ||
-      authChatroomMember.banned ||
-      authChatroomMember.muted ||
-      chatroomMember.admin ||
-      updateChatroomMemberDto.admin !== undefined
-    ) {
-      throw new ForbiddenException();
-    }
-    return this.chatroomMemberService.updateById(
-      chatroomId,
-      userId,
-      updateChatroomMemberDto,
-    );
   }
 
   private async addAvatarAndUpdateChatroom(

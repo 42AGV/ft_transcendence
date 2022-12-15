@@ -16,6 +16,9 @@ import { BooleanString } from '../../../shared/enums/boolean-string.enum';
 import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 import { Action } from '../../../shared/enums/action.enum';
 import { CaslAbilityFactory } from '../../../shared/authorization/casl-ability.factory';
+import { User } from '../../../user/infrastructure/db/user.entity';
+import { JoinChatroomDto } from '../dto/join-chatroom.dto';
+import { Password } from '../../../shared/password';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -54,13 +57,21 @@ export class ChatroomMemberService {
     return chatMember ?? null;
   }
 
-  updateById(
-    chatId: string,
+  async updateChatroomMember(
+    authUser: User,
+    chatroomId: string,
     userId: string,
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
+    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
+      authUser.id,
+      chatroomId,
+    );
+    if (ability.cannot(Action.Update, updateChatroomMemberDto)) {
+      throw new ForbiddenException();
+    }
     return this.chatroomMemberRepository.updateById(
-      chatId,
+      chatroomId,
       userId,
       updateChatroomMemberDto,
     );
@@ -82,7 +93,7 @@ export class ChatroomMemberService {
     if (!toDeleteChatroomMember) {
       throw new NotFoundException();
     }
-    if (!ability.can(Action.Delete, toDeleteChatroomMember)) {
+    if (ability.cannot(Action.Delete, toDeleteChatroomMember)) {
       throw new ForbiddenException();
     }
     if (toDeleteChatroomMember.banned || toDeleteChatroomMember.muted) {
@@ -98,6 +109,7 @@ export class ChatroomMemberService {
   }
 
   async getChatroomMembers(
+    userId: string,
     chatroomId: string,
     {
       search = '',
@@ -106,6 +118,13 @@ export class ChatroomMemberService {
       sort = BooleanString.True,
     }: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[] | null> {
+    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
+      userId,
+      chatroomId,
+    );
+    if (ability.cannot(Action.Read, 'ChatroomMember')) {
+      throw new ForbiddenException();
+    }
     return this.chatroomMemberRepository.getPaginatedChatroomMembers(
       chatroomId,
       {

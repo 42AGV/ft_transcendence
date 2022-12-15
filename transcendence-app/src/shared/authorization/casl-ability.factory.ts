@@ -46,12 +46,13 @@ export class CaslAbilityFactory {
       userId: chatroomMember.userId,
     });
     if (chatroomMember.crm_isAdmin) {
-      can(Action.Update, 'ChatroomMember', ['muted', 'banned'], {
+      can(Action.Update, 'UpdateChatroomMemberDto', ['muted', 'banned'], {
         admin: false,
       });
       can(Action.Delete, 'ChatroomMember', { admin: false });
     }
     if (chatroomMember.crm_isOwner) {
+      can(Action.Manage, 'UpdateChatroomMemberDto');
       can(Action.Manage, 'ChatroomMember');
       cannot(Action.Delete, 'ChatroomMember', {
         userId: chatroomMember.userId,
@@ -61,21 +62,33 @@ export class CaslAbilityFactory {
     return build();
   }
 
-  async defineAbilitiesForCr(chatroomMember: AuthUserCtxForChatroom) {
+  async defineAbilitiesForCr(authUserId: string, chatroomId: string) {
+    const chatroomMember: AuthUserCtxForChatroom =
+      await this.authorizationService.GetUserAuthContextForChatroom(
+        authUserId,
+        chatroomId,
+      );
+    if (!chatroomMember) {
+      throw new NotFoundException();
+    }
     const abilityCtx = new AbilityBuilder(createMongoAbility);
     const { can, cannot, build } = abilityCtx;
-    if (chatroomMember.crm_isMember && chatroomMember.crm_isOwner) {
+    if (!chatroomMember.crm_isMember || chatroomMember.crm_isBanned) {
+      cannot(Action.Manage, 'Chatroom');
+      if (!chatroomMember.crm_isMember) {
+        can(Action.JoinCr, 'Chatroom');
+      }
+      if (chatroomMember.crm_isBanned !== false) {
+        cannot(Action.enterCr, 'Chatroom');
+        cannot(Action.JoinCr, 'Chatroom');
+      }
+      await this.setGlobalAbilities(abilityCtx, chatroomMember);
+      return build();
+    }
+    cannot(Action.JoinCr, 'Chatroom');
+    can(Action.Read, 'Chatroom');
+    if (chatroomMember.crm_isOwner) {
       can(Action.Manage, 'Chatroom');
-    } else {
-      can(Action.Read, 'Chatroom');
-    }
-    if (chatroomMember.crm_isMember && chatroomMember.crm_isBanned) {
-      cannot(Action.enterCr, 'Chatroom');
-    }
-    if (chatroomMember.crm_isMember) {
-      cannot(Action.JoinCr, 'Chatroom');
-    } else {
-      can(Action.JoinCr, 'Chatroom');
     }
     await this.setGlobalAbilities(abilityCtx, chatroomMember);
     return build();
