@@ -5,21 +5,18 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { UserService } from '../user/user.service';
 import { ChatroomMemberService } from '../chat/chatroom/chatroom-member/chatroom-member.service';
 import { Role } from '../shared/enums/role.enum';
 import { ChatService } from '../chat/chat.service';
 import { AuthUserCtxForChatroomMember } from './infrastructure/authuser.chatroom-member';
 import { AuthUserCtxForChatroom } from './infrastructure/authuser.chatroom';
-import { UserWithRoles } from '../user/infrastructure/db/user-with-role.entity';
+import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
 
 @Injectable()
 export class AuthorizationService {
   constructor(
-    @Inject(forwardRef(() => UserService))
-    private userService: UserService,
     @Inject(forwardRef(() => ChatroomMemberService))
     private chatroomMemberService: ChatroomMemberService,
     @Inject(forwardRef(() => ChatService))
@@ -30,13 +27,8 @@ export class AuthorizationService {
   async getUserWithRolesFromUsername(
     username: string,
   ): Promise<UserWithRoles | null> {
-    const user = await this.userService.retrieveUserWithUserName(username);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(
-      user.id,
-    );
+    const userWithRoles =
+      await this.userToRoleRepository.getUserWithRolesFromUsername(username);
     if (!userWithRoles) {
       throw new NotFoundException();
     }
@@ -63,14 +55,8 @@ export class AuthorizationService {
     username: string,
     role: Role,
   ): Promise<UserToRole | null> {
-    const user = await this.userService.retrieveUserWithUserName(username);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    const userToRole = await this.userToRoleRepository.addUserToRole({
-      id: user.id,
-      role: role,
-    });
+    const userToRole =
+      await this.userToRoleRepository.addUserToRoleFromUsername(username, role);
     if (!userToRole) {
       throw new NotFoundException();
     }
@@ -87,16 +73,13 @@ export class AuthorizationService {
 
   async deleteUserToRoleFromUsername(
     username: string,
-    role: string,
+    role: Role,
   ): Promise<UserToRole | null> {
-    const user = await this.userService.retrieveUserWithUserName(username);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    const userToRole = await this.userToRoleRepository.deleteUserToRole({
-      id: user.id,
-      role: role as Role,
-    });
+    const userToRole =
+      await this.userToRoleRepository.deleteUserToRoleFromUsername(
+        username,
+        role,
+      );
     if (!userToRole) {
       throw new NotFoundException();
     }

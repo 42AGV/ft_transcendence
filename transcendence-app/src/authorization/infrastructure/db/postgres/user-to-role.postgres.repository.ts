@@ -1,8 +1,5 @@
 import { UserToRole, userToRoleKeys } from '../user-to-role.entity';
-import {
-  UserWithRoles,
-  UserWithRolesData,
-} from '../../../../user/infrastructure/db/user-with-role.entity';
+import { UserWithRoles, UserWithRolesData } from '../user-with-role.entity';
 import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { IUserToRoleRepository } from '../user-to-role.repository';
@@ -10,6 +7,8 @@ import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.
 import { table } from '../../../../shared/db/models';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
 import { userKeys } from '../../../../user/infrastructure/db/user.entity';
+import { Role } from '../../../../shared/enums/role.enum';
+import { UserId, UserIdData } from '../userid.entity';
 
 @Injectable()
 export class UserToRolePostgresRepository
@@ -24,9 +23,32 @@ export class UserToRolePostgresRepository
     return this.add(userToRole);
   }
 
+  private async getUserIdFromUsername(
+    username: string,
+  ): Promise<UserId | null> {
+    const userData = await makeQuery<UserIdData>(this.pool, {
+      text: `SELECT u.${userKeys.ID}
+             FROM ${table.USERS} u
+             WHERE u.${userKeys.USERNAME} = $1;`,
+      values: [username],
+    });
+    return userData && userData.length > 0 ? new UserId(userData[0]) : null;
+  }
+
+  async addUserToRoleFromUsername(
+    username: string,
+    role: Role,
+  ): Promise<UserToRole | null> {
+    const id = await this.getUserIdFromUsername(username);
+    if (!id) {
+      return null;
+    }
+    return this.addUserToRole({ id: id.id, role: role });
+  }
+
   async getUserWithRoles(id: string): Promise<UserWithRoles | null> {
     const userData = await makeQuery<UserWithRolesData>(this.pool, {
-      text: `SELECT u.*,
+      text: `SELECT u.${userKeys.ID}, u.${userKeys.USERNAME},
                     coalesce(array_agg(ur.${userToRoleKeys.ROLE}) FILTER (WHERE ur.${userToRoleKeys.ROLE} IS NOT NULL),
                              '{}') as roles
              FROM ${table.USERS} u
@@ -40,6 +62,16 @@ export class UserToRolePostgresRepository
       : null;
   }
 
+  async getUserWithRolesFromUsername(
+    username: string,
+  ): Promise<UserWithRoles | null> {
+    const id = await this.getUserIdFromUsername(username);
+    if (!id) {
+      return null;
+    }
+    return this.getUserWithRoles(id.id);
+  }
+
   async deleteUserToRole({ id, role }: UserToRole): Promise<UserToRole | null> {
     const roleData = await makeQuery<UserToRole>(this.pool, {
       text: `DELETE
@@ -50,5 +82,16 @@ export class UserToRolePostgresRepository
       values: [id, role],
     });
     return roleData && roleData.length > 0 ? new UserToRole(roleData[0]) : null;
+  }
+
+  async deleteUserToRoleFromUsername(
+    username: string,
+    role: Role,
+  ): Promise<UserToRole | null> {
+    const id = await this.getUserIdFromUsername(username);
+    if (!id) {
+      return null;
+    }
+    return this.deleteUserToRole({ id: id.id, role });
   }
 }
