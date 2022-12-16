@@ -1,12 +1,15 @@
 import { UserToRole, userToRoleKeys } from '../user-to-role.entity';
-import { UserWithRoles, UserWithRolesData } from '../user-with-role.entity';
+import {
+  UserWithRoles,
+  UserWithRolesData,
+} from '../../../../user/infrastructure/db/user-with-role.entity';
 import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { IUserToRoleRepository } from '../user-to-role.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import { table } from '../../../../shared/db/models';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
-import { userKeys } from '../user.entity';
+import { userKeys } from '../../../../user/infrastructure/db/user.entity';
 
 @Injectable()
 export class UserToRolePostgresRepository

@@ -1,5 +1,5 @@
 import { UserToRole } from './user-to-role.entity';
-import { UserWithRoles } from './user-with-role.entity';
+import { UserWithRoles } from '../../../user/infrastructure/db/user-with-role.entity';
 
 export abstract class IUserToRoleRepository {
   abstract addUserToRole(userToRole: UserToRole): Promise<UserToRole | null>;

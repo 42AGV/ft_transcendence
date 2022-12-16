@@ -7,8 +7,8 @@ import { ChatGateway } from './chat.gateway';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import { UserService } from '../user/user.service';
 import { AvatarModule } from '../shared/avatar/avatar.module';
-import { AuthorizationModule } from '../shared/authorization/authorization.module';
-import { CaslAbilityFactory } from '../shared/authorization/casl-ability.factory';
+import { AuthorizationModule } from '../authorization/authorization.module';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 
 @Global()
 @Module({

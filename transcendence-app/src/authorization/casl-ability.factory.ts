@@ -4,9 +4,9 @@ import {
   createMongoAbility,
 } from '@casl/ability';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Action } from '../enums/action.enum';
-import { GlobalAuthUserCtx } from './authorizationContext/authuser.global';
-import { AuthUserCtxForChatroom } from './authorizationContext/authuser.chatroom';
+import { Action } from '../shared/enums/action.enum';
+import { GlobalAuthUserCtx } from './infrastructure/authuser.global';
+import { AuthUserCtxForChatroom } from './infrastructure/authuser.chatroom';
 import { AuthorizationService } from './authorization.service';
 
 @Injectable()

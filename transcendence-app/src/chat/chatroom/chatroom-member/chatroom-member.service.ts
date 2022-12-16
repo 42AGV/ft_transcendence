@@ -14,7 +14,7 @@ import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-wi
 import { BooleanString } from '../../../shared/enums/boolean-string.enum';
 import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 import { Action } from '../../../shared/enums/action.enum';
-import { CaslAbilityFactory } from '../../../shared/authorization/casl-ability.factory';
+import { CaslAbilityFactory } from '../../../authorization/casl-ability.factory';
 import { User } from '../../../user/infrastructure/db/user.entity';
 
 @Injectable()
