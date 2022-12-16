@@ -51,6 +51,7 @@ import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { NotificationContextProvider } from './shared/context/NotificationContext';
 import { UserStatusProvider } from './shared/context/UserStatusContext';
 import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
+import { UserFriendProvider } from './shared/context/UserFriendContext';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -61,7 +62,9 @@ function AppContext({ children }: { children: JSX.Element }) {
     <AuthProvider>
       <NotificationContextProvider>
         <UserStatusProvider>
-          <UserBlocklistProvider>{children}</UserBlocklistProvider>
+          <UserFriendProvider>
+            <UserBlocklistProvider>{children}</UserBlocklistProvider>
+          </UserFriendProvider>
         </UserStatusProvider>
       </NotificationContextProvider>
     </AuthProvider>

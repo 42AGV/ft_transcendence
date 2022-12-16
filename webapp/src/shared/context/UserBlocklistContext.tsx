@@ -47,13 +47,13 @@ export const UserBlocklistProvider = ({
     };
 
     if (authUser) {
-      socket.on('block', blockListener);
-      socket.on('unblock', unblockListener);
+      socket.on('follow', blockListener);
+      socket.on('unfollow', unblockListener);
     }
 
     return () => {
-      socket.off('block');
-      socket.off('unblock');
+      socket.off('follow');
+      socket.off('unfollow');
     };
   });
 

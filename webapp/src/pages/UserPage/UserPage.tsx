@@ -8,6 +8,7 @@ import {
   ToggleSwitch,
   ButtonVariant,
   AvatarPageTemplate,
+  Loading,
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
@@ -17,6 +18,8 @@ import { usersApi } from '../../shared/services/ApiService';
 import { useBlock } from '../../shared/hooks/UseBlock';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { useFriend } from '../../shared/hooks/UseFriend';
+import { UserStatus } from '../../shared/context/UserStatusContext';
 
 export default function UserPage() {
   const { username } = useParams();
@@ -29,12 +32,14 @@ export default function UserPage() {
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
   const { userStatus } = useUserStatus();
   const [isToggled, setIsToggled] = useState(false);
+  const { userFriends } = useFriend();
+  const [status, setStatus] = useState<UserStatus>();
 
   useEffect(() => {
     if (user && user.isFriend) {
       setIsToggled(true);
     }
-  }, [user]);
+  }, [user, user?.isFriend]);
   const onToggle = async () => {
     setIsToggled(!isToggled);
     if (user) {
@@ -49,11 +54,23 @@ export default function UserPage() {
       }
     }
   };
+  useEffect(() => {
+    if (user) {
+      setStatus(userFriends(user.id) ? userStatus(user?.id) : undefined);
+    }
+  }, [isToggled]);
+  if (!user) {
+    return (
+      <div className="user-page-loading">
+        <Loading />
+      </div>
+    );
+  }
   return (
     <div className="user-page">
       <AvatarPageTemplate
         isLoading={isLoading}
-        headerStatusVariant={userStatus(user?.id)}
+        headerStatusVariant={status}
         isNotFound={user === null}
         title={user?.username ?? ''}
         avatarProps={{

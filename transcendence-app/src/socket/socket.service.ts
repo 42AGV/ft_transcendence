@@ -16,4 +16,16 @@ export class SocketService {
       this.socket.to(blockerId).emit('unblock', blockedId);
     }
   }
+
+  addFriend(followerId: string, followedId: string) {
+    if (this.socket) {
+      this.socket.to(followerId).emit('follow', followedId);
+    }
+  }
+
+  deleteFriend(followerId: string, followedId: string) {
+    if (this.socket) {
+      this.socket.to(followerId).emit('unfollow', followedId);
+    }
+  }
 }
