@@ -5,7 +5,7 @@ export enum UserToRoleKeys {
   ROLE = '"role"',
 }
 
-interface UserToRoleData {
+export interface UserToRoleData {
   id: string;
   role: Role;
 }

@@ -1,4 +1,8 @@
-import { UserToRole, UserToRoleKeys } from '../user-to-role.entity';
+import {
+  UserToRole,
+  UserToRoleData,
+  UserToRoleKeys,
+} from '../user-to-role.entity';
 import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { IUserToRoleRepository } from '../user-to-role.repository';
@@ -87,7 +91,7 @@ export class UserToRolePostgresRepository
   }
 
   async deleteUserToRole({ id, role }: UserToRole): Promise<UserToRole | null> {
-    const roleData = await makeQuery<UserToRole>(this.pool, {
+    const roleData = await makeQuery<UserToRoleData>(this.pool, {
       text: `DELETE
              FROM ${this.table} as ur
              WHERE ur.${UserToRoleKeys.ID} = $1
