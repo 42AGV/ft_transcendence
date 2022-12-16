@@ -65,13 +65,12 @@ export class UserToRolePostgresRepository
                         GROUP BY u.${userKeys.ID})
              SELECT ${userKeys.ID}                                              as userId,
                     ${userKeys.USERNAME},
-                    to_jsonb((SELECT roles from A)) @> '["owner"]'::jsonb       as owner,
-                    to_jsonb(((SELECT roles from A))) @> '["moderator"]'::jsonb as moderator,
-                    to_jsonb(((SELECT roles from A))) @> '["banned"]'::jsonb    as banned
+                    to_jsonb((SELECT roles from A)) @> '["owner"]'::jsonb       as g_owner,
+                    to_jsonb(((SELECT roles from A))) @> '["moderator"]'::jsonb as g_admin,
+                    to_jsonb(((SELECT roles from A))) @> '["banned"]'::jsonb    as g_banned
              FROM A;`,
       values: [userId],
     });
-    console.log(members);
     return members && members.length
       ? new UserWithAuthorization(members[0])
       : null;
@@ -114,6 +113,8 @@ export class UserToRolePostgresRepository
     userId: string,
     chatroomId: string,
   ): Promise<ChatroomMemberWithAuthorization | null> {
+    void userId;
+    void chatroomId;
     return null;
   }
 }

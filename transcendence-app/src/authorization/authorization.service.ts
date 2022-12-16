@@ -95,6 +95,7 @@ export class AuthorizationService {
     if (!g_user) {
       throw new UnprocessableEntityException();
     }
+    const { username, g_owner, g_admin, g_banned } = g_user;
     const cr = await this.chatService.getChatroomById(chatroomId);
     if (!cr) {
       throw new NotFoundException();
@@ -103,12 +104,12 @@ export class AuthorizationService {
     const isMember = !!crm && crm.joinedAt !== null;
     return new ChatroomMemberWithAuthorization({
       userId,
-      username: g_user.username,
-      g_owner: g_user.g_owner,
-      g_admin: g_user.g_admin,
-      g_banned: g_user.g_banned,
-      crm_owner: userId === cr.ownerId,
+      username,
+      g_owner,
+      g_admin,
+      g_banned,
       crm_member: isMember,
+      crm_owner: isMember ? userId === cr.ownerId : undefined,
       crm_admin: isMember ? crm.admin : undefined,
       crm_banned: isMember ? crm.banned : undefined,
       cr_muted: isMember ? crm.muted : undefined,
