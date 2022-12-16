@@ -5,16 +5,16 @@ import {
 } from '@casl/ability';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Action } from '../shared/enums/action.enum';
-import { GlobalAuthUserCtx } from './infrastructure/authuser.global';
-import { AuthUserCtxForChatroom } from './infrastructure/authuser.chatroom';
+import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
 import { AuthorizationService } from './authorization.service';
+import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
 
 @Injectable()
 export class CaslAbilityFactory {
   constructor(private authorizationService: AuthorizationService) {}
   private async setGlobalAbilities(
     { can, cannot }: AbilityBuilder<AnyMongoAbility>,
-    globalUserAuthCtx: GlobalAuthUserCtx,
+    globalUserAuthCtx: UserWithAuthorization,
   ) {
     if (globalUserAuthCtx.g_isBanned) {
       cannot(Action.Manage, 'all');
@@ -66,8 +66,8 @@ export class CaslAbilityFactory {
   }
 
   async defineAbilitiesForCr(authUserId: string, chatroomId: string) {
-    const chatroomMember: AuthUserCtxForChatroom =
-      await this.authorizationService.GetUserAuthContextForChatroom(
+    const chatroomMember: ChatroomMemberWithAuthorization =
+      await this.authorizationService.GetUserAuthContextForChatroomMember(
         authUserId,
         chatroomId,
       );

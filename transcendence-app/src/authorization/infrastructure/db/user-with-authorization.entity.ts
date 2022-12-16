@@ -1,11 +1,11 @@
-export interface GlobalAuthUserCtxData {
+export interface UserWithAuthorizationData {
   readonly userId: string;
   readonly g_isOwner: boolean;
   readonly g_isModerator: boolean;
   readonly g_isBanned: boolean;
 }
 
-export class GlobalAuthUserCtx {
+export class UserWithAuthorization {
   public readonly userId: string;
   public readonly g_isOwner: boolean;
   public readonly g_isModerator: boolean;
@@ -15,7 +15,7 @@ export class GlobalAuthUserCtx {
     g_isOwner,
     g_isModerator,
     g_isBanned,
-  }: GlobalAuthUserCtxData) {
+  }: UserWithAuthorizationData) {
     this.userId = userId;
     this.g_isModerator = g_isModerator;
     this.g_isOwner = g_isOwner;

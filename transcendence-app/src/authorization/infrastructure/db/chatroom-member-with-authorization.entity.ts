@@ -1,17 +1,22 @@
-import { GlobalAuthUserCtx, GlobalAuthUserCtxData } from './authuser.global';
+import {
+  UserWithAuthorization,
+  UserWithAuthorizationData,
+} from './user-with-authorization.entity';
 
-export interface AuthUserCtxForChatroomMemberData
-  extends GlobalAuthUserCtxData {
+export interface ChatroomMemberWithAuthorizationData
+  extends UserWithAuthorizationData {
   readonly crm_isMember: boolean;
   readonly crm_isOwner?: boolean;
   readonly crm_isAdmin?: boolean;
   readonly crm_isBanned?: boolean;
+  readonly cr_isMuted?: boolean;
 }
-export class AuthUserCtxForChatroomMember extends GlobalAuthUserCtx {
+export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
   public readonly crm_isMember: boolean;
   public readonly crm_isOwner?: boolean;
   public readonly crm_isAdmin?: boolean;
   public readonly crm_isBanned?: boolean;
+  public readonly cr_isMuted?: boolean;
   constructor({
     userId,
     g_isOwner,
@@ -21,11 +26,13 @@ export class AuthUserCtxForChatroomMember extends GlobalAuthUserCtx {
     crm_isOwner,
     crm_isAdmin,
     crm_isBanned,
-  }: AuthUserCtxForChatroomMemberData) {
+    cr_isMuted,
+  }: ChatroomMemberWithAuthorizationData) {
     super({ userId, g_isOwner, g_isModerator, g_isBanned });
     this.crm_isMember = crm_isMember;
     this.crm_isOwner = crm_isOwner;
     this.crm_isAdmin = crm_isAdmin;
     this.crm_isBanned = crm_isBanned;
+    this.cr_isMuted = cr_isMuted;
   }
 }
