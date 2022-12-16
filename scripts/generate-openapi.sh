@@ -47,7 +47,7 @@ create_swagger_spec() {
   fi
   cd "${PROJECT_ROOT}" && touch "${SWAGGER_SPEC_FILE}"
   { { cd "${SCRIPT_DIR}" || exit ; } && \
-      { ${DOCKER_COMPOSE} run --rm swagger || { rm "${SWAGGER_SPEC_FILE}" && exit ; } ; } \
+      { ${DOCKER_COMPOSE} up --build || { rm "${SWAGGER_SPEC_FILE}" && exit ; } ; } \
   && ${DOCKER_COMPOSE} down -v ; }
 }
 

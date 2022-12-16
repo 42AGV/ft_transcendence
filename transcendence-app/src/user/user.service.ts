@@ -14,7 +14,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { AuthProviderType } from '../auth/auth-provider/auth-provider.service';
-import { AvatarResponseDto } from '../shared/avatar/dto/avatar.response.dto';
 import { IBlockRepository } from './infrastructure/db/block.repository';
 import { UserBlockRelation, UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
@@ -22,6 +21,10 @@ import { AvatarService } from '../shared/avatar/avatar.service';
 import { SocketService } from '../socket/socket.service';
 import { Password } from '../shared/password';
 import { IFriendRepository } from './infrastructure/db/friend.repository';
+import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
+import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
+import { UserToRole } from './infrastructure/db/user-to-role.entity';
+import { Role } from '../shared/enums/role.enum';
 
 @Injectable()
 export class UserService {
@@ -30,6 +33,7 @@ export class UserService {
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
     private friendRepository: IFriendRepository,
+    private userToRoleRepository: IUserToRoleRepository,
     private avatarService: AvatarService,
     private socketService: SocketService,
   ) {}
@@ -61,7 +65,7 @@ export class UserService {
     if (user && userMe) {
       const blockRelation = await this.getBlockRelation(userMe.id, user.id);
       const friend = await this.getFriend(userMe.id, user.id);
-      return new UserResponseDto(user, blockRelation, friend ? true : false);
+      return new UserResponseDto(user, blockRelation, !!friend);
     }
     return null;
   }
@@ -105,8 +109,7 @@ export class UserService {
     if (
       !user.password ||
       !updateUserDto.oldPassword ||
-      (await Password.compare(user.password, updateUserDto.oldPassword)) ===
-        false
+      !(await Password.compare(user.password, updateUserDto.oldPassword))
     ) {
       throw new ForbiddenException('Incorrect password');
     }
@@ -114,11 +117,10 @@ export class UserService {
       throw new UnprocessableEntityException('Password required');
     }
     const hashedPassword = await Password.toHash(updateUserPassword.password);
-    const ret = this.userRepository.updateById(user.id, {
+    return this.userRepository.updateById(user.id, {
       ...updateUserPassword,
       password: hashedPassword,
     });
-    return ret;
   }
 
   async getBlockRelation(
@@ -141,7 +143,7 @@ export class UserService {
   private async addAvatarAndUpdateUser(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<AvatarResponseDto | null> {
+  ): Promise<User | null> {
     const avatarUUID = uuidv4();
     const updatedUser = await this.userRepository.addAvatarAndUpdateUser(
       { id: avatarUUID, createdAt: new Date(Date.now()), ...newAvatarFileDto },
@@ -151,26 +153,26 @@ export class UserService {
       this.localFileService.deleteFileData(newAvatarFileDto.path);
       return null;
     }
-    return {
-      avatarId: avatarUUID,
-      file: this.avatarService.streamAvatarData(newAvatarFileDto),
-    };
+    return updatedUser;
   }
 
   async addAvatar(
     user: User,
     newAvatarFileDto: LocalFileDto,
-  ): Promise<AvatarResponseDto | null> {
+  ): Promise<User | null> {
     await this.avatarService.validateAvatarType(newAvatarFileDto.path);
     const previousAvatarId = user.avatarId;
-    const avatar = await this.addAvatarAndUpdateUser(user, newAvatarFileDto);
-    if (!avatar) {
+    const updatedUser = await this.addAvatarAndUpdateUser(
+      user,
+      newAvatarFileDto,
+    );
+    if (!updatedUser) {
       return null;
     }
     if (previousAvatarId) {
       await this.avatarService.deleteAvatar(previousAvatarId);
     }
-    return avatar;
+    return updatedUser;
   }
 
   retrieveUserWithAuthProvider(
@@ -223,11 +225,7 @@ export class UserService {
   }
 
   async getFriend(followerId: string, followedId: string) {
-    const friend = await this.friendRepository.getFriend(
-      followerId,
-      followedId,
-    );
-    return friend;
+    return this.friendRepository.getFriend(followerId, followedId);
   }
 
   async getFriends(
@@ -249,5 +247,81 @@ export class UserService {
       throw new UnprocessableEntityException();
     }
     return friends;
+  }
+
+  async getUserWithRolesFromUsername(
+    username: string,
+  ): Promise<UserWithRoles | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(
+      user.id,
+    );
+    if (!userWithRoles) {
+      throw new NotFoundException();
+    }
+    return userWithRoles;
+  }
+
+  async getUserWithRolesFromId(id: string): Promise<UserWithRoles | null> {
+    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
+    if (!userWithRoles) {
+      throw new NotFoundException();
+    }
+    return userWithRoles;
+  }
+
+  async addUserToRole(user: UserToRole): Promise<UserToRole | null> {
+    const userToRole = await this.userToRoleRepository.addUserToRole(user);
+    if (!userToRole) {
+      throw new NotFoundException();
+    }
+    return userToRole;
+  }
+
+  async addUserToRoleFromUsername(
+    username: string,
+    role: Role,
+  ): Promise<UserToRole | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    const userToRole = await this.userToRoleRepository.addUserToRole({
+      id: user.id,
+      role: role,
+    });
+    if (!userToRole) {
+      throw new NotFoundException();
+    }
+    return userToRole;
+  }
+
+  async deleteUserToRole(user: UserToRole): Promise<UserToRole | null> {
+    const userToRole = await this.userToRoleRepository.deleteUserToRole(user);
+    if (!userToRole) {
+      throw new NotFoundException();
+    }
+    return userToRole;
+  }
+
+  async deleteUserToRoleFromUsername(
+    username: string,
+    role: string,
+  ): Promise<UserToRole | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    const userToRole = await this.userToRoleRepository.deleteUserToRole({
+      id: user.id,
+      role: role as Role,
+    });
+    if (!userToRole) {
+      throw new NotFoundException();
+    }
+    return userToRole;
   }
 }

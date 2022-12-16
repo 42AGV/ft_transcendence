@@ -18,6 +18,8 @@ import { IChatMessageRepository } from '../../chat/chat/infrastructure/db/chat-m
 import { ChatMessagePostgresRepository } from '../../chat/chat/infrastructure/db/postgres/chat-message.postgres.repository';
 import { IFriendRepository } from '../../user/infrastructure/db/friend.repository';
 import { FriendPostgresRepository } from '../../user/infrastructure/db/postgres/friend.postgres.repository';
+import { IUserToRoleRepository } from '../../user/infrastructure/db/user-to-role.repository';
+import { UserToRolePostgresRepository } from '../../user/infrastructure/db/postgres/user-to-role.postgres.repository';
 
 @Module({
   providers: [
@@ -49,6 +51,10 @@ import { FriendPostgresRepository } from '../../user/infrastructure/db/postgres/
       provide: IFriendRepository,
       useClass: FriendPostgresRepository,
     },
+    {
+      provide: IUserToRoleRepository,
+      useClass: UserToRolePostgresRepository,
+    },
   ],
   exports: [
     IUserRepository,
@@ -60,6 +66,7 @@ import { FriendPostgresRepository } from '../../user/infrastructure/db/postgres/
     IChatroomMessageRepository,
     IChatMessageRepository,
     IFriendRepository,
+    IUserToRoleRepository,
   ],
 })
 export class DbModule {}
