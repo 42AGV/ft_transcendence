@@ -8,9 +8,11 @@ import { SearchContextProvider } from '../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigate } from 'react-router-dom';
+import { useFriend } from '../../shared/hooks/UseFriend';
 
 export default function UsersPage() {
   const { userStatus } = useUserStatus();
+  const { userFriends } = useFriend();
   const navigate = useNavigate();
   const getUsers = useCallback(
     (requestParameters: UserControllerGetUsersRequest) =>
@@ -35,7 +37,7 @@ export default function UsersPage() {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: {
         url: `${AVATAR_EP_URL}/${user.avatarId}`,
-        status: userStatus(user.id),
+        status: userFriends(user.id) ? userStatus(user?.id) : undefined,
         XCoordinate: user.avatarX,
         YCoordinate: user.avatarY,
       },

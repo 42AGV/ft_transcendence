@@ -229,7 +229,7 @@ export class UserController {
   followUser(
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) followedUserId: string,
-  ): Promise<Friend> {
+  ): Promise<void> {
     return this.userService.addFriend(user.id, followedUserId);
   }
 
@@ -243,7 +243,7 @@ export class UserController {
   unfollowUser(
     @GetUser() user: User,
     @Param('userId', ParseUUIDPipe) followedUserId: string,
-  ): Promise<Friend> {
+  ): Promise<void> {
     return this.userService.deleteFriend(user.id, followedUserId);
   }
 }

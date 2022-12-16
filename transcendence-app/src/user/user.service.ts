@@ -208,7 +208,7 @@ export class UserService {
     if (!friend) {
       throw new UnprocessableEntityException();
     }
-    return friend;
+    this.socketService.addFriend(followerId, followedId);
   }
 
   async deleteFriend(followerId: string, followedId: string) {
@@ -219,7 +219,7 @@ export class UserService {
     if (!friend) {
       throw new NotFoundException();
     }
-    return friend;
+    this.socketService.deleteFriend(followerId, followedId);
   }
 
   async getFriend(followerId: string, followedId: string) {

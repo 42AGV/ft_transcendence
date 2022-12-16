@@ -8,7 +8,6 @@ import {
   ToggleSwitch,
   ButtonVariant,
   AvatarPageTemplate,
-  Loading,
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
@@ -39,7 +38,10 @@ export default function UserPage() {
     if (user && user.isFriend) {
       setIsToggled(true);
     }
-  }, [user, user?.isFriend]);
+    if (user) {
+      setStatus(userFriends(user.id) ? userStatus(user?.id) : undefined);
+    }
+  }, [user, userFriends, userStatus]);
   const onToggle = async () => {
     setIsToggled(!isToggled);
     if (user) {
@@ -54,18 +56,7 @@ export default function UserPage() {
       }
     }
   };
-  useEffect(() => {
-    if (user) {
-      setStatus(userFriends(user.id) ? userStatus(user?.id) : undefined);
-    }
-  }, [isToggled]);
-  if (!user) {
-    return (
-      <div className="user-page-loading">
-        <Loading />
-      </div>
-    );
-  }
+
   return (
     <div className="user-page">
       <AvatarPageTemplate
