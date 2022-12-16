@@ -9,7 +9,6 @@ import { ChatroomMemberService } from '../chat/chatroom/chatroom-member/chatroom
 import { Role } from '../shared/enums/role.enum';
 import { ChatService } from '../chat/chat.service';
 import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
-import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
 import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
@@ -38,9 +37,7 @@ export class AuthorizationService {
   async getUserWithRolesFromId(
     id: string,
   ): Promise<UserWithAuthorization | null> {
-    const userWithRoles = await this.userToRoleRepository.getUserWithRolesNew(
-      id,
-    );
+    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
     if (!userWithRoles) {
       throw new NotFoundException();
     }

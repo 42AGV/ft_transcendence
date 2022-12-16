@@ -1,5 +1,4 @@
 import { UserToRole } from './user-to-role.entity';
-import { UserWithRoles } from './user-with-role.entity';
 import { Role } from '../../../shared/enums/role.enum';
 import { ChatroomMemberWithAuthorization } from './chatroom-member-with-authorization.entity';
 import { UserWithAuthorization } from './user-with-authorization.entity';
@@ -10,10 +9,7 @@ export abstract class IUserToRoleRepository {
     username: string,
     role: Role,
   ): Promise<UserToRole | null>;
-  abstract getUserWithRoles(id: string): Promise<UserWithRoles | null>;
-  abstract getUserWithRolesNew(
-    id: string,
-  ): Promise<UserWithAuthorization | null>;
+  abstract getUserWithRoles(id: string): Promise<UserWithAuthorization | null>;
   abstract getUserWithRolesFromUsername(
     username: string,
   ): Promise<UserWithAuthorization | null>;

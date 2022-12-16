@@ -1,5 +1,4 @@
 import { UserToRole, UserToRoleKeys } from '../user-to-role.entity';
-import { UserWithRoles, UserWithRolesData } from '../user-with-role.entity';
 import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
 import { IUserToRoleRepository } from '../user-to-role.repository';
@@ -14,12 +13,6 @@ import {
   UserWithAuthorization,
   UserWithAuthorizationData,
 } from '../user-with-authorization.entity';
-import {
-  ChatroomMemberKeys,
-  ChatroomMemberWithUser,
-  ChatroomMemberWithUserData,
-} from '../../../../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
-import { ChatroomKeys } from '../../../../chat/chatroom/infrastructure/db/chatroom.entity';
 
 @Injectable()
 export class UserToRolePostgresRepository
@@ -57,24 +50,7 @@ export class UserToRolePostgresRepository
     return this.addUserToRole({ id: id.id, role: role });
   }
 
-  async getUserWithRoles(id: string): Promise<UserWithRoles | null> {
-    const userData = await makeQuery<UserWithRolesData>(this.pool, {
-      text: `SELECT u.${userKeys.ID},
-                    u.${userKeys.USERNAME},
-                    coalesce(array_agg(ur.${UserToRoleKeys.ROLE}) FILTER (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
-                             '{}') as roles
-             FROM ${table.USERS} u
-                    LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
-             WHERE u.${userKeys.ID} = $1
-             GROUP BY u.${userKeys.ID};`,
-      values: [id],
-    });
-    return userData && userData.length > 0
-      ? new UserWithRoles(userData[0])
-      : null;
-  }
-
-  async getUserWithRolesNew(
+  async getUserWithRoles(
     userId: string,
   ): Promise<UserWithAuthorization | null> {
     const members = await makeQuery<UserWithAuthorizationData>(this.pool, {
@@ -108,7 +84,7 @@ export class UserToRolePostgresRepository
     if (!id) {
       return null;
     }
-    return this.getUserWithRolesNew(id.id);
+    return this.getUserWithRoles(id.id);
   }
 
   async deleteUserToRole({ id, role }: UserToRole): Promise<UserToRole | null> {
