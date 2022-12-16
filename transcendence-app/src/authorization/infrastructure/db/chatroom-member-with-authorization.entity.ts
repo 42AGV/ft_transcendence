@@ -32,9 +32,9 @@ export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
     super({
       userId,
       username,
-      g_owner: g_owner,
-      g_admin: g_admin,
-      g_banned: g_banned,
+      g_owner,
+      g_admin,
+      g_banned,
     });
     this.crm_member = crm_member;
     this.crm_owner = crm_owner;
