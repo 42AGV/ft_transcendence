@@ -101,9 +101,10 @@ export class AuthorizationService {
     const isMember = !!crm && crm.joinedAt !== null;
     return new ChatroomMemberWithAuthorization({
       userId,
-      g_isOwner: g_user.roles.includes(Role.owner),
-      g_isModerator: g_user.roles.includes(Role.moderator),
-      g_isBanned: g_user.roles.includes(Role.banned),
+      username: g_user.username,
+      g_isOwner: g_user.roles.has(Role.owner),
+      g_isModerator: g_user.roles.has(Role.moderator),
+      g_isBanned: g_user.roles.has(Role.banned),
       crm_isOwner: userId === cr.ownerId,
       crm_isMember: isMember,
       crm_isAdmin: isMember ? crm.admin : undefined,

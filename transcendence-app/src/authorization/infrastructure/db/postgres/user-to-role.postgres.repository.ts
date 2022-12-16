@@ -9,6 +9,7 @@ import { makeQuery } from '../../../../shared/db/postgres/utils';
 import { userKeys } from '../../../../user/infrastructure/db/user.entity';
 import { Role } from '../../../../shared/enums/role.enum';
 import { UserId, UserIdData } from '../userid.entity';
+import { ChatroomMemberWithAuthorization } from '../chatroom-member-with-authorization.entity';
 
 @Injectable()
 export class UserToRolePostgresRepository
@@ -93,5 +94,12 @@ export class UserToRolePostgresRepository
       return null;
     }
     return this.deleteUserToRole({ id: id.id, role });
+  }
+
+  async getUserWithRolesForChatroom(
+    userId: string,
+    chatroomId: string,
+  ): Promise<ChatroomMemberWithAuthorization | null> {
+    return null;
   }
 }

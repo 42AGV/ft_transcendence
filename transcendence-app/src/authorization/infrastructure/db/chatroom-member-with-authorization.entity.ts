@@ -19,6 +19,7 @@ export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
   public readonly cr_isMuted?: boolean;
   constructor({
     userId,
+    username,
     g_isOwner,
     g_isModerator,
     g_isBanned,
@@ -28,7 +29,7 @@ export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
     crm_isBanned,
     cr_isMuted,
   }: ChatroomMemberWithAuthorizationData) {
-    super({ userId, g_isOwner, g_isModerator, g_isBanned });
+    super({ userId, username, g_isOwner, g_isModerator, g_isBanned });
     this.crm_isMember = crm_isMember;
     this.crm_isOwner = crm_isOwner;
     this.crm_isAdmin = crm_isAdmin;
