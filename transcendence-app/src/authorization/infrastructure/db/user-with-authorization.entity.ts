@@ -1,28 +1,28 @@
 export interface UserWithAuthorizationData {
   readonly userId: string;
   readonly username: string;
-  readonly g_isOwner: boolean;
-  readonly g_isModerator: boolean;
-  readonly g_isBanned: boolean;
+  readonly g_owner: boolean;
+  readonly g_admin: boolean;
+  readonly g_banned: boolean;
 }
 
 export class UserWithAuthorization {
   public readonly userId: string;
   readonly username: string;
-  public readonly g_isOwner: boolean;
-  public readonly g_isModerator: boolean;
-  public readonly g_isBanned: boolean;
+  public readonly g_owner: boolean;
+  public readonly g_admin: boolean;
+  public readonly g_banned: boolean;
   constructor({
     userId,
     username,
-    g_isOwner,
-    g_isModerator,
-    g_isBanned,
+    g_owner,
+    g_admin,
+    g_banned,
   }: UserWithAuthorizationData) {
     this.userId = userId;
     this.username = username;
-    this.g_isModerator = g_isModerator;
-    this.g_isOwner = g_isOwner;
-    this.g_isBanned = g_isBanned;
+    this.g_admin = g_admin;
+    this.g_owner = g_owner;
+    this.g_banned = g_banned;
   }
 }

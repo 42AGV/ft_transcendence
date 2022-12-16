@@ -12,6 +12,7 @@ import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-me
 import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
+import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
 
 @Injectable()
 export class AuthorizationService {
@@ -25,7 +26,7 @@ export class AuthorizationService {
 
   async getUserWithRolesFromUsername(
     username: string,
-  ): Promise<UserWithRoles | null> {
+  ): Promise<UserWithAuthorization | null> {
     const userWithRoles =
       await this.userToRoleRepository.getUserWithRolesFromUsername(username);
     if (!userWithRoles) {
@@ -34,8 +35,12 @@ export class AuthorizationService {
     return userWithRoles;
   }
 
-  async getUserWithRolesFromId(id: string): Promise<UserWithRoles | null> {
-    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
+  async getUserWithRolesFromId(
+    id: string,
+  ): Promise<UserWithAuthorization | null> {
+    const userWithRoles = await this.userToRoleRepository.getUserWithRolesNew(
+      id,
+    );
     if (!userWithRoles) {
       throw new NotFoundException();
     }
@@ -102,14 +107,14 @@ export class AuthorizationService {
     return new ChatroomMemberWithAuthorization({
       userId,
       username: g_user.username,
-      g_isOwner: g_user.roles.has(Role.owner),
-      g_isModerator: g_user.roles.has(Role.moderator),
-      g_isBanned: g_user.roles.has(Role.banned),
-      crm_isOwner: userId === cr.ownerId,
-      crm_isMember: isMember,
-      crm_isAdmin: isMember ? crm.admin : undefined,
-      crm_isBanned: isMember ? crm.banned : undefined,
-      cr_isMuted: isMember ? crm.muted : undefined,
+      g_owner: g_user.g_owner,
+      g_admin: g_user.g_admin,
+      g_banned: g_user.g_banned,
+      crm_owner: userId === cr.ownerId,
+      crm_member: isMember,
+      crm_admin: isMember ? crm.admin : undefined,
+      crm_banned: isMember ? crm.banned : undefined,
+      cr_muted: isMember ? crm.muted : undefined,
     });
   }
 }

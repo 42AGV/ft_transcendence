@@ -1,6 +1,6 @@
 import { Role } from '../../../shared/enums/role.enum';
 
-export enum userToRoleKeys {
+export enum UserToRoleKeys {
   ID = '"id"',
   ROLE = '"role"',
 }

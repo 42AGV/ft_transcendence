@@ -5,35 +5,41 @@ import {
 
 export interface ChatroomMemberWithAuthorizationData
   extends UserWithAuthorizationData {
-  readonly crm_isMember: boolean;
-  readonly crm_isOwner?: boolean;
-  readonly crm_isAdmin?: boolean;
-  readonly crm_isBanned?: boolean;
-  readonly cr_isMuted?: boolean;
+  readonly crm_member: boolean;
+  readonly crm_owner?: boolean;
+  readonly crm_admin?: boolean;
+  readonly crm_banned?: boolean;
+  readonly cr_muted?: boolean;
 }
 export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
-  public readonly crm_isMember: boolean;
-  public readonly crm_isOwner?: boolean;
-  public readonly crm_isAdmin?: boolean;
-  public readonly crm_isBanned?: boolean;
-  public readonly cr_isMuted?: boolean;
+  public readonly crm_member: boolean;
+  public readonly crm_owner?: boolean;
+  public readonly crm_admin?: boolean;
+  public readonly crm_banned?: boolean;
+  public readonly cr_muted?: boolean;
   constructor({
     userId,
     username,
-    g_isOwner,
-    g_isModerator,
-    g_isBanned,
-    crm_isMember,
-    crm_isOwner,
-    crm_isAdmin,
-    crm_isBanned,
-    cr_isMuted,
+    g_owner,
+    g_admin,
+    g_banned,
+    crm_member,
+    crm_owner,
+    crm_admin,
+    crm_banned,
+    cr_muted,
   }: ChatroomMemberWithAuthorizationData) {
-    super({ userId, username, g_isOwner, g_isModerator, g_isBanned });
-    this.crm_isMember = crm_isMember;
-    this.crm_isOwner = crm_isOwner;
-    this.crm_isAdmin = crm_isAdmin;
-    this.crm_isBanned = crm_isBanned;
-    this.cr_isMuted = cr_isMuted;
+    super({
+      userId,
+      username,
+      g_owner: g_owner,
+      g_admin: g_admin,
+      g_banned: g_banned,
+    });
+    this.crm_member = crm_member;
+    this.crm_owner = crm_owner;
+    this.crm_admin = crm_admin;
+    this.crm_banned = crm_banned;
+    this.cr_muted = cr_muted;
   }
 }

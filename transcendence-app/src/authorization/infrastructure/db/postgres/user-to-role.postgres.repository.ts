@@ -1,4 +1,4 @@
-import { UserToRole, userToRoleKeys } from '../user-to-role.entity';
+import { UserToRole, UserToRoleKeys } from '../user-to-role.entity';
 import { UserWithRoles, UserWithRolesData } from '../user-with-role.entity';
 import { Injectable } from '@nestjs/common';
 import { BasePostgresRepository } from '../../../../shared/db/postgres/postgres.repository';
@@ -10,6 +10,16 @@ import { userKeys } from '../../../../user/infrastructure/db/user.entity';
 import { Role } from '../../../../shared/enums/role.enum';
 import { UserId, UserIdData } from '../userid.entity';
 import { ChatroomMemberWithAuthorization } from '../chatroom-member-with-authorization.entity';
+import {
+  UserWithAuthorization,
+  UserWithAuthorizationData,
+} from '../user-with-authorization.entity';
+import {
+  ChatroomMemberKeys,
+  ChatroomMemberWithUser,
+  ChatroomMemberWithUserData,
+} from '../../../../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
+import { ChatroomKeys } from '../../../../chat/chatroom/infrastructure/db/chatroom.entity';
 
 @Injectable()
 export class UserToRolePostgresRepository
@@ -49,11 +59,12 @@ export class UserToRolePostgresRepository
 
   async getUserWithRoles(id: string): Promise<UserWithRoles | null> {
     const userData = await makeQuery<UserWithRolesData>(this.pool, {
-      text: `SELECT u.${userKeys.ID}, u.${userKeys.USERNAME},
-                    coalesce(array_agg(ur.${userToRoleKeys.ROLE}) FILTER (WHERE ur.${userToRoleKeys.ROLE} IS NOT NULL),
+      text: `SELECT u.${userKeys.ID},
+                    u.${userKeys.USERNAME},
+                    coalesce(array_agg(ur.${UserToRoleKeys.ROLE}) FILTER (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
                              '{}') as roles
              FROM ${table.USERS} u
-                      LEFT JOIN ${this.table} ur ON ur.${userToRoleKeys.ID} = u.${userKeys.ID}
+                    LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
              WHERE u.${userKeys.ID} = $1
              GROUP BY u.${userKeys.ID};`,
       values: [id],
@@ -63,22 +74,49 @@ export class UserToRolePostgresRepository
       : null;
   }
 
+  async getUserWithRolesNew(
+    userId: string,
+  ): Promise<UserWithAuthorization | null> {
+    const members = await makeQuery<UserWithAuthorizationData>(this.pool, {
+      text: `WITH A AS (SELECT u.${userKeys.ID},
+                               u.${userKeys.USERNAME},
+                               coalesce(
+                                   array_agg(ur.${UserToRoleKeys.ROLE}) FILTER (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
+                                   '{}') as roles
+                        FROM ${table.USERS} u
+                               LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
+                        WHERE u.${userKeys.ID} = $1
+                        GROUP BY u.${userKeys.ID})
+             SELECT ${userKeys.ID}                                              as userId,
+                    ${userKeys.USERNAME},
+                    to_jsonb((SELECT roles from A)) @> '["owner"]'::jsonb       as owner,
+                    to_jsonb(((SELECT roles from A))) @> '["moderator"]'::jsonb as moderator,
+                    to_jsonb(((SELECT roles from A))) @> '["banned"]'::jsonb    as banned
+             FROM A;`,
+      values: [userId],
+    });
+    console.log(members);
+    return members && members.length
+      ? new UserWithAuthorization(members[0])
+      : null;
+  }
+
   async getUserWithRolesFromUsername(
     username: string,
-  ): Promise<UserWithRoles | null> {
+  ): Promise<UserWithAuthorization | null> {
     const id = await this.getUserIdFromUsername(username);
     if (!id) {
       return null;
     }
-    return this.getUserWithRoles(id.id);
+    return this.getUserWithRolesNew(id.id);
   }
 
   async deleteUserToRole({ id, role }: UserToRole): Promise<UserToRole | null> {
     const roleData = await makeQuery<UserToRole>(this.pool, {
       text: `DELETE
              FROM ${this.table} as ur
-             WHERE ur.${userToRoleKeys.ID} = $1
-               AND ur.${userToRoleKeys.ROLE} = $2
+             WHERE ur.${UserToRoleKeys.ID} = $1
+               AND ur.${UserToRoleKeys.ROLE} = $2
              RETURNING *;`,
       values: [id, role],
     });
