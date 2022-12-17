@@ -81,7 +81,7 @@ export class AuthorizationService {
     return userToRole;
   }
 
-  async GetUserAuthContextForChatroomMember(
+  async GetUserAuthContextForChatroom(
     userId: string,
     chatroomId: string,
   ): Promise<ChatroomMemberWithAuthorization> {

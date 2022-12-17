@@ -3,7 +3,7 @@ import {
   AnyMongoAbility,
   createMongoAbility,
 } from '@casl/ability';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Action } from '../shared/enums/action.enum';
 import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
 import { AuthorizationService } from './authorization.service';
@@ -27,13 +27,10 @@ export class CaslAbilityFactory {
   }
   async defineAbilitiesForCrm(authUserId: string, chatroomId: string) {
     const chatroomMember =
-      await this.authorizationService.GetUserAuthContextForChatroomMember(
+      await this.authorizationService.GetUserAuthContextForChatroom(
         authUserId,
         chatroomId,
       );
-    if (!chatroomMember) {
-      throw new NotFoundException();
-    }
     const abilityCtx = new AbilityBuilder(createMongoAbility);
     const { can, cannot, build } = abilityCtx;
     if (!chatroomMember.crm_member || chatroomMember.crm_banned) {
@@ -67,13 +64,10 @@ export class CaslAbilityFactory {
 
   async defineAbilitiesForCr(authUserId: string, chatroomId: string) {
     const chatroomMember: ChatroomMemberWithAuthorization =
-      await this.authorizationService.GetUserAuthContextForChatroomMember(
+      await this.authorizationService.GetUserAuthContextForChatroom(
         authUserId,
         chatroomId,
       );
-    if (!chatroomMember) {
-      throw new NotFoundException();
-    }
     const abilityCtx = new AbilityBuilder(createMongoAbility);
     const { can, cannot, build } = abilityCtx;
     if (!chatroomMember.crm_member || chatroomMember.crm_banned) {
