@@ -33,6 +33,7 @@ export class ChatroomMemberService {
       joinedAt: new Date(Date.now()),
       chatId: chatId,
       userId: userId,
+      owner: false,
       admin: false,
       muted: false,
       banned: false,

@@ -12,6 +12,7 @@ export interface ChatroomMemberData {
   chatId: string;
   userId: string;
   joinedAt: Date | null;
+  owner: boolean;
   admin: boolean;
   muted: boolean;
   banned: boolean;
@@ -30,6 +31,7 @@ export class ChatroomMember {
     this.chatId = chatroomMemberData.chatId;
     this.userId = chatroomMemberData.userId;
     this.joinedAt = chatroomMemberData.joinedAt;
+    this.owner = chatroomMemberData.owner;
     this.admin = chatroomMemberData.admin;
     this.muted = chatroomMemberData.muted;
     this.banned = chatroomMemberData.banned;
