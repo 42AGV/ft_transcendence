@@ -13,7 +13,7 @@ import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-me
 export class CaslAbilityFactory {
   constructor(private authorizationService: AuthorizationService) {}
   private async setGlobalAbilities(
-    { can, cannot }: AbilityBuilder<AnyMongoAbility>,
+    { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: UserWithAuthorization,
   ) {
     if (globalUserAuthCtx.g_banned) {
@@ -24,6 +24,7 @@ export class CaslAbilityFactory {
     if (globalUserAuthCtx.g_owner) {
       can(Action.Manage, 'all');
     }
+    return build();
   }
   async defineAbilitiesForCrm(authUserId: string, chatroomId: string) {
     const chatroomMember =
@@ -32,11 +33,10 @@ export class CaslAbilityFactory {
         chatroomId,
       );
     const abilityCtx = new AbilityBuilder(createMongoAbility);
-    const { can, cannot, build } = abilityCtx;
+    const { can, cannot } = abilityCtx;
     if (!chatroomMember.crm_member || chatroomMember.crm_banned) {
       cannot(Action.Manage, 'ChatroomMember');
-      await this.setGlobalAbilities(abilityCtx, chatroomMember);
-      return build();
+      return this.setGlobalAbilities(abilityCtx, chatroomMember);
     }
     can(Action.Read, 'ChatroomMember');
     can(Action.Delete, 'ChatroomMember', {
@@ -58,8 +58,7 @@ export class CaslAbilityFactory {
         userId: chatroomMember.userId,
       });
     }
-    await this.setGlobalAbilities(abilityCtx, chatroomMember);
-    return build();
+    return this.setGlobalAbilities(abilityCtx, chatroomMember);
   }
 
   async defineAbilitiesForCr(authUserId: string, chatroomId: string) {
@@ -79,15 +78,13 @@ export class CaslAbilityFactory {
         cannot(Action.enterCr, 'Chatroom');
         cannot(Action.JoinCr, 'Chatroom');
       }
-      await this.setGlobalAbilities(abilityCtx, chatroomMember);
-      return build();
+      return this.setGlobalAbilities(abilityCtx, chatroomMember);
     }
     cannot(Action.JoinCr, 'Chatroom');
     can(Action.Read, 'Chatroom');
     if (chatroomMember.crm_owner) {
       can(Action.Manage, 'Chatroom');
     }
-    await this.setGlobalAbilities(abilityCtx, chatroomMember);
-    return build();
+    return this.setGlobalAbilities(abilityCtx, chatroomMember);
   }
 }
