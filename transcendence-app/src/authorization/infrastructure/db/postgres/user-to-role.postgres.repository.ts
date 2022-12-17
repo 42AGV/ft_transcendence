@@ -58,21 +58,22 @@ export class UserToRolePostgresRepository
     userId: string,
   ): Promise<UserWithAuthorization | null> {
     const members = await makeQuery<UserWithAuthorizationData>(this.pool, {
-      text: `WITH A AS (SELECT u.${userKeys.ID},
-                               u.${userKeys.USERNAME},
-                               coalesce(
-                                   array_agg(ur.${UserToRoleKeys.ROLE}) FILTER (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
-                                   '{}') as roles
-                        FROM ${table.USERS} u
-                               LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
-                        WHERE u.${userKeys.ID} = $1
-                        GROUP BY u.${userKeys.ID})
-             SELECT ${userKeys.ID}                                              as userId,
+      text: `WITH RolesArray AS (SELECT u.${userKeys.ID},
+                                        u.${userKeys.USERNAME},
+                                        coalesce(array_agg(ur.${UserToRoleKeys.ROLE})
+                                                 FILTER
+                                                     (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
+                                                 '{}') as roles
+                                 FROM ${table.USERS} u
+                                          LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
+                                 WHERE u.${userKeys.ID} = $1
+                                 GROUP BY u.${userKeys.ID})
+             SELECT ${userKeys.ID}                                                       as userId,
                     ${userKeys.USERNAME},
-                    to_jsonb((SELECT roles from A)) @> '["owner"]'::jsonb       as g_owner,
-                    to_jsonb(((SELECT roles from A))) @> '["moderator"]'::jsonb as g_admin,
-                    to_jsonb(((SELECT roles from A))) @> '["banned"]'::jsonb    as g_banned
-             FROM A;`,
+                    to_jsonb((SELECT roles from RolesArray)) @> '["owner"]'::jsonb       as g_owner,
+                    to_jsonb(((SELECT roles from RolesArray))) @> '["moderator"]'::jsonb as g_admin,
+                    to_jsonb(((SELECT roles from RolesArray))) @> '["banned"]'::jsonb    as g_banned
+             FROM RolesArray;`,
       values: [userId],
     });
     return members && members.length

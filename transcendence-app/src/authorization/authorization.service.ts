@@ -1,25 +1,19 @@
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { ChatroomMemberService } from '../chat/chatroom/chatroom-member/chatroom-member.service';
 import { Role } from '../shared/enums/role.enum';
-import { ChatService } from '../chat/chat.service';
 import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
 import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
+import { IChatroomMemberRepository } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
 
 @Injectable()
 export class AuthorizationService {
   constructor(
-    @Inject(forwardRef(() => ChatroomMemberService))
-    private chatroomMemberService: ChatroomMemberService,
-    @Inject(forwardRef(() => ChatService))
-    private chatService: ChatService,
+    private chatroomMemberRepository: IChatroomMemberRepository,
     private userToRoleRepository: IUserToRoleRepository,
   ) {}
 
@@ -95,19 +89,14 @@ export class AuthorizationService {
     if (!g_user) {
       throw new UnprocessableEntityException();
     }
-    const cr = await this.chatService.getChatroomById(chatroomId);
-    if (!cr) {
-      throw new NotFoundException();
-    }
-    const crm = await this.chatroomMemberService.getById(chatroomId, userId);
-    const isMember = !!crm && crm.joinedAt !== null;
+    const crm = await this.chatroomMemberRepository.getById(chatroomId, userId);
     return new ChatroomMemberWithAuthorization({
       ...g_user,
-      crm_member: isMember,
-      crm_owner: isMember ? userId === cr.ownerId : undefined,
-      crm_admin: isMember ? crm.admin : undefined,
-      crm_banned: isMember ? crm.banned : undefined,
-      cr_muted: isMember ? crm.muted : undefined,
+      crm_member: !!crm,
+      crm_owner: crm?.owner,
+      crm_admin: crm?.admin,
+      crm_banned: crm?.banned,
+      cr_muted: crm?.muted,
     });
   }
 }

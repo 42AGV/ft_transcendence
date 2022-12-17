@@ -54,8 +54,9 @@ export class ChatroomMemberPostgresRepository
     userId: string,
   ): Promise<ChatroomMember | null> {
     const members = await makeQuery<ChatroomMemberData>(this.pool, {
-      text: `SELECT *
-             FROM ${this.table}
+      text: `SELECT cm.*, c.${ChatroomKeys.OWNERID} = $2 AS owner
+             FROM ${this.table} cm
+                    LEFT JOIN ${table.CHATROOM} c on c.${ChatroomKeys.ID} = cm.${ChatroomMemberKeys.CHATID}
              WHERE ${ChatroomMemberKeys.CHATID} = $1
                AND ${ChatroomMemberKeys.USERID} = $2
                AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,
@@ -63,6 +64,15 @@ export class ChatroomMemberPostgresRepository
     });
     return members && members.length ? new ChatroomMember(members[0]) : null;
   }
+
+  /*
+  SELECT cm.*, c."ownerId" = '35f3973e-9d6a-4593-8303-57d7a2ef42e2' as owner
+FROM chatroommembers cm
+LEFT JOIN chatroom c on c."id" = cm."chatId"
+WHERE "chatId" = '8fb2faa3-b183-448e-8106-92728a641fcb'
+  AND "userId" = '35f3973e-9d6a-4593-8303-57d7a2ef42e2'
+  AND "joinedAt" IS NOT NULL;
+  * */
 
   async getByIdWithUser(
     chatroomId: string,

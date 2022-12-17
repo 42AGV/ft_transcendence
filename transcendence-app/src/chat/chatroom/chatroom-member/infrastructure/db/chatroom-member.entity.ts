@@ -21,6 +21,7 @@ export class ChatroomMember {
   chatId: string;
   userId: string;
   joinedAt: Date | null;
+  owner: boolean = false;
   admin: boolean = false;
   muted: boolean = false;
   banned: boolean = false;
