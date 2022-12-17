@@ -12,6 +12,7 @@ import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-me
 @Injectable()
 export class CaslAbilityFactory {
   constructor(private authorizationService: AuthorizationService) {}
+
   private async setGlobalAbilities(
     { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: UserWithAuthorization,
@@ -26,6 +27,7 @@ export class CaslAbilityFactory {
     }
     return build();
   }
+
   async defineAbilitiesForCrm(authUserId: string, chatroomId: string) {
     const chatroomMember =
       await this.authorizationService.GetUserAuthContextForChatroom(
