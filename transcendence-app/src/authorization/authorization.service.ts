@@ -19,7 +19,7 @@ export class AuthorizationService {
 
   async getUserWithRolesFromUsername(
     username: string,
-  ): Promise<UserWithAuthorization | null> {
+  ): Promise<UserWithAuthorization> {
     const userWithRoles =
       await this.userToRoleRepository.getUserWithRolesFromUsername(username);
     if (!userWithRoles) {
@@ -28,9 +28,9 @@ export class AuthorizationService {
     return userWithRoles;
   }
 
-  async getUserWithRolesFromId(
+  private async getUserWithRolesFromId(
     id: string,
-  ): Promise<UserWithAuthorization | null> {
+  ): Promise<UserWithAuthorization> {
     const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
     if (!userWithRoles) {
       throw new NotFoundException();
@@ -38,7 +38,7 @@ export class AuthorizationService {
     return userWithRoles;
   }
 
-  async addUserToRole(user: UserToRole): Promise<UserToRole | null> {
+  async addUserToRole(user: UserToRole): Promise<UserToRole> {
     const userToRole = await this.userToRoleRepository.addUserToRole(user);
     if (!userToRole) {
       throw new NotFoundException();
@@ -49,7 +49,7 @@ export class AuthorizationService {
   async addUserToRoleFromUsername(
     username: string,
     role: Role,
-  ): Promise<UserToRole | null> {
+  ): Promise<UserToRole> {
     const userToRole =
       await this.userToRoleRepository.addUserToRoleFromUsername(username, role);
     if (!userToRole) {
@@ -58,7 +58,7 @@ export class AuthorizationService {
     return userToRole;
   }
 
-  async deleteUserToRole(user: UserToRole): Promise<UserToRole | null> {
+  async deleteUserToRole(user: UserToRole): Promise<UserToRole> {
     const userToRole = await this.userToRoleRepository.deleteUserToRole(user);
     if (!userToRole) {
       throw new NotFoundException();
@@ -69,7 +69,7 @@ export class AuthorizationService {
   async deleteUserToRoleFromUsername(
     username: string,
     role: Role,
-  ): Promise<UserToRole | null> {
+  ): Promise<UserToRole> {
     const userToRole =
       await this.userToRoleRepository.deleteUserToRoleFromUsername(
         username,
@@ -86,9 +86,6 @@ export class AuthorizationService {
     chatroomId: string,
   ): Promise<ChatroomMemberWithAuthorization> {
     const g_user = await this.getUserWithRolesFromId(userId);
-    if (!g_user) {
-      throw new UnprocessableEntityException();
-    }
     const crm = await this.chatroomMemberRepository.getById(chatroomId, userId);
     return new ChatroomMemberWithAuthorization({
       ...g_user,
