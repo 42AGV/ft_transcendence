@@ -57,7 +57,7 @@ export class FriendPostgresRepository
     const usersData = await makeQuery<UserData>(this.pool, {
       text: `SELECT u.*
       FROM ${this.table} f
-      JOIN ${table.USERS} u ON (b.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
+      JOIN ${table.USERS} u ON (f.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
       WHERE f.${FriendKeys.FOLLOWER_ID} = $1`,
       values: [followerId],
     });

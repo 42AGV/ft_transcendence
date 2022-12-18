@@ -11,14 +11,13 @@ import {
 } from '../../shared/components';
 import { AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usersApi } from '../../shared/services/ApiService';
 import { useBlock } from '../../shared/hooks/UseBlock';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useFriend } from '../../shared/hooks/UseFriend';
-import { UserStatus } from '../../shared/context/UserStatusContext';
 
 export default function UserPage() {
   const { username } = useParams();
@@ -32,16 +31,13 @@ export default function UserPage() {
   const { userStatus } = useUserStatus();
   const [isToggled, setIsToggled] = useState(false);
   const { userFriends } = useFriend();
-  const [status, setStatus] = useState<UserStatus>();
 
   useEffect(() => {
-    if (user && user.isFriend) {
-      setIsToggled(true);
-    }
     if (user) {
-      setStatus(userFriends(user.id) ? userStatus(user?.id) : undefined);
+      setIsToggled(user.isFriend);
     }
-  }, [user, userFriends, userStatus]);
+  }, [user]);
+
   const onToggle = async () => {
     setIsToggled(!isToggled);
     if (user) {
@@ -49,7 +45,7 @@ export default function UserPage() {
         if (!isToggled) {
           await usersApi.userControllerFollowUser({ userId: user.id });
         } else {
-          usersApi.userControllerUnfollowUser({ userId: user.id });
+          await usersApi.userControllerUnfollowUser({ userId: user.id });
         }
       } catch (error) {
         console.error(error);
@@ -61,7 +57,9 @@ export default function UserPage() {
     <div className="user-page">
       <AvatarPageTemplate
         isLoading={isLoading}
-        headerStatusVariant={status}
+        headerStatusVariant={
+          user && userFriends(user.id) ? userStatus(user.id) : undefined
+        }
         isNotFound={user === null}
         title={user?.username ?? ''}
         avatarProps={{

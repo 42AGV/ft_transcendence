@@ -6,8 +6,6 @@ import {
   useState,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
-import { useData } from '../hooks/UseData';
-import { usersApi } from '../services/ApiService';
 import socket from '../socket';
 
 type FriendId = string;
@@ -21,16 +19,12 @@ export const UserFriendContext = createContext<UserFriendContextType>(null!);
 export const UserFriendProvider = ({ children }: { children: ReactNode }) => {
   const { authUser } = useAuth();
   const [friends, setFriends] = useState(new Set<FriendId>());
-  const getFriends = useCallback(() => usersApi.userControllerGetFriends(), []);
-  const { data: friendsUsers } = useData(getFriends);
 
   useEffect(() => {
-    if (friendsUsers) {
-      setFriends(new Set(friendsUsers.map((user) => user.id)));
-    }
-  }, [friendsUsers]);
+    const friendsListener = (friendIds: FriendId[]) => {
+      setFriends(new Set(friendIds));
+    };
 
-  useEffect(() => {
     const followListener = (friendId: FriendId) => {
       setFriends((prev) => new Set([...prev, friendId]));
     };
@@ -42,24 +36,24 @@ export const UserFriendProvider = ({ children }: { children: ReactNode }) => {
     };
 
     if (authUser) {
+      socket.on('friends', friendsListener);
       socket.on('follow', followListener);
       socket.on('unfollow', unFollowListener);
+      socket.emit('getFriends');
     }
 
     return () => {
+      socket.off('friends');
       socket.off('follow');
       socket.off('unfollow');
     };
-  });
+  }, [authUser]);
 
   const userFriends = useCallback(
     (userId: string) => {
-      if (!friendsUsers) {
-        return true;
-      }
       return friends.has(userId);
     },
-    [friendsUsers, friends],
+    [friends],
   );
 
   const contextValue = {
