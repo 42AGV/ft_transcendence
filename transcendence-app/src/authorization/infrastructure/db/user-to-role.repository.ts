@@ -9,8 +9,10 @@ export abstract class IUserToRoleRepository {
     username: string,
     role: Role,
   ): Promise<UserToRole | null>;
-  abstract getUserWithRoles(id: string): Promise<UserWithAuthorization | null>;
-  abstract getUserWithRolesFromUsername(
+  abstract getUserWithAuthorization(
+    id: string,
+  ): Promise<UserWithAuthorization | null>;
+  abstract getUserWithAuthorizationFromUsername(
     username: string,
   ): Promise<UserWithAuthorization | null>;
   abstract deleteUserToRole(userToRole: UserToRole): Promise<UserToRole | null>;
@@ -18,8 +20,4 @@ export abstract class IUserToRoleRepository {
     username: string,
     role: Role,
   ): Promise<UserToRole | null>;
-  abstract getUserWithRolesForChatroom(
-    userId: string,
-    chatroomId: string,
-  ): Promise<ChatroomMemberWithAuthorization | null>;
 }

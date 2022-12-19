@@ -4,6 +4,4 @@ export enum Action {
   Read = 'read',
   Update = 'update',
   Delete = 'delete',
-  JoinCr = 'joinCr',
-  enterCr = 'enterCr',
 }

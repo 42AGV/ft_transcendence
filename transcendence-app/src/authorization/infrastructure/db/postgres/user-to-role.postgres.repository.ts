@@ -54,26 +54,26 @@ export class UserToRolePostgresRepository
     return this.addUserToRole({ id: id.id, role: role });
   }
 
-  async getUserWithRoles(
+  async getUserWithAuthorization(
     userId: string,
   ): Promise<UserWithAuthorization | null> {
     const members = await makeQuery<UserWithAuthorizationData>(this.pool, {
-      text: `WITH RolesArray AS (SELECT u.${userKeys.ID},
-                                        u.${userKeys.USERNAME},
-                                        coalesce(array_agg(ur.${UserToRoleKeys.ROLE})
-                                                 FILTER
-                                                     (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
-                                                 '{}') as roles
-                                 FROM ${table.USERS} u
-                                          LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
-                                 WHERE u.${userKeys.ID} = $1
-                                 GROUP BY u.${userKeys.ID})
-             SELECT ${userKeys.ID}                                                       as userId,
+      text: `WITH UserWithRoles AS (SELECT u.${userKeys.ID},
+                                           u.${userKeys.USERNAME},
+                                           coalesce(array_agg(ur.${UserToRoleKeys.ROLE})
+                                                    FILTER
+                                                        (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
+                                                    '{}') as roles
+                                    FROM ${table.USERS} u
+                                             LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
+                                    WHERE u.${userKeys.ID} = $1
+                                    GROUP BY u.${userKeys.ID})
+             SELECT ${userKeys.ID}                                                          as userId,
                     ${userKeys.USERNAME},
-                    to_jsonb((SELECT roles from RolesArray)) @> '["owner"]'::jsonb       as g_owner,
-                    to_jsonb(((SELECT roles from RolesArray))) @> '["moderator"]'::jsonb as g_admin,
-                    to_jsonb(((SELECT roles from RolesArray))) @> '["banned"]'::jsonb    as g_banned
-             FROM RolesArray;`,
+                    to_jsonb((SELECT roles from UserWithRoles)) @> '["owner"]'::jsonb       as g_owner,
+                    to_jsonb(((SELECT roles from UserWithRoles))) @> '["moderator"]'::jsonb as g_admin,
+                    to_jsonb(((SELECT roles from UserWithRoles))) @> '["banned"]'::jsonb    as g_banned
+             FROM UserWithRoles;`,
       values: [userId],
     });
     return members && members.length
@@ -81,14 +81,14 @@ export class UserToRolePostgresRepository
       : null;
   }
 
-  async getUserWithRolesFromUsername(
+  async getUserWithAuthorizationFromUsername(
     username: string,
   ): Promise<UserWithAuthorization | null> {
     const id = await this.getUserIdFromUsername(username);
     if (!id) {
       return null;
     }
-    return this.getUserWithRoles(id.id);
+    return this.getUserWithAuthorization(id.id);
   }
 
   async deleteUserToRole({ id, role }: UserToRole): Promise<UserToRole | null> {
@@ -112,14 +112,5 @@ export class UserToRolePostgresRepository
       return null;
     }
     return this.deleteUserToRole({ id: id.id, role });
-  }
-
-  async getUserWithRolesForChatroom(
-    userId: string,
-    chatroomId: string,
-  ): Promise<ChatroomMemberWithAuthorization | null> {
-    void userId;
-    void chatroomId;
-    return null;
   }
 }

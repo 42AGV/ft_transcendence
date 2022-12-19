@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Role } from '../shared/enums/role.enum';
 import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
@@ -21,7 +17,9 @@ export class AuthorizationService {
     username: string,
   ): Promise<UserWithAuthorization> {
     const userWithRoles =
-      await this.userToRoleRepository.getUserWithRolesFromUsername(username);
+      await this.userToRoleRepository.getUserWithAuthorizationFromUsername(
+        username,
+      );
     if (!userWithRoles) {
       throw new NotFoundException();
     }
@@ -31,7 +29,8 @@ export class AuthorizationService {
   private async getUserWithRolesFromId(
     id: string,
   ): Promise<UserWithAuthorization> {
-    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
+    const userWithRoles =
+      await this.userToRoleRepository.getUserWithAuthorization(id);
     if (!userWithRoles) {
       throw new NotFoundException();
     }
