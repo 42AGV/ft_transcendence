@@ -17,9 +17,7 @@ export class AuthorizationService {
     username: string,
   ): Promise<UserWithAuthorization> {
     const userWithRoles =
-      await this.userToRoleRepository.getUserWithAuthorizationFromUsername(
-        username,
-      );
+      await this.userToRoleRepository.getUserWithAuthorization(username, false);
     if (!userWithRoles) {
       throw new NotFoundException();
     }
@@ -65,7 +63,11 @@ export class AuthorizationService {
   }
 
   async deleteUserToRole(user: UserToRole): Promise<UserToRole> {
-    const userToRole = await this.userToRoleRepository.deleteUserToRole(user);
+    const userToRole = await this.userToRoleRepository.deleteUserToRole(
+      user.id,
+      user.role,
+      true,
+    );
     if (!userToRole) {
       throw new NotFoundException();
     }
@@ -76,11 +78,11 @@ export class AuthorizationService {
     username: string,
     role: Role,
   ): Promise<UserToRole> {
-    const userToRole =
-      await this.userToRoleRepository.deleteUserToRoleFromUsername(
-        username,
-        role,
-      );
+    const userToRole = await this.userToRoleRepository.deleteUserToRole(
+      username,
+      role,
+      false,
+    );
     if (!userToRole) {
       throw new NotFoundException();
     }

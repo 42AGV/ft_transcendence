@@ -11,8 +11,6 @@ import { table } from '../../../../shared/db/models';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
 import { userKeys } from '../../../../user/infrastructure/db/user.entity';
 import { Role } from '../../../../shared/enums/role.enum';
-import { UserId, UserIdData } from '../userid.entity';
-import { ChatroomMemberWithAuthorization } from '../chatroom-member-with-authorization.entity';
 import {
   UserWithAuthorization,
   UserWithAuthorizationData,
@@ -28,7 +26,7 @@ export class UserToRolePostgresRepository
   }
 
   async addUserToRole(
-    username: string,
+    userKey: string,
     role: Role,
     isUserId: boolean,
   ): Promise<UserToRole | null> {
@@ -43,25 +41,13 @@ export class UserToRolePostgresRepository
              INTO ${this.table} (${UserToRoleKeys.ID}, ${UserToRoleKeys.ROLE})
              VALUES ((SELECT ${userKeys.ID} from myUser), $2)
              RETURNING *;`,
-      values: [username, role],
+      values: [userKey, role],
     });
     return userData && userData.length > 0 ? new UserToRole(userData[0]) : null;
   }
 
-  private async getUserIdFromUsername(
-    username: string,
-  ): Promise<UserId | null> {
-    const userData = await makeQuery<UserIdData>(this.pool, {
-      text: `SELECT u.${userKeys.ID}
-             FROM ${table.USERS} u
-             WHERE u.${userKeys.USERNAME} = $1;`,
-      values: [username],
-    });
-    return userData && userData.length > 0 ? new UserId(userData[0]) : null;
-  }
-
   async getUserWithAuthorization(
-    userId: string,
+    userKey: string,
     isUserId: boolean,
   ): Promise<UserWithAuthorization | null> {
     const userKeyMatcher = isUserId
@@ -84,39 +70,33 @@ export class UserToRolePostgresRepository
                     to_jsonb(((SELECT roles from UserWithRoles))) @> '["moderator"]'::jsonb as g_admin,
                     to_jsonb(((SELECT roles from UserWithRoles))) @> '["banned"]'::jsonb    as g_banned
              FROM UserWithRoles;`,
-      values: [userId],
+      values: [userKey],
     });
     return members && members.length
       ? new UserWithAuthorization(members[0])
       : null;
   }
 
-  async getUserWithAuthorizationFromUsername(
-    username: string,
-  ): Promise<UserWithAuthorization | null> {
-    return this.getUserWithAuthorization(username, false);
-  }
-
-  async deleteUserToRole({ id, role }: UserToRole): Promise<UserToRole | null> {
+  async deleteUserToRole(
+    userKey: string,
+    role: Role,
+    isUserId: boolean,
+  ): Promise<UserToRole | null> {
+    const userKeyMatcher = isUserId
+      ? `u.${userKeys.ID}`
+      : `u.${userKeys.USERNAME}`;
     const roleData = await makeQuery<UserToRoleData>(this.pool, {
-      text: `DELETE
-             FROM ${this.table} as ur
-             WHERE ur.${UserToRoleKeys.ID} = $1
-               AND ur.${UserToRoleKeys.ROLE} = $2
-             RETURNING *;`,
-      values: [id, role],
+      text: `
+        WITH myUser as (SELECT u.${userKeys.ID}
+                        FROM ${table.USERS} u
+                        WHERE ${userKeyMatcher} = $1)
+        DELETE
+        FROM ${this.table} as ur
+        WHERE ur.${UserToRoleKeys.ID} = (SELECT ${userKeys.ID} from myUser)
+          AND ur.${UserToRoleKeys.ROLE} = $2
+        RETURNING *;`,
+      values: [userKey, role],
     });
     return roleData && roleData.length > 0 ? new UserToRole(roleData[0]) : null;
-  }
-
-  async deleteUserToRoleFromUsername(
-    username: string,
-    role: Role,
-  ): Promise<UserToRole | null> {
-    const id = await this.getUserIdFromUsername(username);
-    if (!id) {
-      return null;
-    }
-    return this.deleteUserToRole({ id: id.id, role });
   }
 }
