@@ -2,14 +2,6 @@
   display: contents;
 }
 
-.user-page-loading {
-  height: 100vh;
-  background-color: var(--color-background);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .user-page .avatar-page-center-element-wrapper {
   gap: 0;
 }
