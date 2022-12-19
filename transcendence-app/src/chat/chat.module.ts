@@ -1,4 +1,4 @@
-import { forwardRef, Global, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { DbModule } from '../shared/db/db.module';
 import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { ChatController } from './chat.controller';
@@ -12,12 +12,7 @@ import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 
 @Global()
 @Module({
-  imports: [
-    DbModule,
-    LocalFileModule,
-    AvatarModule,
-    forwardRef(() => AuthorizationModule),
-  ],
+  imports: [DbModule, LocalFileModule, AvatarModule, AuthorizationModule],
   providers: [
     ChatGateway,
     ChatService,
