@@ -19,11 +19,17 @@ export class CaslAbilityFactory {
   ) {
     if (globalUserAuthCtx.g_banned) {
       cannot(Action.Manage, 'all');
-    } else if (globalUserAuthCtx.g_admin) {
+    } else if (globalUserAuthCtx.g_admin && !globalUserAuthCtx.g_owner) {
       can(Action.Manage, 'all');
+      // This is not implemented / doesn't exist yet, but is left here as
+      // boilerplate to know how does this DSL work
+      cannot(Action.Update, 'UpdateUserToRoleDto', {
+        owner: { $exists: true },
+      });
     }
     if (globalUserAuthCtx.g_owner) {
       can(Action.Manage, 'all');
+      cannot(Action.Manage, 'UserToRole', { role: 'owner' });
     }
     return build();
   }
@@ -38,11 +44,16 @@ export class CaslAbilityFactory {
     const { can, cannot } = abilityCtx;
     if (!chatroomMember.crm_member || chatroomMember.crm_banned) {
       cannot(Action.Manage, 'ChatroomMember');
-      if (chatroomMember.crm_member) {
+      if (!chatroomMember.crm_member) {
+        // a user can join a chatroom, i.e. create a chatroom member, if it's
+        // not yet a member of that chatroom. We should implement the password
+        // checking, and the JoinChatroomDto, maybe, so we can use this.
         can(Action.Create, 'ChatroomMember');
       }
       return this.setGlobalAbilities(abilityCtx, chatroomMember);
     }
+    // a user cannot join a chatroom, i.e. create a chatroom member, if it's
+    // already a member of that chatroom
     cannot(Action.Create, 'ChatroomMember');
     can(Action.Read, 'ChatroomMember');
     can(Action.Delete, 'ChatroomMember', {
