@@ -30,7 +30,7 @@ export class AuthorizationService {
     id: string,
   ): Promise<UserWithAuthorization> {
     const userWithRoles =
-      await this.userToRoleRepository.getUserWithAuthorization(id);
+      await this.userToRoleRepository.getUserWithAuthorization(id, true);
     if (!userWithRoles) {
       throw new NotFoundException();
     }
@@ -38,7 +38,11 @@ export class AuthorizationService {
   }
 
   async addUserToRole(user: UserToRole): Promise<UserToRole> {
-    const userToRole = await this.userToRoleRepository.addUserToRole(user);
+    const userToRole = await this.userToRoleRepository.addUserToRole(
+      user.id,
+      user.role,
+      true,
+    );
     if (!userToRole) {
       throw new NotFoundException();
     }
@@ -49,8 +53,11 @@ export class AuthorizationService {
     username: string,
     role: Role,
   ): Promise<UserToRole> {
-    const userToRole =
-      await this.userToRoleRepository.addUserToRoleFromUsername(username, role);
+    const userToRole = await this.userToRoleRepository.addUserToRole(
+      username,
+      role,
+      false,
+    );
     if (!userToRole) {
       throw new NotFoundException();
     }

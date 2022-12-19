@@ -4,13 +4,14 @@ import { ChatroomMemberWithAuthorization } from './chatroom-member-with-authoriz
 import { UserWithAuthorization } from './user-with-authorization.entity';
 
 export abstract class IUserToRoleRepository {
-  abstract addUserToRole(userToRole: UserToRole): Promise<UserToRole | null>;
-  abstract addUserToRoleFromUsername(
+  abstract addUserToRole(
     username: string,
     role: Role,
+    isUserId: boolean,
   ): Promise<UserToRole | null>;
   abstract getUserWithAuthorization(
     id: string,
+    isUserId: boolean,
   ): Promise<UserWithAuthorization | null>;
   abstract getUserWithAuthorizationFromUsername(
     username: string,
