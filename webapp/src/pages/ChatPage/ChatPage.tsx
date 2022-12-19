@@ -18,28 +18,24 @@ import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 type ChatWithUserProps = {
   username: string;
-  authUser: User;
 };
 
 type ChatProps = {
   user: User;
-  authUser: User;
 };
 
 export default function ChatPage() {
   const { username } = useParams();
   const { authUser } = useAuth();
 
-  if (!authUser) {
+  if (!authUser || !username) {
     return null;
-  } else if (!username) {
-    return <NotFoundPage />;
   }
 
-  return <ChatWithUser username={username} authUser={authUser} />;
+  return <ChatWithUser username={username} />;
 }
 
-function ChatWithUser({ username, authUser }: ChatWithUserProps) {
+function ChatWithUser({ username }: ChatWithUserProps) {
   const fetchUser = React.useCallback(
     () =>
       usersApi.userControllerGetUserByUserName({
@@ -49,16 +45,16 @@ function ChatWithUser({ username, authUser }: ChatWithUserProps) {
   );
   const { data: user, isLoading: isUserLoading } = useData(fetchUser);
 
-  if (isUserLoading && !user) {
+  if (isUserLoading) {
     return <ChatMessagingLoading />;
   } else if (!user) {
     return <NotFoundPage />;
   }
 
-  return <Chat user={user} authUser={authUser} />;
+  return <Chat user={user} />;
 }
 
-function Chat({ user, authUser }: ChatProps) {
+function Chat({ user }: ChatProps) {
   const { warn } = useNotificationContext();
 
   const messageMapper = React.useCallback(
@@ -101,7 +97,6 @@ function Chat({ user, authUser }: ChatProps) {
     <ChatMessagingTemplate
       title={user.username}
       to={user.id}
-      from={authUser.username}
       fetchMessagesCallback={fetchMessagesCallback}
       chatEvent="chatMessage"
       messageMapper={messageMapper}
