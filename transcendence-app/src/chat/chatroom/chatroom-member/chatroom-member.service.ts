@@ -128,7 +128,7 @@ export class ChatroomMemberService {
       userId,
       chatroomId,
     );
-    if (ability.cannot(Action.Read, 'ChatroomMember')) {
+    if (ability.cannot(Action.Read, ChatroomMember)) {
       throw new ForbiddenException();
     }
     return this.chatroomMemberRepository.getPaginatedChatroomMembers(
