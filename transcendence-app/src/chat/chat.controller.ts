@@ -117,10 +117,12 @@ export class ChatController {
     @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
   ): Promise<ChatroomMember> {
-    const chatroomMember = await this.chatroomMemberService.leaveChatroom(
+    const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
       chatroomId,
       user.id,
+      user.id,
     );
+
     if (!chatroomMember) {
       throw new ServiceUnavailableException();
     }
@@ -203,15 +205,9 @@ export class ChatController {
     @GetUser() user: User,
     @Query() paginationWithSearchQueryDto: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[]> {
-    const isChatMember = await this.chatroomMemberService.getById(
-      chatroomId,
-      user.id,
-    );
-    if (!isChatMember || isChatMember.banned) {
-      throw new ForbiddenException();
-    }
     const chatroomsMembers =
       await this.chatroomMemberService.getChatroomMembers(
+        user.id,
         chatroomId,
         paginationWithSearchQueryDto,
       );
@@ -256,12 +252,13 @@ export class ChatController {
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember> {
-    const chatroomMember = await this.chatService.updateChatroomMember(
-      userMe,
-      chatroomId,
-      userId,
-      updateChatroomMemberDto,
-    );
+    const chatroomMember =
+      await this.chatroomMemberService.updateChatroomMember(
+        userMe,
+        chatroomId,
+        userId,
+        updateChatroomMemberDto,
+      );
     if (!chatroomMember) {
       throw new ServiceUnavailableException();
     }
