@@ -45,7 +45,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
         chatroomId,
         userId: authUser.id,
       }),
-    [chatroomId, authUser.id],
+    [chatroomId, authUser],
   );
 
   const messageMapper = useCallback(
@@ -86,7 +86,7 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     return () => {
       socket.emit('leaveChatroom', { chatroomId });
     };
-  }, [chatroomId, warn, enableNotifications]);
+  }, [chatroomId]);
 
   useEffect(() => {
     socket.on('exception', (wsError: WsException) => {
@@ -120,7 +120,6 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     <ChatMessagingTemplate
       title={chatroom.name}
       titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
-      from={chatroomId}
       to={chatroomId}
       chatEvent="chatroomMessage"
       fetchMessagesCallback={fetchMessagesCallback}

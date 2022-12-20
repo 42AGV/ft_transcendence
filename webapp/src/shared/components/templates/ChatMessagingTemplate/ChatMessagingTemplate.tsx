@@ -18,7 +18,6 @@ type ChatMessagingProps = {
   title: string;
   titleNavigationUrl?: string;
   to: string;
-  from: string;
   fetchMessagesCallback: (offset: number) => Promise<ChatMessage[]>;
   chatEvent: ChatEventType;
   messageMapper: (msg: any) => ChatMessage;
@@ -38,7 +37,6 @@ export default function ChatMessagingTemplate({
   title,
   titleNavigationUrl,
   to,
-  from,
   fetchMessagesCallback,
   chatEvent,
   messageMapper,
@@ -76,7 +74,7 @@ export default function ChatMessagingTemplate({
     return () => {
       socket.off(chatEvent);
     };
-  }, [from, chatEvent, messageMapper]);
+  }, [chatEvent, messageMapper]);
 
   return (
     <div className="chat-template">
