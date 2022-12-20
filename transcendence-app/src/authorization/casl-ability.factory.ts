@@ -36,7 +36,7 @@ export class CaslAbilityFactory {
 
   async defineAbilitiesForCrm(authUserId: string, chatroomId: string) {
     const chatroomMember =
-      await this.authorizationService.GetUserAuthContextForChatroom(
+      await this.authorizationService.getUserAuthContextForChatroom(
         authUserId,
         chatroomId,
       );
@@ -80,7 +80,7 @@ export class CaslAbilityFactory {
 
   async defineAbilitiesForCr(authUserId: string, chatroomId: string) {
     const chatroomMember: ChatroomMemberWithAuthorization =
-      await this.authorizationService.GetUserAuthContextForChatroom(
+      await this.authorizationService.getUserAuthContextForChatroom(
         authUserId,
         chatroomId,
       );

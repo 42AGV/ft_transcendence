@@ -89,7 +89,7 @@ export class AuthorizationService {
     return userToRole;
   }
 
-  async GetUserAuthContextForChatroom(
+  async getUserAuthContextForChatroom(
     userId: string,
     chatroomId: string,
   ): Promise<ChatroomMemberWithAuthorization> {

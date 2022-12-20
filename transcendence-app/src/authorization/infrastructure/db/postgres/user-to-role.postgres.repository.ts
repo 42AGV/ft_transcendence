@@ -58,17 +58,17 @@ export class UserToRolePostgresRepository
                                            u.${userKeys.USERNAME},
                                            coalesce(array_agg(ur.${UserToRoleKeys.ROLE})
                                                     FILTER
-                                                      (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
+                                                        (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
                                                     '{}') as roles
                                     FROM ${table.USERS} u
-                                           LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
+                                             LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
                                     WHERE ${userKeyMatcher} = $1
                                     GROUP BY u.${userKeys.ID})
-             SELECT ${userKeys.ID}                                                          as userId,
+             SELECT ${userKeys.ID}                                       as "userId",
                     ${userKeys.USERNAME},
-                    to_jsonb((SELECT roles from UserWithRoles)) @> '["owner"]'::jsonb       as g_owner,
-                    to_jsonb(((SELECT roles from UserWithRoles))) @> '["moderator"]'::jsonb as g_admin,
-                    to_jsonb(((SELECT roles from UserWithRoles))) @> '["banned"]'::jsonb    as g_banned
+                    (SELECT roles from UserWithRoles) @> '{"owner"}'     as g_owner,
+                    (SELECT roles from UserWithRoles) @> '{"moderator"}' as g_admin,
+                    (SELECT roles from UserWithRoles) @> '{"banned"}'    as g_banned
              FROM UserWithRoles;`,
       values: [userKey],
     });

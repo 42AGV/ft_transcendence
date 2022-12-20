@@ -33,7 +33,6 @@ export class ChatroomMemberService {
       joinedAt: new Date(Date.now()),
       chatId: chatId,
       userId: userId,
-      owner: false,
       admin: false,
       muted: false,
       banned: false,
@@ -41,7 +40,7 @@ export class ChatroomMemberService {
     const ret = await this.chatroomMemberRepository.addChatroomMember(
       chatmember,
     );
-    return ret ? new ChatroomMember(ret) : null;
+    return ret ? new ChatroomMember({ owner: false, ...ret }) : null;
   }
 
   async getById(

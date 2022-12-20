@@ -12,7 +12,7 @@ export interface ChatroomMemberData {
   chatId: string;
   userId: string;
   joinedAt: Date | null;
-  owner: boolean;
+  owner?: boolean;
   admin: boolean;
   muted: boolean;
   banned: boolean;
@@ -22,7 +22,7 @@ export class ChatroomMember {
   chatId: string;
   userId: string;
   joinedAt: Date | null;
-  owner: boolean = false;
+  owner?: boolean;
   admin: boolean = false;
   muted: boolean = false;
   banned: boolean = false;
