@@ -53,15 +53,15 @@ export class UserToRolePostgresRepository
     const userKeyMatcher = isUserId
       ? `u.${userKeys.ID}`
       : `u.${userKeys.USERNAME}`;
-    const members = await makeQuery<UserWithAuthorizationData>(this.pool, {
+    const userData = await makeQuery<UserWithAuthorizationData>(this.pool, {
       text: `WITH UserWithRoles AS (SELECT u.${userKeys.ID},
                                            u.${userKeys.USERNAME},
                                            coalesce(array_agg(ur.${UserToRoleKeys.ROLE})
                                                     FILTER
-                                                        (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
+                                                      (WHERE ur.${UserToRoleKeys.ROLE} IS NOT NULL),
                                                     '{}') as roles
                                     FROM ${table.USERS} u
-                                             LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
+                                           LEFT JOIN ${this.table} ur ON ur.${UserToRoleKeys.ID} = u.${userKeys.ID}
                                     WHERE ${userKeyMatcher} = $1
                                     GROUP BY u.${userKeys.ID})
              SELECT ${userKeys.ID}                                       as "userId",
@@ -72,8 +72,8 @@ export class UserToRolePostgresRepository
              FROM UserWithRoles;`,
       values: [userKey],
     });
-    return members && members.length
-      ? new UserWithAuthorization(members[0])
+    return userData && userData.length
+      ? new UserWithAuthorization(userData[0])
       : null;
   }
 
