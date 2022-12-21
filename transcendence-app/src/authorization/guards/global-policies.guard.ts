@@ -5,7 +5,7 @@ import { AuthorizationService } from '../authorization.service';
 import { PoliciesGuard } from './base-policies.guard';
 
 @Injectable()
-export class CrMemberPoliciesGuard extends PoliciesGuard {
+export class GlobalPoliciesGuard extends PoliciesGuard {
   constructor(
     protected reflector: Reflector,
     protected caslAbilityFactory: CaslAbilityFactory,
