@@ -208,6 +208,7 @@ export class ChatController {
     description: `Lists chat members for a given room (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [ChatroomMemberWithUser],
   })
+  @ApiParam({ name: 'chatroomId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatroomMembers(
@@ -252,6 +253,8 @@ export class ChatController {
     description: 'Update a chatroom member',
     type: ChatroomMember,
   })
+  @ApiParam({ name: 'chatroomId', type: String })
+  @ApiParam({ name: 'userId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
