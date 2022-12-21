@@ -28,10 +28,10 @@ export class SocketGateway
   @WebSocketServer() server!: Server;
   onlineUserIds = new Set<UserId>();
 
-  constructor(private eventsService: SocketService) {}
+  constructor(private socketService: SocketService) {}
 
   afterInit(server: Server) {
-    this.eventsService.socket = server;
+    this.socketService.socket = server;
   }
 
   async handleConnection(client: Socket) {
@@ -71,5 +71,10 @@ export class SocketGateway
   @SubscribeMessage('getOnlineUsers')
   handleGetConnectedUsers(@ConnectedSocket() client: Socket) {
     client.emit('onlineUsers', [...this.onlineUserIds]);
+  }
+
+  @SubscribeMessage('getFriends')
+  handleGetFriends(@ConnectedSocket() client: Socket) {
+    this.socketService.getFriends(client);
   }
 }
