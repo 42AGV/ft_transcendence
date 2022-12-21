@@ -46,12 +46,7 @@ export class CaslAbilityFactory {
     });
   }
 
-  async defineAbilitiesForCrm(authUserId: string, chatroomId: string) {
-    const chatroomMember =
-      await this.authorizationService.getUserAuthContextForChatroom(
-        authUserId,
-        chatroomId,
-      );
+  async defineAbilitiesFor(chatroomMember: ChatroomMemberWithAuthorization) {
     const abilityCtx = new AbilityBuilder<AppAbility>(createMongoAbility);
     const { can, cannot } = abilityCtx;
     if (!chatroomMember.crm_member || chatroomMember.crm_banned) {

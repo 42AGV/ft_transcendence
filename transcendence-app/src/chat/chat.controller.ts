@@ -51,6 +51,11 @@ import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-c
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
+import { AuthChatroomMemberPipe } from './chatroom/chatroom-member/decorators/auth-chatroom-member.pipe';
+import { ChatroomMemberWithAuthorization } from '../authorization/infrastructure/db/chatroom-member-with-authorization.entity';
+import { GetAuthCrMember } from './chatroom/chatroom-member/decorators/auth-chatroom-member.decorator';
+import { GetDestCrMember } from './chatroom/chatroom-member/decorators/dest-chatroom-member.decorator';
+import { DestChatroomMemberPipe } from './chatroom/chatroom-member/decorators/dest-chatroom-member.pipe';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -116,11 +121,14 @@ export class ChatController {
   async leaveChatroom(
     @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
+    @GetDestCrMember('chatroomId', AuthChatroomMemberPipe)
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
-      chatroomId,
-      user.id,
-      user.id,
+      authCrm,
+      destCrm,
     );
 
     if (!chatroomMember) {
@@ -138,14 +146,16 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async removeChatroomMember(
-    @GetUser() user: User,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
+    @GetDestCrMember('chatroomId', DestChatroomMemberPipe)
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
-      chatroomId,
-      user.id,
-      toDeleteUserId,
+      authCrm,
+      destCrm,
     );
     if (!chatroomMember) {
       throw new ServiceUnavailableException();
@@ -202,12 +212,13 @@ export class ChatController {
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatroomMembers(
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
-    @GetUser() user: User,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
     @Query() paginationWithSearchQueryDto: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[]> {
     const chatroomsMembers =
       await this.chatroomMemberService.getChatroomMembers(
-        user.id,
+        authCrm,
         chatroomId,
         paginationWithSearchQueryDto,
       );
@@ -251,10 +262,12 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateChatroomMemberDto: UpdateChatroomMemberDto,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
   ): Promise<ChatroomMember> {
     const chatroomMember =
       await this.chatroomMemberService.updateChatroomMember(
-        userMe,
+        authCrm,
         chatroomId,
         userId,
         updateChatroomMemberDto,

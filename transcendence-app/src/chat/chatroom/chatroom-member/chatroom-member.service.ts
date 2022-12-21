@@ -15,7 +15,7 @@ import { BooleanString } from '../../../shared/enums/boolean-string.enum';
 import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 import { Action } from '../../../shared/enums/action.enum';
 import { CaslAbilityFactory } from '../../../authorization/casl-ability.factory';
-import { User } from '../../../user/infrastructure/db/user.entity';
+import { ChatroomMemberWithAuthorization } from '../../../authorization/infrastructure/db/chatroom-member-with-authorization.entity';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -55,19 +55,16 @@ export class ChatroomMemberService {
   }
 
   async updateChatroomMember(
-    authUser: User,
+    authCrm: ChatroomMemberWithAuthorization | null,
     chatroomId: string,
     userId: string,
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
     const toUpdateChatroomMember = await this.getById(chatroomId, userId);
-    if (!toUpdateChatroomMember) {
+    if (!authCrm || !toUpdateChatroomMember) {
       throw new NotFoundException();
     }
-    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
-      authUser.id,
-      chatroomId,
-    );
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
     if (
       !(
         ability.can(Action.Update, updateChatroomMemberDto) &&
@@ -84,38 +81,27 @@ export class ChatroomMemberService {
   }
 
   async removeFromChatroom(
-    chatroomId: string,
-    authUserId: string,
-    toDeleteUserId: string,
+    authCrm: ChatroomMemberWithAuthorization | null,
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember | null> {
-    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
-      authUserId,
-      chatroomId,
-    );
-    const toDeleteChatroomMember = await this.getById(
-      chatroomId,
-      toDeleteUserId,
-    );
-    if (!toDeleteChatroomMember) {
+    if (!authCrm || !destCrm) {
       throw new NotFoundException();
     }
-    if (ability.cannot(Action.Delete, toDeleteChatroomMember)) {
+    const { chatId, userId } = destCrm;
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    if (ability.cannot(Action.Delete, destCrm)) {
       throw new ForbiddenException();
     }
-    if (toDeleteChatroomMember.banned || toDeleteChatroomMember.muted) {
-      return this.chatroomMemberRepository.updateById(
-        chatroomId,
-        toDeleteUserId,
-        {
-          joinedAt: null,
-        },
-      );
+    if (destCrm.banned || destCrm.muted) {
+      return this.chatroomMemberRepository.updateById(chatId, userId, {
+        joinedAt: null,
+      });
     }
-    return this.chatroomMemberRepository.deleteById(chatroomId, toDeleteUserId);
+    return this.chatroomMemberRepository.deleteById(chatId, userId);
   }
 
   async getChatroomMembers(
-    userId: string,
+    authCrm: ChatroomMemberWithAuthorization | null,
     chatroomId: string,
     {
       search = '',
@@ -124,10 +110,10 @@ export class ChatroomMemberService {
       sort = BooleanString.True,
     }: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[] | null> {
-    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
-      userId,
-      chatroomId,
-    );
+    if (!authCrm) {
+      throw new NotFoundException();
+    }
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
     if (ability.cannot(Action.Read, ChatroomMember)) {
       throw new ForbiddenException();
     }
