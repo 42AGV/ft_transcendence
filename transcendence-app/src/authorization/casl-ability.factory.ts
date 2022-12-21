@@ -8,7 +8,6 @@ import {
 import { Injectable } from '@nestjs/common';
 import { Action } from '../shared/enums/action.enum';
 import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
-import { AuthorizationService } from './authorization.service';
 import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
 import { ChatroomMember } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { UpdateChatroomMemberDto } from '../chat/chatroom/chatroom-member/dto/update-chatroom-member.dto';
@@ -21,8 +20,6 @@ type Subject = InferSubjects<
 type AppAbility = MongoAbility<[Action, Subject]>;
 @Injectable()
 export class CaslAbilityFactory {
-  constructor(private authorizationService: AuthorizationService) {}
-
   private async setGlobalAbilities(
     { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: UserWithAuthorization,
@@ -52,6 +49,8 @@ export class CaslAbilityFactory {
     const abilityCtx = new AbilityBuilder<AppAbility>(createMongoAbility);
     const { can, cannot } = abilityCtx;
     if (user instanceof ChatroomMemberWithAuthorization) {
+      // Chatroom Member authorization rules:
+
       if (!user.crm_member || user.crm_banned) {
         cannot(Action.Manage, ChatroomMember);
         if (!user.crm_member) {
@@ -85,24 +84,16 @@ export class CaslAbilityFactory {
           userId: user.userId,
         });
       }
+
+      // Chatroom authorization rules
+
+      can(Action.Create, Chatroom);
+      can(Action.Read, Chatroom);
+      if (user.crm_member && user.crm_owner) {
+        can(Action.Update, Chatroom);
+        can(Action.Delete, Chatroom);
+      }
     }
     return this.setGlobalAbilities(abilityCtx, user);
-  }
-
-  async defineAbilitiesForCr(authUserId: string, chatroomId: string) {
-    const chatroomMember: ChatroomMemberWithAuthorization =
-      await this.authorizationService.getUserAuthContextForChatroom(
-        authUserId,
-        chatroomId,
-      );
-    const abilityCtx = new AbilityBuilder(createMongoAbility);
-    const { can } = abilityCtx;
-    can(Action.Create, Chatroom);
-    can(Action.Read, Chatroom);
-    if (chatroomMember.crm_member && chatroomMember.crm_owner) {
-      can(Action.Update, Chatroom);
-      can(Action.Delete, Chatroom);
-    }
-    return this.setGlobalAbilities(abilityCtx, chatroomMember);
   }
 }
