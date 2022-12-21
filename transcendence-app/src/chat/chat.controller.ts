@@ -211,7 +211,6 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatroomMembers(
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
     authCrm: ChatroomMemberWithAuthorization | null,
     @Query() paginationWithSearchQueryDto: PaginationWithSearchQueryDto,
@@ -219,7 +218,6 @@ export class ChatController {
     const chatroomsMembers =
       await this.chatroomMemberService.getChatroomMembers(
         authCrm,
-        chatroomId,
         paginationWithSearchQueryDto,
       );
     if (!chatroomsMembers) {

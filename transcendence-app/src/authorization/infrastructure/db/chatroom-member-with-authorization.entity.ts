@@ -5,6 +5,7 @@ import {
 
 export interface ChatroomMemberWithAuthorizationData
   extends UserWithAuthorizationData {
+  readonly chatId: string;
   readonly crm_member: boolean;
   readonly crm_owner?: boolean;
   readonly crm_admin?: boolean;
@@ -12,6 +13,7 @@ export interface ChatroomMemberWithAuthorizationData
   readonly cr_muted?: boolean;
 }
 export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
+  public readonly chatId: string;
   public readonly crm_member: boolean;
   public readonly crm_owner?: boolean;
   public readonly crm_admin?: boolean;
@@ -23,6 +25,7 @@ export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
     g_owner,
     g_admin,
     g_banned,
+    chatId,
     crm_member,
     crm_owner,
     crm_admin,
@@ -36,6 +39,7 @@ export class ChatroomMemberWithAuthorization extends UserWithAuthorization {
       g_admin,
       g_banned,
     });
+    this.chatId = chatId;
     this.crm_member = crm_member;
     this.crm_owner = crm_owner;
     this.crm_admin = crm_admin;

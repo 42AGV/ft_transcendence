@@ -102,7 +102,6 @@ export class ChatroomMemberService {
 
   async getChatroomMembers(
     authCrm: ChatroomMemberWithAuthorization | null,
-    chatroomId: string,
     {
       search = '',
       limit = MAX_ENTRIES_PER_PAGE,
@@ -118,7 +117,7 @@ export class ChatroomMemberService {
       throw new ForbiddenException();
     }
     return this.chatroomMemberRepository.getPaginatedChatroomMembers(
-      chatroomId,
+      authCrm.chatId,
       {
         search,
         limit,

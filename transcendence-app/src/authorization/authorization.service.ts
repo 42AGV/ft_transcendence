@@ -91,12 +91,13 @@ export class AuthorizationService {
 
   async getUserAuthContextForChatroom(
     userId: string,
-    chatroomId: string,
+    chatId: string,
   ): Promise<ChatroomMemberWithAuthorization> {
     const g_user = await this.getUserWithRolesFromId(userId);
-    const crm = await this.chatroomMemberRepository.getById(chatroomId, userId);
+    const crm = await this.chatroomMemberRepository.getById(chatId, userId);
     return new ChatroomMemberWithAuthorization({
       ...g_user,
+      chatId,
       crm_member: !!crm,
       crm_owner: crm?.owner,
       crm_admin: crm?.admin,
