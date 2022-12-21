@@ -5,11 +5,11 @@ import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
 import { CHECK_POLICIES_KEY } from '../decorators/policies.decorator';
 
-export interface IPolicyHandler {
+interface IPolicyHandler {
   handle(ability: AnyMongoAbility): boolean;
 }
 
-export type PolicyHandlerCallback = (ability: AnyMongoAbility) => boolean;
+type PolicyHandlerCallback = (ability: AnyMongoAbility) => boolean;
 
 export type PolicyHandler = IPolicyHandler | PolicyHandlerCallback;
 
