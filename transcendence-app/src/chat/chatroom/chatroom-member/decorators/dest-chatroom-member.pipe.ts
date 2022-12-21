@@ -9,12 +9,12 @@ export class DestChatroomMemberPipe
 {
   constructor(private chatroomMemberRepository: IChatroomMemberRepository) {}
 
-  transform(
+  async transform(
     data: Partial<ChatroomMember>,
     metadata: ArgumentMetadata,
   ): Promise<ChatroomMember | null> {
     void metadata;
-    if (!data?.chatId || !data?.userId) return new Promise(() => null);
+    if (!data?.chatId || !data?.userId) return null;
     return this.chatroomMemberRepository.getById(data.chatId, data.userId);
   }
 }

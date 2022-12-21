@@ -13,12 +13,12 @@ export class AuthChatroomMemberPipe
 {
   constructor(private readonly authorizationService: AuthorizationService) {}
 
-  transform(
+  async transform(
     data: Partial<ChatroomMember>,
     metadata: ArgumentMetadata,
   ): Promise<ChatroomMemberWithAuthorization | null> {
     void metadata;
-    if (!data?.chatId || !data?.userId) return new Promise(() => null);
+    if (!data?.chatId || !data?.userId) return null;
     return this.authorizationService.getUserAuthContextForChatroom(
       data.userId,
       data.chatId,
