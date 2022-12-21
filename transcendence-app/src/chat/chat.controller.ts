@@ -119,11 +119,9 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async leaveChatroom(
-    @GetUser() user: User,
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
     authCrm: ChatroomMemberWithAuthorization | null,
-    @GetDestCrMember('chatroomId', AuthChatroomMemberPipe)
+    @GetDestCrMember('chatroomId', DestChatroomMemberPipe)
     destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
@@ -146,8 +144,6 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async removeChatroomMember(
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
-    @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
     @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
     authCrm: ChatroomMemberWithAuthorization | null,
     @GetDestCrMember('chatroomId', DestChatroomMemberPipe)
@@ -256,18 +252,16 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async updateChatroomMember(
-    @GetUser() userMe: User,
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
-    @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateChatroomMemberDto: UpdateChatroomMemberDto,
     @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
     authCrm: ChatroomMemberWithAuthorization | null,
+    @GetDestCrMember('chatroomId', DestChatroomMemberPipe)
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember =
       await this.chatroomMemberService.updateChatroomMember(
         authCrm,
-        chatroomId,
-        userId,
+        destCrm,
         updateChatroomMemberDto,
       );
     if (!chatroomMember) {

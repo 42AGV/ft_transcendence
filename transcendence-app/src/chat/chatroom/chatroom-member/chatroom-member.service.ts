@@ -56,25 +56,24 @@ export class ChatroomMemberService {
 
   async updateChatroomMember(
     authCrm: ChatroomMemberWithAuthorization | null,
-    chatroomId: string,
-    userId: string,
+    destCrm: ChatroomMember | null,
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
-    const toUpdateChatroomMember = await this.getById(chatroomId, userId);
-    if (!authCrm || !toUpdateChatroomMember) {
+    if (!authCrm || !destCrm) {
       throw new NotFoundException();
     }
     const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
     if (
       !(
         ability.can(Action.Update, updateChatroomMemberDto) &&
-        ability.can(Action.Update, toUpdateChatroomMember)
+        ability.can(Action.Update, destCrm)
       )
     ) {
       throw new ForbiddenException();
     }
+    const { chatId, userId } = destCrm;
     return this.chatroomMemberRepository.updateById(
-      chatroomId,
+      chatId,
       userId,
       updateChatroomMemberDto,
     );
