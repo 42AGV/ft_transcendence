@@ -31,8 +31,8 @@ export class ChatroomMemberService {
   ): Promise<ChatroomMember | null> {
     const chatmember = {
       joinedAt: new Date(Date.now()),
-      chatId: chatId,
-      userId: userId,
+      chatId,
+      userId,
       admin: false,
       muted: false,
       banned: false,
