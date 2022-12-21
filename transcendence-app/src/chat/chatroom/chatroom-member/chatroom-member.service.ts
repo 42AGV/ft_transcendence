@@ -111,10 +111,6 @@ export class ChatroomMemberService {
     if (!authCrm) {
       throw new NotFoundException();
     }
-    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
-    if (ability.cannot(Action.Read, ChatroomMember)) {
-      throw new ForbiddenException();
-    }
     return this.chatroomMemberRepository.getPaginatedChatroomMembers(
       authCrm.chatId,
       {

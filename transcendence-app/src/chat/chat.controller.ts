@@ -57,6 +57,9 @@ import { ChatroomMemberWithAuthorization } from '../authorization/infrastructure
 import { GetAuthCrMember } from './chatroom/chatroom-member/decorators/auth-chatroom-member.decorator';
 import { GetDestCrMember } from './chatroom/chatroom-member/decorators/dest-chatroom-member.decorator';
 import { DestChatroomMemberPipe } from './chatroom/chatroom-member/decorators/dest-chatroom-member.pipe';
+import { CheckPolicies } from '../authorization/decorators/policies.decorator';
+import { Action } from '../shared/enums/action.enum';
+import { CrMemberPoliciesGuard } from '../authorization/crm-policies-guard.service';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -211,6 +214,8 @@ export class ChatController {
   @ApiParam({ name: 'chatroomId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  @UseGuards(CrMemberPoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Read, ChatroomMember))
   async getChatroomMembers(
     @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
     authCrm: ChatroomMemberWithAuthorization | null,
