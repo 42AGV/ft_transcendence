@@ -54,8 +54,9 @@ export class ChatroomMemberPostgresRepository
     userId: string,
   ): Promise<ChatroomMember | null> {
     const members = await makeQuery<ChatroomMemberData>(this.pool, {
-      text: `SELECT *
-             FROM ${this.table}
+      text: `SELECT cm.*, c.${ChatroomKeys.OWNERID} = $2 AS owner
+             FROM ${this.table} cm
+                    LEFT JOIN ${table.CHATROOM} c on c.${ChatroomKeys.ID} = cm.${ChatroomMemberKeys.CHATID}
              WHERE ${ChatroomMemberKeys.CHATID} = $1
                AND ${ChatroomMemberKeys.USERID} = $2
                AND ${ChatroomMemberKeys.JOINED_AT} IS NOT NULL`,

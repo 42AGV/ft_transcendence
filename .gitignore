@@ -24,7 +24,7 @@ webapp/src/shared/generated
 .env.development.local
 .env.test.local
 .env.production.local
-nocommit/*
+nocommit
 *.nocommit
 .env
 

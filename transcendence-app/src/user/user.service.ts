@@ -21,10 +21,6 @@ import { AvatarService } from '../shared/avatar/avatar.service';
 import { SocketService } from '../socket/socket.service';
 import { Password } from '../shared/password';
 import { IFriendRepository } from './infrastructure/db/friend.repository';
-import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
-import { UserWithRoles } from './infrastructure/db/user-with-role.entity';
-import { UserToRole } from './infrastructure/db/user-to-role.entity';
-import { Role } from '../shared/enums/role.enum';
 
 @Injectable()
 export class UserService {
@@ -33,7 +29,6 @@ export class UserService {
     private localFileService: LocalFileService,
     private blockRepository: IBlockRepository,
     private friendRepository: IFriendRepository,
-    private userToRoleRepository: IUserToRoleRepository,
     private avatarService: AvatarService,
     private socketService: SocketService,
   ) {}
@@ -247,81 +242,5 @@ export class UserService {
       throw new UnprocessableEntityException();
     }
     return friends;
-  }
-
-  async getUserWithRolesFromUsername(
-    username: string,
-  ): Promise<UserWithRoles | null> {
-    const user = await this.userRepository.getByUsername(username);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(
-      user.id,
-    );
-    if (!userWithRoles) {
-      throw new NotFoundException();
-    }
-    return userWithRoles;
-  }
-
-  async getUserWithRolesFromId(id: string): Promise<UserWithRoles | null> {
-    const userWithRoles = await this.userToRoleRepository.getUserWithRoles(id);
-    if (!userWithRoles) {
-      throw new NotFoundException();
-    }
-    return userWithRoles;
-  }
-
-  async addUserToRole(user: UserToRole): Promise<UserToRole | null> {
-    const userToRole = await this.userToRoleRepository.addUserToRole(user);
-    if (!userToRole) {
-      throw new NotFoundException();
-    }
-    return userToRole;
-  }
-
-  async addUserToRoleFromUsername(
-    username: string,
-    role: Role,
-  ): Promise<UserToRole | null> {
-    const user = await this.userRepository.getByUsername(username);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    const userToRole = await this.userToRoleRepository.addUserToRole({
-      id: user.id,
-      role: role,
-    });
-    if (!userToRole) {
-      throw new NotFoundException();
-    }
-    return userToRole;
-  }
-
-  async deleteUserToRole(user: UserToRole): Promise<UserToRole | null> {
-    const userToRole = await this.userToRoleRepository.deleteUserToRole(user);
-    if (!userToRole) {
-      throw new NotFoundException();
-    }
-    return userToRole;
-  }
-
-  async deleteUserToRoleFromUsername(
-    username: string,
-    role: string,
-  ): Promise<UserToRole | null> {
-    const user = await this.userRepository.getByUsername(username);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    const userToRole = await this.userToRoleRepository.deleteUserToRole({
-      id: user.id,
-      role: role as Role,
-    });
-    if (!userToRole) {
-      throw new NotFoundException();
-    }
-    return userToRole;
   }
 }

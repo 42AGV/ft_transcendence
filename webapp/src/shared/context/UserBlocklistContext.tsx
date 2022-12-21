@@ -26,7 +26,7 @@ export const UserBlocklistProvider = ({
     () => usersApi.userControllerGetBlocks(),
     [],
   );
-  const { data: blockedUsers } = useData(getBlockedUsers);
+  const { data: blockedUsers, isLoading } = useData(getBlockedUsers);
 
   useEffect(() => {
     if (blockedUsers) {
@@ -59,12 +59,12 @@ export const UserBlocklistProvider = ({
 
   const userBlocks = useCallback(
     (userId: string) => {
-      if (!blockedUsers) {
+      if (isLoading) {
         return true;
       }
       return blocks.has(userId);
     },
-    [blockedUsers, blocks],
+    [isLoading, blocks],
   );
 
   const contextValue = {
