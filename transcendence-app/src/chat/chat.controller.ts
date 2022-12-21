@@ -123,7 +123,7 @@ export class ChatController {
   async leaveChatroom(
     @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
     authCrm: ChatroomMemberWithAuthorization | null,
-    @GetDestCrMember('chatroomId', DestChatroomMemberPipe)
+    @GetAuthCrMember('chatroomId', DestChatroomMemberPipe) // Sic!!!
     destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
