@@ -26,6 +26,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiParam,
   ApiPayloadTooLargeResponse,
   ApiProduces,
   ApiServiceUnavailableResponse,
@@ -115,6 +116,7 @@ export class ChatController {
     description: 'Authenticated user leaves the given chatroom',
     type: ChatroomMember,
   })
+  @ApiParam({ name: 'chatroomId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
@@ -140,6 +142,8 @@ export class ChatController {
     description: 'Chatroom admin removes chatroom member',
     type: ChatroomMember,
   })
+  @ApiParam({ name: 'chatroomId', type: String })
+  @ApiParam({ name: 'userId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
