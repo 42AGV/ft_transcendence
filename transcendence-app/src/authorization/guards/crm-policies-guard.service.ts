@@ -1,15 +1,15 @@
 import { AnyMongoAbility } from '@casl/ability';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { CaslAbilityFactory } from './casl-ability.factory';
-import { CHECK_POLICIES_KEY } from './decorators/policies.decorator';
-import { AuthorizationService } from './authorization.service';
+import { CaslAbilityFactory } from '../casl-ability.factory';
+import { CHECK_POLICIES_KEY } from '../decorators/policies.decorator';
+import { AuthorizationService } from '../authorization.service';
 
-interface IPolicyHandler {
+export interface IPolicyHandler {
   handle(ability: AnyMongoAbility): boolean;
 }
 
-type PolicyHandlerCallback = (ability: AnyMongoAbility) => boolean;
+export type PolicyHandlerCallback = (ability: AnyMongoAbility) => boolean;
 
 export type PolicyHandler = IPolicyHandler | PolicyHandlerCallback;
 

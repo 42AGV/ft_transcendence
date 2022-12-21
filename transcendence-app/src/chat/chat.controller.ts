@@ -59,7 +59,7 @@ import { GetDestCrMember } from './chatroom/chatroom-member/decorators/dest-chat
 import { DestChatroomMemberPipe } from './chatroom/chatroom-member/decorators/dest-chatroom-member.pipe';
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
-import { CrMemberPoliciesGuard } from '../authorization/crm-policies-guard.service';
+import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies-guard.service';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)

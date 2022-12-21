@@ -46,43 +46,47 @@ export class CaslAbilityFactory {
     });
   }
 
-  async defineAbilitiesFor(chatroomMember: ChatroomMemberWithAuthorization) {
+  async defineAbilitiesFor(
+    user: UserWithAuthorization | ChatroomMemberWithAuthorization,
+  ) {
     const abilityCtx = new AbilityBuilder<AppAbility>(createMongoAbility);
     const { can, cannot } = abilityCtx;
-    if (!chatroomMember.crm_member || chatroomMember.crm_banned) {
-      cannot(Action.Manage, ChatroomMember);
-      if (!chatroomMember.crm_member) {
-        // a user can join a chatroom, i.e. create a chatroom member, if it's
-        // not yet a member of that chatroom. We should implement the password
-        // checking, and the JoinChatroomDto, maybe, so we can use this.
-        can(Action.Create, ChatroomMember);
+    if (user instanceof ChatroomMemberWithAuthorization) {
+      if (!user.crm_member || user.crm_banned) {
+        cannot(Action.Manage, ChatroomMember);
+        if (!user.crm_member) {
+          // a user can join a chatroom, i.e. create a chatroom member, if it's
+          // not yet a member of that chatroom. We should implement the password
+          // checking, and the JoinChatroomDto, maybe, so we can use this.
+          can(Action.Create, ChatroomMember);
+        }
+        return this.setGlobalAbilities(abilityCtx, user);
       }
-      return this.setGlobalAbilities(abilityCtx, chatroomMember);
-    }
-    // a user cannot join a chatroom, i.e. create a chatroom member, if it's
-    // already a member of that chatroom
-    cannot(Action.Create, ChatroomMember);
-    can(Action.Read, ChatroomMember);
-    can(Action.Delete, ChatroomMember, {
-      userId: chatroomMember.userId,
-    });
-    if (chatroomMember.crm_admin) {
-      can(Action.Update, ChatroomMember);
-      cannot(Action.Update, ChatroomMember, { admin: true });
-      can(Action.Update, UpdateChatroomMemberDto);
-      cannot(Action.Update, UpdateChatroomMemberDto, {
-        admin: { $exists: true },
+      // a user cannot join a chatroom, i.e. create a chatroom member, if it's
+      // already a member of that chatroom
+      cannot(Action.Create, ChatroomMember);
+      can(Action.Read, ChatroomMember);
+      can(Action.Delete, ChatroomMember, {
+        userId: user.userId,
       });
-      can(Action.Delete, ChatroomMember, { admin: false });
+      if (user.crm_admin) {
+        can(Action.Update, ChatroomMember);
+        cannot(Action.Update, ChatroomMember, { admin: true });
+        can(Action.Update, UpdateChatroomMemberDto);
+        cannot(Action.Update, UpdateChatroomMemberDto, {
+          admin: { $exists: true },
+        });
+        can(Action.Delete, ChatroomMember, { admin: false });
+      }
+      if (user.crm_owner) {
+        can(Action.Manage, UpdateChatroomMemberDto);
+        can(Action.Manage, ChatroomMember);
+        cannot(Action.Delete, ChatroomMember, {
+          userId: user.userId,
+        });
+      }
     }
-    if (chatroomMember.crm_owner) {
-      can(Action.Manage, UpdateChatroomMemberDto);
-      can(Action.Manage, ChatroomMember);
-      cannot(Action.Delete, ChatroomMember, {
-        userId: chatroomMember.userId,
-      });
-    }
-    return this.setGlobalAbilities(abilityCtx, chatroomMember);
+    return this.setGlobalAbilities(abilityCtx, user);
   }
 
   async defineAbilitiesForCr(authUserId: string, chatroomId: string) {
