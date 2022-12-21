@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { PolicyHandler } from '../guards/crm-policies-guard.service';
+import { PolicyHandler } from '../guards/base-policies.guard';
 
 export const CHECK_POLICIES_KEY = 'check_policy';
 export const CheckPolicies = (...handlers: PolicyHandler[]) =>

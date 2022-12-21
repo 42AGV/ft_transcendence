@@ -59,7 +59,8 @@ import { GetDestCrMember } from './chatroom/chatroom-member/decorators/dest-chat
 import { DestChatroomMemberPipe } from './chatroom/chatroom-member/decorators/dest-chatroom-member.pipe';
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
-import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies-guard.service';
+import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies.guard';
+import { AnyMongoAbility } from '@casl/ability';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -215,7 +216,9 @@ export class ChatController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseGuards(CrMemberPoliciesGuard)
-  @CheckPolicies((ability) => ability.can(Action.Read, ChatroomMember))
+  @CheckPolicies((ability: AnyMongoAbility) =>
+    ability.can(Action.Read, ChatroomMember),
+  )
   async getChatroomMembers(
     @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
     authCrm: ChatroomMemberWithAuthorization | null,
