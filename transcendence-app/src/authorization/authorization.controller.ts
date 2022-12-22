@@ -3,12 +3,13 @@ import {
   Post,
   Body,
   UseGuards,
-  UnprocessableEntityException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
-  ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
@@ -29,14 +30,14 @@ export class AuthorizationController {
   constructor(private readonly authorizationService: AuthorizationService) {}
 
   @Post('role')
-  @ApiCreatedResponse({ description: 'Create a new role', type: UserToRole })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Add a role to a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addRole(@Body() roleObj: CreateUserToRoleDto): Promise<UserToRole> {
-    const uToR = await this.authorizationService.addUserToRole({
+  async addRole(@Body() roleObj: CreateUserToRoleDto): Promise<void> {
+    await this.authorizationService.addUserToRole({
       id: roleObj.userId,
       role: roleObj.role,
     });
-    return uToR;
   }
 }
