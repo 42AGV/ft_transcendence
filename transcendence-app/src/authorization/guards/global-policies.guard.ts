@@ -18,8 +18,6 @@ export class GlobalPoliciesGuard extends PoliciesGuard {
     const userWithAuthorization =
       await this.authorizationService.getUserWithAuthorizationFromId(authId);
 
-    return await this.caslAbilityFactory.defineAbilitiesFor(
-      userWithAuthorization,
-    );
+    return this.caslAbilityFactory.defineAbilitiesFor(userWithAuthorization);
   }
 }

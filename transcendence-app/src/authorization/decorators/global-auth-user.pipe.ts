@@ -4,8 +4,7 @@ import { AuthorizationService } from '../authorization.service';
 
 @Injectable()
 export class GlobalAuthUserPipe
-  implements
-    PipeTransform<Partial<string>, Promise<UserWithAuthorization | null>>
+  implements PipeTransform<string, Promise<UserWithAuthorization | null>>
 {
   constructor(private readonly authorizationService: AuthorizationService) {}
 

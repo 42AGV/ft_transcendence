@@ -22,7 +22,7 @@ type Subject = InferSubjects<
 type AppAbility = MongoAbility<[Action, Subject]>;
 @Injectable()
 export class CaslAbilityFactory {
-  private async setGlobalAbilities(
+  private setGlobalAbilities(
     { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: UserWithAuthorization,
   ) {
@@ -43,7 +43,7 @@ export class CaslAbilityFactory {
     });
   }
 
-  async defineAbilitiesFor(
+  defineAbilitiesFor(
     user: UserWithAuthorization | ChatroomMemberWithAuthorization,
   ) {
     const abilityCtx = new AbilityBuilder<AppAbility>(createMongoAbility);

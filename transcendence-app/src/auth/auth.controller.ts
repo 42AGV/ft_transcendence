@@ -124,7 +124,7 @@ export class AuthController {
     if (!authUser) {
       throw new UnprocessableEntityException();
     }
-    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authUser);
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
     if (ability.cannot(Action.Create, roleObj)) {
       throw new UnauthorizedException();
     }
@@ -146,7 +146,7 @@ export class AuthController {
     if (!authUser) {
       throw new UnprocessableEntityException();
     }
-    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authUser);
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
     if (ability.cannot(Action.Delete, roleObj)) {
       throw new UnauthorizedException();
     }

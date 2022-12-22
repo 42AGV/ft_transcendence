@@ -22,6 +22,6 @@ export class CrMemberPoliciesGuard extends PoliciesGuard {
         authId,
         chatId,
       );
-    return await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    return this.caslAbilityFactory.defineAbilitiesFor(authCrm);
   }
 }
