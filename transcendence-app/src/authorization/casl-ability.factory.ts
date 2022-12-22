@@ -12,6 +12,8 @@ import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-me
 import { ChatroomMember } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { UpdateChatroomMemberDto } from '../chat/chatroom/chatroom-member/dto/update-chatroom-member.dto';
 import { Chatroom } from '../chat/chatroom/infrastructure/db/chatroom.entity';
+import { UserToRole } from './infrastructure/db/user-to-role.entity';
+import { Role } from '../shared/enums/role.enum';
 
 type Subject = InferSubjects<
   typeof ChatroomMember | typeof UpdateChatroomMemberDto | typeof Chatroom
@@ -28,16 +30,13 @@ export class CaslAbilityFactory {
       cannot(Action.Manage, 'all');
     } else if (globalUserAuthCtx.g_admin && !globalUserAuthCtx.g_owner) {
       can(Action.Manage, 'all');
-      // This is not implemented / doesn't exist yet, but is left here as
-      // boilerplate to know how does this DSL work
-      cannot(Action.Update, 'UpdateUserToRoleDto', {
-        owner: { $exists: true },
-      });
     }
     if (globalUserAuthCtx.g_owner) {
       can(Action.Manage, 'all');
-      cannot(Action.Manage, 'UserToRole', { role: 'owner' });
     }
+    cannot(Action.Manage, UserToRole, {
+      role: Role.owner,
+    });
     return build({
       detectSubjectType: (object) => object.constructor,
     });
