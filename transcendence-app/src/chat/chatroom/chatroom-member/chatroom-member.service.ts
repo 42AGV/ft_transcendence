@@ -15,7 +15,7 @@ import { BooleanString } from '../../../shared/enums/boolean-string.enum';
 import { UpdateChatroomMemberDto } from './dto/update-chatroom-member.dto';
 import { Action } from '../../../shared/enums/action.enum';
 import { CaslAbilityFactory } from '../../../authorization/casl-ability.factory';
-import { User } from '../../../user/infrastructure/db/user.entity';
+import { ChatroomMemberWithAuthorization } from '../../../authorization/infrastructure/db/chatroom-member-with-authorization.entity';
 
 @Injectable()
 export class ChatroomMemberService {
@@ -31,8 +31,8 @@ export class ChatroomMemberService {
   ): Promise<ChatroomMember | null> {
     const chatmember = {
       joinedAt: new Date(Date.now()),
-      chatId: chatId,
-      userId: userId,
+      chatId,
+      userId,
       admin: false,
       muted: false,
       banned: false,
@@ -55,68 +55,52 @@ export class ChatroomMemberService {
   }
 
   async updateChatroomMember(
-    authUser: User,
-    chatroomId: string,
-    userId: string,
+    authCrm: ChatroomMemberWithAuthorization | null,
+    destCrm: ChatroomMember | null,
     updateChatroomMemberDto: UpdateChatroomMemberDto,
   ): Promise<ChatroomMember | null> {
-    const toUpdateChatroomMember = await this.getById(chatroomId, userId);
-    if (!toUpdateChatroomMember) {
+    if (!authCrm || !destCrm) {
       throw new NotFoundException();
     }
-    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
-      authUser.id,
-      chatroomId,
-    );
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
     if (
       !(
         ability.can(Action.Update, updateChatroomMemberDto) &&
-        ability.can(Action.Update, toUpdateChatroomMember)
+        ability.can(Action.Update, destCrm)
       )
     ) {
       throw new ForbiddenException();
     }
+    const { chatId, userId } = destCrm;
     return this.chatroomMemberRepository.updateById(
-      chatroomId,
+      chatId,
       userId,
       updateChatroomMemberDto,
     );
   }
 
   async removeFromChatroom(
-    chatroomId: string,
-    authUserId: string,
-    toDeleteUserId: string,
+    authCrm: ChatroomMemberWithAuthorization | null,
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember | null> {
-    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
-      authUserId,
-      chatroomId,
-    );
-    const toDeleteChatroomMember = await this.getById(
-      chatroomId,
-      toDeleteUserId,
-    );
-    if (!toDeleteChatroomMember) {
+    if (!authCrm || !destCrm) {
       throw new NotFoundException();
     }
-    if (ability.cannot(Action.Delete, toDeleteChatroomMember)) {
+    const { chatId, userId } = destCrm;
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    if (ability.cannot(Action.Delete, destCrm)) {
       throw new ForbiddenException();
     }
-    if (toDeleteChatroomMember.banned || toDeleteChatroomMember.muted) {
-      return this.chatroomMemberRepository.updateById(
-        chatroomId,
-        toDeleteUserId,
-        {
-          joinedAt: null,
-        },
-      );
+    if (destCrm.banned || destCrm.muted) {
+      return this.chatroomMemberRepository.updateById(chatId, userId, {
+        joinedAt: null,
+      });
     }
-    return this.chatroomMemberRepository.deleteById(chatroomId, toDeleteUserId);
+    return this.chatroomMemberRepository.deleteById(chatId, userId);
   }
 
   async getChatroomMembers(
-    userId: string,
-    chatroomId: string,
+    authCrm: ChatroomMemberWithAuthorization | null,
     {
       search = '',
       limit = MAX_ENTRIES_PER_PAGE,
@@ -124,15 +108,11 @@ export class ChatroomMemberService {
       sort = BooleanString.True,
     }: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[] | null> {
-    const ability = await this.caslAbilityFactory.defineAbilitiesForCrm(
-      userId,
-      chatroomId,
-    );
-    if (ability.cannot(Action.Read, ChatroomMember)) {
-      throw new ForbiddenException();
+    if (!authCrm) {
+      throw new NotFoundException();
     }
     return this.chatroomMemberRepository.getPaginatedChatroomMembers(
-      chatroomId,
+      authCrm.chatId,
       {
         search,
         limit,

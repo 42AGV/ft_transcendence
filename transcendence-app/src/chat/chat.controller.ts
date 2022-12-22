@@ -26,6 +26,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiParam,
   ApiPayloadTooLargeResponse,
   ApiProduces,
   ApiServiceUnavailableResponse,
@@ -51,6 +52,15 @@ import { UpdateChatroomMemberDto } from './chatroom/chatroom-member/dto/update-c
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { ApiFile } from '../shared/decorators/api-file.decorator';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
+import { AuthChatroomMemberPipe } from './chatroom/chatroom-member/decorators/auth-chatroom-member.pipe';
+import { ChatroomMemberWithAuthorization } from '../authorization/infrastructure/db/chatroom-member-with-authorization.entity';
+import { GetAuthCrMember } from './chatroom/chatroom-member/decorators/auth-chatroom-member.decorator';
+import { GetDestCrMember } from './chatroom/chatroom-member/decorators/dest-chatroom-member.decorator';
+import { DestChatroomMemberPipe } from './chatroom/chatroom-member/decorators/dest-chatroom-member.pipe';
+import { CheckPolicies } from '../authorization/decorators/policies.decorator';
+import { Action } from '../shared/enums/action.enum';
+import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies.guard';
+import { AnyMongoAbility } from '@casl/ability';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -110,17 +120,19 @@ export class ChatController {
     description: 'Authenticated user leaves the given chatroom',
     type: ChatroomMember,
   })
+  @ApiParam({ name: 'chatroomId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async leaveChatroom(
-    @GetUser() user: User,
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
+    @GetAuthCrMember('chatroomId', DestChatroomMemberPipe) // Sic!!!
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
-      chatroomId,
-      user.id,
-      user.id,
+      authCrm,
+      destCrm,
     );
 
     if (!chatroomMember) {
@@ -134,18 +146,20 @@ export class ChatController {
     description: 'Chatroom admin removes chatroom member',
     type: ChatroomMember,
   })
+  @ApiParam({ name: 'chatroomId', type: String })
+  @ApiParam({ name: 'userId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async removeChatroomMember(
-    @GetUser() user: User,
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
-    @Param('userId', ParseUUIDPipe) toDeleteUserId: string,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
+    @GetDestCrMember('chatroomId', DestChatroomMemberPipe)
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember = await this.chatroomMemberService.removeFromChatroom(
-      chatroomId,
-      user.id,
-      toDeleteUserId,
+      authCrm,
+      destCrm,
     );
     if (!chatroomMember) {
       throw new ServiceUnavailableException();
@@ -198,17 +212,21 @@ export class ChatController {
     description: `Lists chat members for a given room (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [ChatroomMemberWithUser],
   })
+  @ApiParam({ name: 'chatroomId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  @UseGuards(CrMemberPoliciesGuard)
+  @CheckPolicies((ability: AnyMongoAbility) =>
+    ability.can(Action.Read, ChatroomMember),
+  )
   async getChatroomMembers(
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
-    @GetUser() user: User,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
     @Query() paginationWithSearchQueryDto: PaginationWithSearchQueryDto,
   ): Promise<ChatroomMemberWithUser[]> {
     const chatroomsMembers =
       await this.chatroomMemberService.getChatroomMembers(
-        user.id,
-        chatroomId,
+        authCrm,
         paginationWithSearchQueryDto,
       );
     if (!chatroomsMembers) {
@@ -243,20 +261,22 @@ export class ChatController {
     description: 'Update a chatroom member',
     type: ChatroomMember,
   })
+  @ApiParam({ name: 'chatroomId', type: String })
+  @ApiParam({ name: 'userId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async updateChatroomMember(
-    @GetUser() userMe: User,
-    @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
-    @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateChatroomMemberDto: UpdateChatroomMemberDto,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
+    @GetDestCrMember('chatroomId', DestChatroomMemberPipe)
+    destCrm: ChatroomMember | null,
   ): Promise<ChatroomMember> {
     const chatroomMember =
       await this.chatroomMemberService.updateChatroomMember(
-        userMe,
-        chatroomId,
-        userId,
+        authCrm,
+        destCrm,
         updateChatroomMemberDto,
       );
     if (!chatroomMember) {
