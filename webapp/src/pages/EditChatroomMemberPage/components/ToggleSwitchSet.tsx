@@ -57,6 +57,7 @@ export default function ToggleSwitchSet({
     });
   }, [canEditParams.destCrMember]);
   const { warn } = useNotificationContext();
+
   const [canEdit, isAuthOwner] = CanEdit(canEditParams);
 
   const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
