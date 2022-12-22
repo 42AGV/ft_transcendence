@@ -12,14 +12,14 @@ import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-me
 import { ChatroomMember } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { UpdateChatroomMemberDto } from '../chat/chatroom/chatroom-member/dto/update-chatroom-member.dto';
 import { Chatroom } from '../chat/chatroom/infrastructure/db/chatroom.entity';
-import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { Role } from '../shared/enums/role.enum';
+import { UserToRoleDto } from './dto/user-to-role.dto';
 
 export type SubjectCtors =
   | typeof ChatroomMember
   | typeof UpdateChatroomMemberDto
   | typeof Chatroom
-  | typeof UserToRole;
+  | typeof UserToRoleDto;
 
 export type Subject = InferSubjects<SubjectCtors>;
 
@@ -30,7 +30,7 @@ export class CaslAbilityFactory {
     { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: UserWithAuthorization,
   ) {
-    cannot(Action.Manage, UserToRole);
+    cannot(Action.Manage, UserToRoleDto);
     if (globalUserAuthCtx.g_banned) {
       cannot(Action.Manage, 'all');
     } else if (globalUserAuthCtx.g_admin && !globalUserAuthCtx.g_owner) {
@@ -39,7 +39,7 @@ export class CaslAbilityFactory {
     if (globalUserAuthCtx.g_owner) {
       can(Action.Manage, 'all');
     }
-    cannot(Action.Manage, UserToRole, {
+    cannot(Action.Manage, UserToRoleDto, {
       role: Role.owner,
     });
     return build({

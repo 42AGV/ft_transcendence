@@ -38,8 +38,8 @@ import { AuthorizationService } from '../authorization/authorization.service';
 import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
-import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
+import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -104,8 +104,8 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('local/role')
-  @SetSubjects(UserToRole)
+  @Post('authorization/role')
+  @SetSubjects(UserToRoleDto)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
     ability.can(Action.Create, userToRole),
@@ -114,12 +114,12 @@ export class AuthController {
   @ApiNoContentResponse({ description: 'Add a role to a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addRole(@Body() roleObj: UserToRole): Promise<void> {
+  async addRole(@Body() roleObj: UserToRoleDto): Promise<void> {
     await this.authorizationService.addUserToRole(roleObj);
   }
 
-  @Delete('local/role')
-  @SetSubjects(UserToRole)
+  @Delete('authorization/role')
+  @SetSubjects(UserToRoleDto)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
     ability.can(Action.Delete, userToRole),
@@ -128,7 +128,7 @@ export class AuthController {
   @ApiNoContentResponse({ description: 'Remove a role from a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async removeRole(@Body() roleObj: UserToRole): Promise<void> {
+  async removeRole(@Body() roleObj: UserToRoleDto): Promise<void> {
     await this.authorizationService.deleteUserToRole(roleObj);
   }
 }

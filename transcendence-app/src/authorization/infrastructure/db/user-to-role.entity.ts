@@ -1,4 +1,3 @@
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { Role } from '../../../shared/enums/role.enum';
 
 export enum UserToRoleKeys {
@@ -12,19 +11,11 @@ export interface UserToRoleData {
 }
 
 export class UserToRole {
-  @IsString()
-  @IsUUID()
-  @IsNotEmpty()
-  id!: string;
+  id: string;
+  role: Role;
 
-  @IsEnum(Role)
-  @IsNotEmpty()
-  role!: Role;
-
-  constructor(userRoleData?: UserToRoleData) {
-    if (userRoleData !== undefined) {
-      this.id = userRoleData.id;
-      this.role = userRoleData.role;
-    }
+  constructor(userRoleData: UserToRoleData) {
+    this.id = userRoleData.id;
+    this.role = userRoleData.role;
   }
 }
