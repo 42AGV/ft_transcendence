@@ -27,8 +27,7 @@ import { GlobalPoliciesGuard } from './guards/global-policies.guard';
 import { CheckPolicies } from './decorators/policies.decorator';
 
 @Controller('authorization')
-@UseGuards(AuthenticatedGuard, GlobalPoliciesGuard)
-@CheckPolicies((ability) => ability.can(Action.Read, UserToRole))
+@UseGuards(AuthenticatedGuard)
 @ApiTags('authorization')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class AuthorizationController {
@@ -38,6 +37,8 @@ export class AuthorizationController {
   ) {}
 
   @Post('role')
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Create, UserToRole))
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Add a role to a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })

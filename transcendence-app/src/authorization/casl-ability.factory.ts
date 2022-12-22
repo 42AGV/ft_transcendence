@@ -26,6 +26,7 @@ export class CaslAbilityFactory {
     { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: UserWithAuthorization,
   ) {
+    cannot(Action.Manage, UserToRole);
     if (globalUserAuthCtx.g_banned) {
       cannot(Action.Manage, 'all');
     } else if (globalUserAuthCtx.g_admin && !globalUserAuthCtx.g_owner) {

@@ -7,17 +7,19 @@ import { PoliciesGuard } from './base-policies.guard';
 @Injectable()
 export class GlobalPoliciesGuard extends PoliciesGuard {
   constructor(
-    protected reflector: Reflector,
-    protected caslAbilityFactory: CaslAbilityFactory,
-    protected readonly authorizationService: AuthorizationService,
+    reflector: Reflector,
+    caslAbilityFactory: CaslAbilityFactory,
+    authorizationService: AuthorizationService,
   ) {
     super(reflector, caslAbilityFactory, authorizationService);
   }
   override async getAbilityFromContext(ctx: ExecutionContext) {
     const authId = ctx.switchToHttp().getRequest().user.id;
-    const authCrm =
+    const userWithAuthorization =
       await this.authorizationService.getUserWithAuthorizationFromId(authId);
 
-    return await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    return await this.caslAbilityFactory.defineAbilitiesFor(
+      userWithAuthorization,
+    );
   }
 }
