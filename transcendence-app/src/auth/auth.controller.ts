@@ -40,6 +40,7 @@ import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
 import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
+import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -105,7 +106,7 @@ export class AuthController {
   }
 
   @Post('authorization/role')
-  @SetSubjects(UserToRoleDto)
+  @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
     ability.can(Action.Create, userToRole),
@@ -119,7 +120,7 @@ export class AuthController {
   }
 
   @Delete('authorization/role')
-  @SetSubjects(UserToRoleDto)
+  @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
     ability.can(Action.Delete, userToRole),
