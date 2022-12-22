@@ -1,3 +1,4 @@
+import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { Role } from '../../../shared/enums/role.enum';
 
 export enum UserToRoleKeys {

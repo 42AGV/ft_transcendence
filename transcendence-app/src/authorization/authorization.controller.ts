@@ -17,7 +17,10 @@ import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { GlobalPoliciesGuard } from './guards/global-policies.guard';
 import { CheckPolicies } from './decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
-import { UserToRole } from './infrastructure/db/user-to-role.entity';
+import {
+  UserToRole,
+  UserToRoleData,
+} from './infrastructure/db/user-to-role.entity';
 import { AuthorizationService } from './authorization.service';
 import { CreateUserToRoleDto } from './dto/create-user-to-role.dto';
 
@@ -35,9 +38,6 @@ export class AuthorizationController {
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async addRole(@Body() roleObj: CreateUserToRoleDto): Promise<void> {
-    await this.authorizationService.addUserToRole({
-      id: roleObj.userId,
-      role: roleObj.role,
-    });
+    await this.authorizationService.addUserToRole(roleObj);
   }
 }
