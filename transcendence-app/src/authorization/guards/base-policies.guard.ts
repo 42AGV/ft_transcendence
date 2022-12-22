@@ -4,8 +4,7 @@ import { Reflector } from '@nestjs/core';
 import {
   CaslAbilityFactory,
   Subject,
-  SubjectAsString,
-  SubjectsByKey,
+  SubjectCtors,
 } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
 import { CHECK_POLICIES_KEY } from '../decorators/policies.decorator';
@@ -41,20 +40,16 @@ export abstract class PoliciesGuard implements CanActivate {
         ctx.getHandler(),
       ) || [];
     const ability = await this.getAbilityFromContext(ctx);
-    const subjects: SubjectAsString[] =
-      this.reflector.get<SubjectAsString[]>(
-        SET_SUBJECTS_KEY,
-        ctx.getHandler(),
-      ) || [];
+    const subjects: SubjectCtors[] =
+      this.reflector.get<SubjectCtors[]>(SET_SUBJECTS_KEY, ctx.getHandler()) ||
+      [];
     if (subjects.length) {
       const body = ctx.switchToHttp().getRequest().body;
       let subjectsAsObj: Subject[] = [];
       if (Array.isArray(body)) {
-        subjectsAsObj = subjects.map(
-          (ctor, i) => new SubjectsByKey[ctor](body[i]),
-        );
+        subjectsAsObj = subjects.map((Ctor, i) => new Ctor(body[i]));
       } else {
-        subjectsAsObj = subjects.map((ctor) => new SubjectsByKey[ctor](body));
+        subjectsAsObj = subjects.map((Ctor) => new Ctor(body));
       }
       return policyHandlers.every((handler, i) =>
         this.execPolicyHandler(handler, ability, subjectsAsObj[i]),

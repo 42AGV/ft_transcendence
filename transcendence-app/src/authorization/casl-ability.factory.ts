@@ -15,26 +15,13 @@ import { Chatroom } from '../chat/chatroom/infrastructure/db/chatroom.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { Role } from '../shared/enums/role.enum';
 
-type SubjectCtors =
+export type SubjectCtors =
   | typeof ChatroomMember
   | typeof UpdateChatroomMemberDto
   | typeof Chatroom
   | typeof UserToRole;
 
 export type Subject = InferSubjects<SubjectCtors>;
-
-export type SubjectAsString =
-  | 'ChatroomMember'
-  | 'UpdateChatroomMemberDto'
-  | 'Chatroom'
-  | 'UserToRole';
-
-export const SubjectsByKey: { [K: string]: SubjectCtors } = {
-  ChatroomMember: ChatroomMember,
-  UpdateChatroomMemberDto: UpdateChatroomMemberDto,
-  Chatroom: Chatroom,
-  UserToRole: UserToRole,
-};
 
 type AppAbility = MongoAbility<[Action, Subject]>;
 @Injectable()

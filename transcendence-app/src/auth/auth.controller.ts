@@ -107,7 +107,7 @@ export class AuthController {
   }
 
   @Post('local/role')
-  @SetSubjects('UserToRole')
+  @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
     ability.can(Action.Create, userToRole),
@@ -121,7 +121,7 @@ export class AuthController {
   }
 
   @Delete('local/role')
-  @SetSubjects('UserToRole')
+  @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
     ability.can(Action.Delete, userToRole),
