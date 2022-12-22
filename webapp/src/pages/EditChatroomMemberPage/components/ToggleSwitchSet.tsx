@@ -57,13 +57,19 @@ export default function ToggleSwitchSet({
     });
   }, [canEditParams.destCrMember]);
   const { warn } = useNotificationContext();
+  const [canEdit, isAuthOwner] = CanEdit(canEditParams);
 
   const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
     return async () => {
-      if (isLoading) {
+      if (isLoading || !canEdit) {
+        if (!canEdit) warn("You can't modify this setting");
         return;
       }
       try {
+        if (!isAuthOwner && dto.admin !== undefined) {
+          warn('You cannot make new admins');
+          return;
+        }
         const oldUpdateChatroomMember = updateChatroomMemberDto;
         await chatApi.chatControllerUpdateChatroomMember({
           chatroomId: chatroomId,
