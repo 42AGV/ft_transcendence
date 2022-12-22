@@ -10,7 +10,6 @@ import {
   Redirect,
   Req,
   Request as GetRequest,
-  UnauthorizedException,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
@@ -41,9 +40,7 @@ import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.gua
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
-import { User as GetUser } from '../user/decorators/user.decorator';
-import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
-import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
+import { SetSubjects } from '../authorization/decorators/get-subjects.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -110,46 +107,30 @@ export class AuthController {
   }
 
   @Post('local/role')
+  @SetSubjects('UserToRole')
   @UseGuards(GlobalPoliciesGuard)
-  @CheckPolicies((ability) => ability.can(Action.Create, UserToRole))
+  @CheckPolicies((ability, userToRole) =>
+    ability.can(Action.Create, userToRole),
+  )
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Add a role to a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addRole(
-    @Body() roleObj: UserToRole,
-    @GetUser('id', GlobalAuthUserPipe)
-    authUser: UserWithAuthorization | null,
-  ): Promise<void> {
-    if (!authUser) {
-      throw new UnprocessableEntityException();
-    }
-    const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
-    if (ability.cannot(Action.Create, roleObj)) {
-      throw new UnauthorizedException();
-    }
+  async addRole(@Body() roleObj: UserToRole): Promise<void> {
     await this.authorizationService.addUserToRole(roleObj);
   }
 
   @Delete('local/role')
+  @SetSubjects('UserToRole')
   @UseGuards(GlobalPoliciesGuard)
-  @CheckPolicies((ability) => ability.can(Action.Delete, UserToRole))
+  @CheckPolicies((ability, userToRole) =>
+    ability.can(Action.Delete, userToRole),
+  )
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Remove a role from a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async removeRole(
-    @Body() roleObj: UserToRole,
-    @GetUser('id', GlobalAuthUserPipe)
-    authUser: UserWithAuthorization | null,
-  ): Promise<void> {
-    if (!authUser) {
-      throw new UnprocessableEntityException();
-    }
-    const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
-    if (ability.cannot(Action.Delete, roleObj)) {
-      throw new UnauthorizedException();
-    }
+  async removeRole(@Body() roleObj: UserToRole): Promise<void> {
     await this.authorizationService.deleteUserToRole(roleObj);
   }
 }
