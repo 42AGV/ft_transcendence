@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { Subject, SubjectCtors } from '../casl-ability.factory';
+import { SubjectCtors } from '../casl-ability.factory';
 
 export const SET_SUBJECTS_KEY = 'set_subjects';
 
