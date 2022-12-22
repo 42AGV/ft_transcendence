@@ -35,7 +35,6 @@ import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
 import { User } from '../user/infrastructure/db/user.entity';
 import { AuthorizationService } from '../authorization/authorization.service';
-import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
@@ -49,7 +48,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly socketService: SocketService,
     private readonly authorizationService: AuthorizationService,
-    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   @Get('login')

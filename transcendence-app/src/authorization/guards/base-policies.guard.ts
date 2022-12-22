@@ -59,6 +59,7 @@ export abstract class PoliciesGuard implements CanActivate {
       this.execPolicyHandler(handler, ability),
     );
   }
+
   private execPolicyHandler(
     handler: PolicyHandler,
     ability: AnyMongoAbility,
