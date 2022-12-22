@@ -9,7 +9,7 @@ import {
 } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
 import { CHECK_POLICIES_KEY } from '../decorators/policies.decorator';
-import { SET_SUBJECTS_KEY } from '../decorators/get-subjects.decorator';
+import { SET_SUBJECTS_KEY } from '../decorators/set-subjects.decorator';
 
 interface IPolicyHandler {
   handle(ability: AnyMongoAbility, subject?: Subject): boolean;

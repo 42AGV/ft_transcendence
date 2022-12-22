@@ -40,7 +40,7 @@ import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.gua
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
-import { SetSubjects } from '../authorization/decorators/get-subjects.decorator';
+import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
