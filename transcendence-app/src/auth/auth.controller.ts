@@ -109,7 +109,7 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('role')
+  @Post('local/role')
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability) => ability.can(Action.Create, UserToRole))
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -129,5 +129,27 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     await this.authorizationService.addUserToRole(roleObj);
+  }
+
+  @Delete('local/role')
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Delete, UserToRole))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Remove a role from a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async removeRole(
+    @Body() roleObj: UserToRole,
+    @GetUser('id', GlobalAuthUserPipe)
+    authUser: UserWithAuthorization | null,
+  ): Promise<void> {
+    if (!authUser) {
+      throw new UnprocessableEntityException();
+    }
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authUser);
+    if (ability.cannot(Action.Delete, roleObj)) {
+      throw new UnauthorizedException();
+    }
+    await this.authorizationService.deleteUserToRole(roleObj);
   }
 }
