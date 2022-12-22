@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Post,
   Redirect,
@@ -16,6 +18,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiFoundResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiServiceUnavailableResponse,
@@ -31,6 +34,12 @@ import { AuthService } from './auth.service';
 import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
 import { User } from '../user/infrastructure/db/user.entity';
+import { AuthorizationService } from '../authorization/authorization.service';
+import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
+import { CheckPolicies } from '../authorization/decorators/policies.decorator';
+import { Action } from '../shared/enums/action.enum';
+import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
+import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -38,6 +47,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly socketService: SocketService,
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
   @Get('login')
@@ -92,5 +102,33 @@ export class AuthController {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto): User {
     return req.user;
+  }
+
+  @Post('authorization/role')
+  @SetSubjects(UserToRoleDto)
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability, userToRole) =>
+    ability.can(Action.Create, userToRole),
+  )
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Add a role to a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async addRole(@Body() roleObj: UserToRoleDto): Promise<void> {
+    await this.authorizationService.addUserToRole(roleObj);
+  }
+
+  @Delete('authorization/role')
+  @SetSubjects(UserToRoleDto)
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability, userToRole) =>
+    ability.can(Action.Delete, userToRole),
+  )
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Remove a role from a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async removeRole(@Body() roleObj: UserToRoleDto): Promise<void> {
+    await this.authorizationService.deleteUserToRole(roleObj);
   }
 }

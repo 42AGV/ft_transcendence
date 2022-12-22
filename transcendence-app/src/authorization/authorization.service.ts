@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Role } from '../shared/enums/role.enum';
 import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
@@ -42,7 +46,7 @@ export class AuthorizationService {
       true,
     );
     if (!userToRole) {
-      throw new NotFoundException();
+      throw new UnprocessableEntityException();
     }
     return userToRole;
   }

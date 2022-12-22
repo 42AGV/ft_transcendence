@@ -62,7 +62,7 @@ export class ChatroomMemberService {
     if (!authCrm || !destCrm) {
       throw new NotFoundException();
     }
-    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authCrm);
     if (
       !(
         ability.can(Action.Update, updateChatroomMemberDto) &&
@@ -87,7 +87,7 @@ export class ChatroomMemberService {
       throw new NotFoundException();
     }
     const { chatId, userId } = destCrm;
-    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authCrm);
     if (ability.cannot(Action.Delete, destCrm)) {
       throw new ForbiddenException();
     }

@@ -7,9 +7,9 @@ import { PoliciesGuard } from './base-policies.guard';
 @Injectable()
 export class CrMemberPoliciesGuard extends PoliciesGuard {
   constructor(
-    protected reflector: Reflector,
-    protected caslAbilityFactory: CaslAbilityFactory,
-    protected readonly authorizationService: AuthorizationService,
+    reflector: Reflector,
+    caslAbilityFactory: CaslAbilityFactory,
+    authorizationService: AuthorizationService,
   ) {
     super(reflector, caslAbilityFactory, authorizationService);
   }
@@ -22,6 +22,6 @@ export class CrMemberPoliciesGuard extends PoliciesGuard {
         authId,
         chatId,
       );
-    return await this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    return this.caslAbilityFactory.defineAbilitiesFor(authCrm);
   }
 }

@@ -13,6 +13,7 @@ import { LocalStrategy } from './local.strategy';
 import { OAuth42Strategy } from './oauth42.strategy';
 import { SessionSerializer } from './session.serializer';
 import { SocketModule } from '../socket/socket.module';
+import { AuthorizationModule } from '../authorization/authorization.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SocketModule } from '../socket/socket.module';
     PassportModule.register({ session: true }),
     LocalFileModule,
     AuthProviderModule,
+    AuthorizationModule,
   ],
   controllers: [AuthController],
   providers: [
