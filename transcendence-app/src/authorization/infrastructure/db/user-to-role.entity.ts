@@ -12,11 +12,19 @@ export interface UserToRoleData {
 }
 
 export class UserToRole {
-  id: string;
-  role: Role;
+  @IsString()
+  @IsUUID()
+  @IsNotEmpty()
+  id!: string;
 
-  constructor(userRoleData: UserToRoleData) {
-    this.id = userRoleData.id;
-    this.role = userRoleData.role;
+  @IsEnum(Role)
+  @IsNotEmpty()
+  role!: Role;
+
+  constructor(userRoleData?: UserToRoleData) {
+    if (userRoleData !== undefined) {
+      this.id = userRoleData.id;
+      this.role = userRoleData.role;
+    }
   }
 }

@@ -19,10 +19,8 @@ import { CheckPolicies } from './decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
 import {
   UserToRole,
-  UserToRoleData,
 } from './infrastructure/db/user-to-role.entity';
 import { AuthorizationService } from './authorization.service';
-import { CreateUserToRoleDto } from './dto/create-user-to-role.dto';
 
 @Controller('authorization')
 @UseGuards(AuthenticatedGuard, GlobalPoliciesGuard)
@@ -37,7 +35,7 @@ export class AuthorizationController {
   @ApiNoContentResponse({ description: 'Add a role to a user' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addRole(@Body() roleObj: CreateUserToRoleDto): Promise<void> {
+  async addRole(@Body() roleObj: UserToRole): Promise<void> {
     await this.authorizationService.addUserToRole(roleObj);
   }
 }
