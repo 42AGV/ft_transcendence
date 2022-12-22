@@ -23,9 +23,11 @@ type SubjectCtors =
 
 export type Subject = InferSubjects<SubjectCtors>;
 
-export type SubjectAsString = InferSubjects<
-  'ChatroomMember' | 'UpdateChatroomMemberDto' | 'Chatroom' | 'UserToRole'
->;
+export type SubjectAsString =
+  | 'ChatroomMember'
+  | 'UpdateChatroomMemberDto'
+  | 'Chatroom'
+  | 'UserToRole';
 
 export const SubjectsByKey: { [K: string]: SubjectCtors } = {
   ChatroomMember: ChatroomMember,
