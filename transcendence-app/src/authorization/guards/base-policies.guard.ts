@@ -48,14 +48,14 @@ export abstract class PoliciesGuard implements CanActivate {
       ) || [];
     if (subjects.length) {
       const body = ctx.switchToHttp().getRequest().body;
-      let objs: unknown[] = [];
+      let subjectsAsObj: Subject[] = [];
       if (Array.isArray(body)) {
-        objs = subjects.map((ctor, i) => new SubjectsByKey[ctor](body[i]));
+        subjectsAsObj = subjects.map((ctor, i) => new SubjectsByKey[ctor](body[i]));
       } else {
-        objs = subjects.map((ctor) => new SubjectsByKey[ctor](body));
+        subjectsAsObj = subjects.map((ctor) => new SubjectsByKey[ctor](body));
       }
       return policyHandlers.every((handler, i) =>
-        this.execPolicyHandler(handler, ability, objs[i] as Subject),
+        this.execPolicyHandler(handler, ability, subjectsAsObj[i]),
       );
     }
     return policyHandlers.every((handler) =>
