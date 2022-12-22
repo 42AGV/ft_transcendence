@@ -50,7 +50,9 @@ export abstract class PoliciesGuard implements CanActivate {
       const body = ctx.switchToHttp().getRequest().body;
       let subjectsAsObj: Subject[] = [];
       if (Array.isArray(body)) {
-        subjectsAsObj = subjects.map((ctor, i) => new SubjectsByKey[ctor](body[i]));
+        subjectsAsObj = subjects.map(
+          (ctor, i) => new SubjectsByKey[ctor](body[i]),
+        );
       } else {
         subjectsAsObj = subjects.map((ctor) => new SubjectsByKey[ctor](body));
       }
