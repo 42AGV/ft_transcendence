@@ -3,11 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Post,
   Redirect,
   Req,
   Request as GetRequest,
+  UnauthorizedException,
   UnprocessableEntityException,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +19,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiFoundResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiServiceUnavailableResponse,
@@ -31,6 +35,15 @@ import { AuthService } from './auth.service';
 import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
 import { User } from '../user/infrastructure/db/user.entity';
+import { AuthorizationService } from '../authorization/authorization.service';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
+import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
+import { CheckPolicies } from '../authorization/decorators/policies.decorator';
+import { Action } from '../shared/enums/action.enum';
+import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
+import { User as GetUser } from '../user/decorators/user.decorator';
+import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
+import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -38,6 +51,8 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly socketService: SocketService,
+    private readonly authorizationService: AuthorizationService,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   @Get('login')
@@ -92,5 +107,27 @@ export class AuthController {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto): User {
     return req.user;
+  }
+
+  @Post('role')
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Create, UserToRole))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Add a role to a user' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  async addRole(
+    @Body() roleObj: UserToRole,
+    @GetUser('id', GlobalAuthUserPipe)
+    authUser: UserWithAuthorization | null,
+  ): Promise<void> {
+    if (!authUser) {
+      throw new UnprocessableEntityException();
+    }
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authUser);
+    if (ability.cannot(Action.Create, roleObj)) {
+      throw new UnauthorizedException();
+    }
+    await this.authorizationService.addUserToRole(roleObj);
   }
 }
