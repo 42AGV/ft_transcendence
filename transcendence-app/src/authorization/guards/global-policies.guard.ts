@@ -2,8 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
-import { PoliciesGuard, PolicyHandler } from './base-policies.guard';
-import { CHECK_POLICIES_KEY } from '../decorators/policies.decorator';
+import { PoliciesGuard } from './base-policies.guard';
 import { CONFIG_PARAM_KEY } from '../decorators/configure-param.decorator';
 import { UserWithAuthorization } from '../infrastructure/db/user-with-authorization.entity';
 
