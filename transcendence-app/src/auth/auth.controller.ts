@@ -143,7 +143,7 @@ export class AuthController {
     await this.authorizationService.deleteUserToRole(roleObj);
   }
 
-  @Get('authorization/role/:username')
+  @Get('authorization/:username')
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability) =>
     ability.can(Action.Read, UserWithAuthorizationResponseDto),
