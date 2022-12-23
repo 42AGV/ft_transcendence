@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
+  Param,
   Post,
   Redirect,
   Req,
@@ -23,6 +24,7 @@ import {
   ApiOkResponse,
   ApiServiceUnavailableResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -41,6 +43,8 @@ import { Action } from '../shared/enums/action.enum';
 import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
+import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
+import { ConfigParam } from '../authorization/decorators/configure-param.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -127,9 +131,34 @@ export class AuthController {
   )
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Remove a role from a user' })
+  @ApiUnauthorizedResponse({
+    description: 'Not authorized to remove this role',
+  })
+  @ApiNotFoundResponse({ description: 'Username to role relation not found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async removeRole(@Body() roleObj: UserToRoleDto): Promise<void> {
     await this.authorizationService.deleteUserToRole(roleObj);
+  }
+
+  @Get('authorization/role/:username')
+  @ConfigParam('username')
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability) =>
+    ability.can(Action.Read, UserWithAuthorizationResponseDto),
+  )
+  @ApiOkResponse({
+    description: 'Retrieve user with roles',
+    type: UserWithAuthorizationResponseDto,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Username not found' })
+  @ApiUnauthorizedResponse({ description: 'Not authorized to read roles' })
+  async retrieveUserWithRoles(
+    @Param('username') username: string,
+  ): Promise<UserWithAuthorizationResponseDto> {
+    return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
+      username,
+    );
   }
 }

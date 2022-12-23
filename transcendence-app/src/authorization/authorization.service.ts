@@ -9,12 +9,15 @@ import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
 import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
 import { IChatroomMemberRepository } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
+import { UserWithAuthorizationResponseDto } from './dto/user-with-authorization.response.dto';
+import { IUserRepository } from '../user/infrastructure/db/user.repository';
 
 @Injectable()
 export class AuthorizationService {
   constructor(
     private chatroomMemberRepository: IChatroomMemberRepository,
     private userToRoleRepository: IUserToRoleRepository,
+    private userRepository: IUserRepository,
   ) {}
 
   async getUserWithAuthorizationFromUsername(
@@ -107,6 +110,23 @@ export class AuthorizationService {
       crm_admin: crm?.admin,
       crm_banned: crm?.banned,
       cr_muted: crm?.muted,
+    });
+  }
+
+  async getUserWithAuthorizationResponseDtoFromUsername(
+    username: string,
+  ): Promise<UserWithAuthorizationResponseDto> {
+    const { g_owner, g_admin, g_banned } =
+      await this.getUserWithAuthorizationFromUsername(username);
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return new UserWithAuthorizationResponseDto({
+      g_owner,
+      g_admin,
+      g_banned,
+      ...user,
     });
   }
 }
