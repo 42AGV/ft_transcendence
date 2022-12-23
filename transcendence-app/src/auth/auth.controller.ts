@@ -107,7 +107,7 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('authorization/role')
+  @Post('authorization')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -126,7 +126,7 @@ export class AuthController {
     await this.authorizationService.addUserToRole(roleObj);
   }
 
-  @Delete('authorization/role')
+  @Delete('authorization')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
