@@ -44,7 +44,6 @@ import { SetSubjects } from '../authorization/decorators/set-subjects.decorator'
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
-import { ConfigParam } from '../authorization/decorators/configure-param.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -142,7 +141,6 @@ export class AuthController {
   }
 
   @Get('authorization/role/:username')
-  @ConfigParam('username')
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability) =>
     ability.can(Action.Read, UserWithAuthorizationResponseDto),
