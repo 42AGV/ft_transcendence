@@ -24,7 +24,6 @@ import {
   ApiOkResponse,
   ApiServiceUnavailableResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -116,8 +115,13 @@ export class AuthController {
   )
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Add a role to a user' })
+  @ApiForbiddenResponse({
+    description: 'Not authorized add this role',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "The provided id doesn't match any user",
+  })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async addRole(@Body() roleObj: UserToRoleDto): Promise<void> {
     await this.authorizationService.addUserToRole(roleObj);
   }
@@ -130,12 +134,11 @@ export class AuthController {
   )
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Remove a role from a user' })
-  @ApiUnauthorizedResponse({
+  @ApiForbiddenResponse({
     description: 'Not authorized to remove this role',
   })
   @ApiNotFoundResponse({ description: 'Username to role relation not found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async removeRole(@Body() roleObj: UserToRoleDto): Promise<void> {
     await this.authorizationService.deleteUserToRole(roleObj);
   }
@@ -151,7 +154,7 @@ export class AuthController {
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Username not found' })
-  @ApiUnauthorizedResponse({ description: 'Not authorized to read roles' })
+  @ApiForbiddenResponse({ description: 'Not authorized to read roles' })
   async retrieveUserWithRoles(
     @Param('username') username: string,
   ): Promise<UserWithAuthorizationResponseDto> {
