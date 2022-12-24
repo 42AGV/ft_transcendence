@@ -43,7 +43,11 @@ export default function NavigationBar() {
   const { data: userWithAuth, isLoading } = useData(getUserWithAuth);
   const [navItems, setNavItems] = useState<NavItemContent[]>(NAV_ITEMS_CONTENT);
   useEffect(() => {
-    if (!isLoading && userWithAuth && userWithAuth.gAdmin) {
+    if (
+      !isLoading &&
+      userWithAuth &&
+      (userWithAuth.gAdmin || userWithAuth.gOwner)
+    ) {
       setNavItems([
         ...NAV_ITEMS_CONTENT,
         {
