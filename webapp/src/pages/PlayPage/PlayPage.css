@@ -1,0 +1,20 @@
+.play-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  grid-column-gap: var(--column-gap);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-row-gap: calc(var(--row-gap) * 1.5);
+  overflow: scroll;
+}
+
+@media all and (min-width: 768px) {
+  .avatar-page-template .header {
+    grid-row: 1 / 2;
+    grid-column: 1 / -1;
+  }
+}
