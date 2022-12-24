@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -43,6 +44,9 @@ import { SetSubjects } from '../authorization/decorators/set-subjects.decorator'
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
+import { User as GetUser } from '../user/decorators/user.decorator';
+import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
+import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -144,10 +148,6 @@ export class AuthController {
   }
 
   @Get('authorization/:username')
-  @UseGuards(GlobalPoliciesGuard)
-  @CheckPolicies((ability) =>
-    ability.can(Action.Read, UserWithAuthorizationResponseDto),
-  )
   @ApiOkResponse({
     description: 'Retrieve user with roles',
     type: UserWithAuthorizationResponseDto,
@@ -156,10 +156,16 @@ export class AuthController {
   @ApiNotFoundResponse({ description: 'Username not found' })
   @ApiForbiddenResponse({ description: 'Not authorized to read roles' })
   async retrieveUserWithRoles(
-    @Param('username') username: string,
+    @Param('username') destUsername: string,
+    @GetUser('id', GlobalAuthUserPipe)
+    authUser: UserWithAuthorization | null,
   ): Promise<UserWithAuthorizationResponseDto> {
+    if (!authUser) {
+      throw new BadRequestException();
+    }
     return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
-      username,
+      destUsername,
+      authUser,
     );
   }
 }
