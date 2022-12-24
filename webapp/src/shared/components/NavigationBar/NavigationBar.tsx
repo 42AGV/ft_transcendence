@@ -53,7 +53,7 @@ export default function NavigationBar() {
         },
       ]);
     }
-  }, [userWithAuth]);
+  }, [isLoading, userWithAuth]);
   return (
     <nav className="navigation-bar">
       <ul>
