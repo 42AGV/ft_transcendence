@@ -5,14 +5,26 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthorizationService } from '../authorization/authorization.service';
 
 @Injectable()
 export class OAuth42Guard extends AuthGuard('oauth42') {
   private readonly logger = new Logger(OAuth42Guard.name);
 
+  constructor(private readonly authorizationService: AuthorizationService) {
+    super();
+  }
   async canActivate(context: ExecutionContext) {
-    const result = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest();
+    const result = (await super.canActivate(context)) as boolean;
+    const isBanned = (
+      await this.authorizationService.getUserWithAuthorizationFromUsername(
+        request.user.username,
+      )
+    ).g_banned;
+    if (isBanned) {
+      return false;
+    }
     await super.logIn(request);
     return result;
   }
