@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
+  Param,
   Post,
   Redirect,
   Req,
@@ -41,6 +43,10 @@ import { Action } from '../shared/enums/action.enum';
 import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
+import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
+import { User as GetUser } from '../user/decorators/user.decorator';
+import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
+import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -105,7 +111,7 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('authorization/role')
+  @Post('authorization')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -113,13 +119,18 @@ export class AuthController {
   )
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Add a role to a user' })
+  @ApiForbiddenResponse({
+    description: 'Not authorized add this role',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "The provided id doesn't match any user",
+  })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async addRole(@Body() roleObj: UserToRoleDto): Promise<void> {
     await this.authorizationService.addUserToRole(roleObj);
   }
 
-  @Delete('authorization/role')
+  @Delete('authorization')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -127,9 +138,34 @@ export class AuthController {
   )
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: 'Remove a role from a user' })
+  @ApiForbiddenResponse({
+    description: 'Not authorized to remove this role',
+  })
+  @ApiNotFoundResponse({ description: 'Username to role relation not found' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
   async removeRole(@Body() roleObj: UserToRoleDto): Promise<void> {
     await this.authorizationService.deleteUserToRole(roleObj);
+  }
+
+  @Get('authorization/:username')
+  @ApiOkResponse({
+    description: 'Retrieve user with roles',
+    type: UserWithAuthorizationResponseDto,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Username not found' })
+  @ApiForbiddenResponse({ description: 'Not authorized to read roles' })
+  async retrieveUserWithRoles(
+    @Param('username') destUsername: string,
+    @GetUser('id', GlobalAuthUserPipe)
+    authUser: UserWithAuthorization | null,
+  ): Promise<UserWithAuthorizationResponseDto> {
+    if (!authUser) {
+      throw new BadRequestException();
+    }
+    return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
+      destUsername,
+      authUser,
+    );
   }
 }

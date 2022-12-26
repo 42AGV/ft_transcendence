@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -9,12 +10,18 @@ import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
 import { UserWithAuthorization } from './infrastructure/db/user-with-authorization.entity';
 import { IChatroomMemberRepository } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.repository';
+import { UserWithAuthorizationResponseDto } from './dto/user-with-authorization.response.dto';
+import { IUserRepository } from '../user/infrastructure/db/user.repository';
+import { CaslAbilityFactory } from './casl-ability.factory';
+import { Action } from '../shared/enums/action.enum';
 
 @Injectable()
 export class AuthorizationService {
   constructor(
     private chatroomMemberRepository: IChatroomMemberRepository,
     private userToRoleRepository: IUserToRoleRepository,
+    private userRepository: IUserRepository,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   async getUserWithAuthorizationFromUsername(
@@ -108,5 +115,28 @@ export class AuthorizationService {
       crm_banned: crm?.banned,
       cr_muted: crm?.muted,
     });
+  }
+
+  async getUserWithAuthorizationResponseDtoFromUsername(
+    destUsername: string,
+    authUser: UserWithAuthorization,
+  ): Promise<UserWithAuthorizationResponseDto> {
+    const destUser = await this.userRepository.getByUsername(destUsername);
+    if (!destUser) {
+      throw new NotFoundException();
+    }
+    const { g_owner, g_admin, g_banned } =
+      await this.getUserWithAuthorizationFromUsername(destUsername);
+    const ret = new UserWithAuthorizationResponseDto({
+      g_admin,
+      g_owner,
+      g_banned,
+      ...destUser,
+    });
+    const ability = await this.caslAbilityFactory.defineAbilitiesFor(authUser);
+    if (ability.cannot(Action.Read, ret)) {
+      throw new ForbiddenException();
+    }
+    return ret;
   }
 }

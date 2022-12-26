@@ -14,12 +14,14 @@ import { UpdateChatroomMemberDto } from '../chat/chatroom/chatroom-member/dto/up
 import { Chatroom } from '../chat/chatroom/infrastructure/db/chatroom.entity';
 import { Role } from '../shared/enums/role.enum';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
+import { UserWithAuthorizationResponseDto } from './dto/user-with-authorization.response.dto';
 
 export type SubjectCtors =
   | typeof ChatroomMember
   | typeof UpdateChatroomMemberDto
   | typeof Chatroom
-  | typeof UserToRole;
+  | typeof UserToRole
+  | typeof UserWithAuthorizationResponseDto;
 
 export type Subject = InferSubjects<SubjectCtors>;
 
@@ -30,16 +32,17 @@ export class CaslAbilityFactory {
     { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
     globalUserAuthCtx: UserWithAuthorization,
   ) {
+    cannot(Action.Read, UserWithAuthorizationResponseDto);
+    can(Action.Read, UserWithAuthorizationResponseDto, {
+      username: globalUserAuthCtx.username,
+    });
     cannot(Action.Manage, UserToRole);
-    if (globalUserAuthCtx.g_banned) {
+    if (globalUserAuthCtx.g_banned && !globalUserAuthCtx.g_owner) {
       cannot(Action.Manage, 'all');
-    } else if (globalUserAuthCtx.g_admin && !globalUserAuthCtx.g_owner) {
+    } else if (globalUserAuthCtx.g_admin || globalUserAuthCtx.g_owner) {
       can(Action.Manage, 'all');
     }
-    if (globalUserAuthCtx.g_owner) {
-      can(Action.Manage, 'all');
-    }
-    cannot(Action.Manage, UserToRole, {
+    cannot([Action.Create, Action.Update, Action.Delete], UserToRole, {
       role: Role.owner,
     });
     return build({

@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
 import { PoliciesGuard } from './base-policies.guard';
+import { UserWithAuthorization } from '../infrastructure/db/user-with-authorization.entity';
 
 @Injectable()
 export class GlobalPoliciesGuard extends PoliciesGuard {
@@ -15,9 +16,8 @@ export class GlobalPoliciesGuard extends PoliciesGuard {
   }
   override async getAbilityFromContext(ctx: ExecutionContext) {
     const authId = ctx.switchToHttp().getRequest().user.id;
-    const userWithAuthorization =
+    const userWithAuthorization: UserWithAuthorization =
       await this.authorizationService.getUserWithAuthorizationFromId(authId);
-
     return this.caslAbilityFactory.defineAbilitiesFor(userWithAuthorization);
   }
 }

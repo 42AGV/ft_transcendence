@@ -61,6 +61,7 @@ import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { Action } from '../shared/enums/action.enum';
 import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies.guard';
 import { AnyMongoAbility } from '@casl/ability';
+import { ConfigParam } from '../authorization/decorators/configure-param.decorator';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -215,6 +216,7 @@ export class ChatController {
   @ApiParam({ name: 'chatroomId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  @ConfigParam('chatroomId')
   @UseGuards(CrMemberPoliciesGuard)
   @CheckPolicies((ability: AnyMongoAbility) =>
     ability.can(Action.Read, ChatroomMember),
