@@ -12,6 +12,7 @@ export const EDIT_USER_AVATAR_URL = `${USER_ME_URL}/edit/avatar`;
 export const PLAY_URL = '/play';
 export const CHAT_URL = '/chat';
 export const CHATS_URL = '/chats';
+export const ADMIN_URL = '/admin';
 export const CHATROOM_URL = '/chatroom';
 export const CREATE_CHATROOM_URL = `${CHATROOM_URL}/createchatroom`;
 export const EDIT_CHATROOM_AVATAR_URL = `${CHATROOM_URL}/:chatroomId/edit/avatar`;
