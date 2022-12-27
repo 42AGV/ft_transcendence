@@ -14,7 +14,7 @@ export class LocalGuard extends AuthGuard('local') {
       await this.authorizationService.getUserWithAuthorizationFromUsername(
         request.user.username,
       )
-    ).g_banned;
+    ).gBanned;
     if (isBanned) {
       return false;
     }
