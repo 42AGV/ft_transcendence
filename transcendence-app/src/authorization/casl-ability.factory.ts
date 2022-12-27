@@ -37,9 +37,9 @@ export class CaslAbilityFactory {
       username: globalUserAuthCtx.username,
     });
     cannot(Action.Manage, UserToRole);
-    if (globalUserAuthCtx.g_banned && !globalUserAuthCtx.g_owner) {
+    if (globalUserAuthCtx.gBanned && !globalUserAuthCtx.gOwner) {
       cannot(Action.Manage, 'all');
-    } else if (globalUserAuthCtx.g_admin || globalUserAuthCtx.g_owner) {
+    } else if (globalUserAuthCtx.gAdmin || globalUserAuthCtx.gOwner) {
       can(Action.Manage, 'all');
     }
     cannot([Action.Create, Action.Update, Action.Delete], UserToRole, {

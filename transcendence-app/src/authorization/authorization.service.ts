@@ -125,12 +125,12 @@ export class AuthorizationService {
     if (!destUser) {
       throw new NotFoundException();
     }
-    const { g_owner, g_admin, g_banned } =
+    const { gOwner, gAdmin, gBanned } =
       await this.getUserWithAuthorizationFromUsername(destUsername);
     const ret = new UserWithAuthorizationResponseDto({
-      g_admin,
-      g_owner,
-      g_banned,
+      gOwner,
+      gAdmin,
+      gBanned,
       ...destUser,
     });
     const ability = await this.caslAbilityFactory.defineAbilitiesFor(authUser);
