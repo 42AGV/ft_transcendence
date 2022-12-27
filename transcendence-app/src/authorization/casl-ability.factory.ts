@@ -95,10 +95,15 @@ export class CaslAbilityFactory {
       // Chatroom authorization rules
 
       can(Action.Create, Chatroom);
-      can(Action.Read, Chatroom);
-      if (user.crm_member && user.crm_owner) {
-        can(Action.Update, Chatroom);
-        can(Action.Delete, Chatroom);
+      if (user.crm_member) {
+        can(Action.Read, Chatroom);
+        if (!user.crm_banned) {
+          can(Action.Join, Chatroom, { id: user.chatId });
+        }
+        if (user.crm_owner) {
+          can(Action.Update, Chatroom);
+          can(Action.Delete, Chatroom);
+        }
       }
     }
     return this.setGlobalAbilities(abilityCtx, user);

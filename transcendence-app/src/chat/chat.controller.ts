@@ -62,6 +62,10 @@ import { Action } from '../shared/enums/action.enum';
 import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies.guard';
 import { AnyMongoAbility } from '@casl/ability';
 import { ConfigParam } from '../authorization/decorators/configure-param.decorator';
+import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
+import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
+import { AuthorizationService } from '../authorization/authorization.service';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -71,6 +75,8 @@ export class ChatController {
   constructor(
     private chatService: ChatService,
     private chatroomMemberService: ChatroomMemberService,
+    private caslAbilityFactory: CaslAbilityFactory,
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
   @Post('room')
@@ -313,25 +319,23 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatroomMessages(
-    @GetUser() user: User,
+    @GetUser('id', GlobalAuthUserPipe) user: UserWithAuthorization,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Query() paginationQueryDto: PaginationQueryDto,
   ): Promise<ChatroomMessageWithUser[] | null> {
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(user);
     const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
     }
-    const isChatMember = await this.chatroomMemberService.getById(
-      chatroomId,
-      user.id,
-    );
-    if (!isChatMember || isChatMember.banned) {
+    if (ability.cannot(Action.Read, chatroom)) {
       throw new ForbiddenException();
     }
     const messages = await this.chatService.getChatroomMessagesWithUser(
       chatroomId,
       paginationQueryDto,
     );
+
     if (!messages) {
       throw new ServiceUnavailableException();
     }

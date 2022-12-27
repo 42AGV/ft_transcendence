@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { CHATS_URL, CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
-import { chatApi } from '../../shared/services/ApiService';
+import { authApi, chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { ChatroomMessageWithUser, User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
@@ -33,6 +33,15 @@ type ChatroomProps = {
 
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {
   const { warn } = useNotificationContext();
+  const getUserWithAuth = useCallback(
+    () =>
+      authApi.authControllerRetrieveUserWithRoles({
+        username: authUser?.username ?? '',
+      }),
+    [authUser],
+  );
+  const { data: userWithAuth, isLoading: isAuthLoading } =
+    useData(getUserWithAuth);
 
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
@@ -78,7 +87,8 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     useData(getChatroomMember);
 
   const enableNotifications =
-    chatroom !== null && chatroomMember !== null && !chatroomMember.banned;
+    (chatroom !== null && chatroomMember !== null && !chatroomMember.banned) ||
+    (userWithAuth && (userWithAuth.gAdmin || userWithAuth.gOwner));
 
   useEffect(() => {
     socket.emit('joinChatroom', { chatroomId });
@@ -108,12 +118,18 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     return <NotFoundPage />;
   }
 
-  if (!chatroomMember) {
-    return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
-  }
+  if (
+    !isAuthLoading &&
+    userWithAuth &&
+    !(userWithAuth.gAdmin || userWithAuth.gOwner)
+  ) {
+    if (!chatroomMember) {
+      return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
+    }
 
-  if (chatroomMember.banned) {
-    return <Navigate to={`${CHATS_URL}`} replace />;
+    if (chatroomMember.banned) {
+      return <Navigate to={`${CHATS_URL}`} replace />;
+    }
   }
 
   return (
