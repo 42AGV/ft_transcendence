@@ -1,6 +1,6 @@
 import EditAvatarPage from '../../shared/components/templates/EditAvatarPageTemplate/EditAvatarPageTemplate';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import { User, UserWithAuthorizationResponseDto } from '../../shared/generated';
+import { User } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { AVATAR_EP_URL } from '../../shared/urls';

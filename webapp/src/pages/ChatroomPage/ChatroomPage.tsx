@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { CHATS_URL, CHATROOM_URL } from '../../shared/urls';
 import socket from '../../shared/socket';

@@ -27,7 +27,7 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { isLoggedIn, setAuthUser, logout } = useAuth();
+  const { isLoggedIn, setAuthUser } = useAuth();
   const { warn } = useNotificationContext();
   const navigate = useNavigate();
 

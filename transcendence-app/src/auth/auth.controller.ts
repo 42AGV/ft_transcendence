@@ -111,7 +111,7 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('authorization/roles')
+  @Post('authorization')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -130,7 +130,7 @@ export class AuthController {
     await this.authorizationService.addUserToRole(roleObj);
   }
 
-  @Delete('authorization/roles')
+  @Delete('authorization')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -147,7 +147,7 @@ export class AuthController {
     await this.authorizationService.deleteUserToRole(roleObj);
   }
 
-  @Get('authorization/roles/:username')
+  @Get('authorization/:username')
   @ApiOkResponse({
     description: 'Retrieve user with roles',
     type: UserWithAuthorizationResponseDto,
@@ -168,9 +168,9 @@ export class AuthController {
       authUser,
     );
   }
-  @Get('authorization/me')
+  @Get('authorization')
   @ApiOkResponse({
-    description: 'Retrieve user with roles',
+    description: 'Retrieve authenticated user with roles',
     type: UserWithAuthorizationResponseDto,
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })

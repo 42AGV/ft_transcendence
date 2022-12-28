@@ -9,7 +9,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { UserWithAuthorizationResponseDto } from '../generated';
 import { useData } from '../hooks/UseData';
-import { authApi, usersApi } from '../services/ApiService';
+import { authApi } from '../services/ApiService';
 import socket from '../socket';
 import { HOST_URL } from '../urls';
 
