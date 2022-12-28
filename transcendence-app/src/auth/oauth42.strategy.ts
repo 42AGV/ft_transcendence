@@ -77,7 +77,9 @@ export class OAuth42Strategy extends PassportStrategy(Strategy, 'oauth42') {
     userDto: CreateUserDto,
   ): Promise<User | null> {
     const userWithUsernameExists =
-      await this.userService.retrieveUserWithUserName(userDto.username);
+      await this.userService.retrieveUserWithUserNameWithoutFriend(
+        userDto.username,
+      );
     if (userWithUsernameExists) {
       const username = await this.generateRandomUsername(userDto.username);
       if (!username) {
