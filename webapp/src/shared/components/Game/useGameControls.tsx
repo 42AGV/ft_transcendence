@@ -1,6 +1,7 @@
 import * as React from 'react';
+
 import { GamePaddle } from './types';
-import { PADDLE_SLIDE_SPEED } from './constants';
+import { CANVAS_WIDTH, PADDLE_SLIDE_SPEED, PADDLE_WIDTH } from './constants';
 
 const useGameControls = (paddleRef: React.MutableRefObject<GamePaddle>) => {
   const dragRef = React.useRef<number>(0);
@@ -25,20 +26,42 @@ const useGameControls = (paddleRef: React.MutableRefObject<GamePaddle>) => {
     [paddleRef],
   );
 
+  const getPaddleDragX = (
+    paddle: GamePaddle,
+    dragPrevPos: number,
+    dragCurrPos: number,
+  ): number => {
+    const deltaX = paddle.x - (dragPrevPos - dragCurrPos);
+
+    if (deltaX < 0) {
+      return 0;
+    } else if (deltaX > CANVAS_WIDTH - PADDLE_WIDTH) {
+      return CANVAS_WIDTH - PADDLE_WIDTH;
+    }
+    return deltaX;
+  };
+
   const dragPaddle = React.useCallback(
     (e: TouchEvent) => {
       const paddle = paddleRef.current;
-      const dragPos = dragRef.current;
-      dragRef.current = e.touches[0].clientX;
+      const dragCurrPos = e.touches[0].clientX;
+      const dragPrevPos = dragRef.current;
 
-      if (dragPos)
+      dragRef.current = dragCurrPos;
+
+      if (dragPrevPos) {
         paddleRef.current = {
           ...paddle,
-          x: paddle.x - (dragPos - dragRef.current),
+          x: getPaddleDragX(paddle, dragPrevPos, dragCurrPos),
         };
+      }
     },
     [paddleRef],
   );
+
+  const resetDragPaddle = React.useCallback((e: TouchEvent) => {
+    dragRef.current = 0;
+  }, []);
 
   const stopPaddle = React.useCallback(
     (e: KeyboardEvent) => {
@@ -59,14 +82,16 @@ const useGameControls = (paddleRef: React.MutableRefObject<GamePaddle>) => {
     window.addEventListener('keydown', movePaddle, false);
     window.addEventListener('keyup', stopPaddle, false);
     window.addEventListener('touchmove', dragPaddle, false);
+    window.addEventListener('touchend', resetDragPaddle, false);
     window.addEventListener('contextmenu', (e) => e.preventDefault());
     return () => {
       window.removeEventListener('keydown', movePaddle);
       window.removeEventListener('keyup', stopPaddle);
       window.removeEventListener('touchmove', dragPaddle);
+      window.removeEventListener('touchend', resetDragPaddle);
       window.removeEventListener('contextmenu', (e) => e.preventDefault());
     };
-  }, [movePaddle, stopPaddle, dragPaddle]);
+  }, [movePaddle, stopPaddle, dragPaddle, resetDragPaddle]);
 
   return { movePaddle, dragPaddle, stopPaddle };
 };
