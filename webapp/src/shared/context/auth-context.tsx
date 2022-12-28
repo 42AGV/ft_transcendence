@@ -7,9 +7,9 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../generated';
+import { UserWithAuthorizationResponseDto } from '../generated';
 import { useData } from '../hooks/UseData';
-import { authApi, usersApi } from '../services/ApiService';
+import { authApi } from '../services/ApiService';
 import socket from '../socket';
 import { HOST_URL } from '../urls';
 
@@ -17,19 +17,23 @@ export interface AuthContextType {
   isLoggedIn: boolean;
   isLoading: boolean;
   logout: () => void;
-  authUser: User | null;
-  setAuthUser: React.Dispatch<React.SetStateAction<User | null>>;
+  authUser: UserWithAuthorizationResponseDto | null;
+  setAuthUser: React.Dispatch<
+    React.SetStateAction<UserWithAuthorizationResponseDto | null>
+  >;
 }
 
 export const AuthContext = createContext<AuthContextType>(null!);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authUser, setAuthUser] = useState<User | null>(null);
+  const [authUser, setAuthUser] =
+    useState<UserWithAuthorizationResponseDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const getCurrentUser = useCallback(() => {
-    return usersApi.userControllerGetCurrentUser();
+    return authApi.authControllerRetrieveAuthUserWithRoles();
   }, []);
-  const { data, isLoading: isDataLoading } = useData<User>(getCurrentUser);
+  const { data, isLoading: isDataLoading } =
+    useData<UserWithAuthorizationResponseDto>(getCurrentUser);
   const navigate = useNavigate();
   const authBroadcastChannel = useMemo(
     () => new BroadcastChannel('auth_channel'),
