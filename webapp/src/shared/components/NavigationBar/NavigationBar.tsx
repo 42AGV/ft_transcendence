@@ -3,9 +3,7 @@ import { IconVariant } from '../Icon/Icon';
 import NavigationItem from '../NavigationItem/NavigationItem';
 import './NavigationBar.css';
 import { useAuth } from '../../hooks/UseAuth';
-import { authApi } from '../../services/ApiService';
-import { useCallback, useEffect, useState } from 'react';
-import { useData } from '../../hooks/UseData';
+import { useEffect, useState } from 'react';
 
 type NavItemContent = {
   icon: IconVariant;
