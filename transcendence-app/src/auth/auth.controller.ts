@@ -111,7 +111,7 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('authorization')
+  @Post('authorization/roles')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -130,7 +130,7 @@ export class AuthController {
     await this.authorizationService.addUserToRole(roleObj);
   }
 
-  @Delete('authorization')
+  @Delete('authorization/roles')
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -147,7 +147,7 @@ export class AuthController {
     await this.authorizationService.deleteUserToRole(roleObj);
   }
 
-  @Get('authorization/:username')
+  @Get('authorization/roles/:username')
   @ApiOkResponse({
     description: 'Retrieve user with roles',
     type: UserWithAuthorizationResponseDto,
@@ -165,6 +165,28 @@ export class AuthController {
     }
     return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
       destUsername,
+      authUser,
+    );
+  }
+  @Get('authorization/me')
+  @ApiOkResponse({
+    description: 'Retrieve user with roles',
+    type: UserWithAuthorizationResponseDto,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Username not found' })
+  @ApiForbiddenResponse({ description: 'Not authorized to read roles' })
+  async retrieveAuthUserWithRoles(
+    @GetUser('username')
+    authUserUsername: string,
+    @GetUser('id', GlobalAuthUserPipe)
+    authUser: UserWithAuthorization | null,
+  ): Promise<UserWithAuthorizationResponseDto> {
+    if (!authUser) {
+      throw new BadRequestException();
+    }
+    return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
+      authUserUsername,
       authUser,
     );
   }

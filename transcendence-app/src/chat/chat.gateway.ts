@@ -25,7 +25,6 @@ import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { Action } from '../shared/enums/action.enum';
-import { Chatroom } from './chatroom/infrastructure/db/chatroom.entity';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -131,7 +130,7 @@ export class ChatGateway {
       chatroomId,
     );
     const ability = this.caslAbilityFactory.defineAbilitiesFor(crm);
-    if (ability.can(Action.Join, cr)) {
+    if (ability.cannot(Action.Join, cr)) {
       throw new WsException('Not a chatroom member. Forbidden.');
     }
     client.join(chatroomId);

@@ -1,6 +1,6 @@
 import EditAvatarPage from '../../shared/components/templates/EditAvatarPageTemplate/EditAvatarPageTemplate';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import { User } from '../../shared/generated';
+import { User, UserWithAuthorizationResponseDto } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { usersApi } from '../../shared/services/ApiService';
 import { AVATAR_EP_URL } from '../../shared/urls';
@@ -29,12 +29,13 @@ export default function EditUserAvatarPage() {
   };
 
   const uploadAvatar = async (file: File | null) => {
-    if (file !== null) {
+    if (file !== null && !isLoading && authUser) {
       usersApi
         .userControllerUploadAvatar({ file })
         .then((updatedUser: User) => {
+          const { gOwner, gAdmin, gBanned } = authUser;
           notify('Image uploaded correctly.');
-          setAuthUser(updatedUser);
+          setAuthUser({ ...updatedUser, gOwner, gAdmin, gBanned });
         })
         .catch((e) => warn(e.response.statusText));
     }
