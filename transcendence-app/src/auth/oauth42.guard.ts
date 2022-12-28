@@ -21,7 +21,7 @@ export class OAuth42Guard extends AuthGuard('oauth42') {
       await this.authorizationService.getUserWithAuthorizationFromUsername(
         request.user.username,
       )
-    ).g_banned;
+    ).gBanned;
     if (isBanned) {
       return false;
     }

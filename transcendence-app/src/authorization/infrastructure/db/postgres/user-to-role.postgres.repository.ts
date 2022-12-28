@@ -66,9 +66,9 @@ export class UserToRolePostgresRepository
                                     GROUP BY u.${userKeys.ID})
              SELECT ${userKeys.ID}                                       as "userId",
                     ${userKeys.USERNAME},
-                    (SELECT roles from UserWithRoles) @> '{"owner"}'     as g_owner,
-                    (SELECT roles from UserWithRoles) @> '{"moderator"}' as g_admin,
-                    (SELECT roles from UserWithRoles) @> '{"banned"}'    as g_banned
+                    (SELECT roles from UserWithRoles) @> '{"owner"}'     as "gOwner",
+                    (SELECT roles from UserWithRoles) @> '{"moderator"}' as "gAdmin",
+                    (SELECT roles from UserWithRoles) @> '{"banned"}'    as "gBanned"
              FROM UserWithRoles;`,
       values: [userKey],
     });
