@@ -11,10 +11,3 @@
   grid-row-gap: calc(var(--row-gap) * 1.5);
   overflow: scroll;
 }
-
-@media all and (min-width: 768px) {
-  .avatar-page-template .header {
-    grid-row: 1 / 2;
-    grid-column: 1 / -1;
-  }
-}
