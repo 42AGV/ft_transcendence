@@ -13,11 +13,21 @@ const useGameAnimation = (
   ballRef: React.MutableRefObject<GameBall>,
   paddleRef: React.MutableRefObject<GamePaddle>,
 ) => {
+  const timeRef = React.useRef<number>(new Date().getTime());
+  const deltaTimeRef = React.useRef<number>(0);
+
+  const updateFrameTime = React.useCallback(() => {
+    const prevTime = timeRef.current;
+    timeRef.current = new Date().getTime();
+    deltaTimeRef.current = (timeRef.current - prevTime) / 1000;
+  }, []);
+
   const drawBall = React.useCallback(
     (context: CanvasRenderingContext2D) => {
       const ball = ballRef.current;
       const paddle = paddleRef.current;
-      ballRef.current = getBallPos(ball, paddle);
+
+      ballRef.current = getBallPos(ball, paddle, deltaTimeRef.current);
       context.beginPath();
       context.arc(ball.x, ball.y, BALL_RADIUS, 0, 2 * Math.PI, false);
       context.fillStyle = ball.color;
@@ -32,7 +42,7 @@ const useGameAnimation = (
   const drawPaddle = React.useCallback(
     (context: CanvasRenderingContext2D) => {
       const paddle = paddleRef.current;
-      paddleRef.current = getPaddlePos(paddleRef.current);
+      paddleRef.current = getPaddlePos(paddleRef.current, deltaTimeRef.current);
       context.fillStyle = paddle.color;
       context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
     },
@@ -56,7 +66,7 @@ const useGameAnimation = (
     [],
   );
 
-  return { drawBall, drawPaddle, drawBrick, resetGame };
+  return { drawBall, drawPaddle, drawBrick, resetGame, updateFrameTime };
 };
 
 export default useGameAnimation;

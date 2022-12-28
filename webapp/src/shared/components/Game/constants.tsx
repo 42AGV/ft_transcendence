@@ -10,6 +10,3 @@ export const PADDLE_SLIDE_SPEED = 300;
 export const BALL_RADIUS = 8;
 export const MAX_PADDLE_BOUNCE_ANGLE = (5 / 6) * Math.PI;
 export const MIN_PADDLE_BOUNCE_ANGLE = Math.PI - MAX_PADDLE_BOUNCE_ANGLE;
-// const previousTimeRef = React.useRef<number | null>(null);
-// Calcular tiempo, depende de la pantalla el refresh rate
-export const DELTA_TIME = 1 / 60;

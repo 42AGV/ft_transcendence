@@ -4,7 +4,6 @@ import {
   CANVAS_HEIGHT,
   MAX_PADDLE_BOUNCE_ANGLE,
   MIN_PADDLE_BOUNCE_ANGLE,
-  DELTA_TIME,
   PADDLE_WIDTH,
   PADDLE_HEIGHT,
   BALL_RADIUS,
@@ -12,29 +11,33 @@ import {
 } from './constants';
 import { GameBall, GamePaddle, Coord } from './types';
 
-const bounceOpposite = (ball: GameBall): GameBall => ({
+const bounceOpposite = (ball: GameBall, deltaTime: number): GameBall => ({
   ...ball,
   vx: -1 * ball.vx,
   vy: -1 * ball.vx,
-  x: ball.x - ball.vx * DELTA_TIME,
-  y: ball.y - ball.vy * DELTA_TIME,
+  x: ball.x - ball.vx * deltaTime,
+  y: ball.y - ball.vy * deltaTime,
 });
 
-const bounceVert = (ball: GameBall): GameBall => ({
+const bounceVert = (ball: GameBall, deltaTime: number): GameBall => ({
   ...ball,
   vx: -1 * ball.vx,
-  x: ball.x - ball.vx * DELTA_TIME,
-  y: ball.y + ball.vy * DELTA_TIME,
+  x: ball.x - ball.vx * deltaTime,
+  y: ball.y + ball.vy * deltaTime,
 });
 
-const bounceHor = (ball: GameBall): GameBall => ({
+const bounceHor = (ball: GameBall, deltaTime: number): GameBall => ({
   ...ball,
   vy: -1 * ball.vy,
-  x: ball.x + ball.vx * DELTA_TIME,
-  y: ball.y - ball.vy * DELTA_TIME,
+  x: ball.x + ball.vx * deltaTime,
+  y: ball.y - ball.vy * deltaTime,
 });
 
-const bounceArkanoid = (ball: GameBall, paddle: GamePaddle): GameBall => {
+const bounceArkanoid = (
+  ball: GameBall,
+  paddle: GamePaddle,
+  deltaTime: number,
+): GameBall => {
   const paddleBallDistance = ball.x - paddle.x;
   const bounceAngle =
     MAX_PADDLE_BOUNCE_ANGLE -
@@ -47,15 +50,15 @@ const bounceArkanoid = (ball: GameBall, paddle: GamePaddle): GameBall => {
     ...ball,
     vx: newVx,
     vy: newVy,
-    x: ball.x + newVx * DELTA_TIME,
-    y: ball.y + newVy * DELTA_TIME,
+    x: ball.x + newVx * deltaTime,
+    y: ball.y + newVy * deltaTime,
   };
 };
 
-const move = (ball: GameBall): GameBall => ({
+const move = (ball: GameBall, deltaTime: number): GameBall => ({
   ...ball,
-  x: ball.x + ball.vx * DELTA_TIME,
-  y: ball.y + ball.vy * DELTA_TIME,
+  x: ball.x + ball.vx * deltaTime,
+  y: ball.y + ball.vy * deltaTime,
 });
 
 const cornerCollision = (ball: GameBall) =>
@@ -75,28 +78,35 @@ const paddleCollision = (ball: GameBall, paddle: GamePaddle) =>
   ball.x > paddle.x - BALL_RADIUS &&
   ball.x < paddle.x + paddle.width + BALL_RADIUS;
 
-export const getBallPos = (ball: GameBall, paddle: GamePaddle): GameBall => {
+export const getBallPos = (
+  ball: GameBall,
+  paddle: GamePaddle,
+  deltaTime: number,
+): GameBall => {
   if (cornerCollision(ball)) {
-    return bounceOpposite(ball);
+    return bounceOpposite(ball, deltaTime);
   } else if (vertWallCollision(ball)) {
-    return bounceVert(ball);
+    return bounceVert(ball, deltaTime);
   } else if (horWallCollision(ball)) {
-    return bounceHor(ball);
+    return bounceHor(ball, deltaTime);
   } else if (paddleCollision(ball, paddle)) {
-    return bounceArkanoid(ball, paddle);
+    return bounceArkanoid(ball, paddle, deltaTime);
   } else {
-    return move(ball);
+    return move(ball, deltaTime);
   }
 };
 
-export const getPaddlePos = (paddle: GamePaddle): GamePaddle => {
+export const getPaddlePos = (
+  paddle: GamePaddle,
+  deltaTime: number,
+): GamePaddle => {
   if (
     (paddle.x > 0 && paddle.slide < 0) ||
     (paddle.x < CANVAS_WIDTH - PADDLE_WIDTH && paddle.slide > 0)
   ) {
     return {
       ...paddle,
-      x: paddle.x + paddle.slide * DELTA_TIME,
+      x: paddle.x + paddle.slide * deltaTime,
     };
   }
   return paddle;
