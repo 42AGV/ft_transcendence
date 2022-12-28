@@ -55,10 +55,18 @@ const useGameControls = (paddleRef: React.MutableRefObject<GamePaddle>) => {
     [paddleRef],
   );
 
-  window.addEventListener('keydown', movePaddle, false);
-  window.addEventListener('keyup', stopPaddle, false);
-  window.addEventListener('touchmove', dragPaddle, false);
-  window.addEventListener('contextmenu', (e) => e.preventDefault());
+  React.useEffect(() => {
+    window.addEventListener('keydown', movePaddle, false);
+    window.addEventListener('keyup', stopPaddle, false);
+    window.addEventListener('touchmove', dragPaddle, false);
+    window.addEventListener('contextmenu', (e) => e.preventDefault());
+    return () => {
+      window.removeEventListener('keydown', movePaddle);
+      window.removeEventListener('keyup', stopPaddle);
+      window.removeEventListener('touchmove', dragPaddle);
+      window.removeEventListener('contextmenu', (e) => e.preventDefault());
+    };
+  }, [movePaddle, stopPaddle, dragPaddle]);
 
   return { movePaddle, dragPaddle, stopPaddle };
 };
