@@ -168,4 +168,26 @@ export class AuthController {
       authUser,
     );
   }
+  @Get('authorization')
+  @ApiOkResponse({
+    description: 'Retrieve authenticated user with roles',
+    type: UserWithAuthorizationResponseDto,
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'Username not found' })
+  @ApiForbiddenResponse({ description: 'Not authorized to read roles' })
+  async retrieveAuthUserWithRoles(
+    @GetUser('username')
+    authUserUsername: string,
+    @GetUser('id', GlobalAuthUserPipe)
+    authUser: UserWithAuthorization | null,
+  ): Promise<UserWithAuthorizationResponseDto> {
+    if (!authUser) {
+      throw new BadRequestException();
+    }
+    return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
+      authUserUsername,
+      authUser,
+    );
+  }
 }

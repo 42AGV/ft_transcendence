@@ -6,7 +6,10 @@ import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
-import { ChatroomMessageWithUser, User } from '../../shared/generated';
+import {
+  ChatroomMessageWithUser,
+  UserWithAuthorizationResponseDto,
+} from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import {
@@ -28,7 +31,7 @@ export default function ChatroomPage() {
 
 type ChatroomProps = {
   chatroomId: string;
-  authUser: User;
+  authUser: UserWithAuthorizationResponseDto;
 };
 
 function Chatroom({ chatroomId, authUser }: ChatroomProps) {

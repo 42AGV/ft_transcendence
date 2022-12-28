@@ -39,7 +39,9 @@ export default function LoginPage() {
       const authUser = await authApi.authControllerLoginLocalUser({
         loginUserDto: { username, password },
       });
-      setAuthUser(authUser);
+      const { gOwner, gAdmin, gBanned } =
+        await authApi.authControllerRetrieveAuthUserWithRoles();
+      setAuthUser({ ...authUser, gOwner, gAdmin, gBanned });
       navigate(USERS_URL, { replace: true });
     } catch (error) {
       let errMessage = '';
