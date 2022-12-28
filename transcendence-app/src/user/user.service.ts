@@ -51,6 +51,12 @@ export class UserService {
     });
   }
 
+  async retrieveUserWithUserNameWithoutFriend(
+    username: string,
+  ): Promise<User | null> {
+    return await this.userRepository.getByUsername(username);
+  }
+
   async retrieveUserWithUserName(
     username: string,
     userMe?: User,
