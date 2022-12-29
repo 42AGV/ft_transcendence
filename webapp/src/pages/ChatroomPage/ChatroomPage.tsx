@@ -118,7 +118,7 @@ function Chatroom({
     return <NotFoundPage />;
   }
 
-  if (overridePermissions && !(authUser.gAdmin || authUser.gOwner)) {
+  if (!(overridePermissions && (authUser.gAdmin || authUser.gOwner))) {
     if (!chatroomMember) {
       return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
     }
