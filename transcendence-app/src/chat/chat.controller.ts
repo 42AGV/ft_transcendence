@@ -325,11 +325,13 @@ export class ChatController {
     if (!chatroom) {
       throw new NotFoundException();
     }
+    if (ability.cannot(Action.Join, chatroom)) {
+      throw new ForbiddenException();
+    }
     const messages = await this.chatService.getChatroomMessagesWithUser(
       chatroomId,
       paginationQueryDto,
     );
-
     if (!messages) {
       throw new ServiceUnavailableException();
     }
