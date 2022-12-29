@@ -87,8 +87,7 @@ function Chatroom({
 
   const enableNotifications =
     (chatroom !== null && chatroomMember !== null && !chatroomMember.banned) ||
-    authUser.gAdmin ||
-    authUser.gOwner;
+    (overridePermissions && (authUser.gAdmin || authUser.gOwner));
 
   useEffect(() => {
     socket.emit('joinChatroom', { chatroomId });
