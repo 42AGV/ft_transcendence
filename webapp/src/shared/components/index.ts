@@ -46,3 +46,5 @@ export { default as ToggleSwitch } from './ToggleSwitch/ToggleSwitch';
 
 export { default as SnackBar } from './Snackbar/Snackbar';
 export * from './Snackbar/Snackbar';
+
+export { default as Game } from './Game/Game';

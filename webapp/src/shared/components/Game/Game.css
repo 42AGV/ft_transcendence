@@ -1,0 +1,24 @@
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  touch-action: none;
+  /* Disable text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.game-arena {
+  border: solid 0.125rem var(--color-light);
+  border-bottom: dashed;
+  align-self: center;
+  justify-self: center;
+  object-fit: contain;
+}
+
+.game-score {
+  margin-bottom: 1rem;
+}
