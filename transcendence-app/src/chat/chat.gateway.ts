@@ -125,6 +125,9 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
   ) {
     const cr = await this.chatService.getChatroomById(chatroomId);
+    if (!cr) {
+      throw new WsException('Chatroom not found');
+    }
     const crm = await this.authorizationService.getUserAuthContextForChatroom(
       client.request.user.id,
       chatroomId,

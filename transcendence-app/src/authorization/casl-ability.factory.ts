@@ -1,7 +1,7 @@
 import {
   AbilityBuilder,
-  AnyMongoAbility,
   createMongoAbility,
+  ExtractSubjectType,
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
@@ -25,13 +25,16 @@ export type SubjectCtors =
   | typeof UserWithAuthorizationResponseDto
   | typeof ChatroomMessageWithUser;
 
-export type Subject = InferSubjects<SubjectCtors>;
+export type Subject =
+  | InferSubjects<SubjectCtors>
+  | 'all'
+  | 'readChatroomMessagesList';
 
 type AppAbility = MongoAbility<[Action, Subject]>;
 @Injectable()
 export class CaslAbilityFactory {
   private setGlobalAbilities(
-    { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
+    { can, cannot, build }: AbilityBuilder<AppAbility>,
     globalUserAuthCtx: UserWithAuthorization,
   ) {
     cannot(Action.Read, UserWithAuthorizationResponseDto);
@@ -48,7 +51,8 @@ export class CaslAbilityFactory {
       role: Role.owner,
     });
     return build({
-      detectSubjectType: (object) => object.constructor,
+      detectSubjectType: (object) =>
+        object.constructor as ExtractSubjectType<Subject>,
     });
   }
 
@@ -104,6 +108,7 @@ export class CaslAbilityFactory {
           can(Action.Read, ChatroomMessageWithUser, {
             chatroomId: user.chatId,
           });
+          can(Action.Read, 'readChatroomMessagesList');
         }
         if (user.crm_owner) {
           can(Action.Update, Chatroom, { id: user.chatId });
