@@ -22,6 +22,9 @@ import { CreateChatroomMessageDto } from './chatroom/chatroom-message/dto/create
 import { CreateChatMessageDto } from './chat/dto/create-chat-message.dto';
 import { UserService } from '../user/user.service';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
+import { AuthorizationService } from '../authorization/authorization.service';
+import { Action } from '../shared/enums/action.enum';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(WsAuthenticatedGuard)
@@ -33,6 +36,8 @@ export class ChatGateway {
   constructor(
     private chatService: ChatService,
     private chatroomMemberService: ChatroomMemberService,
+    private caslAbilityFactory: CaslAbilityFactory,
+    private readonly authorizationService: AuthorizationService,
     private userService: UserService,
   ) {}
 
@@ -119,11 +124,16 @@ export class ChatGateway {
     @MessageBody('chatroomId', ParseUUIDPipe) chatroomId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const chatroomMember = await this.chatroomMemberService.getById(
-      chatroomId,
+    const cr = await this.chatService.getChatroomById(chatroomId);
+    if (!cr) {
+      throw new WsException('Chatroom not found');
+    }
+    const crm = await this.authorizationService.getUserAuthContextForChatroom(
       client.request.user.id,
+      chatroomId,
     );
-    if (!chatroomMember || chatroomMember.banned) {
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(crm);
+    if (ability.cannot(Action.Join, cr)) {
       throw new WsException('Not a chatroom member. Forbidden.');
     }
     client.join(chatroomId);

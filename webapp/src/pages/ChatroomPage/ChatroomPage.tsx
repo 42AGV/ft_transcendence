@@ -32,9 +32,14 @@ export default function ChatroomPage() {
 type ChatroomProps = {
   chatroomId: string;
   authUser: UserWithAuthorizationResponseDto;
+  overridePermissions?: boolean;
 };
 
-function Chatroom({ chatroomId, authUser }: ChatroomProps) {
+function Chatroom({
+  chatroomId,
+  authUser,
+  overridePermissions = false,
+}: ChatroomProps) {
   const { warn } = useNotificationContext();
 
   const getChatroom = useCallback(
@@ -81,7 +86,8 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     useData(getChatroomMember);
 
   const enableNotifications =
-    chatroom !== null && chatroomMember !== null && !chatroomMember.banned;
+    (chatroom !== null && chatroomMember !== null && !chatroomMember.banned) ||
+    (overridePermissions && (authUser.gAdmin || authUser.gOwner));
 
   useEffect(() => {
     socket.emit('joinChatroom', { chatroomId });
@@ -111,12 +117,14 @@ function Chatroom({ chatroomId, authUser }: ChatroomProps) {
     return <NotFoundPage />;
   }
 
-  if (!chatroomMember) {
-    return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
-  }
+  if (!(overridePermissions && (authUser.gAdmin || authUser.gOwner))) {
+    if (!chatroomMember) {
+      return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
+    }
 
-  if (chatroomMember.banned) {
-    return <Navigate to={`${CHATS_URL}`} replace />;
+    if (chatroomMember.banned) {
+      return <Navigate to={`${CHATS_URL}`} replace />;
+    }
   }
 
   return (

@@ -1,7 +1,7 @@
 import {
   AbilityBuilder,
-  AnyMongoAbility,
   createMongoAbility,
+  ExtractSubjectType,
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
@@ -15,21 +15,26 @@ import { Chatroom } from '../chat/chatroom/infrastructure/db/chatroom.entity';
 import { Role } from '../shared/enums/role.enum';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { UserWithAuthorizationResponseDto } from './dto/user-with-authorization.response.dto';
+import { ChatroomMessageWithUser } from '../chat/chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
 
 export type SubjectCtors =
   | typeof ChatroomMember
   | typeof UpdateChatroomMemberDto
   | typeof Chatroom
   | typeof UserToRole
-  | typeof UserWithAuthorizationResponseDto;
+  | typeof UserWithAuthorizationResponseDto
+  | typeof ChatroomMessageWithUser;
 
-export type Subject = InferSubjects<SubjectCtors>;
+export type Subject =
+  | InferSubjects<SubjectCtors>
+  | 'all'
+  | 'readChatroomMessagesList';
 
 type AppAbility = MongoAbility<[Action, Subject]>;
 @Injectable()
 export class CaslAbilityFactory {
   private setGlobalAbilities(
-    { can, cannot, build }: AbilityBuilder<AnyMongoAbility>,
+    { can, cannot, build }: AbilityBuilder<AppAbility>,
     globalUserAuthCtx: UserWithAuthorization,
   ) {
     cannot(Action.Read, UserWithAuthorizationResponseDto);
@@ -46,7 +51,8 @@ export class CaslAbilityFactory {
       role: Role.owner,
     });
     return build({
-      detectSubjectType: (object) => object.constructor,
+      detectSubjectType: (object) =>
+        object.constructor as ExtractSubjectType<Subject>,
     });
   }
 
@@ -96,9 +102,18 @@ export class CaslAbilityFactory {
 
       can(Action.Create, Chatroom);
       can(Action.Read, Chatroom);
-      if (user.crm_member && user.crm_owner) {
-        can(Action.Update, Chatroom);
-        can(Action.Delete, Chatroom);
+      if (user.crm_member) {
+        if (!user.crm_banned) {
+          can(Action.Join, Chatroom, { id: user.chatId });
+          can(Action.Read, ChatroomMessageWithUser, {
+            chatroomId: user.chatId,
+          });
+          can(Action.Read, 'readChatroomMessagesList');
+        }
+        if (user.crm_owner) {
+          can(Action.Update, Chatroom, { id: user.chatId });
+          can(Action.Delete, Chatroom, { id: user.chatId });
+        }
       }
     }
     return this.setGlobalAbilities(abilityCtx, user);

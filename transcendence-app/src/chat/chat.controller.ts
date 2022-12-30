@@ -62,6 +62,7 @@ import { Action } from '../shared/enums/action.enum';
 import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies.guard';
 import { AnyMongoAbility } from '@casl/ability';
 import { ConfigParam } from '../authorization/decorators/configure-param.decorator';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 
 @Controller('chat')
 @UseGuards(AuthenticatedGuard)
@@ -71,6 +72,7 @@ export class ChatController {
   constructor(
     private chatService: ChatService,
     private chatroomMemberService: ChatroomMemberService,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   @Post('room')
@@ -313,19 +315,17 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatroomMessages(
-    @GetUser() user: User,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authUserCrm: ChatroomMemberWithAuthorization,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Query() paginationQueryDto: PaginationQueryDto,
   ): Promise<ChatroomMessageWithUser[] | null> {
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authUserCrm);
     const chatroom = await this.chatService.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
     }
-    const isChatMember = await this.chatroomMemberService.getById(
-      chatroomId,
-      user.id,
-    );
-    if (!isChatMember || isChatMember.banned) {
+    if (ability.cannot(Action.Read, 'readChatroomMessagesList')) {
       throw new ForbiddenException();
     }
     const messages = await this.chatService.getChatroomMessagesWithUser(
@@ -335,7 +335,7 @@ export class ChatController {
     if (!messages) {
       throw new ServiceUnavailableException();
     }
-    return messages;
+    return messages.filter((message) => ability.can(Action.Read, message));
   }
 
   @Patch('room/:chatroomId')
