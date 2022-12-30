@@ -13,14 +13,7 @@ const useGameAnimation = (
   ballRef: React.MutableRefObject<GameBall>,
   paddleRef: React.MutableRefObject<GamePaddle>,
 ) => {
-  const timeRef = React.useRef<number>(new Date().getTime());
   const deltaTimeRef = React.useRef<number>(0);
-
-  const updateFrameTime = React.useCallback(() => {
-    const prevTime = timeRef.current;
-    timeRef.current = new Date().getTime();
-    deltaTimeRef.current = (timeRef.current - prevTime) / 1000;
-  }, []);
 
   const drawBall = React.useCallback(
     (context: CanvasRenderingContext2D) => {
@@ -66,7 +59,35 @@ const useGameAnimation = (
     [],
   );
 
-  return { drawBall, drawPaddle, drawBrick, resetGame, updateFrameTime };
+  const getScreenRefreshRate = React.useCallback((): Promise<number> => {
+    // We want to calculate how many frames are rendered in one second (fps)
+    // So we get the current UTC time plus 1000ms and count how many times
+    // we loop inside requestAnimationFrame until we reach one second.
+
+    const oneSecondTime = new Date().getTime() + 1000;
+
+    const loop = (resolve: (value: number) => void, frames: number) => {
+      const currTime = new Date().getTime();
+
+      if (currTime < oneSecondTime) {
+        window.requestAnimationFrame(() => loop(resolve, frames + 1));
+      } else {
+        resolve(frames);
+      }
+    };
+
+    return new Promise((resolve) => {
+      window.requestAnimationFrame(() => loop(resolve, 0));
+    });
+  }, []);
+
+  React.useEffect(() => {
+    getScreenRefreshRate().then((fps) => {
+      deltaTimeRef.current = 1 / fps;
+    });
+  }, [getScreenRefreshRate]);
+
+  return { drawBall, drawPaddle, drawBrick, resetGame };
 };
 
 export default useGameAnimation;

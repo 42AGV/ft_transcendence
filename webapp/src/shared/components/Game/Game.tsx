@@ -15,8 +15,10 @@ export default function Game() {
   const paddleRef = React.useRef<GamePaddle>(initialPaddleState());
   const [score, setScore] = React.useState(0);
 
-  const { drawBall, drawPaddle, drawBrick, resetGame, updateFrameTime } =
-    useGameAnimation(ballRef, paddleRef);
+  const { drawBall, drawPaddle, drawBrick, resetGame } = useGameAnimation(
+    ballRef,
+    paddleRef,
+  );
   useGameControls(paddleRef);
 
   const loop = React.useCallback(
@@ -25,7 +27,6 @@ export default function Game() {
       setScore: React.Dispatch<React.SetStateAction<number>>,
     ) => {
       if (context) {
-        updateFrameTime();
         context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         drawBrick(context);
         if (isLose(ballRef.current)) {
@@ -41,7 +42,7 @@ export default function Game() {
         window.requestAnimationFrame(() => loop(context, setScore));
       }
     },
-    [drawBall, drawPaddle, drawBrick, resetGame, updateFrameTime],
+    [drawBall, drawPaddle, drawBrick, resetGame],
   );
 
   React.useEffect(() => {

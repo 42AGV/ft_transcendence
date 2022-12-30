@@ -14,7 +14,7 @@ import { GameBall, GamePaddle, Coord } from './types';
 const bounceOpposite = (ball: GameBall, deltaTime: number): GameBall => ({
   ...ball,
   vx: -1 * ball.vx,
-  vy: -1 * ball.vx,
+  vy: -1 * ball.vy,
   x: ball.x - ball.vx * deltaTime,
   y: ball.y - ball.vy * deltaTime,
 });
@@ -78,6 +78,16 @@ const paddleCollision = (ball: GameBall, paddle: GamePaddle) =>
   ball.x > paddle.x - BALL_RADIUS &&
   ball.x < paddle.x + paddle.width + BALL_RADIUS;
 
+const calcInitialBallSpeed = (): Coord => {
+  const coef = Math.ceil(3 * Math.random());
+  const angle = (Math.PI / 2) * coef + Math.PI / 4;
+
+  return {
+    x: BALL_SPEED * Math.cos(angle),
+    y: BALL_SPEED * Math.sin(angle),
+  };
+};
+
 export const getBallPos = (
   ball: GameBall,
   paddle: GamePaddle,
@@ -110,16 +120,6 @@ export const getPaddlePos = (
     };
   }
   return paddle;
-};
-
-export const calcInitialBallSpeed = (): Coord => {
-  const coef = Math.ceil(3 * Math.random());
-  const angle = (Math.PI / 2) * coef + Math.PI / 4;
-
-  return {
-    x: BALL_SPEED * Math.cos(angle),
-    y: BALL_SPEED * Math.sin(angle),
-  };
 };
 
 export const initialBallState = (): GameBall => {
