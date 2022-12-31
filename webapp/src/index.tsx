@@ -33,7 +33,7 @@ import {
   PLAY_URL,
   USER_URL,
   USER_ME_URL,
-  USERS_URL,
+  SEARCH_FRIENDS_URL,
   COMPONENTS_BOOK_URL,
   EDIT_USER_URL,
   EDIT_USER_AVATAR_URL,
@@ -78,7 +78,7 @@ function AppRoutes() {
       <Route path={LOGIN_OPTIONS_URL} element={<LoginPage />} />
       <Route path={REGISTER_URL} element={<RegisterPage />} />
       <Route
-        path={USERS_URL}
+        path={SEARCH_FRIENDS_URL}
         element={
           <RequireAuth>
             <UsersPage />
