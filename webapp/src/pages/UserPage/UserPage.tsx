@@ -18,10 +18,8 @@ import { useBlock } from '../../shared/hooks/UseBlock';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useFriend } from '../../shared/hooks/UseFriend';
-import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function UserPage() {
-  const { isMe } = useAuth();
   const { username } = useParams();
   const { navigate } = useNavigation();
   const getUserByUserName = useCallback(
@@ -35,7 +33,7 @@ export default function UserPage() {
   const { userFriends } = useFriend();
 
   useEffect(() => {
-    if (user) {
+    if (user && user.isFriend !== null) {
       setIsToggled(user.isFriend);
     }
   }, [user]);
@@ -105,7 +103,7 @@ export default function UserPage() {
               onToggle={blockRelation.isUserBlocked ? unblockUser : blockUser}
             />
           )}
-          {username && !isMe(username) && (
+          {user && user.isFriend !== null && (
             <ToggleSwitch
               label={isToggled ? 'Unfollow' : 'Follow'}
               isToggled={isToggled}

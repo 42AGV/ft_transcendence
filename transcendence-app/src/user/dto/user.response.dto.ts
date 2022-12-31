@@ -6,12 +6,12 @@ export class UserBlockRelation {
 }
 export class UserResponseDto extends User {
   blockRelation: UserBlockRelation | null;
-  isFriend: boolean;
+  isFriend: boolean | null;
 
   constructor(
     userEntity: User,
     blockRelation: UserBlockRelation | null,
-    isFriend: boolean,
+    isFriend: boolean | null,
   ) {
     super(userEntity);
     this.blockRelation = blockRelation;
