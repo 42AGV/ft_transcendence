@@ -23,9 +23,9 @@ export default function FriendsPage() {
   const usersButton = [
     {
       variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.ARROW_BACK,
+      iconVariant: IconVariant.ARROW_FORWARD,
       onClick: () => navigate(USERS_URL),
-      children: 'Users',
+      children: 'Find new friends',
     },
   ];
 

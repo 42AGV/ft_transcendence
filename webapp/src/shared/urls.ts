@@ -17,7 +17,7 @@ export const CHATROOM_URL = '/chatroom';
 export const CREATE_CHATROOM_URL = `${CHATROOM_URL}/createchatroom`;
 export const EDIT_CHATROOM_AVATAR_URL = `${CHATROOM_URL}/:chatroomId/edit/avatar`;
 export const COMPONENTS_BOOK_URL = '/components-book';
-export const DEFAULT_LOGIN_REDIRECT_URL = `${USERS_URL}`;
+export const DEFAULT_LOGIN_REDIRECT_URL = `${FRIENDS_URL}`;
 
 // transcendence-app
 const API_ENDPOINT_URL = '/api/v1';
