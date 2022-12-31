@@ -17,7 +17,6 @@ import {
   DEFAULT_LOGIN_REDIRECT_URL,
   LOGIN_EP_URL,
   REGISTER_URL,
-  USERS_URL,
   HOST_URL,
 } from '../../shared/urls';
 import './LoginPage.css';
@@ -42,7 +41,7 @@ export default function LoginPage() {
       const { gOwner, gAdmin, gBanned } =
         await authApi.authControllerRetrieveAuthUserWithRoles();
       setAuthUser({ ...authUser, gOwner, gAdmin, gBanned });
-      navigate(USERS_URL, { replace: true });
+      navigate(DEFAULT_LOGIN_REDIRECT_URL, { replace: true });
     } catch (error) {
       let errMessage = '';
       if (error instanceof ResponseError) {
