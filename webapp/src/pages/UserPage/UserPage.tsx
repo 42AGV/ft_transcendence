@@ -21,8 +21,8 @@ import { useFriend } from '../../shared/hooks/UseFriend';
 import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function UserPage() {
+  const { isMe } = useAuth();
   const { username } = useParams();
-  const { isMe } = useAuth(username);
   const { navigate } = useNavigation();
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
@@ -105,7 +105,7 @@ export default function UserPage() {
               onToggle={blockRelation.isUserBlocked ? unblockUser : blockUser}
             />
           )}
-          {!isMe && (
+          {username && !isMe(username) && (
             <ToggleSwitch
               label={isToggled ? 'Unfollow' : 'Follow'}
               isToggled={isToggled}

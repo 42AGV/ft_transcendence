@@ -5,7 +5,6 @@ import {
   InputVariant,
 } from '../../shared/components';
 import { AVATAR_EP_URL, USER_ME_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useState } from 'react';
 import { ResponseError, UpdateUserDto } from '../../shared/generated';
@@ -14,8 +13,7 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 import { useAuth } from '../../shared/hooks/UseAuth';
 
 export default function EditUserPasswordPage() {
-  const { username } = useParams();
-  const { authUser, isLoading } = useAuth(username);
+  const { authUser, isLoading } = useAuth();
   const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
 

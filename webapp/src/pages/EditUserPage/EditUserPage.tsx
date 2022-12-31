@@ -10,7 +10,6 @@ import {
   EDIT_USER_PASSWORD_URL,
   USER_ME_URL,
 } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { ResponseError, UpdateUserDto } from '../../shared/generated';
@@ -19,8 +18,7 @@ import { useState } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 
 export default function EditUserPage() {
-  const { username } = useParams();
-  const { authUser, setAuthUser, isLoading } = useAuth(username);
+  const { authUser, setAuthUser, isLoading } = useAuth();
   const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
   const initialFormValues: UpdateUserDto = {
