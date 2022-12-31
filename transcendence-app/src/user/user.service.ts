@@ -65,8 +65,9 @@ export class UserService {
 
     if (user && userMe) {
       const blockRelation = await this.getBlockRelation(userMe.id, user.id);
-      const friend = await this.getFriend(userMe.id, user.id);
-      return new UserResponseDto(user, blockRelation, !!friend);
+      const isFriend = await this.getIsFriend(userMe.id, user.id);
+      console.log(isFriend);
+      return new UserResponseDto(user, blockRelation, isFriend);
     }
     return null;
   }
@@ -225,8 +226,17 @@ export class UserService {
     this.socketService.deleteFriend(followerId, followedId);
   }
 
-  async getFriend(followerId: string, followedId: string) {
-    return this.friendRepository.getFriend(followerId, followedId);
+  async getIsFriend(userMeId: string, followedId: string) {
+    if (userMeId === followedId) {
+      return null;
+    }
+    const friend = await this.friendRepository.getFriend(userMeId, followedId);
+
+    return !!friend;
+  }
+
+  async getFriend(userMeId: string, followedId: string) {
+    return this.friendRepository.getFriend(userMeId, followedId);
   }
 
   async getFriends(

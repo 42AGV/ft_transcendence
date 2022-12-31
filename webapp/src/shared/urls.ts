@@ -4,8 +4,9 @@ export const LOGIN_OPTIONS_URL = '/login';
 export const REGISTER_URL = '/register';
 export const USER_URL = '/user';
 export const USER_ME_URL = '/myprofile';
+export const FRIENDS_URL = '/friends';
 export const USERS_URL = '/users';
-export const FRIENDS_URL = '/users/friends';
+export const SEARCH_FRIENDS_URL = '/friends/search';
 export const EDIT_USER_URL = `${USER_ME_URL}/edit`;
 export const EDIT_USER_PASSWORD_URL = `${USER_ME_URL}/edit/password`;
 export const EDIT_USER_AVATAR_URL = `${USER_ME_URL}/edit/avatar`;
@@ -17,7 +18,7 @@ export const CHATROOM_URL = '/chatroom';
 export const CREATE_CHATROOM_URL = `${CHATROOM_URL}/createchatroom`;
 export const EDIT_CHATROOM_AVATAR_URL = `${CHATROOM_URL}/:chatroomId/edit/avatar`;
 export const COMPONENTS_BOOK_URL = '/components-book';
-export const DEFAULT_LOGIN_REDIRECT_URL = `${USERS_URL}`;
+export const DEFAULT_LOGIN_REDIRECT_URL = `${FRIENDS_URL}`;
 
 // transcendence-app
 const API_ENDPOINT_URL = '/api/v1';

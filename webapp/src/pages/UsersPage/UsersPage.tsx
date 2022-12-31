@@ -26,7 +26,7 @@ export default function UsersPage() {
   const friendsButton = [
     {
       variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.ARROW_FORWARD,
+      iconVariant: IconVariant.ARROW_BACK,
       onClick: () => navigate(FRIENDS_URL),
       children: 'Friends',
     },

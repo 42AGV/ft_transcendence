@@ -1,5 +1,5 @@
 import { ButtonVariant, IconVariant, RowItem } from '../../shared/components';
-import { AVATAR_EP_URL, USERS_URL, USER_URL } from '../../shared/urls';
+import { AVATAR_EP_URL, SEARCH_FRIENDS_URL, USER_URL } from '../../shared/urls';
 import { User, UserControllerGetFriendsRequest } from '../../shared/generated';
 import { MainTabTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
@@ -23,9 +23,9 @@ export default function FriendsPage() {
   const usersButton = [
     {
       variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.ARROW_BACK,
-      onClick: () => navigate(USERS_URL),
-      children: 'Users',
+      iconVariant: IconVariant.ARROW_FORWARD,
+      onClick: () => navigate(SEARCH_FRIENDS_URL),
+      children: 'Find new friends',
     },
   ];
 

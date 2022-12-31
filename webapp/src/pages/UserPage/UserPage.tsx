@@ -33,7 +33,7 @@ export default function UserPage() {
   const { userFriends } = useFriend();
 
   useEffect(() => {
-    if (user) {
+    if (user && user.isFriend !== null) {
       setIsToggled(user.isFriend);
     }
   }, [user]);
@@ -103,11 +103,13 @@ export default function UserPage() {
               onToggle={blockRelation.isUserBlocked ? unblockUser : blockUser}
             />
           )}
-          <ToggleSwitch
-            label={isToggled ? 'Unfollow' : 'Follow'}
-            isToggled={isToggled}
-            onToggle={onToggle}
-          />
+          {user && user.isFriend !== null && (
+            <ToggleSwitch
+              label={isToggled ? 'Unfollow' : 'Follow'}
+              isToggled={isToggled}
+              onToggle={onToggle}
+            />
+          )}
         </>
       </AvatarPageTemplate>
     </div>
