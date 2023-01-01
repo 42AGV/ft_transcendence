@@ -17,6 +17,7 @@ import * as yaml from 'yaml';
 import { AuthModule } from '../../src/auth/auth.module';
 import { SocketModule } from '../../src/socket/socket.module';
 import { ChatModule } from '../../src/chat/chat.module';
+import { GameModule } from '../../src/game/game.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ChatController } from '../../src/chat/chat.controller';
 import { AuthController } from '../../src/auth/auth.controller';
@@ -46,6 +47,7 @@ describe('[Feature] Swagger works', () => {
         AuthModule,
         SocketModule,
         ChatModule,
+        GameModule,
         DbModule,
         LocalFileModule,
         AuthorizationModule,
