@@ -1,7 +1,7 @@
 import { Game, Header, IconVariant } from '../../shared/components';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
-import './Game.css';
+import './GamePage.css';
 
 export default function GamePage() {
   const { goBack } = useNavigation();

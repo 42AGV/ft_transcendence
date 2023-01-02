@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import {
   BALL_SPEED,
   CANVAS_WIDTH,
@@ -9,7 +11,7 @@ import {
   BALL_RADIUS,
   BRICK_WIDTH,
 } from './constants';
-import { GameBall, GamePaddle, Coord } from './types';
+import { GameBall, GamePaddle, Coord } from './models';
 
 const bounceOpposite = (ball: GameBall, deltaTime: number): GameBall => ({
   ...ball,

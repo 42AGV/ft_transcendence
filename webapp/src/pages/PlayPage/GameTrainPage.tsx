@@ -1,7 +1,7 @@
-import { Game, Header, IconVariant } from '../../shared/components';
+import { GameTraining, Header, IconVariant } from '../../shared/components';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
-import './Game.css';
+import './GamePage.css';
 
 export default function GameTrainPage() {
   const { goBack } = useNavigation();
@@ -11,7 +11,7 @@ export default function GameTrainPage() {
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
         Hit the brick!
       </Header>
-      <Game />
+      <GameTraining />
     </div>
   );
 }

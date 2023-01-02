@@ -5,22 +5,15 @@ import {
   BRICK_WIDTH,
   BRICK_HEIGHT,
   BALL_RADIUS,
+  CANVAS_HEIGHT,
 } from './constants';
-import { GameBall, GamePaddle } from './types';
-import { getBallPos, getPaddlePos, initialBallState } from './physics';
+import { GameBall, GamePaddle, GameState } from './models';
 
-const useGameAnimation = (
-  ballRef: React.MutableRefObject<GameBall>,
-  paddleRef: React.MutableRefObject<GamePaddle>,
-) => {
+const useGameAnimation = () => {
   const deltaTimeRef = React.useRef<number>(0);
 
   const drawBall = React.useCallback(
-    (context: CanvasRenderingContext2D) => {
-      const ball = ballRef.current;
-      const paddle = paddleRef.current;
-
-      ballRef.current = getBallPos(ball, paddle, deltaTimeRef.current);
+    (context: CanvasRenderingContext2D, ball: GameBall, paddle: GamePaddle) => {
       context.beginPath();
       context.arc(ball.x, ball.y, BALL_RADIUS, 0, 2 * Math.PI, false);
       context.fillStyle = ball.color;
@@ -29,17 +22,15 @@ const useGameAnimation = (
       context.strokeStyle = ball.color;
       context.stroke();
     },
-    [paddleRef, ballRef],
+    [],
   );
 
   const drawPaddle = React.useCallback(
-    (context: CanvasRenderingContext2D) => {
-      const paddle = paddleRef.current;
-      paddleRef.current = getPaddlePos(paddleRef.current, deltaTimeRef.current);
+    (context: CanvasRenderingContext2D, paddle: GamePaddle) => {
       context.fillStyle = paddle.color;
       context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
     },
-    [paddleRef],
+    [],
   );
 
   const drawBrick = React.useCallback((context: CanvasRenderingContext2D) => {
@@ -51,13 +42,6 @@ const useGameAnimation = (
       BRICK_HEIGHT,
     );
   }, []);
-
-  const resetGame = React.useCallback(
-    (ballRef: React.MutableRefObject<GameBall>) => {
-      ballRef.current = initialBallState();
-    },
-    [],
-  );
 
   const getScreenRefreshRate = React.useCallback((): Promise<number> => {
     // We want to calculate how many frames are rendered in one second (fps)
@@ -87,7 +71,20 @@ const useGameAnimation = (
     });
   }, [getScreenRefreshRate]);
 
-  return { drawBall, drawPaddle, drawBrick, resetGame };
+  const renderFrame = React.useCallback(
+    (canvasContext: CanvasRenderingContext2D, state: GameState) => {
+      const ball = state.ball;
+      const paddle = state.paddle;
+
+      canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      drawBall(canvasContext, ball, paddle);
+      drawPaddle(canvasContext, paddle);
+      drawBrick(canvasContext);
+    },
+    [drawBall, drawPaddle, drawBrick],
+  );
+
+  return { renderFrame, deltaTimeRef };
 };
 
 export default useGameAnimation;
