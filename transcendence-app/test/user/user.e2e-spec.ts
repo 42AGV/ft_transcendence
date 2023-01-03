@@ -6,6 +6,7 @@ import { UserModule } from '../../src/user/user.module';
 import { validate } from '../../src/config/env.validation';
 import { UserController } from '../../src/user/user.controller';
 import { AuthenticatedGuard } from '../../src/shared/guards/authenticated.guard';
+import { AuthorizationModule } from '../../src/authorization/authorization.module';
 
 describe('[Feature] User - /users', () => {
   let app: INestApplication;
@@ -15,6 +16,7 @@ describe('[Feature] User - /users', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         UserModule,
+        AuthorizationModule,
         ConfigModule.forRoot({
           envFilePath: '.env.test',
           isGlobal: true,
