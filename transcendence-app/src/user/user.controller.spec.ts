@@ -34,10 +34,11 @@ describe('UserController', () => {
   let controller: UserController;
   let mockUserService: Partial<UserService>;
   const mockAvatarFileInterceptor = {};
-  let mockAuthService: Partial<AuthorizationService> = {
+  const mockAuthService: Partial<AuthorizationService> = {
     getUserWithAuthorizationFromUsername: (
       arg0?: any,
     ): Promise<UserWithAuthorization> => {
+      void arg0;
       return new Promise((): UserWithAuthorization => {
         return {
           userId: '544cdc51-e289-4073-8956-75babb1feec9',
