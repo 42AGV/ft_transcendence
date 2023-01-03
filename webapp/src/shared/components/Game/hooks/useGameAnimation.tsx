@@ -6,8 +6,8 @@ import {
   BRICK_HEIGHT,
   BALL_RADIUS,
   CANVAS_HEIGHT,
-} from './constants';
-import { GameBall, GamePaddle, GameState } from './models';
+} from '../constants';
+import { GameBall, GamePaddle, GameState } from '../models';
 
 const useGameAnimation = () => {
   const deltaTimeRef = React.useRef<number>(0);

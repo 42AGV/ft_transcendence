@@ -1,7 +1,5 @@
-import * as React from 'react';
-
-import { GameBall, GamePaddle, GameState, Coord } from './models';
 import { getBallPos, getPaddlePos } from './physics';
+import { GameBall, GamePaddle, Coord } from './models';
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
@@ -12,22 +10,39 @@ import {
   BALL_SPEED,
 } from './constants';
 
+export type GameState = {
+  ball: GameBall;
+  paddle: GamePaddle;
+  score: number;
+};
+
 type Act<Type extends string, Payload extends {}> = {
   type: Type;
   payload: Payload;
 };
 
-type Action =
+export type Action =
   | Act<'move', { deltaTime: number }>
   | Act<
-      | 'lose'
-      | 'win'
-      | 'paddleMoveRight'
-      | 'paddleMoveLeft'
-      | 'paddleStop'
-      | 'dragPaddle',
+      'lose' | 'win' | 'paddleMoveRight' | 'paddleMoveLeft' | 'paddleStop',
       {}
-    >;
+    >
+  | Act<'paddleDrag', { dragCurrPos: number; dragPrevPos: number }>;
+
+const getPaddleDragX = (
+  paddle: GamePaddle,
+  dragPrevPos: number,
+  dragCurrPos: number,
+): number => {
+  const deltaX = paddle.x - (dragPrevPos - dragCurrPos);
+
+  if (deltaX < 0) {
+    return 0;
+  } else if (deltaX > CANVAS_WIDTH - PADDLE_WIDTH) {
+    return CANVAS_WIDTH - PADDLE_WIDTH;
+  }
+  return deltaX;
+};
 
 const calcInitialBallSpeed = (): Coord => {
   const coef = Math.ceil(3 * Math.random());
@@ -39,7 +54,7 @@ const calcInitialBallSpeed = (): Coord => {
   };
 };
 
-const initialBallState = (): GameBall => {
+export const initialBallState = (): GameBall => {
   const initialBallSpeed = calcInitialBallSpeed();
 
   return {
@@ -52,7 +67,7 @@ const initialBallState = (): GameBall => {
   };
 };
 
-const initialPaddleState = (): GamePaddle => ({
+export const initialPaddleState = (): GamePaddle => ({
   x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
   y: CANVAS_HEIGHT - 2 * PADDLE_HEIGHT,
   slide: 0,
@@ -61,7 +76,10 @@ const initialPaddleState = (): GamePaddle => ({
   color: '#FFF',
 });
 
-const reducer = (state: GameState, { type, payload }: Action): GameState => {
+export const reducer = (
+  state: GameState,
+  { type, payload }: Action,
+): GameState => {
   const ball = state.ball;
   const paddle = state.paddle;
   const score = state.score;
@@ -109,22 +127,16 @@ const reducer = (state: GameState, { type, payload }: Action): GameState => {
           slide: 0,
         },
       };
-    // case 'paddleDrag':
+    case 'paddleDrag':
+      const { dragCurrPos, dragPrevPos } = payload;
+      return {
+        ...state,
+        paddle: {
+          ...paddle,
+          x: getPaddleDragX(paddle, dragPrevPos, dragCurrPos),
+        },
+      };
     default:
       return state;
   }
-};
-
-export const UseGameState = () => {
-  const gameStateRef = React.useRef<GameState>({
-    ball: initialBallState(),
-    paddle: initialPaddleState(),
-    score: 0,
-  });
-
-  const dispatch = React.useCallback((action: Action) => {
-    gameStateRef.current = reducer(gameStateRef.current, action);
-  }, []);
-
-  return { gameStateRef, dispatch };
 };

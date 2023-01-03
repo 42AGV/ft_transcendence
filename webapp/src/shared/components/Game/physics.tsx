@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import {
   BALL_SPEED,
   CANVAS_WIDTH,
@@ -9,7 +7,6 @@ import {
   PADDLE_WIDTH,
   PADDLE_HEIGHT,
   BALL_RADIUS,
-  BRICK_WIDTH,
 } from './constants';
 import { GameBall, GamePaddle, Coord } from './models';
 
@@ -145,10 +142,3 @@ export const initialPaddleState = (): GamePaddle => ({
   height: PADDLE_HEIGHT,
   color: '#FFF',
 });
-
-export const isLose = (ball: GameBall) => ball.y > 1.5 * CANVAS_HEIGHT;
-
-export const isWin = (ball: GameBall) =>
-  ball.y <= BALL_RADIUS &&
-  ball.x >= CANVAS_WIDTH / 2 - BRICK_WIDTH / 2 &&
-  ball.x <= CANVAS_WIDTH / 2 + BRICK_WIDTH / 2;
