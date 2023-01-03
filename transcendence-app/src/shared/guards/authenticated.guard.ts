@@ -7,12 +7,11 @@ export class AuthenticatedGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const isAuthenticated: boolean = request.isAuthenticated();
-    const isAuthorized: boolean =
-      !(
-        await this.authorizationService.getUserWithAuthorizationFromUsername(
-          request.user?.username ?? '',
-        )
-      )?.gBanned ?? true;
+    const isAuthorized: boolean = !(
+      await this.authorizationService.getUserWithAuthorizationFromUsername(
+        request.user?.username,
+      )
+    ).gBanned;
     return isAuthenticated && isAuthorized;
   }
 }
