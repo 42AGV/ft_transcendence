@@ -132,6 +132,9 @@ export class ChatGateway {
       client.request.user.id,
       chatroomId,
     );
+    if (!crm) {
+      throw new WsException('No such user id or chatroom id');
+    }
     const ability = this.caslAbilityFactory.defineAbilitiesFor(crm);
     if (ability.cannot(Action.Join, cr)) {
       throw new WsException('Not a chatroom member. Forbidden.');
