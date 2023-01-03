@@ -5,9 +5,16 @@ import { DbModule } from '../shared/db/db.module';
 import { LocalFileModule } from '../shared/local-file/local-file.module';
 import { AvatarModule } from '../shared/avatar/avatar.module';
 import { SocketModule } from '../socket/socket.module';
+import { AuthorizationModule } from '../authorization/authorization.module';
 
 @Module({
-  imports: [DbModule, LocalFileModule, AvatarModule, SocketModule],
+  imports: [
+    DbModule,
+    LocalFileModule,
+    AvatarModule,
+    SocketModule,
+    AuthorizationModule,
+  ],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
