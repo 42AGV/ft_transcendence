@@ -18,13 +18,15 @@ import { Action } from '../shared/enums/action.enum';
 
 @Injectable()
 export class AuthorizationService {
+  private logger: Logger;
   constructor(
     private chatroomMemberRepository: IChatroomMemberRepository,
     private userToRoleRepository: IUserToRoleRepository,
     private userRepository: IUserRepository,
     private caslAbilityFactory: CaslAbilityFactory,
-    private logger = new Logger(AuthorizationService.name),
-  ) {}
+  ) {
+    this.logger = new Logger(AuthorizationService.name);
+  }
 
   async getUserWithAuthorizationFromUsername(
     username: string,
