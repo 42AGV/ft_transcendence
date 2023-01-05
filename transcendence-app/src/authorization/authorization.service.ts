@@ -122,9 +122,9 @@ export class AuthorizationService {
       });
     } catch (e) {
       if (e instanceof Error) {
-        this.logger.log(e.message);
+        this.logger.error(e.message);
       } else {
-        this.logger.log('Not found');
+        this.logger.error('Not found');
       }
       return null;
     }
