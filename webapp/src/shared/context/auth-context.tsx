@@ -7,7 +7,11 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserWithAuthorizationResponseDto } from '../generated';
+import {
+  UserWithAuthorizationResponseDto,
+  UserToRoleDto,
+  UserToRoleDtoRoleEnum,
+} from '../generated';
 import { useData } from '../hooks/UseData';
 import { authApi } from '../services/ApiService';
 import socket from '../socket';

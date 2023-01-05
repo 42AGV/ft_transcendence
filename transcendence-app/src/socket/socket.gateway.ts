@@ -5,17 +5,28 @@ import {
 } from '@nestjs/common';
 import {
   ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket, Server, RemoteSocket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { SocketService } from './socket.service';
+import { AuthorizationService } from '../authorization/authorization.service';
+import { User } from '../user/infrastructure/db/user.entity';
+import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
+import { CreateChatroomMessageDto } from '../chat/chatroom/chatroom-message/dto/create-chatroom-message.dto';
+import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
+import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
+import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
+import { Action } from '../shared/enums/action.enum';
 
 type UserId = string;
 
@@ -27,8 +38,11 @@ export class SocketGateway
 {
   @WebSocketServer() server!: Server;
   onlineUserIds = new Set<UserId>();
-
-  constructor(private socketService: SocketService) {}
+  constructor(
+    private socketService: SocketService,
+    private authorizationService: AuthorizationService,
+    private caslAbilityFactory: CaslAbilityFactory,
+  ) {}
 
   afterInit(server: Server) {
     this.socketService.socket = server;
@@ -76,5 +90,73 @@ export class SocketGateway
   @SubscribeMessage('getFriends')
   handleGetFriends(@ConnectedSocket() client: Socket) {
     this.socketService.getFriends(client);
+  }
+
+  @SubscribeMessage('getAuthUserWithRoles')
+  async retrieveAuthUserWithRoles(
+    @ConnectedSocket() client: Socket,
+  ): Promise<UserWithAuthorizationResponseDto> {
+    const user = client.request.user;
+    if (user instanceof User) {
+      try {
+        const authUserUsername = user.username;
+        const authUser =
+          await this.authorizationService.getUserWithAuthorizationFromId(
+            user.id,
+          );
+        return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
+          authUserUsername,
+          authUser,
+        );
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new WsException(e.message);
+        }
+      }
+    }
+    throw new WsException('Bad request');
+  }
+
+  @SubscribeMessage('setUserWithRoles')
+  async setUserWithRoles(
+    @MessageBody()
+    userToRoleDto: UserToRoleDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<UserToRole> {
+    const user = new User(client.request.user);
+    const authUserId: string = user.id;
+    let userWithAuthorization: UserWithAuthorization | null = null;
+    try {
+      userWithAuthorization =
+        await this.authorizationService.getUserWithAuthorizationFromId(user.id);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new WsException(e.message);
+      }
+      throw new WsException('Bad request0');
+    }
+    if (userWithAuthorization) {
+      const ability = this.caslAbilityFactory.defineAbilitiesFor(
+        userWithAuthorization,
+      );
+      if (ability.cannot(Action.Create, userToRoleDto)) {
+        throw new WsException('Not allowed to add this role');
+      }
+      try {
+        const newRole = await this.authorizationService.addUserToRole(
+          userToRoleDto,
+        );
+        if (newRole) {
+          this.server.to(authUserId).emit('userToRole', { ...newRole });
+          this.server.to(userToRoleDto.id).emit('userToRole', { ...newRole });
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          throw new WsException(e.message);
+        }
+        throw new WsException('Bad request1');
+      }
+    }
+    throw new WsException('Bad request2');
   }
 }

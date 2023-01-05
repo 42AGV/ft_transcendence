@@ -20,3 +20,4 @@ export { default as EditUserPasswordPage } from './EditUserPasswordPage/EditUser
 export { default as ChatPage } from './ChatPage/ChatPage';
 export { default as FriendsPage } from './UsersPage/FriendsPage';
 export { default as EditChatroomAvatarPage } from './EditChatroomAvatarPage/EditChatroomAvatarPage';
+export { default as AdminPage } from './AdminPage/AdminPage';
