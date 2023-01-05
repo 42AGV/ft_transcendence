@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ export class AuthorizationService {
     private userToRoleRepository: IUserToRoleRepository,
     private userRepository: IUserRepository,
     private caslAbilityFactory: CaslAbilityFactory,
+    private logger = new Logger(AuthorizationService.name),
   ) {}
 
   async getUserWithAuthorizationFromUsername(
@@ -117,6 +119,11 @@ export class AuthorizationService {
         cr_muted: crm?.muted,
       });
     } catch (e) {
+      if (e instanceof Error) {
+        this.logger.log(e.message);
+      } else {
+        this.logger.log('Not found');
+      }
       return null;
     }
   }
