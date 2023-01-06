@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -17,12 +18,15 @@ import { Action } from '../shared/enums/action.enum';
 
 @Injectable()
 export class AuthorizationService {
+  private logger: Logger;
   constructor(
     private chatroomMemberRepository: IChatroomMemberRepository,
     private userToRoleRepository: IUserToRoleRepository,
     private userRepository: IUserRepository,
     private caslAbilityFactory: CaslAbilityFactory,
-  ) {}
+  ) {
+    this.logger = new Logger(AuthorizationService.name);
+  }
 
   async getUserWithAuthorizationFromUsername(
     username: string,
@@ -103,18 +107,27 @@ export class AuthorizationService {
   async getUserAuthContextForChatroom(
     userId: string,
     chatId: string,
-  ): Promise<ChatroomMemberWithAuthorization> {
-    const g_user = await this.getUserWithAuthorizationFromId(userId);
-    const crm = await this.chatroomMemberRepository.getById(chatId, userId);
-    return new ChatroomMemberWithAuthorization({
-      ...g_user,
-      chatId,
-      crm_member: !!crm,
-      crm_owner: crm?.owner,
-      crm_admin: crm?.admin,
-      crm_banned: crm?.banned,
-      cr_muted: crm?.muted,
-    });
+  ): Promise<ChatroomMemberWithAuthorization | null> {
+    try {
+      const g_user = await this.getUserWithAuthorizationFromId(userId);
+      const crm = await this.chatroomMemberRepository.getById(chatId, userId);
+      return new ChatroomMemberWithAuthorization({
+        ...g_user,
+        chatId,
+        crm_member: !!crm,
+        crm_owner: crm?.owner,
+        crm_admin: crm?.admin,
+        crm_banned: crm?.banned,
+        cr_muted: crm?.muted,
+      });
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.error(e.message);
+      } else {
+        this.logger.error('Not found');
+      }
+      return null;
+    }
   }
 
   async getUserWithAuthorizationResponseDtoFromUsername(

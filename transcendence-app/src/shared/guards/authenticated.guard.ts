@@ -1,9 +1,17 @@
 import { ExecutionContext, Injectable, CanActivate } from '@nestjs/common';
+import { AuthorizationService } from '../../authorization/authorization.service';
 
 @Injectable()
 export class AuthenticatedGuard implements CanActivate {
-  canActivate(context: ExecutionContext) {
+  constructor(protected readonly authorizationService: AuthorizationService) {}
+  async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    return request.isAuthenticated();
+    const isAuthenticated: boolean = request.isAuthenticated();
+    const isAuthorized = !(
+      await this.authorizationService.getUserWithAuthorizationFromUsername(
+        request.user?.username,
+      )
+    ).gBanned;
+    return isAuthenticated && isAuthorized;
   }
 }

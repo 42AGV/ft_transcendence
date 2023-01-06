@@ -15,10 +15,24 @@ import { SocketModule } from '../../src/socket/socket.module';
 import { LocalFileModule } from '../../src/shared/local-file/local-file.module';
 import { DbModule } from '../../src/shared/db/db.module';
 import { AuthorizationModule } from '../../src/authorization/authorization.module';
+import { AuthorizationService } from '../../src/authorization/authorization.service';
+import { UserWithAuthorization } from '../../src/authorization/infrastructure/db/user-with-authorization.entity';
 
 describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
   let config: ConfigService<EnvironmentVariables>;
+  const getUserWithAuthorizationFromUsername = jest.fn(
+    (arg0?: any): UserWithAuthorization => {
+      void arg0;
+      return {
+        userId: '544cdc51-e289-4073-8956-75babb1feec9',
+        username: 'a',
+        gOwner: false,
+        gAdmin: false,
+        gBanned: false,
+      };
+    },
+  );
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -38,7 +52,10 @@ describe('[Feature] Auth - /auth', () => {
       ],
       providers: [AuthService],
       controllers: [AuthController],
-    }).compile();
+    })
+      .overrideProvider(AuthorizationService)
+      .useValue({ getUserWithAuthorizationFromUsername })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     config =

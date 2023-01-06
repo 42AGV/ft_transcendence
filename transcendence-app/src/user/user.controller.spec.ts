@@ -6,6 +6,8 @@ import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './infrastructure/db/user.entity';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
+import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
+import { AuthorizationService } from '../authorization/authorization.service';
 
 const testUserMe = new User(
   new User({
@@ -32,6 +34,22 @@ describe('UserController', () => {
   let controller: UserController;
   let mockUserService: Partial<UserService>;
   const mockAvatarFileInterceptor = {};
+  const mockAuthService: Partial<AuthorizationService> = {
+    getUserWithAuthorizationFromUsername: (
+      arg0?: any,
+    ): Promise<UserWithAuthorization> => {
+      void arg0;
+      return new Promise((): UserWithAuthorization => {
+        return {
+          userId: '544cdc51-e289-4073-8956-75babb1feec9',
+          username: 'a',
+          gOwner: false,
+          gAdmin: false,
+          gBanned: false,
+        };
+      });
+    },
+  };
 
   beforeEach(async () => {
     mockUserService = {
@@ -59,6 +77,10 @@ describe('UserController', () => {
         {
           provide: UserService,
           useValue: mockUserService,
+        },
+        {
+          provide: AuthorizationService,
+          useValue: mockAuthService,
         },
       ],
     })
