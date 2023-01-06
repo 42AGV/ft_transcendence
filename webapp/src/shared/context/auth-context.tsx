@@ -85,41 +85,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    const userToRoleListener = async (userToRole: UserToRoleDto) => {
-      console.log('first');
-      console.log(authUser);
-      if (authUser && userToRole.id === authUser.id) {
-        switch (userToRole.role) {
-          case UserToRoleDtoRoleEnum.Moderator: {
-            const tempObj = { ...authUser, gAdmin: !authUser.gAdmin };
-            console.log('switch');
-            console.log(tempObj);
-            await setAuthUser({ ...tempObj });
-            break;
-          }
-          case UserToRoleDtoRoleEnum.Owner: {
-            setAuthUser({ ...authUser, gOwner: !authUser.gOwner });
-            break;
-          }
-          case UserToRoleDtoRoleEnum.Banned: {
-            logout();
-            navigate(HOST_URL);
-            break;
+    const userToRoleListener =
+      (isAdd: boolean) => async (userToRole: UserToRoleDto) => {
+        if (authUser && userToRole.id === authUser.id) {
+          switch (userToRole.role) {
+            case UserToRoleDtoRoleEnum.Moderator: {
+              setAuthUser({ ...authUser, gAdmin: isAdd });
+              break;
+            }
+            case UserToRoleDtoRoleEnum.Owner: {
+              console.error('Not allowed to add or remove owners');
+              break;
+            }
+            case UserToRoleDtoRoleEnum.Banned: {
+              if (isAdd) {
+                logout();
+              }
+              break;
+            }
           }
         }
-      }
-      console.log('second');
-      console.log(authUser);
-    };
+      };
 
     if (authUser) {
-      socket.on('userToRole', userToRoleListener);
+      socket.on('userToRole', userToRoleListener(true));
+      socket.on('deletedUserToRole', userToRoleListener(false));
     }
 
     return () => {
       socket.off('userToRole');
+      socket.off('deletedUserToRole');
     };
-  }, [authUser]);
+  }, [authUser, logout]);
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

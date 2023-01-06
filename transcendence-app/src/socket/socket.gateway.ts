@@ -117,12 +117,7 @@ export class SocketGateway
     throw new WsException('Bad request');
   }
 
-  @SubscribeMessage('setUserWithRoles')
-  async setUserWithRoles(
-    @MessageBody()
-    userToRoleDto: UserToRoleDto,
-    @ConnectedSocket() client: Socket,
-  ): Promise<UserToRole> {
+  private async setUpPermissions(client: Socket) {
     const user = new User(client.request.user);
     const authUserId: string = user.id;
     let userWithAuthorization: UserWithAuthorization | null = null;
@@ -139,24 +134,63 @@ export class SocketGateway
       const ability = this.caslAbilityFactory.defineAbilitiesFor(
         userWithAuthorization,
       );
-      if (ability.cannot(Action.Create, userToRoleDto)) {
-        throw new WsException('Not allowed to add this role');
-      }
-      try {
-        const newRole = await this.authorizationService.addUserToRole(
-          userToRoleDto,
-        );
-        if (newRole) {
-          this.server.to(authUserId).emit('userToRole', { ...newRole });
-          this.server.to(userToRoleDto.id).emit('userToRole', { ...newRole });
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          throw new WsException(e.message);
-        }
-        throw new WsException('Bad request1');
-      }
+      return { authUserId, userWithAuthorization, ability };
+    } else {
+      throw new WsException('Not found userWithAuthorization');
     }
-    throw new WsException('Bad request2');
+  }
+
+  @SubscribeMessage('setUserWithRoles')
+  async setUserWithRoles(
+    @MessageBody()
+    userToRoleDto: UserToRoleDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    const { authUserId, ability } = await this.setUpPermissions(client);
+    if (ability.cannot(Action.Create, userToRoleDto)) {
+      throw new WsException('Not allowed to add this role');
+    }
+    try {
+      const newRole = await this.authorizationService.addUserToRole(
+        userToRoleDto,
+      );
+      if (newRole) {
+        this.server.to(authUserId).emit('userToRole', { ...newRole });
+        this.server.to(userToRoleDto.id).emit('userToRole', { ...newRole });
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new WsException(e.message);
+      }
+      throw new WsException('Bad request1');
+    }
+  }
+
+  @SubscribeMessage('deleteUserWithRoles')
+  async deleteUserWithRoles(
+    @MessageBody()
+    userToRoleDto: UserToRoleDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    const { authUserId, ability } = await this.setUpPermissions(client);
+    if (ability.cannot(Action.Delete, userToRoleDto)) {
+      throw new WsException('Not allowed to remove this role');
+    }
+    try {
+      const newRole = await this.authorizationService.deleteUserToRole(
+        userToRoleDto,
+      );
+      if (newRole) {
+        this.server.to(authUserId).emit('deletedUserToRole', { ...newRole });
+        this.server
+          .to(userToRoleDto.id)
+          .emit('deletedUserToRole', { ...newRole });
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new WsException(e.message);
+      }
+      throw new WsException('Bad request1');
+    }
   }
 }
