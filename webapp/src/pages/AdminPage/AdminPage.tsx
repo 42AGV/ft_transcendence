@@ -7,7 +7,7 @@ import {
 import { useAuth } from '../../shared/hooks/UseAuth';
 import socket from '../../shared/socket';
 import { UserToRoleDto, UserToRoleDtoRoleEnum } from '../../shared/generated';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 
 type UserToRoleDtoProps = UserToRoleDto & {
@@ -15,34 +15,24 @@ type UserToRoleDtoProps = UserToRoleDto & {
 };
 export default function AdminPage() {
   const { authUser, isLoading } = useAuth();
-  const [userToRoleValues, setUserToRoleValues] = useState<UserToRoleDtoProps>({
-    username: '',
-    role: 'moderator',
-    id: '',
-  });
-  const getUserId = useCallback(() => {
-    if (userToRoleValues.username !== '')
-      return usersApi.userControllerGetUserByUserName({
-        userName: userToRoleValues.username,
-      });
-    return Promise.reject(new Error('bad stuff'));
-  }, [userToRoleValues]);
-  const [destUserId, setDestUserId] = useState<string>('');
-
-  useEffect(() => {
-    if (userToRoleValues) {
-      usersApi
-        .userControllerGetUserByUserName({
-          userName: userToRoleValues.username,
-        })
-        .then((user) => setDestUserId(user.id));
-    }
-  }, [userToRoleValues]);
-  const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const [userToRoleValues, setUserToRoleValues] =
+    useState<UserToRoleDtoProps | null>(null);
+  const getUserId = useCallback(
+    (username: string) => {
+      if (userToRoleValues && userToRoleValues.username !== '')
+        return usersApi.userControllerGetUserByUserName({
+          userName: username,
+        });
+      return Promise.reject(new Error('bad stuff'));
+    },
+    [userToRoleValues],
+  );
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (destUserId !== '') {
+    if (userToRoleValues) {
+      const userToModify = await getUserId(userToRoleValues.username);
       socket.emit('setUserWithRoles', {
-        id: destUserId,
+        id: userToModify.id,
         role: UserToRoleDtoRoleEnum.Moderator,
       });
     }
@@ -53,9 +43,6 @@ export default function AdminPage() {
       return { ...previousValues, [name]: value };
     });
   };
-  if (!userToRoleValues) {
-    return <></>;
-  }
   return (
     <AvatarPageTemplate
       isLoading={isLoading}
@@ -76,7 +63,7 @@ export default function AdminPage() {
           variant={InputVariant.LIGHT}
           label="Username"
           placeholder="Username"
-          value={userToRoleValues.username}
+          value={userToRoleValues?.username ?? ''}
           name="username"
           onChange={handleInputChange}
         />
