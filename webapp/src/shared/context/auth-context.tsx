@@ -84,6 +84,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [isLoading, authUser, logout],
   );
 
+  useEffect(() => {
+    const userToRoleListener = async (userToRole: UserToRoleDto) => {
+      console.log('first');
+      console.log(authUser);
+      if (authUser && userToRole.id === authUser.id) {
+        switch (userToRole.role) {
+          case UserToRoleDtoRoleEnum.Moderator: {
+            const tempObj = { ...authUser, gAdmin: !authUser.gAdmin };
+            console.log('switch');
+            console.log(tempObj);
+            await setAuthUser({ ...tempObj });
+            break;
+          }
+          case UserToRoleDtoRoleEnum.Owner: {
+            setAuthUser({ ...authUser, gOwner: !authUser.gOwner });
+            break;
+          }
+          case UserToRoleDtoRoleEnum.Banned: {
+            logout();
+            navigate(HOST_URL);
+            break;
+          }
+        }
+      }
+      console.log('second');
+      console.log(authUser);
+    };
+
+    if (authUser) {
+      socket.on('userToRole', userToRoleListener);
+    }
+
+    return () => {
+      socket.off('userToRole');
+    };
+  }, [authUser]);
+
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
