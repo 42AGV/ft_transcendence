@@ -12,18 +12,10 @@ import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { ChatroomMemberWithAuthorization } from '../authorization/infrastructure/db/chatroom-member-with-authorization.entity';
 import {
   AbilityBuilder,
-  AnyMongoAbility,
   createMongoAbility,
-  InferSubjects,
   MongoAbility,
 } from '@casl/ability';
 import { Action } from '../shared/enums/action.enum';
-import { ChatroomMember } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
-import { UpdateChatroomMemberDto } from '../chat/chatroom/chatroom-member/dto/update-chatroom-member.dto';
-import { Chatroom } from '../chat/chatroom/infrastructure/db/chatroom.entity';
-import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
-import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
-import { ChatroomMessageWithUser } from '../chat/chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
 
 const testUserMe = new User(
   new User({
@@ -46,7 +38,7 @@ const testUserDto: CreateUserDto = {
 };
 const testUsername = 'paquito';
 
-export type Subject = 'all';
+type Subject = 'all';
 
 type AppAbility = MongoAbility<[Action, Subject]>;
 
@@ -95,6 +87,7 @@ describe('UserController', () => {
       defineAbilitiesFor(
         user: UserWithAuthorization | ChatroomMemberWithAuthorization,
       ) {
+        void user;
         const abilityCtx = new AbilityBuilder<AppAbility>(createMongoAbility);
         const { can, build } = abilityCtx;
         can(Action.Manage, 'all');
