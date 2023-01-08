@@ -1,5 +1,5 @@
-import { getBallPos, getPaddlePos } from './physics';
-import { GameBall, GamePaddle, Coord } from './models';
+import { getBallPos, getPaddlePos, calcInitialBallSpeed } from './physics';
+import { GameBall, GamePaddle } from './models';
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
@@ -7,7 +7,6 @@ import {
   PADDLE_HEIGHT,
   PADDLE_SLIDE_SPEED,
   BALL_RADIUS,
-  BALL_SPEED,
 } from './constants';
 
 export type GameState = {
@@ -42,16 +41,6 @@ const getPaddleDragX = (
     return CANVAS_WIDTH - PADDLE_WIDTH;
   }
   return deltaX;
-};
-
-const calcInitialBallSpeed = (): Coord => {
-  const coef = Math.ceil(3 * Math.random());
-  const angle = (Math.PI / 2) * coef + Math.PI / 4;
-
-  return {
-    x: BALL_SPEED * Math.cos(angle),
-    y: BALL_SPEED * Math.sin(angle),
-  };
 };
 
 export const initialBallState = (): GameBall => {

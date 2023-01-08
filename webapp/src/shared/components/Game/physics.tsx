@@ -1,11 +1,9 @@
 import {
   BALL_SPEED,
   CANVAS_WIDTH,
-  CANVAS_HEIGHT,
   MAX_PADDLE_BOUNCE_ANGLE,
   MIN_PADDLE_BOUNCE_ANGLE,
   PADDLE_WIDTH,
-  PADDLE_HEIGHT,
   BALL_RADIUS,
 } from './constants';
 import { GameBall, GamePaddle, Coord } from './models';
@@ -77,7 +75,7 @@ const paddleCollision = (ball: GameBall, paddle: GamePaddle) =>
   ball.x > paddle.x - BALL_RADIUS &&
   ball.x < paddle.x + paddle.width + BALL_RADIUS;
 
-const calcInitialBallSpeed = (): Coord => {
+export const calcInitialBallSpeed = (): Coord => {
   const coef = Math.ceil(3 * Math.random());
   const angle = (Math.PI / 2) * coef + Math.PI / 4;
 
@@ -120,25 +118,3 @@ export const getPaddlePos = (
   }
   return paddle;
 };
-
-export const initialBallState = (): GameBall => {
-  const initialBallSpeed = calcInitialBallSpeed();
-
-  return {
-    x: CANVAS_WIDTH / 2,
-    y: CANVAS_HEIGHT / 2,
-    vx: initialBallSpeed.x,
-    vy: initialBallSpeed.y,
-    radius: BALL_RADIUS,
-    color: '#FFF',
-  };
-};
-
-export const initialPaddleState = (): GamePaddle => ({
-  x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
-  y: CANVAS_HEIGHT - 2 * PADDLE_HEIGHT,
-  slide: 0,
-  width: PADDLE_WIDTH,
-  height: PADDLE_HEIGHT,
-  color: '#FFF',
-});

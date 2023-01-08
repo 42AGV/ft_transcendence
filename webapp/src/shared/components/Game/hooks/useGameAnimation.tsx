@@ -13,7 +13,7 @@ const useGameAnimation = () => {
   const deltaTimeRef = React.useRef<number>(0);
 
   const drawBall = React.useCallback(
-    (context: CanvasRenderingContext2D, ball: GameBall, paddle: GamePaddle) => {
+    (context: CanvasRenderingContext2D, ball: GameBall) => {
       context.beginPath();
       context.arc(ball.x, ball.y, BALL_RADIUS, 0, 2 * Math.PI, false);
       context.fillStyle = ball.color;
@@ -77,7 +77,7 @@ const useGameAnimation = () => {
       const paddle = state.paddle;
 
       canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      drawBall(canvasContext, ball, paddle);
+      drawBall(canvasContext, ball);
       drawPaddle(canvasContext, paddle);
       drawBrick(canvasContext);
     },
