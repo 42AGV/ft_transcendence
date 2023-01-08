@@ -16,6 +16,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
+import { GameInputDto } from './dto/game-input.dto';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -27,6 +28,7 @@ export class GameGateway {
   @SubscribeMessage('gameMessage')
   async handleChatMessage(
     @MessageBody('gameId', ParseUUIDPipe) gameId: string,
+    gameInputDto: GameInputDto,
     @ConnectedSocket() client: Socket,
   ) {
     console.log(client, gameId);
