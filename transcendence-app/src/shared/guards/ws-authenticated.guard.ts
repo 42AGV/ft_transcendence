@@ -7,12 +7,13 @@ export class WsAuthenticatedGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const client = context.switchToWs().getClient();
     const request = client.request;
+    if (!request.isAuthenticated()) {
+      return false;
+    }
     const authUser =
       await this.authorizationService.getUserWithAuthorizationFromUsername(
         request.user?.username,
       );
-    const isAuthenticated: boolean = request.isAuthenticated();
-    const isAuthorized = !authUser.gBanned || authUser.gOwner;
-    return isAuthenticated && isAuthorized;
+    return !authUser.gBanned || authUser.gOwner;
   }
 }
