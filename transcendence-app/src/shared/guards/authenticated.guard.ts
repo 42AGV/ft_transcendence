@@ -11,7 +11,7 @@ export class AuthenticatedGuard implements CanActivate {
         request.user?.username,
       );
     const isAuthenticated: boolean = request.isAuthenticated();
-    const isAuthorized = !authUser.gBanned && !authUser.gOwner;
+    const isAuthorized = !authUser.gBanned || authUser.gOwner;
     return isAuthenticated && isAuthorized;
   }
 }
