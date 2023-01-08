@@ -4,6 +4,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -20,6 +22,7 @@ import {
   ApiFoundResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiNoContentResponse,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -34,6 +37,12 @@ import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
 import { User } from '../user/infrastructure/db/user.entity';
 import { AuthorizationService } from '../authorization/authorization.service';
+import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
+import { CheckPolicies } from '../authorization/decorators/policies.decorator';
+import { Action } from '../shared/enums/action.enum';
+import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
+import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
+import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
@@ -100,6 +109,42 @@ export class AuthController {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loginLocalUser(@Req() req: Request, @Body() user: LoginUserDto): User {
     return req.user;
+  }
+
+  @Post('authorization')
+  @SetSubjects(UserToRole)
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability, userToRole) =>
+    ability.can(Action.Create, userToRole),
+  )
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Add a role to a user' })
+  @ApiForbiddenResponse({
+    description: 'Not authorized add this role',
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "The provided id doesn't match any user",
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  async addRole(@Body() roleObj: UserToRoleDto): Promise<void> {
+    await this.authorizationService.addUserToRole(roleObj);
+  }
+
+  @Delete('authorization')
+  @SetSubjects(UserToRole)
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability, userToRole) =>
+    ability.can(Action.Delete, userToRole),
+  )
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Remove a role from a user' })
+  @ApiForbiddenResponse({
+    description: 'Not authorized to remove this role',
+  })
+  @ApiNotFoundResponse({ description: 'Username to role relation not found' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  async removeRole(@Body() roleObj: UserToRoleDto): Promise<void> {
+    await this.authorizationService.deleteUserToRole(roleObj);
   }
 
   @Get('authorization/:username')
