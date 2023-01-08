@@ -61,15 +61,15 @@ const developmentMode = process.env.NODE_ENV === 'development';
 
 function AppContext({ children }: { children: JSX.Element }) {
   return (
-    <AuthProvider>
-      <NotificationContextProvider>
+    <NotificationContextProvider>
+      <AuthProvider>
         <UserStatusProvider>
           <UserFriendProvider>
             <UserBlocklistProvider>{children}</UserBlocklistProvider>
           </UserFriendProvider>
         </UserStatusProvider>
-      </NotificationContextProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </NotificationContextProvider>
   );
 }
 

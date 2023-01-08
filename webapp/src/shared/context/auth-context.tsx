@@ -16,6 +16,7 @@ import { useData } from '../hooks/UseData';
 import { authApi } from '../services/ApiService';
 import socket from '../socket';
 import { HOST_URL } from '../urls';
+import { useNotificationContext } from './NotificationContext';
 
 export interface AuthContextType {
   isLoggedIn: boolean;
@@ -30,6 +31,7 @@ export interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>(null!);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { warn } = useNotificationContext();
   const [authUser, setAuthUser] =
     useState<UserWithAuthorizationResponseDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +96,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               break;
             }
             case UserToRoleDtoRoleEnum.Owner: {
-              console.error('Not allowed to add or remove owners');
+              warn('Not allowed to add or remove owners');
               break;
             }
             case UserToRoleDtoRoleEnum.Banned: {
