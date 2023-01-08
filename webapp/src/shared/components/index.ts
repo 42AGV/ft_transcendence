@@ -48,3 +48,5 @@ export { default as SnackBar } from './Snackbar/Snackbar';
 export * from './Snackbar/Snackbar';
 
 export { default as Game } from './Game/Game';
+
+export { default as GameTraining } from './Game/GameTraining';

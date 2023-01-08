@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import socket from '../../socket';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
 import {
   useGameControls,
@@ -11,9 +10,7 @@ import { GameStateContextProvider } from './context';
 
 import './Game.css';
 
-const GAME_SERVER_MESSAGE = 'gameServerMessage';
-
-const Game = () => {
+const GameTraining = () => {
   const { renderFrame, deltaTimeRef } = useGameAnimation();
   const { runGameFrame } = useClientGameEngine();
   useGameControls();
@@ -46,16 +43,6 @@ const Game = () => {
     }
   }, [gameLoop]);
 
-  const updateGameState = React.useCallback(() => {}, []);
-
-  React.useEffect(() => {
-    socket.on(GAME_SERVER_MESSAGE, updateGameState);
-
-    return () => {
-      socket.off(GAME_SERVER_MESSAGE);
-    };
-  }, [updateGameState]);
-
   return (
     <div className="game">
       <h1 className="game-score heading-bold">{score}</h1>
@@ -64,10 +51,10 @@ const Game = () => {
   );
 };
 
-export default function GameWithContext() {
+export default function GameTrainingWithContext() {
   return (
     <GameStateContextProvider>
-      <Game />
+      <GameTraining />
     </GameStateContextProvider>
   );
 }

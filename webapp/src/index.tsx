@@ -6,6 +6,8 @@ import {
   ChatsPage,
   LandingPage,
   PlayPage,
+  GameTrainPage,
+  GamePage,
   UsersPage,
   UserPage,
   ComponentsBookPage,
@@ -44,6 +46,8 @@ import {
   EDIT_USER_PASSWORD_URL,
   FRIENDS_URL,
   EDIT_CHATROOM_AVATAR_URL,
+  PLAY_GAME_TRAIN_URL,
+  PLAY_GAME_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -98,6 +102,22 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <PlayPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={PLAY_GAME_URL}
+        element={
+          <RequireAuth>
+            <GamePage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={PLAY_GAME_TRAIN_URL}
+        element={
+          <RequireAuth>
+            <GameTrainPage />
           </RequireAuth>
         }
       />
