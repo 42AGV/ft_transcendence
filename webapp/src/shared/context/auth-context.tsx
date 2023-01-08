@@ -108,12 +108,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       };
 
     if (authUser) {
-      socket.on('userToRole', userToRoleListener(true));
+      socket.on('addedUserToRole', userToRoleListener(true));
       socket.on('deletedUserToRole', userToRoleListener(false));
     }
 
     return () => {
-      socket.off('userToRole');
+      socket.off('addedUserToRole');
       socket.off('deletedUserToRole');
     };
   }, [authUser, logout]);

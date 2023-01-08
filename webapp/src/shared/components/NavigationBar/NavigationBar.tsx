@@ -33,15 +33,20 @@ export default function NavigationBar() {
   const { isLoading, authUser } = useAuth();
   const [navItems, setNavItems] = useState<NavItemContent[]>(NAV_ITEMS_CONTENT);
   useEffect(() => {
-    if (!isLoading && authUser && (authUser.gAdmin || authUser.gOwner)) {
-      setNavItems([
-        ...NAV_ITEMS_CONTENT,
-        {
-          icon: IconVariant.EDIT,
-          title: 'Admin',
-          url: ADMIN_URL,
-        },
-      ]);
+    if (!isLoading && authUser) {
+      if (authUser.gAdmin || authUser.gOwner) {
+        setNavItems([
+          ...NAV_ITEMS_CONTENT,
+          {
+            icon: IconVariant.EDIT,
+            title: 'Admin',
+            url: ADMIN_URL,
+          },
+        ]);
+      }
+      if (!authUser.gAdmin && !authUser.gOwner) {
+        setNavItems(NAV_ITEMS_CONTENT);
+      }
     }
   }, [isLoading, authUser]);
   return (

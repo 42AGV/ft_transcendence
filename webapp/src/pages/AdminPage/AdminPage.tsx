@@ -31,7 +31,7 @@ export default function AdminPage() {
     e.preventDefault();
     if (userToRoleValues) {
       const userToModify = await getUserId(userToRoleValues.username);
-      socket.emit('setUserWithRoles', {
+      socket.emit('toggleUserWithRoles', {
         id: userToModify.id,
         role: UserToRoleDtoRoleEnum.Moderator,
       });
