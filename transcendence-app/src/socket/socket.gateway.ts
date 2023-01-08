@@ -19,7 +19,6 @@ import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { SocketService } from './socket.service';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
-import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 
 type UserId = string;
@@ -35,7 +34,6 @@ export class SocketGateway
   constructor(
     private socketService: SocketService,
     private authorizationService: AuthorizationService,
-    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   afterInit(server: Server) {
