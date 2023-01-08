@@ -325,7 +325,7 @@ export class ChatController {
     if (!chatroom) {
       throw new NotFoundException();
     }
-    if (ability.cannot(Action.Read, 'readChatroomMessagesList')) {
+    if (ability.cannot(Action.Read, 'chatroomMessagesList')) {
       throw new ForbiddenException();
     }
     const messages = await this.chatService.getChatroomMessagesWithUser(

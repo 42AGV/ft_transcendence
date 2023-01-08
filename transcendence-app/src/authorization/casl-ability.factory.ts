@@ -28,7 +28,8 @@ export type SubjectCtors =
 export type Subject =
   | InferSubjects<SubjectCtors>
   | 'all'
-  | 'readChatroomMessagesList';
+  | 'chatroomMessagesList'
+  | 'transcendence-app';
 
 type AppAbility = MongoAbility<[Action, Subject]>;
 @Injectable()
@@ -41,6 +42,7 @@ export class CaslAbilityFactory {
     can(Action.Read, UserWithAuthorizationResponseDto, {
       username: globalUserAuthCtx.username,
     });
+    can(Action.Join, 'transcendence-app');
     cannot(Action.Manage, UserToRole);
     if (globalUserAuthCtx.gBanned && !globalUserAuthCtx.gOwner) {
       cannot(Action.Manage, 'all');
@@ -108,7 +110,7 @@ export class CaslAbilityFactory {
           can(Action.Read, ChatroomMessageWithUser, {
             chatroomId: user.chatId,
           });
-          can(Action.Read, 'readChatroomMessagesList');
+          can(Action.Read, 'chatroomMessagesList');
         }
         if (user.crm_owner) {
           can(Action.Update, Chatroom, { id: user.chatId });
