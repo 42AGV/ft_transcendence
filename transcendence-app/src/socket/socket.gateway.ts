@@ -12,15 +12,12 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
 import { Socket, Server, RemoteSocket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { SocketService } from './socket.service';
 import { AuthorizationService } from '../authorization/authorization.service';
-import { User } from '../user/infrastructure/db/user.entity';
-import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';

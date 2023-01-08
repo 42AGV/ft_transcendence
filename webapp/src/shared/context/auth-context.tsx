@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAuthUser(null);
       navigate(HOST_URL);
     }
-  }, [navigate, authBroadcastChannel, authUser]);
+  }, [navigate, authBroadcastChannel, authUser, warn]);
 
   const contextValue = useMemo(
     () => ({
@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       socket.off('addedUserToRole');
       socket.off('deletedUserToRole');
     };
-  }, [authUser, logout]);
+  }, [authUser, logout, warn]);
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

@@ -4,8 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -20,7 +18,6 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiFoundResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiServiceUnavailableResponse,
@@ -37,12 +34,6 @@ import { LocalGuard } from './local.guard';
 import { OAuth42Guard } from './oauth42.guard';
 import { User } from '../user/infrastructure/db/user.entity';
 import { AuthorizationService } from '../authorization/authorization.service';
-import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
-import { CheckPolicies } from '../authorization/decorators/policies.decorator';
-import { Action } from '../shared/enums/action.enum';
-import { SetSubjects } from '../authorization/decorators/set-subjects.decorator';
-import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
-import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with-authorization.response.dto';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
