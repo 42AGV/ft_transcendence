@@ -6,14 +6,21 @@ import {
 } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import socket from '../../shared/socket';
-import { UserToRoleDto, UserToRoleDtoRoleEnum } from '../../shared/generated';
-import { useCallback, useState } from 'react';
+import {
+  ResponseError,
+  UserToRoleDto,
+  UserToRoleDtoRoleEnum,
+} from '../../shared/generated';
+import { useCallback, useEffect, useState } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
+import { WsException } from '../../shared/types';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 type UserToRoleDtoProps = UserToRoleDto & {
   username: string;
 };
 export default function AdminPage() {
+  const { warn } = useNotificationContext();
   const { authUser, isLoading } = useAuth();
   const [userToRoleValues, setUserToRoleValues] =
     useState<UserToRoleDtoProps | null>(null);
@@ -23,18 +30,33 @@ export default function AdminPage() {
         return usersApi.userControllerGetUserByUserName({
           userName: username,
         });
-      return Promise.reject(new Error('bad stuff'));
+      return Promise.reject(new Error('Could not get user with username'));
     },
     [userToRoleValues],
   );
   const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (userToRoleValues) {
-      const userToModify = await getUserId(userToRoleValues.username);
-      socket.emit('toggleUserWithRoles', {
-        id: userToModify.id,
-        role: UserToRoleDtoRoleEnum.Moderator,
-      });
+      try {
+        const userToModify = await getUserId(userToRoleValues.username);
+        socket.emit('toggleUserWithRoles', {
+          id: userToModify.id,
+          role: UserToRoleDtoRoleEnum.Owner,
+        });
+      } catch (error: unknown) {
+        if (error instanceof ResponseError) {
+          const responseBody = await error.response.json();
+          if (responseBody.message) {
+            warn(responseBody.message);
+          } else {
+            warn(error.response.statusText);
+          }
+        } else if (error instanceof Error) {
+          warn(error.message);
+        } else {
+          warn('Could not find user with username');
+        }
+      }
     }
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +65,17 @@ export default function AdminPage() {
       return { ...previousValues, [name]: value };
     });
   };
+
+  useEffect(() => {
+    socket.on('exception', (wsError: WsException) => {
+      warn(wsError.message);
+    });
+
+    return () => {
+      socket.off('exception');
+    };
+  }, [warn]);
+
   return (
     <AvatarPageTemplate
       isLoading={isLoading}
