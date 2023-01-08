@@ -1,81 +1,49 @@
 import * as React from 'react';
+import { useGameStateContext } from '../context';
 
-import { GamePaddle } from './types';
-import { CANVAS_WIDTH, PADDLE_SLIDE_SPEED, PADDLE_WIDTH } from './constants';
-
-const useGameControls = (paddleRef: React.MutableRefObject<GamePaddle>) => {
+const useGameControls = () => {
+  const { dispatch } = useGameStateContext();
   const dragRef = React.useRef<number>(0);
 
   const movePaddle = React.useCallback(
     (e: KeyboardEvent) => {
       const key = e.key;
-      const paddle = paddleRef.current;
 
       if (key === 'ArrowRight') {
-        paddleRef.current = {
-          ...paddle,
-          slide: PADDLE_SLIDE_SPEED,
-        };
+        dispatch({ type: 'paddleMoveRight', payload: {} });
       } else if (key === 'ArrowLeft') {
-        paddleRef.current = {
-          ...paddle,
-          slide: -1 * PADDLE_SLIDE_SPEED,
-        };
+        dispatch({ type: 'paddleMoveLeft', payload: {} });
       }
     },
-    [paddleRef],
+    [dispatch],
   );
-
-  const getPaddleDragX = (
-    paddle: GamePaddle,
-    dragPrevPos: number,
-    dragCurrPos: number,
-  ): number => {
-    const deltaX = paddle.x - (dragPrevPos - dragCurrPos);
-
-    if (deltaX < 0) {
-      return 0;
-    } else if (deltaX > CANVAS_WIDTH - PADDLE_WIDTH) {
-      return CANVAS_WIDTH - PADDLE_WIDTH;
-    }
-    return deltaX;
-  };
 
   const dragPaddle = React.useCallback(
     (e: TouchEvent) => {
-      const paddle = paddleRef.current;
       const dragCurrPos = e.touches[0].clientX;
       const dragPrevPos = dragRef.current;
-
       dragRef.current = dragCurrPos;
 
       if (dragPrevPos) {
-        paddleRef.current = {
-          ...paddle,
-          x: getPaddleDragX(paddle, dragPrevPos, dragCurrPos),
-        };
+        dispatch({ type: 'paddleDrag', payload: { dragCurrPos, dragPrevPos } });
       }
     },
-    [paddleRef],
+    [dispatch],
   );
 
-  const resetDragPaddle = React.useCallback((e: TouchEvent) => {
+  const resetDragPaddle = React.useCallback(() => {
     dragRef.current = 0;
   }, []);
 
   const stopPaddle = React.useCallback(
     (e: KeyboardEvent) => {
       const key = e.key;
-      const paddle = paddleRef.current;
 
       if (key === 'ArrowRight' || key === 'ArrowLeft') {
-        paddleRef.current = {
-          ...paddle,
-          slide: 0,
-        };
+        dispatch({ type: 'paddleStop', payload: {} });
       }
     },
-    [paddleRef],
+    [dispatch],
   );
 
   React.useEffect(() => {
@@ -91,9 +59,7 @@ const useGameControls = (paddleRef: React.MutableRefObject<GamePaddle>) => {
       window.removeEventListener('touchend', resetDragPaddle);
       window.removeEventListener('contextmenu', (e) => e.preventDefault());
     };
-  }, [movePaddle, stopPaddle, dragPaddle, resetDragPaddle]);
-
-  return { movePaddle, dragPaddle, stopPaddle };
+  }, [movePaddle, stopPaddle, resetDragPaddle, dragPaddle]);
 };
 
 export default useGameControls;

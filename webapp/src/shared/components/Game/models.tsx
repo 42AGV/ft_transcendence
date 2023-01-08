@@ -20,3 +20,9 @@ export type Coord = {
   x: number;
   y: number;
 };
+
+export type GameState = {
+  ball: GameBall;
+  paddle: GamePaddle;
+  score: number;
+};
