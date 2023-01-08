@@ -41,7 +41,7 @@ export default function AdminPage() {
         const userToModify = await getUserId(userToRoleValues.username);
         socket.emit('toggleUserWithRoles', {
           id: userToModify.id,
-          role: UserToRoleDtoRoleEnum.Owner,
+          role: UserToRoleDtoRoleEnum.Banned,
         });
       } catch (error: unknown) {
         if (error instanceof ResponseError) {
