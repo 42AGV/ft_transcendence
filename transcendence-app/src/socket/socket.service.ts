@@ -8,6 +8,7 @@ import { UserWithAuthorization } from '../authorization/infrastructure/db/user-w
 import { AuthorizationService } from '../authorization/authorization.service';
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { WsException } from '@nestjs/websockets';
+import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 
 @Injectable()
 export class SocketService {
@@ -85,7 +86,7 @@ export class SocketService {
       return;
     }
     const { authUserId, ability } = await this.setUpPermissions(client);
-    if (ability.cannot(Action.Create, userToRoleDto)) {
+    if (ability.cannot(Action.Create, new UserToRole(userToRoleDto))) {
       throw new WsException('Not allowed to add this role');
     }
     try {
@@ -114,7 +115,7 @@ export class SocketService {
       return;
     }
     const { authUserId, ability } = await this.setUpPermissions(client);
-    if (ability.cannot(Action.Delete, userToRoleDto)) {
+    if (ability.cannot(Action.Delete, new UserToRole(userToRoleDto))) {
       throw new WsException('Not allowed to remove this role');
     }
     try {

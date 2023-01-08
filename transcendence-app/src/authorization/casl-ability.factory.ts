@@ -19,7 +19,7 @@ import { ChatroomMessageWithUser } from '../chat/chatroom/chatroom-message/infra
 
 export type SubjectCtors =
   | typeof ChatroomMember
-  | typeof UpdateChatroomMemberDto
+  | typeof UpdateChatroomMemberDto // interfaces may have problems when detecting permissions: make class from this
   | typeof Chatroom
   | typeof UserToRole
   | typeof UserWithAuthorizationResponseDto
