@@ -58,12 +58,14 @@ export class SocketService {
     let userWithAuthorization: UserWithAuthorization | null = null;
     try {
       userWithAuthorization =
-        await this.authorizationService.getUserWithAuthorizationFromId(user.id);
+        await this.authorizationService.getUserWithAuthorizationFromId(
+          authUserId,
+        );
     } catch (e) {
       if (e instanceof Error) {
         throw new WsException(e.message);
       }
-      throw new WsException('Bad request0');
+      throw new WsException('Authenticated user not found');
     }
     if (userWithAuthorization) {
       const ability = this.caslAbilityFactory.defineAbilitiesFor(
@@ -71,7 +73,7 @@ export class SocketService {
       );
       return { authUserId, userWithAuthorization, ability };
     } else {
-      throw new WsException('Not found userWithAuthorization');
+      throw new WsException('Authenticated user not found');
     }
   }
 
@@ -100,7 +102,7 @@ export class SocketService {
       if (e instanceof Error) {
         throw new WsException(e.message);
       }
-      throw new WsException('Bad request1');
+      throw new WsException("Couldn't add role to user");
     }
   }
 
@@ -131,7 +133,7 @@ export class SocketService {
       if (e instanceof Error) {
         throw new WsException(e.message);
       }
-      throw new WsException('Bad request1');
+      throw new WsException("Couldn't delete role for user");
     }
   }
 }
