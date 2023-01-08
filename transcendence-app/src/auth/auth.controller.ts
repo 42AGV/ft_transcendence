@@ -111,42 +111,6 @@ export class AuthController {
     return req.user;
   }
 
-  @Post('authorization')
-  @SetSubjects(UserToRole)
-  @UseGuards(GlobalPoliciesGuard)
-  @CheckPolicies((ability, userToRole) =>
-    ability.can(Action.Create, userToRole),
-  )
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse({ description: 'Add a role to a user' })
-  @ApiForbiddenResponse({
-    description: 'Not authorized add this role',
-  })
-  @ApiUnprocessableEntityResponse({
-    description: "The provided id doesn't match any user",
-  })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  async addRole(@Body() roleObj: UserToRoleDto): Promise<void> {
-    await this.authorizationService.addUserToRole(roleObj);
-  }
-
-  @Delete('authorization')
-  @SetSubjects(UserToRole)
-  @UseGuards(GlobalPoliciesGuard)
-  @CheckPolicies((ability, userToRole) =>
-    ability.can(Action.Delete, userToRole),
-  )
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse({ description: 'Remove a role from a user' })
-  @ApiForbiddenResponse({
-    description: 'Not authorized to remove this role',
-  })
-  @ApiNotFoundResponse({ description: 'Username to role relation not found' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  async removeRole(@Body() roleObj: UserToRoleDto): Promise<void> {
-    await this.authorizationService.deleteUserToRole(roleObj);
-  }
-
   @Get('authorization/:username')
   @ApiOkResponse({
     description: 'Retrieve user with roles',

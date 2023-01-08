@@ -89,31 +89,6 @@ export class SocketGateway
     this.socketService.getFriends(client);
   }
 
-  @SubscribeMessage('getAuthUserWithRoles')
-  async retrieveAuthUserWithRoles(
-    @ConnectedSocket() client: Socket,
-  ): Promise<UserWithAuthorizationResponseDto> {
-    const user = client.request.user;
-    if (user instanceof User) {
-      try {
-        const authUserUsername = user.username;
-        const authUser =
-          await this.authorizationService.getUserWithAuthorizationFromId(
-            user.id,
-          );
-        return this.authorizationService.getUserWithAuthorizationResponseDtoFromUsername(
-          authUserUsername,
-          authUser,
-        );
-      } catch (e) {
-        if (e instanceof Error) {
-          throw new WsException(e.message);
-        }
-      }
-    }
-    throw new WsException('Bad request');
-  }
-
   @SubscribeMessage('toggleUserWithRoles')
   async toggleUserWithRoles(
     @MessageBody()
