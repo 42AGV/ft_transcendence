@@ -11,6 +11,7 @@ import {
   UserWithAuthorizationResponseDto,
   UserToRoleDto,
   UserToRoleDtoRoleEnum,
+  ResponseError,
 } from '../generated';
 import { useData } from '../hooks/UseData';
 import { authApi } from '../services/ApiService';
@@ -67,8 +68,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await authApi.authControllerLogout();
       authBroadcastChannel.postMessage(authUser);
-    } catch (err) {
-      console.error(err);
+    } catch (error: unknown) {
+      if (error instanceof ResponseError) {
+        const responseBody = await error.response.json();
+        if (responseBody.message) {
+          warn(responseBody.message);
+        } else {
+          warn(error.response.statusText);
+        }
+      } else if (error instanceof Error) {
+        warn(error.message);
+      } else {
+        warn('Could not logout');
+      }
     } finally {
       setAuthUser(null);
       navigate(HOST_URL);
@@ -96,12 +108,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               break;
             }
             case UserToRoleDtoRoleEnum.Owner: {
-              warn('Not allowed to add or remove owners');
+              warn('Someone tried to make you an owner');
               break;
             }
             case UserToRoleDtoRoleEnum.Banned: {
-              if (isAdd) {
-                logout();
+              if (!authUser.gOwner) {
+                if (isAdd) {
+                  logout();
+                }
+              } else {
+                warn('Someone tried to ban you');
               }
               break;
             }
