@@ -1,11 +1,6 @@
-import {
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  ValidationArguments,
-} from 'class-validator';
-
-type inputCommandType = 'hola';
+import { IsGameCommand } from '../validators';
 
 export class GameInputDto {
-  command!: inputCommandType;
+  @IsGameCommand()
+  command!: string;
 }
