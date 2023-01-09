@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -16,6 +17,9 @@ import { Socket, Server, RemoteSocket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
 import { SocketService } from './socket.service';
+import { AuthorizationService } from '../authorization/authorization.service';
+import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
+import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 
 type UserId = string;
 
@@ -27,8 +31,10 @@ export class SocketGateway
 {
   @WebSocketServer() server!: Server;
   onlineUserIds = new Set<UserId>();
-
-  constructor(private socketService: SocketService) {}
+  constructor(
+    private socketService: SocketService,
+    private authorizationService: AuthorizationService,
+  ) {}
 
   afterInit(server: Server) {
     this.socketService.socket = server;
@@ -76,5 +82,20 @@ export class SocketGateway
   @SubscribeMessage('getFriends')
   handleGetFriends(@ConnectedSocket() client: Socket) {
     this.socketService.getFriends(client);
+  }
+
+  @SubscribeMessage('toggleUserWithRoles')
+  async toggleUserWithRoles(
+    @MessageBody()
+    userToRoleDto: UserToRoleDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    const foundUserToRole: UserToRole | null =
+      await this.authorizationService.maybeGetUserToRole(userToRoleDto);
+    if (foundUserToRole) {
+      await this.socketService.deleteUserWithRoles(userToRoleDto, client);
+    } else {
+      await this.socketService.addUserWithRoles(userToRoleDto, client);
+    }
   }
 }

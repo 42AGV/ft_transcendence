@@ -66,7 +66,6 @@ export class UserService {
     if (user && userMe) {
       const blockRelation = await this.getBlockRelation(userMe.id, user.id);
       const isFriend = await this.getIsFriend(userMe.id, user.id);
-      console.log(isFriend);
       return new UserResponseDto(user, blockRelation, isFriend);
     }
     return null;

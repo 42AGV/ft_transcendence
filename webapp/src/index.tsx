@@ -27,6 +27,7 @@ import {
   EditUserPasswordPage,
   FriendsPage,
   EditChatroomAvatarPage,
+  AdminPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -48,6 +49,7 @@ import {
   EDIT_CHATROOM_AVATAR_URL,
   PLAY_GAME_TRAIN_URL,
   PLAY_GAME_URL,
+  ADMIN_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -63,15 +65,15 @@ const developmentMode = process.env.NODE_ENV === 'development';
 
 function AppContext({ children }: { children: JSX.Element }) {
   return (
-    <AuthProvider>
-      <NotificationContextProvider>
+    <NotificationContextProvider>
+      <AuthProvider>
         <UserStatusProvider>
           <UserFriendProvider>
             <UserBlocklistProvider>{children}</UserBlocklistProvider>
           </UserFriendProvider>
         </UserStatusProvider>
-      </NotificationContextProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </NotificationContextProvider>
   );
 }
 
@@ -238,6 +240,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <JoinChatroomPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={ADMIN_URL}
+        element={
+          <RequireAuth>
+            <AdminPage />
           </RequireAuth>
         }
       />

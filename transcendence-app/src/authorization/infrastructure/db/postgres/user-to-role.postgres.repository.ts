@@ -77,6 +77,19 @@ export class UserToRolePostgresRepository
       : null;
   }
 
+  async maybeGetUserToRole(user: UserToRole): Promise<UserToRole | null> {
+    const { id, role } = user;
+    const roleData = await makeQuery<UserToRoleData>(this.pool, {
+      text: `
+        SELECT *
+        FROM ${this.table} as ur
+        WHERE ur.${UserToRoleKeys.ID} = $1
+          AND ur.${UserToRoleKeys.ROLE} = $2;`,
+      values: [id, role],
+    });
+    return roleData && roleData.length > 0 ? new UserToRole(roleData[0]) : null;
+  }
+
   async deleteUserToRole(
     userKey: string,
     role: Role,

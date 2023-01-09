@@ -8,6 +8,14 @@ import { User } from './infrastructure/db/user.entity';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
 import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
 import { AuthorizationService } from '../authorization/authorization.service';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
+import { ChatroomMemberWithAuthorization } from '../authorization/infrastructure/db/chatroom-member-with-authorization.entity';
+import {
+  AbilityBuilder,
+  createMongoAbility,
+  MongoAbility,
+} from '@casl/ability';
+import { Action } from '../shared/enums/action.enum';
 
 const testUserMe = new User(
   new User({
@@ -29,6 +37,10 @@ const testUserDto: CreateUserDto = {
   password: null,
 };
 const testUsername = 'paquito';
+
+type Subject = 'all';
+
+type AppAbility = MongoAbility<[Action, Subject]>;
 
 describe('UserController', () => {
   let controller: UserController;
@@ -71,6 +83,18 @@ describe('UserController', () => {
       },
     };
 
+    const mockCaslAbilityFactory: Partial<CaslAbilityFactory> = {
+      defineAbilitiesFor(
+        user: UserWithAuthorization | ChatroomMemberWithAuthorization,
+      ) {
+        void user;
+        const abilityCtx = new AbilityBuilder<AppAbility>(createMongoAbility);
+        const { can, build } = abilityCtx;
+        can(Action.Manage, 'all');
+        return build();
+      },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
       providers: [
@@ -81,6 +105,10 @@ describe('UserController', () => {
         {
           provide: AuthorizationService,
           useValue: mockAuthService,
+        },
+        {
+          provide: CaslAbilityFactory,
+          useValue: mockCaslAbilityFactory,
         },
       ],
     })

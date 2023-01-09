@@ -39,6 +39,10 @@ export class AuthorizationService {
     return userWithRoles;
   }
 
+  async maybeGetUserToRole(user: UserToRole): Promise<UserToRole | null> {
+    return this.userToRoleRepository.maybeGetUserToRole(user);
+  }
+
   async getUserWithAuthorizationFromId(
     id: string,
   ): Promise<UserWithAuthorization> {

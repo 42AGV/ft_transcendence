@@ -22,3 +22,4 @@ export { default as FriendsPage } from './UsersPage/FriendsPage';
 export { default as EditChatroomAvatarPage } from './EditChatroomAvatarPage/EditChatroomAvatarPage';
 export { default as GameTrainPage } from './PlayPage/GameTrainPage';
 export { default as GamePage } from './PlayPage/GamePage';
+export { default as AdminPage } from './AdminPage/AdminPage';

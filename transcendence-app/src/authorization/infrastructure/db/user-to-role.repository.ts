@@ -12,6 +12,7 @@ export abstract class IUserToRoleRepository {
     userKey: string,
     isUserId: boolean,
   ): Promise<UserWithAuthorization | null>;
+  abstract maybeGetUserToRole(user: UserToRole): Promise<UserToRole | null>;
   abstract deleteUserToRole(
     userKey: string,
     role: Role,
