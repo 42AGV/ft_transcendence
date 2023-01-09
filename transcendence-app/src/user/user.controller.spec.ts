@@ -28,6 +28,7 @@ const testUserMe = new User(
     avatarY: 0,
     id: uuidv4(),
     createdAt: new Date(Date.now()),
+    twoFactorAuthenticationSecret: null,
   }),
 );
 const testUserDto: CreateUserDto = {
@@ -79,6 +80,7 @@ describe('UserController', () => {
             amIBlockedByUser: false,
           },
           isFriend: true,
+          twoFactorAuthenticationSecret: null,
         });
       },
     };
