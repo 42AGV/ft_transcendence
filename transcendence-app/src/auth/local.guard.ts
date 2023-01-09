@@ -1,6 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CaslAbilityFactory } from 'src/authorization/casl-ability.factory';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { Action } from '../shared/enums/action.enum';
 
