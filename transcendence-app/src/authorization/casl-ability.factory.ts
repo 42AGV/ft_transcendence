@@ -23,7 +23,8 @@ export type SubjectCtors =
   | typeof Chatroom
   | typeof UserToRole
   | typeof UserWithAuthorizationResponseDto
-  | typeof ChatroomMessageWithUser;
+  | typeof ChatroomMessageWithUser
+  | typeof UserWithAuthorization;
 
 export type Subject =
   | InferSubjects<SubjectCtors>
@@ -49,6 +50,11 @@ export class CaslAbilityFactory {
     } else if (globalUserAuthCtx.gAdmin || globalUserAuthCtx.gOwner) {
       can(Action.Manage, 'all');
     }
+    cannot(
+      [Action.Create, Action.Update, Action.Delete],
+      UserWithAuthorization,
+      { gOwner: true },
+    );
     cannot([Action.Create, Action.Update, Action.Delete], UserToRole, {
       role: Role.owner,
     });
