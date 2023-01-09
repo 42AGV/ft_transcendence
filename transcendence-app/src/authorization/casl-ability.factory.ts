@@ -50,7 +50,11 @@ export class CaslAbilityFactory {
     } else if (globalUserAuthCtx.gAdmin || globalUserAuthCtx.gOwner) {
       can(Action.Manage, 'all');
     }
-    cannot(Action.Manage, UserWithAuthorization, { gOwner: true });
+    cannot(
+      [Action.Create, Action.Update, Action.Delete],
+      UserWithAuthorization,
+      { gOwner: true },
+    );
     cannot([Action.Create, Action.Update, Action.Delete], UserToRole, {
       role: Role.owner,
     });
