@@ -16,6 +16,7 @@ import {
   UseGuards,
   Res,
   Header,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -50,6 +51,8 @@ import { UserWithAuthorizationResponseDto } from '../authorization/dto/user-with
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user.pipe';
 import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
+import { TwoFactorAuthenticationCodeDto } from './dto/two-factor-authentication-code.dto';
+import { UserService } from '../user/user.service';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -58,6 +61,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly socketService: SocketService,
     private readonly authorizationService: AuthorizationService,
+    private readonly userService: UserService,
   ) {}
 
   @Get('login')
@@ -115,6 +119,7 @@ export class AuthController {
   }
 
   @Post('authorization')
+  @UseGuards(AuthenticatedGuard)
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -134,6 +139,7 @@ export class AuthController {
   }
 
   @Delete('authorization')
+  @UseGuards(AuthenticatedGuard)
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -151,6 +157,7 @@ export class AuthController {
   }
 
   @Get('authorization/:username')
+  @UseGuards(AuthenticatedGuard)
   @ApiOkResponse({
     description: 'Retrieve user with roles',
     type: UserWithAuthorizationResponseDto,
@@ -171,7 +178,9 @@ export class AuthController {
       authUser,
     );
   }
+
   @Get('authorization')
+  @UseGuards(AuthenticatedGuard)
   @ApiOkResponse({
     description: 'Retrieve authenticated user with roles',
     type: UserWithAuthorizationResponseDto,
@@ -194,7 +203,7 @@ export class AuthController {
     );
   }
 
-  @Post('twofactor/generate')
+  @Post('2fa/generate')
   @UseGuards(AuthenticatedGuard)
   @Header('Content-Type', 'image/png')
   @Header('Content-Disposition', 'inline')
@@ -212,5 +221,32 @@ export class AuthController {
         request.user,
       );
     return this.authService.pipeQrCodeStream(response, otpAuthUrl);
+  }
+
+  @Post('2fa/turn-on')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthenticatedGuard)
+  @ApiBadRequestResponse({ description: 'Wrong authentication code' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async enableTwoFactorAuthentication(
+    @GetUser('id') userId: string,
+    @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
+  ) {
+    const isValidCode =
+      await this.authService.isTwoFactorAuthenticationCodeValid(
+        twoFactorAuthenticationCode,
+        userId,
+      );
+
+    if (!isValidCode) {
+      throw new BadRequestException('Wrong authentication code');
+    }
+    const updatedUser = await this.userService.enableTwoFactorAuthentication(
+      userId,
+    );
+    if (!updatedUser) {
+      throw new ServiceUnavailableException();
+    }
   }
 }

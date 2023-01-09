@@ -83,4 +83,18 @@ export class AuthService {
   async pipeQrCodeStream(stream: Response, otpAuthUrl: string) {
     return toFileStream(stream, otpAuthUrl);
   }
+
+  async isTwoFactorAuthenticationCodeValid(
+    twoFactorAuthenticationCode: string,
+    userId: string,
+  ) {
+    const user = await this.userService.retrieveUserWithId(userId);
+    if (!user?.twoFactorAuthenticationSecret) {
+      return false;
+    }
+    return authenticator.verify({
+      token: twoFactorAuthenticationCode,
+      secret: user.twoFactorAuthenticationSecret,
+    });
+  }
 }

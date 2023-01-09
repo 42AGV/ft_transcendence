@@ -249,21 +249,30 @@ export class UserService {
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<User[] | null> {
-    const friends = this.friendRepository.getPaginatedFriends(followerId, {
-      limit,
-      offset,
-      sort,
-      search,
-    });
+    const friends = await this.friendRepository.getPaginatedFriends(
+      followerId,
+      {
+        limit,
+        offset,
+        sort,
+        search,
+      },
+    );
     if (!friends) {
       throw new UnprocessableEntityException();
     }
     return friends;
   }
 
-  async setTwoFactorAuthenticationSecret(secret: string, userId: string) {
+  setTwoFactorAuthenticationSecret(secret: string, userId: string) {
     return this.userRepository.updateById(userId, {
       twoFactorAuthenticationSecret: secret,
+    });
+  }
+
+  enableTwoFactorAuthentication(userId: string) {
+    return this.userRepository.updateById(userId, {
+      isTwoFactorAuthenticationEnabled: true,
     });
   }
 }
