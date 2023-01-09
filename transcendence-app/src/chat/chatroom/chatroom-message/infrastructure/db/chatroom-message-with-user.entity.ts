@@ -13,6 +13,7 @@ export interface ChatroomMessageWithUserData extends ChatroomMessageData {
   userAvatarX: number;
   userAvatarY: number;
   userCreatedAt: Date;
+  userTwoFactorAuthenticationSecret: string | null;
 }
 export class ChatroomMessageWithUser extends ChatroomMessage {
   user: User;
@@ -29,6 +30,8 @@ export class ChatroomMessageWithUser extends ChatroomMessage {
       avatarX: messageData.userAvatarX,
       avatarY: messageData.userAvatarY,
       createdAt: messageData.userCreatedAt,
+      twoFactorAuthenticationSecret:
+        messageData.userTwoFactorAuthenticationSecret,
     });
   }
 }

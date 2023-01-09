@@ -73,6 +73,7 @@
     "@types/passport-local": "^1.0.34",
     "@types/passport-oauth2": "^1.4.11",
     "@types/pg": "^8.6.5",
+    "@types/qrcode": "^1.5.0",
     "@types/supertest": "^2.0.12",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.46.0",

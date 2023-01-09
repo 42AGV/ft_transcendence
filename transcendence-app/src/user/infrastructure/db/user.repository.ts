@@ -1,7 +1,6 @@
 import { AuthProviderType } from '../../../auth/auth-provider/auth-provider.service';
 import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
 import { LocalFile } from '../../../shared/local-file/infrastructure/db/local-file.entity';
-import { UpdateUserDto } from '../../dto/update-user.dto';
 import { User } from './user.entity';
 
 export abstract class IUserRepository {
@@ -10,8 +9,8 @@ export abstract class IUserRepository {
   abstract getByEmail(username: string): Promise<User | null>;
   abstract deleteByUsername(username: string): Promise<User | null>;
   abstract updateById(
-    username: string,
-    updateUserDto: UpdateUserDto,
+    id: string,
+    updateUser: Partial<User>,
   ): Promise<User | null>;
   abstract add(user: User): Promise<User | null>;
   abstract getPaginatedUsers(

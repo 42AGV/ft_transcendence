@@ -84,6 +84,7 @@ export class UserService {
         avatarId,
         avatarX: 0,
         avatarY: 0,
+        twoFactorAuthenticationSecret: null,
         ...userDto,
       },
     );
@@ -257,5 +258,11 @@ export class UserService {
       throw new UnprocessableEntityException();
     }
     return friends;
+  }
+
+  async setTwoFactorAuthenticationSecret(secret: string, userId: string) {
+    return this.userRepository.updateById(userId, {
+      twoFactorAuthenticationSecret: secret,
+    });
   }
 }

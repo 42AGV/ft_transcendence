@@ -14,6 +14,8 @@ import {
   Request as GetRequest,
   UnprocessableEntityException,
   UseGuards,
+  Res,
+  Header,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -23,11 +25,12 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiProduces,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { SocketService } from '../socket/socket.service';
 import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
 import { LoginUserDto } from '../user/dto/login-user.dto';
@@ -189,5 +192,25 @@ export class AuthController {
       authUserUsername,
       authUser,
     );
+  }
+
+  @Post('twofactor/generate')
+  @UseGuards(AuthenticatedGuard)
+  @Header('Content-Type', 'image/png')
+  @Header('Content-Disposition', 'inline')
+  @ApiProduces('image/png')
+  @ApiCreatedResponse({
+    schema: {
+      type: 'file',
+      format: 'binary',
+    },
+  })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  async twoFactorGenerate(@Res() response: Response, @Req() request: Request) {
+    const { otpAuthUrl } =
+      await this.authService.generateTwoFactorAuthenticationSecret(
+        request.user,
+      );
+    return this.authService.pipeQrCodeStream(response, otpAuthUrl);
   }
 }

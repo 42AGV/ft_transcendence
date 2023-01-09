@@ -10,7 +10,6 @@ import {
 } from '../../../../shared/db/postgres/utils';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
-import { UpdateUserDto } from '../../../dto/update-user.dto';
 import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.service';
 import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
 
@@ -45,9 +44,9 @@ export class UserPostgresRepository
 
   async updateById(
     id: string,
-    updateUserDto: UpdateUserDto,
+    updateUser: Partial<User>,
   ): Promise<User | null> {
-    const users = await this.updateByKey(userKeys.ID, id, updateUserDto);
+    const users = await this.updateByKey(userKeys.ID, id, updateUser);
     return users && users.length ? users[0] : null;
   }
 
