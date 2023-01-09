@@ -9,8 +9,6 @@ import { AuthorizationService } from '../authorization/authorization.service';
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { WsException } from '@nestjs/websockets';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
-import { AppModule } from '../app.module';
-import { AnyMongoAbility } from '@casl/ability';
 
 @Injectable()
 export class SocketService {
