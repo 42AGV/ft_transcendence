@@ -13,6 +13,7 @@ export enum userKeys {
   AVATAR_X = '"avatarX"',
   AVATAR_Y = '"avatarY"',
   TWO_FACTOR_AUTHENTICATION_SECRET = '"twoFactorAuthenticationSecret"',
+  IS_TWO_FACTOR_AUTHENTICATION_ENABLED = '"isTwoFactorAuthenticationEnabled"',
 }
 
 export interface UserData {
@@ -26,6 +27,7 @@ export interface UserData {
   avatarY: number;
   createdAt: Date;
   twoFactorAuthenticationSecret: string | null;
+  isTwoFactorAuthenticationEnabled: boolean;
 }
 
 export class User {
@@ -43,6 +45,7 @@ export class User {
   @ApiHideProperty()
   @Exclude()
   twoFactorAuthenticationSecret: string | null;
+  isTwoFactorAuthenticationEnabled: boolean;
 
   constructor(userData: UserData) {
     this.id = userData.id;
@@ -55,5 +58,7 @@ export class User {
     this.avatarY = userData.avatarY;
     this.createdAt = userData.createdAt;
     this.twoFactorAuthenticationSecret = userData.twoFactorAuthenticationSecret;
+    this.isTwoFactorAuthenticationEnabled =
+      userData.isTwoFactorAuthenticationEnabled;
   }
 }

@@ -29,6 +29,7 @@ const testUserMe = new User(
     id: uuidv4(),
     createdAt: new Date(Date.now()),
     twoFactorAuthenticationSecret: null,
+    isTwoFactorAuthenticationEnabled: false,
   }),
 );
 const testUserDto: CreateUserDto = {
@@ -81,6 +82,7 @@ describe('UserController', () => {
           },
           isFriend: true,
           twoFactorAuthenticationSecret: null,
+          isTwoFactorAuthenticationEnabled: false,
         });
       },
     };
