@@ -6,25 +6,28 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthorizationService } from '../authorization/authorization.service';
+import { Action } from '../shared/enums/action.enum';
+import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 
 @Injectable()
 export class OAuth42Guard extends AuthGuard('oauth42') {
   private readonly logger = new Logger(OAuth42Guard.name);
 
-  constructor(private readonly authorizationService: AuthorizationService) {
+  constructor(
+    private readonly authorizationService: AuthorizationService,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
+  ) {
     super();
   }
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
     const result = (await super.canActivate(context)) as boolean;
-    const isBanned = (
+    const request = context.switchToHttp().getRequest();
+    const authUser =
       await this.authorizationService.getUserWithAuthorizationFromUsername(
-        request.user.username,
-      )
-    ).gBanned;
-    if (isBanned) {
-      return false;
-    }
+        request.user?.username,
+      );
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
+    if (ability.cannot(Action.Join, 'transcendence-app')) return false;
     await super.logIn(request);
     return result;
   }
