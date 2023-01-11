@@ -5,6 +5,7 @@ import * as passport from 'passport';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from './config/env.validation';
 import { WsSessionAdapter } from './shared/adapters/ws-session.adapter';
+import * as cookieParser from 'cookie-parser';
 
 export const setupApp = (app: INestApplication) => {
   app.useGlobalPipes(
@@ -34,5 +35,6 @@ export const setupApp = (app: INestApplication) => {
   app.use(sessionMiddleware);
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(cookieParser(config.get('SESSION_SECRET')));
   app.useWebSocketAdapter(new WsSessionAdapter(app, sessionMiddleware));
 };

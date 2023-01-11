@@ -54,6 +54,10 @@ import { UserWithAuthorization } from '../authorization/infrastructure/db/user-w
 import { TwoFactorAuthenticationCodeDto } from './dto/two-factor-authentication-code.dto';
 import { UserService } from '../user/user.service';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
+import {
+  IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
+  IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
+} from '../shared/constants';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -80,7 +84,10 @@ export class AuthController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiOkResponse({ description: 'Logout successfully' })
   @ApiNotFoundResponse({ description: 'Not Found' })
-  logout(@GetRequest() req: Request) {
+  logout(
+    @GetRequest() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const sessionId = req.session.id;
 
     req.logout((err: Error) => {
@@ -91,6 +98,9 @@ export class AuthController {
       if (this.socketService.socket) {
         this.socketService.socket.to(sessionId).disconnectSockets();
       }
+    });
+    response.clearCookie(IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
+      signed: true,
     });
   }
 
@@ -217,11 +227,9 @@ export class AuthController {
     description: 'Generate a QR code for TOTP 2FA',
   })
   @ApiForbiddenResponse({ description: 'Forbidden' })
-  async twoFactorGenerate(@Res() response: Response, @Req() request: Request) {
+  async twoFactorGenerate(@Res() response: Response, @GetUser() user: User) {
     const { otpAuthUrl } =
-      await this.authService.generateTwoFactorAuthenticationSecret(
-        request.user,
-      );
+      await this.authService.generateTwoFactorAuthenticationSecret(user);
     return this.authService.pipeQrCodeStream(response, otpAuthUrl);
   }
 
@@ -233,6 +241,7 @@ export class AuthController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async enableTwoFactorAuthentication(
+    @Res({ passthrough: true }) response: Response,
     @GetUser('id') userId: string,
     @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
   ) {
@@ -251,6 +260,11 @@ export class AuthController {
     if (!updatedUser) {
       throw new ServiceUnavailableException();
     }
+    response.cookie(
+      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
+      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
+      { signed: true },
+    );
   }
 
   @Post('2fa/validate')
@@ -261,6 +275,7 @@ export class AuthController {
   @ApiForbiddenResponse({ description: 'Forbidden' })
   validateTwoFactorAuthentication(
     @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
     @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
   ) {
@@ -271,7 +286,12 @@ export class AuthController {
     if (!isValidCode) {
       throw new BadRequestException('Wrong authentication code');
     }
-    request.session.isTwoFactorAuthenticated = true;
+    response.cookie(
+      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
+      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
+      { signed: true },
+    );
+    console.log(request.signedCookies);
     return user;
   }
 }

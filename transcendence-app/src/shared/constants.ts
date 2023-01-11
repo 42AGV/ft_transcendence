@@ -8,3 +8,6 @@ export const AVATAR_MIMETYPE_WHITELIST = [
 export const MAX_ENTRIES_PER_PAGE = 20;
 export const HTTP_TIMEOUT_MILLISECONDS = 10000;
 export const TWO_FACTOR_AUTHENTICATION_APP_NAME = 'ft_transcendence';
+export const IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME = '2FA';
+export const IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE =
+  'isTwoFactorAuthenticated';

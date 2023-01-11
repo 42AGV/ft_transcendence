@@ -7,9 +7,3 @@ declare module 'http' {
     session: Session;
   }
 }
-
-declare module 'express-session' {
-  interface Session {
-    isTwoFactorAuthenticated: boolean;
-  }
-}
