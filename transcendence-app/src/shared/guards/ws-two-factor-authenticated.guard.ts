@@ -13,7 +13,6 @@ export class WsTwoFactorAuthenticatedGuard extends WsAuthenticatedGuard {
     if (!user.isTwoFactorAuthenticationEnabled) {
       return isAuthenticated;
     }
-
     return isAuthenticated && request.session.isTwoFactorAuthenticated;
   }
 }
