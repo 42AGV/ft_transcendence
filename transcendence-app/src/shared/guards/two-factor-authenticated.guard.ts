@@ -1,7 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthenticatedGuard } from './authenticated.guard';
 import { User } from '../../user/infrastructure/db/user.entity';
-// import { TWO_FACTOR_AUTHENTICATION_COOKIE_NAME } from '../constants';
 import { EnvironmentVariables } from '../../config/env.validation';
 import { ConfigService } from '@nestjs/config';
 import { AuthorizationService } from '../../authorization/authorization.service';
@@ -23,10 +22,10 @@ export class TwoFactorAuthenticatedGuard extends AuthenticatedGuard {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user: User = request.user;
+    const user: User | null = request.user;
     const isAuth = await super.canActivate(context);
 
-    if (!user.isTwoFactorAuthenticationEnabled) {
+    if (!user?.isTwoFactorAuthenticationEnabled) {
       return isAuth;
     }
     const isTwoFactorAuthenticated =

@@ -23,10 +23,10 @@ export class WsTwoFactorAuthenticatedGuard extends WsAuthenticatedGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client = context.switchToWs().getClient();
     const request = client.request;
-    const user: User = request.user;
+    const user: User | null = request.user;
     const isAuth = await super.canActivate(context);
 
-    if (!user.isTwoFactorAuthenticationEnabled) {
+    if (!user?.isTwoFactorAuthenticationEnabled) {
       return isAuth;
     }
     const isTwoFactorAuthenticated =
