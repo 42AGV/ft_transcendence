@@ -15,10 +15,10 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
-import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
+import { WsTwoFactorAuthenticatedGuard } from '../shared/guards/ws-two-factor-authenticated.guard';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
-@UseGuards(WsAuthenticatedGuard)
+@UseGuards(WsTwoFactorAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(BadRequestTransformationFilter)
 export class GameGateway {

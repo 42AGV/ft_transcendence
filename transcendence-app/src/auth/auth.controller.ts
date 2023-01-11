@@ -53,6 +53,7 @@ import { GlobalAuthUserPipe } from '../authorization/decorators/global-auth-user
 import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
 import { TwoFactorAuthenticationCodeDto } from './dto/two-factor-authentication-code.dto';
 import { UserService } from '../user/user.service';
+import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -75,7 +76,7 @@ export class AuthController {
   }
 
   @Delete('logout')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(TwoFactorAuthenticatedGuard)
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiOkResponse({ description: 'Logout successfully' })
   @ApiNotFoundResponse({ description: 'Not Found' })
@@ -119,7 +120,7 @@ export class AuthController {
   }
 
   @Post('authorization')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(TwoFactorAuthenticatedGuard)
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -139,7 +140,7 @@ export class AuthController {
   }
 
   @Delete('authorization')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(TwoFactorAuthenticatedGuard)
   @SetSubjects(UserToRole)
   @UseGuards(GlobalPoliciesGuard)
   @CheckPolicies((ability, userToRole) =>
@@ -157,7 +158,7 @@ export class AuthController {
   }
 
   @Get('authorization/:username')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(TwoFactorAuthenticatedGuard)
   @ApiOkResponse({
     description: 'Retrieve user with roles',
     type: UserWithAuthorizationResponseDto,
@@ -180,7 +181,7 @@ export class AuthController {
   }
 
   @Get('authorization')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(TwoFactorAuthenticatedGuard)
   @ApiOkResponse({
     description: 'Retrieve authenticated user with roles',
     type: UserWithAuthorizationResponseDto,
@@ -204,7 +205,7 @@ export class AuthController {
   }
 
   @Post('2fa/generate')
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(TwoFactorAuthenticatedGuard)
   @Header('Content-Type', 'image/png')
   @Header('Content-Disposition', 'inline')
   @ApiProduces('image/png')
@@ -213,6 +214,7 @@ export class AuthController {
       type: 'file',
       format: 'binary',
     },
+    description: 'Generate a QR code for TOTP 2FA',
   })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   async twoFactorGenerate(@Res() response: Response, @Req() request: Request) {
@@ -223,9 +225,10 @@ export class AuthController {
     return this.authService.pipeQrCodeStream(response, otpAuthUrl);
   }
 
-  @Post('2fa/turn-on')
+  @Post('2fa')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AuthenticatedGuard)
+  @UseGuards(TwoFactorAuthenticatedGuard)
+  @ApiNoContentResponse({ description: 'Enable 2FA' })
   @ApiBadRequestResponse({ description: 'Wrong authentication code' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
@@ -248,5 +251,27 @@ export class AuthController {
     if (!updatedUser) {
       throw new ServiceUnavailableException();
     }
+  }
+
+  @Post('2fa/validate')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthenticatedGuard)
+  @ApiOkResponse({ description: 'Validate 2FA' })
+  @ApiBadRequestResponse({ description: 'Wrong authentication code' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  validateTwoFactorAuthentication(
+    @Req() request: Request,
+    @GetUser() user: User,
+    @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
+  ) {
+    const isValidCode = this.authService.isTwoFactorAuthenticationCodeValid(
+      twoFactorAuthenticationCode,
+      user.id,
+    );
+    if (!isValidCode) {
+      throw new BadRequestException('Wrong authentication code');
+    }
+    request.session.isTwoFactorAuthenticated = true;
+    return user;
   }
 }

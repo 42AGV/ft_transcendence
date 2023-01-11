@@ -15,7 +15,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
-import { WsAuthenticatedGuard } from '../shared/guards/ws-authenticated.guard';
+import { WsTwoFactorAuthenticatedGuard } from '../shared/guards/ws-two-factor-authenticated.guard';
 import { ChatService } from './chat.service';
 import { ChatroomMemberService } from './chatroom/chatroom-member/chatroom-member.service';
 import { CreateChatroomMessageDto } from './chatroom/chatroom-message/dto/create-chatroom-message.dto';
@@ -27,7 +27,7 @@ import { AuthorizationService } from '../authorization/authorization.service';
 import { Action } from '../shared/enums/action.enum';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
-@UseGuards(WsAuthenticatedGuard)
+@UseGuards(WsTwoFactorAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(BadRequestTransformationFilter)
 export class ChatGateway {
