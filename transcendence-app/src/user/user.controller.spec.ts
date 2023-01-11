@@ -16,6 +16,8 @@ import {
   MongoAbility,
 } from '@casl/ability';
 import { Action } from '../shared/enums/action.enum';
+import { ConfigModule } from '@nestjs/config';
+import { validate } from '../config/env.validation';
 
 const testUserMe = new User(
   new User({
@@ -100,6 +102,14 @@ describe('UserController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: `.env.${process.env.NODE_ENV}`,
+          isGlobal: true,
+          cache: true,
+          validate,
+        }),
+      ],
       controllers: [UserController],
       providers: [
         {
