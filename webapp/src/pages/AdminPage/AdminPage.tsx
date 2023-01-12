@@ -1,5 +1,6 @@
 import {
   AvatarPageTemplate,
+  Button,
   ButtonVariant,
   Input,
   InputVariant,
@@ -15,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
 import { WsException } from '../../shared/types';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
+import { Dropdown, DropdownMenuItem } from '../../shared/components/Menu/Menu';
 
 type UserToRoleDtoProps = UserToRoleDto & {
   username: string;
@@ -76,6 +78,18 @@ export default function AdminPage() {
     };
   }, [warn]);
 
+  const handleCreate = () => {
+    console.log('create something');
+  };
+
+  const handleEdit = () => {
+    console.log('edit something');
+  };
+
+  const handleDelete = () => {
+    console.log('delete something');
+  };
+
   return (
     <AvatarPageTemplate
       isLoading={isLoading}
@@ -87,20 +101,31 @@ export default function AdminPage() {
         form: 'add-role-form',
       }}
     >
-      <form
-        id="add-role-form"
-        className="add-role-form"
-        onSubmit={handleOnSubmit}
-      >
-        <Input
-          variant={InputVariant.LIGHT}
-          label="Username"
-          placeholder="Username"
-          value={userToRoleValues?.username ?? ''}
-          name="username"
-          onChange={handleInputChange}
+      <>
+        <form
+          id="add-role-form"
+          className="add-role-form"
+          onSubmit={handleOnSubmit}
+        >
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Username"
+            placeholder="Username"
+            value={userToRoleValues?.username ?? ''}
+            name="username"
+            onChange={handleInputChange}
+          />
+        </form>
+        <Dropdown
+          keepOpen
+          trigger={<Button variant={ButtonVariant.SUBMIT}>Dropdown</Button>}
+          menu={[
+            <DropdownMenuItem onClick={handleCreate}>Create</DropdownMenuItem>,
+            <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>,
+            <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>,
+          ]}
         />
-      </form>
+      </>
     </AvatarPageTemplate>
   );
 }
