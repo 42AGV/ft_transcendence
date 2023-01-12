@@ -275,4 +275,11 @@ export class UserService {
       isTwoFactorAuthenticationEnabled: true,
     });
   }
+
+  disableTwoFactorAuthentication(userId: string) {
+    return this.userRepository.updateById(userId, {
+      isTwoFactorAuthenticationEnabled: false,
+      twoFactorAuthenticationSecret: null,
+    });
+  }
 }

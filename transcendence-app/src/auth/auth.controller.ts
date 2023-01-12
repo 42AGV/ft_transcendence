@@ -87,6 +87,7 @@ export class AuthController {
   logout(
     @GetRequest() req: Request,
     @Res({ passthrough: true }) response: Response,
+    @GetUser() user: User,
   ) {
     const sessionId = req.session.id;
 
@@ -99,9 +100,11 @@ export class AuthController {
         this.socketService.socket.to(sessionId).disconnectSockets();
       }
     });
-    response.clearCookie(IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
-      signed: true,
-    });
+    if (user.isTwoFactorAuthenticationEnabled) {
+      response.clearCookie(IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
+        signed: true,
+      });
+    }
   }
 
   @Post('local/register')
@@ -267,6 +270,31 @@ export class AuthController {
     );
   }
 
+  @Delete('2fa')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(TwoFactorAuthenticatedGuard)
+  @ApiNoContentResponse({ description: 'Disable 2FA' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
+  async disableTwoFactorAuthentication(
+    @Res({ passthrough: true }) response: Response,
+    @GetUser() user: User,
+  ) {
+    if (!user.isTwoFactorAuthenticationEnabled) {
+      throw new NotFoundException();
+    }
+    const updatedUser = await this.userService.disableTwoFactorAuthentication(
+      user.id,
+    );
+    if (!updatedUser) {
+      throw new ServiceUnavailableException();
+    }
+    response.clearCookie(IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
+      signed: true,
+    });
+  }
+
   @Post('2fa/validate')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticatedGuard)
@@ -274,7 +302,6 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Wrong authentication code' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   validateTwoFactorAuthentication(
-    @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
     @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
@@ -291,7 +318,6 @@ export class AuthController {
       IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
       { signed: true },
     );
-    console.log(request.signedCookies);
     return user;
   }
 }
