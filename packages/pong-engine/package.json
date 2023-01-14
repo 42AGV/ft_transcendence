@@ -1,0 +1,34 @@
+{
+  "name": "@transcendence/pong-engine",
+  "version": "1.0.0",
+  "description": "Pong engine with models, physics and constants",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf ./lib && tsc ./src/index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/42AGV/ft_transcendence.git"
+  },
+  "bugs": {
+    "url": "https://github.com/42AGV/ft_transcendence/issues"
+  },
+  "homepage": "https://github.com/42AGV/ft_transcendence#readme",
+  "dependencies": {
+    "typescript": "^4.9.4"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "main": "./lib/index.js"
+    },
+    "./state": {
+      "types": "./lib/state.d.ts",
+      "main": "./lib/state.js"
+    }
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts"
+}

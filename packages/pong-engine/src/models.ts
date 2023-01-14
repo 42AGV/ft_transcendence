@@ -4,6 +4,15 @@ type GameElement = {
   color: string;
 };
 
+export type GamePaddleMoveCommand =
+  | 'paddleMoveRight'
+  | 'paddleMoveLeft'
+  | 'paddleStop';
+
+export type GamePaddleDragCommand = 'paddleDrag';
+
+export type GameCommand = GamePaddleMoveCommand | GamePaddleDragCommand;
+
 export type GamePaddle = GameElement & {
   slide: number;
   width: number;

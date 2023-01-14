@@ -19,7 +19,9 @@ export function IsGameCommand() {
       name: 'IsGameCommand',
       target: object.constructor,
       propertyName: propertyName,
-      options: { message: 'Not a valid game command' },
+      options: {
+        message: 'The value passed as command is not a valid game command',
+      },
       validator: {
         validate(value: string) {
           return typeof value === 'string' && isGameCommandType(value);

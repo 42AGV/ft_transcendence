@@ -1,11 +1,23 @@
-import { getBallPos, getPaddlePos, calcInitialBallSpeed } from './physics';
-import { GameBall, GamePaddle } from './models';
+import {
+  getBallPos,
+  getPaddlePos,
+  calcInitialBallSpeed,
+  movePaddleRight,
+  movePaddleLeft,
+  stopPaddle,
+  dragPaddle,
+} from './physics';
+import {
+  GameBall,
+  GamePaddle,
+  GamePaddleMoveCommand,
+  GamePaddleDragCommand,
+} from './models';
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
   PADDLE_WIDTH,
   PADDLE_HEIGHT,
-  PADDLE_SLIDE_SPEED,
   BALL_RADIUS,
 } from './constants';
 
@@ -22,26 +34,8 @@ type Act<Type extends string, Payload extends {}> = {
 
 export type Action =
   | Act<'move', { deltaTime: number }>
-  | Act<
-      'lose' | 'win' | 'paddleMoveRight' | 'paddleMoveLeft' | 'paddleStop',
-      {}
-    >
-  | Act<'paddleDrag', { dragCurrPos: number; dragPrevPos: number }>;
-
-const getPaddleDragX = (
-  paddle: GamePaddle,
-  dragPrevPos: number,
-  dragCurrPos: number,
-): number => {
-  const deltaX = paddle.x - (dragPrevPos - dragCurrPos);
-
-  if (deltaX < 0) {
-    return 0;
-  } else if (deltaX > CANVAS_WIDTH - PADDLE_WIDTH) {
-    return CANVAS_WIDTH - PADDLE_WIDTH;
-  }
-  return deltaX;
-};
+  | Act<'lose' | 'win' | GamePaddleMoveCommand, {}>
+  | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
 
 export const initialBallState = (): GameBall => {
   const initialBallSpeed = calcInitialBallSpeed();
@@ -95,35 +89,23 @@ export const reducer = (
     case 'paddleMoveRight':
       return {
         ...state,
-        paddle: {
-          ...paddle,
-          slide: PADDLE_SLIDE_SPEED,
-        },
+        paddle: movePaddleRight(paddle),
       };
     case 'paddleMoveLeft':
       return {
         ...state,
-        paddle: {
-          ...paddle,
-          slide: -1 * PADDLE_SLIDE_SPEED,
-        },
+        paddle: movePaddleLeft(paddle),
       };
     case 'paddleStop':
       return {
         ...state,
-        paddle: {
-          ...paddle,
-          slide: 0,
-        },
+        paddle: stopPaddle(paddle),
       };
     case 'paddleDrag':
       const { dragCurrPos, dragPrevPos } = payload;
       return {
         ...state,
-        paddle: {
-          ...paddle,
-          x: getPaddleDragX(paddle, dragPrevPos, dragCurrPos),
-        },
+        paddle: dragPaddle(paddle, dragPrevPos, dragCurrPos),
       };
     default:
       return state;

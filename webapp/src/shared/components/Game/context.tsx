@@ -6,7 +6,7 @@ import {
   initialBallState,
   initialPaddleState,
   reducer,
-} from './state';
+} from '@transcendence/pong-engine/state';
 
 type GameStateContextType = {
   gameStateRef: React.MutableRefObject<GameState>;

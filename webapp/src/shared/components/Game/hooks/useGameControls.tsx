@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { useGameStateContext } from '../context';
+import { GameCommand } from '../models';
+import { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
 
-const useGameControls = () => {
+const useGameControls = (
+  sendGameCommand?: (
+    command: GameCommand,
+  ) => Socket<DefaultEventsMap, DefaultEventsMap>,
+) => {
   const { dispatch } = useGameStateContext();
   const dragRef = React.useRef<number>(0);
 
@@ -11,11 +18,13 @@ const useGameControls = () => {
 
       if (key === 'ArrowRight') {
         dispatch({ type: 'paddleMoveRight', payload: {} });
+        sendGameCommand && sendGameCommand('paddleMoveRight');
       } else if (key === 'ArrowLeft') {
         dispatch({ type: 'paddleMoveLeft', payload: {} });
+        sendGameCommand && sendGameCommand('paddleMoveLeft');
       }
     },
-    [dispatch],
+    [dispatch, sendGameCommand],
   );
 
   const dragPaddle = React.useCallback(
@@ -26,9 +35,10 @@ const useGameControls = () => {
 
       if (dragPrevPos) {
         dispatch({ type: 'paddleDrag', payload: { dragCurrPos, dragPrevPos } });
+        sendGameCommand && sendGameCommand('paddleDrag');
       }
     },
-    [dispatch],
+    [dispatch, sendGameCommand],
   );
 
   const resetDragPaddle = React.useCallback(() => {
@@ -41,9 +51,10 @@ const useGameControls = () => {
 
       if (key === 'ArrowRight' || key === 'ArrowLeft') {
         dispatch({ type: 'paddleStop', payload: {} });
+        sendGameCommand && sendGameCommand('paddleStop');
       }
     },
-    [dispatch],
+    [dispatch, sendGameCommand],
   );
 
   React.useEffect(() => {
