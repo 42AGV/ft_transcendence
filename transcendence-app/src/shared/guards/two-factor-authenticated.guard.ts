@@ -4,8 +4,8 @@ import { User } from '../../user/infrastructure/db/user.entity';
 import { AuthorizationService } from '../../authorization/authorization.service';
 import { CaslAbilityFactory } from '../../authorization/casl-ability.factory';
 import {
-  IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
-  IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
+  USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
+  USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
 } from '../constants';
 import { Request } from 'express';
 
@@ -30,8 +30,8 @@ export class TwoFactorAuthenticatedGuard extends AuthenticatedGuard {
       return isAuth;
     }
     const isTwoFactorAuthenticated =
-      request.signedCookies[IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME] ===
-      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE;
+      request.signedCookies[USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME] ===
+      USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE;
     return isAuth && isTwoFactorAuthenticated;
   }
 }

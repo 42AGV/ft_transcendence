@@ -55,8 +55,8 @@ import { TwoFactorAuthenticationCodeDto } from './dto/two-factor-authentication-
 import { UserService } from '../user/user.service';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 import {
-  IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
-  IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
+  USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
+  USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
 } from '../shared/constants';
 
 @Controller('auth')
@@ -101,7 +101,7 @@ export class AuthController {
       }
     });
     if (user.isTwoFactorAuthenticationEnabled) {
-      response.clearCookie(IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
+      response.clearCookie(USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
         signed: true,
       });
     }
@@ -261,8 +261,8 @@ export class AuthController {
       throw new ServiceUnavailableException();
     }
     response.cookie(
-      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
-      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
+      USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
+      USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
       { signed: true },
     );
   }
@@ -287,7 +287,7 @@ export class AuthController {
     if (!updatedUser) {
       throw new ServiceUnavailableException();
     }
-    response.clearCookie(IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
+    response.clearCookie(USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME, {
       signed: true,
     });
   }
@@ -312,8 +312,8 @@ export class AuthController {
       throw new BadRequestException('Wrong authentication code');
     }
     response.cookie(
-      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
-      IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
+      USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
+      USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
       { signed: true },
     );
     return user;
