@@ -18,7 +18,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
@@ -65,7 +65,7 @@ import { ConfigParam } from '../authorization/decorators/configure-param.decorat
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 
 @Controller('chat')
-@UseGuards(AuthenticatedGuard)
+@UseGuards(TwoFactorAuthenticatedGuard)
 @ApiTags('chat')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class ChatController {

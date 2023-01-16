@@ -19,7 +19,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthenticatedGuard } from '../shared/guards/authenticated.guard';
+import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
@@ -44,7 +44,7 @@ import { Friend } from './infrastructure/db/friend.entity';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
 
 @Controller()
-@UseGuards(AuthenticatedGuard)
+@UseGuards(TwoFactorAuthenticatedGuard)
 @ApiTags('users')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class UserController {

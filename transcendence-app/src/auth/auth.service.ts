@@ -13,6 +13,10 @@ import { IUserRepository } from '../user/infrastructure/db/user.repository';
 import { LocalFileService } from '../shared/local-file/local-file.service';
 import { Password } from '../shared/password';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { authenticator } from 'otplib';
+import { TWO_FACTOR_AUTHENTICATION_APP_NAME } from '../shared/constants';
+import { Response } from 'express';
+import { toFileStream } from 'qrcode';
 
 @Injectable()
 export class AuthService {
@@ -63,5 +67,34 @@ export class AuthService {
     };
 
     return this.userService.addAvatarAndUser(avatarId, avatarDto, userDto);
+  }
+
+  async generateTwoFactorAuthenticationSecret(user: User) {
+    const secret = authenticator.generateSecret();
+    const otpAuthUrl = authenticator.keyuri(
+      user.email,
+      TWO_FACTOR_AUTHENTICATION_APP_NAME,
+      secret,
+    );
+    await this.userService.setTwoFactorAuthenticationSecret(secret, user.id);
+    return { secret, otpAuthUrl };
+  }
+
+  async pipeQrCodeStream(stream: Response, otpAuthUrl: string) {
+    return toFileStream(stream, otpAuthUrl);
+  }
+
+  async isTwoFactorAuthenticationCodeValid(
+    twoFactorAuthenticationCode: string,
+    userId: string,
+  ) {
+    const user = await this.userService.retrieveUserWithId(userId);
+    if (!user?.twoFactorAuthenticationSecret) {
+      return false;
+    }
+    return authenticator.verify({
+      token: twoFactorAuthenticationCode,
+      secret: user.twoFactorAuthenticationSecret,
+    });
   }
 }

@@ -5,7 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserModule } from '../../src/user/user.module';
 import { validate } from '../../src/config/env.validation';
 import { UserController } from '../../src/user/user.controller';
-import { AuthenticatedGuard } from '../../src/shared/guards/authenticated.guard';
+import { TwoFactorAuthenticatedGuard } from '../../src/shared/guards/two-factor-authenticated.guard';
 import { AuthorizationModule } from '../../src/authorization/authorization.module';
 
 describe('[Feature] User - /users', () => {
@@ -26,7 +26,7 @@ describe('[Feature] User - /users', () => {
       ],
       controllers: [UserController],
     })
-      .overrideGuard(AuthenticatedGuard)
+      .overrideGuard(TwoFactorAuthenticatedGuard)
       .useValue({ canActivate })
       .compile();
 
@@ -34,6 +34,7 @@ describe('[Feature] User - /users', () => {
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
+        forbidNonWhitelisted: true,
         transform: true,
         transformOptions: {
           enableImplicitConversion: true,
