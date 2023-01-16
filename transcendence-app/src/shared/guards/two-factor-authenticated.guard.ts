@@ -1,19 +1,17 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthenticatedGuard } from './authenticated.guard';
 import { User } from '../../user/infrastructure/db/user.entity';
-import { EnvironmentVariables } from '../../config/env.validation';
-import { ConfigService } from '@nestjs/config';
 import { AuthorizationService } from '../../authorization/authorization.service';
 import { CaslAbilityFactory } from '../../authorization/casl-ability.factory';
 import {
   IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
   IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
 } from '../constants';
+import { Request } from 'express';
 
 @Injectable()
 export class TwoFactorAuthenticatedGuard extends AuthenticatedGuard {
   constructor(
-    private readonly configService: ConfigService<EnvironmentVariables>,
     authorizationService: AuthorizationService,
     caslAbilityFactory: CaslAbilityFactory,
   ) {
@@ -21,7 +19,10 @@ export class TwoFactorAuthenticatedGuard extends AuthenticatedGuard {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request: Request =
+      context.getType() === 'http'
+        ? context.switchToHttp().getRequest()
+        : context.switchToWs().getClient().request;
     const user: User | null = request.user;
     const isAuth = await super.canActivate(context);
 

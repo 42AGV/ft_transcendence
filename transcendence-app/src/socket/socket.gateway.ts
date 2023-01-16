@@ -15,7 +15,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server, RemoteSocket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { WsTwoFactorAuthenticatedGuard } from '../shared/guards/ws-two-factor-authenticated.guard';
+import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 import { SocketService } from './socket.service';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
@@ -24,7 +24,7 @@ import { UserToRole } from '../authorization/infrastructure/db/user-to-role.enti
 type UserId = string;
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
-@UseGuards(WsTwoFactorAuthenticatedGuard)
+@UseGuards(TwoFactorAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
