@@ -236,7 +236,7 @@ export class AuthController {
     return this.authService.pipeQrCodeStream(response, otpAuthUrl);
   }
 
-  @Post('2fa')
+  @Post('2fa/enable')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(TwoFactorAuthenticatedGuard)
   @ApiNoContentResponse({ description: 'Enable 2FA' })
