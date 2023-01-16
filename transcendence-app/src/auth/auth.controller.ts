@@ -246,13 +246,10 @@ export class AuthController {
   async enableTwoFactorAuthentication(
     @Res({ passthrough: true }) response: Response,
     @GetUser('id') userId: string,
-    @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
+    @Body() { code }: TwoFactorAuthenticationCodeDto,
   ) {
     const isValidCode =
-      await this.authService.isTwoFactorAuthenticationCodeValid(
-        twoFactorAuthenticationCode,
-        userId,
-      );
+      await this.authService.isTwoFactorAuthenticationCodeValid(code, userId);
 
     if (!isValidCode) {
       throw new BadRequestException('Wrong authentication code');
@@ -304,10 +301,11 @@ export class AuthController {
   validateTwoFactorAuthentication(
     @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
-    @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
+    @Body()
+    { code }: TwoFactorAuthenticationCodeDto,
   ) {
     const isValidCode = this.authService.isTwoFactorAuthenticationCodeValid(
-      twoFactorAuthenticationCode,
+      code,
       user.id,
     );
     if (!isValidCode) {
