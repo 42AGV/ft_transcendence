@@ -27,7 +27,6 @@ import {
   EditUserPasswordPage,
   FriendsPage,
   EditChatroomAvatarPage,
-  AdminPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -248,7 +247,15 @@ function AppRoutes() {
         path={ADMIN_URL}
         element={
           <RequireAdmin>
-            <AdminPage />
+            <UsersPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATS_URL}`}
+        element={
+          <RequireAdmin>
+            <DiscoverChatsPage />
           </RequireAdmin>
         }
       />

@@ -3,30 +3,19 @@ import {
   IconVariant,
   RowItem,
   MainTabTemplate,
+  ButtonProps,
 } from '../../../shared/components';
 import {
+  ADMIN_URL,
   AVATAR_EP_URL,
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
 import { Chatroom } from '../../../shared/generated';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../../shared/constants';
 import { Query } from '../../../shared/types';
-
-const mapChatToRow = (chatroom: Chatroom): RowItem => {
-  return {
-    iconVariant: IconVariant.ARROW_FORWARD,
-    avatarProps: {
-      url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
-    },
-    url: `${CHATROOM_URL}/${chatroom.id}`,
-    title: chatroom.name,
-    subtitle: 'last message',
-    key: chatroom.id,
-  };
-};
 
 type ChatPageTemplateProps = {
   fetchFn: <RequestType extends Query>(
@@ -44,13 +33,23 @@ export default function ChatsPageTemplate({
   buttonLabel,
 }: ChatPageTemplateProps) {
   const navigate = useNavigate();
-  const chatButtons = [
-    {
-      variant: ButtonVariant.SUBMIT,
-      onClick: () => navigate(CREATE_CHATROOM_URL),
-      iconVariant: IconVariant.ADD,
-      children: 'Add chatroom',
-    },
+  const overridePermissions =
+    buttonUrl.slice(0, ADMIN_URL.length) === ADMIN_URL;
+  const mapChatToRow = (chatroom: Chatroom): RowItem => {
+    return {
+      iconVariant: IconVariant.ARROW_FORWARD,
+      avatarProps: {
+        url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
+      },
+      url: `${overridePermissions ? ADMIN_URL : ''}${CHATROOM_URL}/${
+        chatroom.id
+      }`,
+      title: chatroom.name,
+      subtitle: 'last message',
+      key: chatroom.id,
+    };
+  };
+  let chatButtons: ButtonProps[] = [
     {
       variant: ButtonVariant.SUBMIT,
       onClick: () => navigate(buttonUrl),
@@ -58,6 +57,14 @@ export default function ChatsPageTemplate({
       children: buttonLabel,
     },
   ];
+  if (!overridePermissions) {
+    chatButtons.unshift({
+      variant: ButtonVariant.SUBMIT,
+      onClick: () => navigate(CREATE_CHATROOM_URL),
+      iconVariant: IconVariant.ADD,
+      children: 'Add chatroom',
+    });
+  }
   return (
     <div className="chat-page">
       <div className="chat-page-content">
