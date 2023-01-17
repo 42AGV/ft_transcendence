@@ -12,7 +12,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from '../../src/user/user.module';
 import { UserController } from '../../src/user/user.controller';
-import { AuthenticatedGuard } from '../../src/shared/guards/authenticated.guard';
+import { TwoFactorAuthenticatedGuard } from '../../src/shared/guards/two-factor-authenticated.guard';
 import * as yaml from 'yaml';
 import { AuthModule } from '../../src/auth/auth.module';
 import { SocketModule } from '../../src/socket/socket.module';
@@ -64,7 +64,7 @@ describe('[Feature] Swagger works', () => {
       ],
       controllers: [AuthController, UserController, ChatController],
     })
-      .overrideGuard(AuthenticatedGuard)
+      .overrideGuard(TwoFactorAuthenticatedGuard)
       .useValue({ canActivate })
       .compile();
     app = moduleFixture.createNestApplication();

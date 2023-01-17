@@ -16,6 +16,8 @@ import {
   MongoAbility,
 } from '@casl/ability';
 import { Action } from '../shared/enums/action.enum';
+import { ConfigModule } from '@nestjs/config';
+import { validate } from '../config/env.validation';
 
 const testUserMe = new User(
   new User({
@@ -28,6 +30,8 @@ const testUserMe = new User(
     avatarY: 0,
     id: uuidv4(),
     createdAt: new Date(Date.now()),
+    twoFactorAuthenticationSecret: null,
+    isTwoFactorAuthenticationEnabled: false,
   }),
 );
 const testUserDto: CreateUserDto = {
@@ -79,6 +83,8 @@ describe('UserController', () => {
             amIBlockedByUser: false,
           },
           isFriend: true,
+          twoFactorAuthenticationSecret: null,
+          isTwoFactorAuthenticationEnabled: false,
         });
       },
     };
@@ -96,6 +102,14 @@ describe('UserController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: `.env.${process.env.NODE_ENV}`,
+          isGlobal: true,
+          cache: true,
+          validate,
+        }),
+      ],
       controllers: [UserController],
       providers: [
         {

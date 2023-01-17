@@ -215,6 +215,16 @@ cd transcendence-app
 npm run style
 ```
 
+## Two-factor authentication
+
+We use the [otplib](https://www.npmjs.com/package/otplib) library to generate and validate TOTP tokens and the [qrcode](https://www.npmjs.com/package/qrcode) library to display a QR code with the 2FA info.
+
+After the user validates the 2FA TOTP token, we store a signed cookie on the client and check its presence on the server using the [cookie-parser](https://www.npmjs.com/package/cookie-parser) library.
+
+When the user logs out, we delete the 2FA cookie.
+
+We use the `TwoFactorAuthenticatedGuard` to check if the user is authenticated + authorized and also two-factor authenticated (this guard uses the `canActivate` method from the `AuthenticatedGuard` when the user doesn't have 2FA enabled)
+
 ## 🗄️ Exploring DB <a name = "tests"></a>
 
 You may want to make some test DB queries when developing. Just go to `localhost:5050` and log in with `admin@admin.com`, `admin` to access the [pg-admin](https://www.pgadmin.org/) client.

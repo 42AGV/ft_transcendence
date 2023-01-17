@@ -15,11 +15,11 @@ import {
   ApiProduces,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthenticatedGuard } from '../guards/authenticated.guard';
+import { TwoFactorAuthenticatedGuard } from '../guards/two-factor-authenticated.guard';
 import { AvatarService } from './avatar.service';
 
 @Controller('avatar')
-@UseGuards(AuthenticatedGuard)
+@UseGuards(TwoFactorAuthenticatedGuard)
 @ApiTags('avatar')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class AvatarController {
