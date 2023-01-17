@@ -6,7 +6,10 @@ type DataReturn<T> = {
   error: Error | null;
 };
 
-export function useData<T>(fetchFn: () => Promise<T>): DataReturn<T> {
+export function useData<T>(
+  fetchFn: () => Promise<T>,
+  logger: (arg0: any) => void = console.error,
+): DataReturn<T> {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -24,7 +27,7 @@ export function useData<T>(fetchFn: () => Promise<T>): DataReturn<T> {
         if (!ignore) {
           setError(error);
           setData(null);
-          console.error(error);
+          logger(error);
         }
       })
       .finally(() => {

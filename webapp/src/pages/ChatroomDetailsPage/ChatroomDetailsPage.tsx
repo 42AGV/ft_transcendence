@@ -12,8 +12,13 @@ import {
   Text,
   ButtonProps,
 } from '../../shared/components';
-import { AVATAR_EP_URL, CHATS_URL, CHATROOM_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
+import {
+  AVATAR_EP_URL,
+  CHATS_URL,
+  CHATROOM_URL,
+  ADMIN_URL,
+} from '../../shared/urls';
+import { useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback } from 'react';
 import './ChatroomDetailsPage.css';
@@ -37,6 +42,8 @@ export default function ChatroomDetailsPage() {
   // still draw the page. Check such authentication validation in other pages
   const { warn } = useNotificationContext();
   const { chatroomId } = useParams();
+  const { pathname } = useLocation();
+  const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
   const { goBack, navigate } = useNavigation();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
@@ -115,7 +122,7 @@ export default function ChatroomDetailsPage() {
 
   let button: ButtonProps;
 
-  if (isOwner) {
+  if (isOwner || overridePermissions) {
     button = {
       buttonSize: ButtonSize.SMALL,
       variant: ButtonVariant.SUBMIT,

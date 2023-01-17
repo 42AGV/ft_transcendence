@@ -9,14 +9,19 @@ import {
   TextWeight,
 } from '../../shared/components';
 import './EditChatroomMemberPage.css';
-import { AVATAR_EP_URL, CHATROOM_URL, USER_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
+import {
+  ADMIN_URL,
+  AVATAR_EP_URL,
+  CHATROOM_URL,
+  USER_URL,
+} from '../../shared/urls';
+import { useLocation, useParams } from 'react-router-dom';
 import { useCallback } from 'react';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { ResponseError } from '../../shared/generated';
+import { ChatroomMember, ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
@@ -27,6 +32,9 @@ export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
   const { warn } = useNotificationContext();
   const { navigate } = useNavigation();
+  const { pathname } = useLocation();
+  const { authUser, isLoading: isAuthUserLoading } = useAuth();
+  const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
 
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
@@ -54,11 +62,12 @@ export default function EditChatroomMemberPage() {
     }, [id]);
   const { data: destCrMember, isLoading: isDestCrMemberLoading } = useData(
     useGetChatroomMember(destUser?.id),
+    () => {},
   );
 
-  const { authUser, isLoading: isAuthUserLoading } = useAuth();
   const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
     useGetChatroomMember(authUser?.id),
+    () => {},
   );
   const { userStatus } = useUserStatus();
   const chatroomMemberStatus = userStatus(destCrMember?.userId);
@@ -69,6 +78,7 @@ export default function EditChatroomMemberPage() {
     destUser,
     authCrMember,
     authUserId: authUser?.id ?? null,
+    isGlobalAdmin: overridePermissions,
   });
 
   const removeChatMember = useCallback(async () => {
@@ -167,6 +177,7 @@ export default function EditChatroomMemberPage() {
               destUser,
               authUserId: authUser?.id ?? '',
               authCrMember,
+              isGlobalAdmin: overridePermissions,
             }}
           />
         </>

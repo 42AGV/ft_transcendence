@@ -14,6 +14,7 @@ type CanEditParams = {
   destUser: User | null;
   authCrMember: ChatroomMember | null;
   authUserId: string | null;
+  isGlobalAdmin: boolean;
 };
 
 type ToggleSwitchSetProps = {
@@ -28,16 +29,19 @@ export function CanEdit({
   destUser,
   authCrMember,
   authUserId,
+  isGlobalAdmin,
 }: CanEditParams): boolean[] {
   if (!(chatroom && destCrMember && destUser && authCrMember && authUserId))
     return [false, false];
   const isAuthOwner = authUserId === chatroom.ownerId;
   const isDestOwner = chatroom.ownerId === destUser.id;
   return [
-    (isAuthOwner ||
+    ((isAuthOwner ||
       (authCrMember.admin && !authCrMember.banned && !destCrMember.admin)) &&
-      !isDestOwner,
+      !isDestOwner) ||
+      isGlobalAdmin,
     isAuthOwner,
+    isGlobalAdmin,
   ];
 }
 
@@ -58,7 +62,7 @@ export default function ToggleSwitchSet({
   }, [canEditParams.destCrMember]);
   const { warn } = useNotificationContext();
 
-  const [canEdit, isAuthOwner] = CanEdit(canEditParams);
+  const [canEdit, isAuthOwner, isGlobalAdmin] = CanEdit(canEditParams);
 
   const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
     return async () => {
@@ -67,7 +71,7 @@ export default function ToggleSwitchSet({
         return;
       }
       try {
-        if (!isAuthOwner && dto.admin !== undefined) {
+        if (!isAuthOwner && dto.admin !== undefined && !isGlobalAdmin) {
           warn('You cannot make new admins');
           return;
         }
