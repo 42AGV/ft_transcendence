@@ -25,7 +25,7 @@ export default function ChatroomPage() {
   const { pathname } = useLocation();
 
   if (!chatroomId || !authUser) {
-    return null;
+    return <></>;
   }
   return (
     <Chatroom

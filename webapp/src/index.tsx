@@ -149,14 +149,6 @@ function AppRoutes() {
         }
       />
       <Route
-        path={`${USER_URL}/:username`}
-        element={
-          <RequireAuth>
-            <UserPage />
-          </RequireAuth>
-        }
-      />
-      <Route
         path={USER_ME_URL}
         element={
           <RequireAuth>
@@ -197,6 +189,30 @@ function AppRoutes() {
         }
       />
       <Route
+        path={EDIT_CHATROOM_AVATAR_URL}
+        element={
+          <RequireAuth>
+            <EditChatroomAvatarPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${CHATROOM_URL}/:chatroomId/join`}
+        element={
+          <RequireAuth>
+            <JoinChatroomPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${USER_URL}/:username`}
+        element={
+          <RequireAuth>
+            <UserPage />
+          </RequireAuth>
+        }
+      />
+      <Route
         path={`${CHATROOM_URL}/:chatroomId`}
         element={
           <RequireAuth>
@@ -213,14 +229,6 @@ function AppRoutes() {
         }
       />
       <Route
-        path={EDIT_CHATROOM_AVATAR_URL}
-        element={
-          <RequireAuth>
-            <EditChatroomAvatarPage />
-          </RequireAuth>
-        }
-      />
-      <Route
         path={`${CHATROOM_URL}/:chatroomId/member/:username/edit`}
         element={
           <RequireAuth>
@@ -233,14 +241,6 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <ChatroomDetailsPage />
-          </RequireAuth>
-        }
-      />
-      <Route
-        path={`${CHATROOM_URL}/:chatroomId/join`}
-        element={
-          <RequireAuth>
-            <JoinChatroomPage />
           </RequireAuth>
         }
       />
@@ -265,6 +265,30 @@ function AppRoutes() {
         element={
           <RequireAdmin>
             <ChatroomPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId/edit`}
+        element={
+          <RequireAdmin>
+            <EditChatroomDetailsPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId/member/:username/edit`}
+        element={
+          <RequireAdmin>
+            <EditChatroomMemberPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId/details`}
+        element={
+          <RequireAdmin>
+            <ChatroomDetailsPage />
           </RequireAdmin>
         }
       />
