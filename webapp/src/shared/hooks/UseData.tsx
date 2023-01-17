@@ -39,7 +39,7 @@ export function useData<T>(
     return () => {
       ignore = true;
     };
-  }, [fetchFn]);
+  }, [logger, fetchFn]);
 
   return { data, isLoading, error };
 }

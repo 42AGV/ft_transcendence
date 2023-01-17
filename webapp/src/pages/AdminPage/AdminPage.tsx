@@ -3,7 +3,6 @@ import {
   ADMIN_URL,
   AVATAR_EP_URL,
   CHATS_URL,
-  FRIENDS_URL,
   USER_URL,
 } from '../../shared/urls';
 import { User, UserControllerGetUsersRequest } from '../../shared/generated';

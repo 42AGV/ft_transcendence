@@ -54,7 +54,7 @@ export default function UserPage() {
         if (e instanceof Error) warn(e.message);
       });
     }
-  }, [isAdminLoc, username]);
+  }, [warn, isAdminLoc, username]);
   const { userFriends } = useFriend();
 
   useEffect(() => {

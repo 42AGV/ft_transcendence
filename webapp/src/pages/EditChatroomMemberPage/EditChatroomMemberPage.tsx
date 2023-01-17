@@ -21,7 +21,7 @@ import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { ChatroomMember, ResponseError } from '../../shared/generated';
+import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
