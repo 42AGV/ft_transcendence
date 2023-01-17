@@ -260,6 +260,14 @@ function AppRoutes() {
           </RequireAdmin>
         }
       />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId`}
+        element={
+          <RequireAdmin>
+            <ChatroomPage />
+          </RequireAdmin>
+        }
+      />
       {developmentMode && (
         <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBookPage />} />
       )}

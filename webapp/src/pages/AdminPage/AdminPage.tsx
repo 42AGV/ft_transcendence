@@ -1,107 +1,62 @@
+import { ButtonVariant, IconVariant, RowItem } from '../../shared/components';
 import {
-  AvatarPageTemplate,
-  Button,
-  ButtonVariant,
-  Input,
-  InputVariant,
-} from '../../shared/components';
-import { useAuth } from '../../shared/hooks/UseAuth';
-import socket from '../../shared/socket';
-import {
-  ResponseError,
-  UserToRoleDto,
-  UserToRoleDtoRoleEnum,
-} from '../../shared/generated';
-import { useCallback, useEffect, useState } from 'react';
+  ADMIN_URL,
+  AVATAR_EP_URL,
+  CHATS_URL,
+  FRIENDS_URL,
+  USER_URL,
+} from '../../shared/urls';
+import { User, UserControllerGetUsersRequest } from '../../shared/generated';
+import { MainTabTemplate } from '../../shared/components/index';
+import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
-import { WsException } from '../../shared/types';
-import { useNotificationContext } from '../../shared/context/NotificationContext';
+import { SearchContextProvider } from '../../shared/context/SearchContext';
+import { ENTRIES_LIMIT } from '../../shared/constants';
+import { useUserStatus } from '../../shared/hooks/UseUserStatus';
+import { useNavigate } from 'react-router-dom';
+import { useFriend } from '../../shared/hooks/UseFriend';
 
-type UserToRoleDtoProps = UserToRoleDto & {
-  username: string;
-};
 export default function AdminPage() {
-  const { warn } = useNotificationContext();
-  const { authUser, isLoading } = useAuth();
-  const [userToRoleValues, setUserToRoleValues] =
-    useState<UserToRoleDtoProps | null>(null);
-  const getUserId = useCallback(
-    (username: string) => {
-      if (userToRoleValues && userToRoleValues.username !== '')
-        return usersApi.userControllerGetUserByUserName({
-          userName: username,
-        });
-      return Promise.reject(new Error('Could not get user with username'));
-    },
-    [userToRoleValues],
+  const { userStatus } = useUserStatus();
+  const { userFriends } = useFriend();
+  const navigate = useNavigate();
+  const getUsers = useCallback(
+    (requestParameters: UserControllerGetUsersRequest) =>
+      usersApi.userControllerGetUsers({
+        ...requestParameters,
+        limit: ENTRIES_LIMIT,
+      }),
+    [],
   );
-  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (userToRoleValues) {
-      try {
-        const userToModify = await getUserId(userToRoleValues.username);
-        socket.emit('toggleUserWithRoles', {
-          id: userToModify.id,
-          role: UserToRoleDtoRoleEnum.Banned,
-        });
-      } catch (error: unknown) {
-        if (error instanceof ResponseError) {
-          const responseBody = await error.response.json();
-          if (responseBody.message) {
-            warn(responseBody.message);
-          } else {
-            warn(error.response.statusText);
-          }
-        } else if (error instanceof Error) {
-          warn(error.message);
-        } else {
-          warn('Could not find user with username');
-        }
-      }
-    }
-  };
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserToRoleValues((previousValues: any) => {
-      return { ...previousValues, [name]: value };
-    });
-  };
 
-  useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
-    });
+  const friendsButton = [
+    {
+      variant: ButtonVariant.SUBMIT,
+      iconVariant: IconVariant.ARROW_BACK,
+      onClick: () => navigate(`${ADMIN_URL}${CHATS_URL}`),
+      children: 'Admin chats',
+    },
+  ];
 
-    return () => {
-      socket.off('exception');
+  const mapUserToRow = (user: User): RowItem => {
+    return {
+      iconVariant: IconVariant.ARROW_FORWARD,
+      avatarProps: {
+        url: `${AVATAR_EP_URL}/${user.avatarId}`,
+        status: userFriends(user.id) ? userStatus(user?.id) : undefined,
+        XCoordinate: user.avatarX,
+        YCoordinate: user.avatarY,
+      },
+      url: `${ADMIN_URL}${USER_URL}/${user.username}`,
+      title: user.username,
+      subtitle: 'level x',
+      key: user.id,
     };
-  }, [warn]);
+  };
 
   return (
-    <AvatarPageTemplate
-      isLoading={isLoading}
-      isNotFound={!authUser}
-      title="Admin Page"
-      button={{
-        children: 'save',
-        variant: ButtonVariant.SUBMIT,
-        form: 'add-role-form',
-      }}
-    >
-      <form
-        id="add-role-form"
-        className="add-role-form"
-        onSubmit={handleOnSubmit}
-      >
-        <Input
-          variant={InputVariant.LIGHT}
-          label="Username"
-          placeholder="Username"
-          value={userToRoleValues?.username ?? ''}
-          name="username"
-          onChange={handleInputChange}
-        />
-      </form>
-    </AvatarPageTemplate>
+    <SearchContextProvider fetchFn={getUsers} maxEntries={ENTRIES_LIMIT}>
+      <MainTabTemplate dataMapper={mapUserToRow} buttons={friendsButton} />
+    </SearchContextProvider>
   );
 }

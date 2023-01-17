@@ -9,27 +9,52 @@ import {
   ButtonVariant,
   AvatarPageTemplate,
 } from '../../shared/components';
-import { AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
+import { ADMIN_URL, AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { usersApi } from '../../shared/services/ApiService';
+import { useLocation, useParams } from 'react-router-dom';
+import { authApi, usersApi } from '../../shared/services/ApiService';
 import { useBlock } from '../../shared/hooks/UseBlock';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useFriend } from '../../shared/hooks/UseFriend';
+import {
+  UserToRoleDtoRoleEnum,
+  UserWithAuthorizationResponseDto,
+} from '../../shared/generated';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
+import socket from '../../shared/socket';
 
 export default function UserPage() {
+  const { warn } = useNotificationContext();
   const { username } = useParams();
   const { navigate } = useNavigation();
+  const { pathname } = useLocation();
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
   const { data: user, isLoading } = useData(getUserByUserName);
+  const isAdminLoc = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
   const { userStatus } = useUserStatus();
   const [isToggled, setIsToggled] = useState(false);
+  const [userWithAuth, setUserWithAuth] =
+    useState<UserWithAuthorizationResponseDto | null>(null);
+  useEffect(() => {
+    const getUser = async () => {
+      setUserWithAuth(
+        await authApi.authControllerRetrieveUserWithRoles({
+          username: username!,
+        }),
+      );
+    };
+    if (isAdminLoc) {
+      getUser().catch((e: unknown) => {
+        if (e instanceof Error) warn(e.message);
+      });
+    }
+  }, [isAdminLoc, username]);
   const { userFriends } = useFriend();
 
   useEffect(() => {
@@ -52,6 +77,33 @@ export default function UserPage() {
       }
     }
   };
+
+  const onToggleAuthorization =
+    (label: keyof UserWithAuthorizationResponseDto) => async () => {
+      const getRole = (label: keyof UserWithAuthorizationResponseDto) => {
+        switch (label) {
+          case 'gAdmin': {
+            return UserToRoleDtoRoleEnum.Moderator;
+          }
+          case 'gBanned': {
+            return UserToRoleDtoRoleEnum.Banned;
+          }
+          default: {
+            warn('Trying to change unexpected authorization field');
+          }
+        }
+      };
+      if (userWithAuth) {
+        setUserWithAuth({
+          ...userWithAuth,
+          [label]: !userWithAuth[label],
+        });
+        socket.emit('toggleUserWithRoles', {
+          id: userWithAuth.id,
+          role: getRole(label),
+        });
+      }
+    };
 
   return (
     <div className="user-page">
@@ -109,6 +161,26 @@ export default function UserPage() {
               isToggled={isToggled}
               onToggle={onToggle}
             />
+          )}
+          {userWithAuth && (
+            <>
+              <ToggleSwitch
+                label={
+                  userWithAuth.gAdmin
+                    ? 'Remove global admin'
+                    : 'Add global admin'
+                }
+                isToggled={userWithAuth.gAdmin}
+                onToggle={onToggleAuthorization('gAdmin')}
+              />
+              <ToggleSwitch
+                label={
+                  userWithAuth.gBanned ? 'Remove global ban' : 'Add global ban'
+                }
+                isToggled={userWithAuth.gBanned}
+                onToggle={onToggleAuthorization('gBanned')}
+              />
+            </>
           )}
         </>
       </AvatarPageTemplate>
