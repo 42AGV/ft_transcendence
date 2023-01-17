@@ -58,6 +58,7 @@ import { NotificationContextProvider } from './shared/context/NotificationContex
 import { UserStatusProvider } from './shared/context/UserStatusContext';
 import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
+import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -246,9 +247,17 @@ function AppRoutes() {
       <Route
         path={ADMIN_URL}
         element={
-          <RequireAuth>
+          <RequireAdmin>
             <AdminPage />
-          </RequireAuth>
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${USER_URL}/:username`}
+        element={
+          <RequireAdmin>
+            <UserPage />
+          </RequireAdmin>
         }
       />
       {developmentMode && (
