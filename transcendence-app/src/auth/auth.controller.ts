@@ -298,16 +298,14 @@ export class AuthController {
   @ApiOkResponse({ description: 'Validate 2FA' })
   @ApiBadRequestResponse({ description: 'Wrong authentication code' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
-  validateTwoFactorAuthentication(
+  async validateTwoFactorAuthentication(
     @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
     @Body()
     { code }: TwoFactorAuthenticationCodeDto,
   ) {
-    const isValidCode = this.authService.isTwoFactorAuthenticationCodeValid(
-      code,
-      user.id,
-    );
+    const isValidCode =
+      await this.authService.isTwoFactorAuthenticationCodeValid(code, user.id);
     if (!isValidCode) {
       throw new BadRequestException('Wrong authentication code');
     }
