@@ -62,12 +62,12 @@ export default function EditChatroomMemberPage() {
     }, [id]);
   const { data: destCrMember, isLoading: isDestCrMemberLoading } = useData(
     useGetChatroomMember(destUser?.id),
-    () => {},
+    useCallback(() => {}, []),
   );
 
   const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
     useGetChatroomMember(authUser?.id),
-    () => {},
+    useCallback(() => {}, []),
   );
   const { userStatus } = useUserStatus();
   const chatroomMemberStatus = userStatus(destCrMember?.userId);

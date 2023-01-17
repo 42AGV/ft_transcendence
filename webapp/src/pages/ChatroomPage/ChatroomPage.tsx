@@ -129,7 +129,7 @@ function Chatroom({
       return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
     }
 
-    if (chatroomMember.banned) {
+    if (chatroomMember.banned && !overridePermissions) {
       return <Navigate to={`${CHATS_URL}`} replace />;
     }
   }
@@ -137,7 +137,9 @@ function Chatroom({
   return (
     <ChatMessagingTemplate
       title={chatroom.name}
-      titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
+      titleNavigationUrl={`${
+        overridePermissions ? ADMIN_URL : ''
+      }${CHATROOM_URL}/${chatroomId}/details`}
       to={chatroomId}
       chatEvent="chatroomMessage"
       fetchMessagesCallback={fetchMessagesCallback}

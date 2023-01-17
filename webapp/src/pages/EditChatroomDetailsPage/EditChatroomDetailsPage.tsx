@@ -7,8 +7,13 @@ import {
   Loading,
   ToggleSwitch,
 } from '../../shared/components';
-import { CHATS_URL, AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
+import {
+  CHATS_URL,
+  AVATAR_EP_URL,
+  CHATROOM_URL,
+  ADMIN_URL,
+} from '../../shared/urls';
+import { useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ResponseError, UpdateChatroomDto } from '../../shared/generated';
@@ -17,11 +22,29 @@ import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import './EditChatroomDetailsPage.css';
+import { useAuth } from '../../shared/hooks/UseAuth';
 
-export default function CreateChatroomPage() {
+export default function EditChatroomDetailsPage() {
+  const { pathname } = useLocation();
+  const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
+  const { authUser } = useAuth();
   const { chatroomId } = useParams();
   const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
+  const useGetChatroomMember = (id?: string) =>
+    useCallback(() => {
+      if (!id) {
+        return Promise.reject(new Error('The chatroom member could not load'));
+      }
+      return chatApi.chatControllerGetChatroomMember({
+        chatroomId: chatroomId!,
+        userId: id,
+      });
+    }, [id]);
+  const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
+    useGetChatroomMember(authUser?.id),
+    useCallback(() => {}, []),
+  );
 
   const getChatRoomById = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
@@ -177,7 +200,7 @@ export default function CreateChatroomPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isAuthCrMemberLoading) {
     return (
       <div className="edit-chatroom-details">
         <div className="edit-chatroom-details-loading">
@@ -187,7 +210,10 @@ export default function CreateChatroomPage() {
     );
   }
 
-  if (!chatroom) {
+  if (
+    !chatroom ||
+    ((!authCrMember || !authCrMember.owner) && !overridePermissions)
+  ) {
     return <NotFoundPage />;
   }
 

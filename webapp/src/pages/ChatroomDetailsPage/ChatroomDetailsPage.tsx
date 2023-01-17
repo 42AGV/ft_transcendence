@@ -77,8 +77,9 @@ export default function ChatroomDetailsPage() {
         XCoordinate: member.avatarX,
         YCoordinate: member.avatarY,
       },
-      // TODO: Decide where does this url point to when the auth user is not an owner or admin
-      url: `${CHATROOM_URL}/${chatroomId}/member/${member.username}/edit`,
+      url: `${
+        overridePermissions ? ADMIN_URL : ''
+      }${CHATROOM_URL}/${chatroomId}/member/${member.username}/edit`,
       title: member.username,
       subtitle: memberDetails(),
       key: member.userId,
@@ -107,8 +108,12 @@ export default function ChatroomDetailsPage() {
 
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
-    navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
-  }, [chatroomId, navigate]);
+    navigate(
+      `${
+        overridePermissions ? ADMIN_URL : ''
+      }${CHATROOM_URL}/${chatroomId}/edit`,
+    );
+  }, [overridePermissions, chatroomId, navigate]);
 
   const getChatroomMembers = useCallback(
     <T extends Query>(requestParameters: T) =>
