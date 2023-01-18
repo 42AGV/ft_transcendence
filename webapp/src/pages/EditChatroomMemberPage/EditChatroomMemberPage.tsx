@@ -162,7 +162,9 @@ export default function EditChatroomMemberPage() {
               YCoordinate: destUser?.avatarY ?? 0,
             }}
             iconVariant={IconVariant.USERS}
-            url={`${USER_URL}/${username}`}
+            url={`${
+              overridePermissions ? ADMIN_URL : ''
+            }${USER_URL}/${username}`}
             title={username}
             subtitle="level x"
           />
