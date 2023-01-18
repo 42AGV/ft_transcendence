@@ -184,7 +184,7 @@ export default function EditChatroomDetailsPage() {
           chatroomId: chatroomId!,
         });
         notify('Chatroom successfully deleted');
-        navigate(CHATS_URL);
+        navigate(`${overridePermissions ? ADMIN_URL : ''}${CHATS_URL}`);
       } catch (error) {
         handleRequestError(error);
       }
