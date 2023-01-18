@@ -10,4 +10,4 @@ export const useGetChatroomMember = (chatroomId: string, id?: string) =>
       chatroomId: chatroomId,
       userId: id,
     });
-  }, [id]);
+  }, [chatroomId, id]);

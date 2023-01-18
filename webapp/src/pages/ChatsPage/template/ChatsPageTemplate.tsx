@@ -12,7 +12,7 @@ import {
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
 import { Chatroom } from '../../../shared/generated';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../../shared/constants';
 import { Query } from '../../../shared/types';
