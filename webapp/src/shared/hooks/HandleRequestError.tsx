@@ -5,17 +5,15 @@ export const handleRequestError = (
   msg: string,
   logger: (arg0: any) => void = console.error,
 ) => {
-  let errMessage = msg;
   if (error instanceof ResponseError) {
     error.response.json().then((responseBody) => {
       if (responseBody.message) {
-        errMessage = responseBody.message;
+        logger(responseBody.message);
       } else {
-        errMessage = error.response.statusText;
+        logger(error.response.statusText);
       }
     });
   } else if (error instanceof Error) {
-    errMessage = error.message;
+    logger(error.message);
   }
-  logger(errMessage);
 };
