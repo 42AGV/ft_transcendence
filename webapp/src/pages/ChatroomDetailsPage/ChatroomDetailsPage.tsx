@@ -39,7 +39,7 @@ import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 export default function ChatroomDetailsPage() {
-  const { authUser } = useAuth();
+  const { authUser, isLoading } = useAuth();
   const { warn } = useNotificationContext();
   const { chatroomId } = useParams();
   const { pathname } = useLocation();
@@ -49,14 +49,14 @@ export default function ChatroomDetailsPage() {
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
   );
-  const { data: chatroom } = useData<Chatroom>(getChatroom);
+  const { data: chatroom, isLoading: crIsLoading } =
+    useData<Chatroom>(getChatroom);
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
   const { userStatus } = useUserStatus();
   const { data: crm, isLoading: isCrmLoading } = useGetChatroomMember(
     chatroomId!,
     authUser?.id,
   );
-  const isCrm: boolean = !!crm && !isCrmLoading;
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     const memberDetails = () => {
       if (member.owner) {
@@ -146,10 +146,7 @@ export default function ChatroomDetailsPage() {
       onClick: leaveChatroom,
     };
   }
-  if (!isCrm && !overridePermissions) {
-    return <NotFoundPage />;
-  }
-  if (!(authUser && chatroom)) {
+  if (isLoading || isCrmLoading || crIsLoading) {
     return (
       <div className="chatroom-details-page">
         <div className="chatroom-details-page-loading">
@@ -157,6 +154,9 @@ export default function ChatroomDetailsPage() {
         </div>
       </div>
     );
+  }
+  if ((!crm && !overridePermissions) || !chatroom) {
+    return <NotFoundPage />;
   }
   return (
     <div className="chatroom-details-page">
