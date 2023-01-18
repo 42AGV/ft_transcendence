@@ -116,7 +116,6 @@ export default function EditChatroomMemberPage() {
     isDestUserLoading ||
     isAuthUserLoading ||
     isAuthCrMemberLoading;
-  console.log(overridePermissions);
   return (
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
