@@ -165,7 +165,11 @@ export default function EditChatroomDetailsPage() {
         updateChatroomDto,
       });
       notify('Chatroom details successfully updated');
-      navigate(CHATS_URL);
+      navigate(
+        `${
+          overridePermissions ? ADMIN_URL : ''
+        }${CHATROOM_URL}/${chatroomId}/details`,
+      );
     } catch (error) {
       handleRequestError(error);
     }

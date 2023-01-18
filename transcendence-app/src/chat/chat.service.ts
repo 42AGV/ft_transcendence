@@ -29,6 +29,8 @@ import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { AvatarService } from '../shared/avatar/avatar.service';
+import { MongoAbility } from '@casl/ability';
+import { Action } from '../shared/enums/action.enum';
 
 @Injectable()
 export class ChatService {
@@ -154,7 +156,7 @@ export class ChatService {
   }
 
   async updateChatroom(
-    userMe: User,
+    ability: MongoAbility,
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {
@@ -164,8 +166,7 @@ export class ChatService {
     if (!chatroom) {
       throw new NotFoundException();
     }
-
-    if (userMe.id !== chatroom.ownerId) {
+    if (ability.cannot(Action.Update, chatroom)) {
       throw new ForbiddenException();
     }
 
@@ -181,10 +182,10 @@ export class ChatService {
     if (
       chatroom.password &&
       (!updateChatroomDto.oldPassword ||
-        (await Password.compare(
+        !(await Password.compare(
           chatroom.password,
           updateChatroomDto.oldPassword,
-        )) === false)
+        )))
     ) {
       throw new ForbiddenException('Incorrect password');
     }

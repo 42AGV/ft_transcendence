@@ -348,12 +348,17 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateChatroom(
-    @GetUser() userMe: User,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
+    if (!authCrm) {
+      throw new UnprocessableEntityException();
+    }
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authCrm);
     const updatedChatroom = await this.chatService.updateChatroom(
-      userMe,
+      ability,
       chatroomId,
       updateChatroomDto,
     );
