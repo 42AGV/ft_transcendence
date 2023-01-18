@@ -22,6 +22,7 @@ import {
 import './LoginPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
+import { handleRequestError } from '../../shared/hooks/HandleRequestError';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -58,7 +59,7 @@ export default function LoginPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    login().catch((e) => warn(e));
+    login().catch((e) => handleRequestError(e, 'Could not log in', warn));
   };
 
   return (
