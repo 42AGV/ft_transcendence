@@ -24,6 +24,7 @@ import {
 } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import socket from '../../shared/socket';
+import { WsException } from '../../shared/types';
 
 export default function UserPage() {
   const { warn } = useNotificationContext();
@@ -94,16 +95,29 @@ export default function UserPage() {
         }
       };
       if (userWithAuth) {
-        setUserWithAuth({
-          ...userWithAuth,
-          [label]: !userWithAuth[label],
-        });
-        socket.emit('toggleUserWithRoles', {
-          id: userWithAuth.id,
-          role: getRole(label),
-        });
+        if (!userWithAuth.gOwner) {
+          setUserWithAuth({
+            ...userWithAuth,
+            [label]: !userWithAuth[label],
+          });
+          socket.emit('toggleUserWithRoles', {
+            id: userWithAuth.id,
+            role: getRole(label),
+          });
+        } else {
+          warn('Cannot assign or remove roles from owner');
+        }
       }
     };
+  useEffect(() => {
+    socket.on('exception', (wsError: WsException) => {
+      warn(wsError.message);
+    });
+
+    return () => {
+      socket.off('exception');
+    };
+  }, [warn]);
 
   return (
     <div className="user-page">
