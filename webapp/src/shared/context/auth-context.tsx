@@ -14,7 +14,7 @@ import {
   ResponseError,
 } from '../generated';
 import { useData } from '../hooks/UseData';
-import { authApi, usersApi } from '../services/ApiService';
+import { authApi } from '../services/ApiService';
 import socket from '../socket';
 import { HOST_URL } from '../urls';
 import { useNotificationContext } from './NotificationContext';
@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       socket.off('addedUserToRole');
       socket.off('deletedUserToRole');
     };
-  }, [authUser, logout, warn]);
+  }, [authUser, logout, warn, notify]);
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
