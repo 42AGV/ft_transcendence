@@ -63,7 +63,7 @@ export default function EditUserPage() {
       });
       navigate(USER_ME_URL);
     } catch (error) {
-      handleRequestError(error);
+      await handleRequestError(error);
     }
   }
 

@@ -58,7 +58,7 @@ export default function LoginPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    login().catch((e) => console.error(e));
+    login().catch((e) => warn(e));
   };
 
   return (

@@ -25,6 +25,7 @@ import {
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
+import { handleRequestError } from '../../shared/hooks/HandleRequestError';
 
 export default function UserPage() {
   const { warn } = useNotificationContext();
@@ -51,8 +52,8 @@ export default function UserPage() {
       );
     };
     if (overridePermissions) {
-      getUser().catch((e: unknown) => {
-        if (e instanceof Error) warn(e.message);
+      getUser().catch((error: unknown) => {
+        handleRequestError(error, 'Could not update authorization', warn);
       });
     }
   }, [warn, overridePermissions, username]);
@@ -74,7 +75,7 @@ export default function UserPage() {
           await usersApi.userControllerUnfollowUser({ userId: user.id });
         }
       } catch (error) {
-        console.error(error);
+        handleRequestError(error, 'Could not toggle friends', warn);
       }
     }
   };

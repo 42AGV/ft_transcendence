@@ -16,7 +16,7 @@ import {
 import { useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ResponseError, UpdateChatroomDto } from '../../shared/generated';
+import { UpdateChatroomDto } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
@@ -24,6 +24,7 @@ import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import './EditChatroomDetailsPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
+import { handleRequestError } from '../../shared/hooks/HandleRequestError';
 
 export default function EditChatroomDetailsPage() {
   const { pathname } = useLocation();
@@ -108,22 +109,6 @@ export default function EditChatroomDetailsPage() {
     return true;
   }
 
-  // TODO: We can move this function to shared directory
-  const handleRequestError = async (error: unknown) => {
-    let errMessage = '';
-    if (error instanceof ResponseError) {
-      const responseBody = await error.response.json();
-      if (responseBody.message) {
-        errMessage = responseBody.message;
-      } else {
-        errMessage = error.response.statusText;
-      }
-    } else if (error instanceof Error) {
-      errMessage = error.message;
-    }
-    warn(errMessage);
-  };
-
   async function updateChatroomDetails() {
     if (!chatroom || !chatroomId || !hasValidFormValues()) {
       return;
@@ -171,7 +156,7 @@ export default function EditChatroomDetailsPage() {
         }${CHATROOM_URL}/${chatroomId}/details`,
       );
     } catch (error) {
-      handleRequestError(error);
+      handleRequestError(error, "Couldn't update chatroom", warn);
     }
   }
 
@@ -188,7 +173,7 @@ export default function EditChatroomDetailsPage() {
         notify('Chatroom successfully deleted');
         navigate(`${overridePermissions ? ADMIN_URL : ''}${CHATS_URL}`);
       } catch (error) {
-        handleRequestError(error);
+        handleRequestError(error, "Couldn't delete chatroom", warn);
       }
     }
   };

@@ -11,13 +11,13 @@ import {
   UserWithAuthorizationResponseDto,
   UserToRoleDto,
   UserToRoleDtoRoleEnum,
-  ResponseError,
 } from '../generated';
 import { useData } from '../hooks/UseData';
 import { authApi } from '../services/ApiService';
 import socket from '../socket';
 import { HOST_URL } from '../urls';
 import { useNotificationContext } from './NotificationContext';
+import { handleRequestError } from '../hooks/HandleRequestError';
 
 export interface AuthContextType {
   isLoggedIn: boolean;
@@ -69,18 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await authApi.authControllerLogout();
       authBroadcastChannel.postMessage(authUser);
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not logout');
-      }
+      handleRequestError(error, 'Could not logout', warn);
     } finally {
       setAuthUser(null);
       navigate(HOST_URL);

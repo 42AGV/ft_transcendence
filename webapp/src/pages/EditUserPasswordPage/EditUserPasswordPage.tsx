@@ -7,10 +7,11 @@ import {
 import { AVATAR_EP_URL, USER_ME_URL } from '../../shared/urls';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useState } from 'react';
-import { ResponseError, UpdateUserDto } from '../../shared/generated';
+import { UpdateUserDto } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import { handleRequestError } from '../../shared/hooks/HandleRequestError';
 
 export default function EditUserPasswordPage() {
   const { authUser, isLoading } = useAuth();
@@ -48,22 +49,6 @@ export default function EditUserPasswordPage() {
     return true;
   }
 
-  // TODO: We can move this function to shared directory
-  const handleRequestError = async (error: unknown) => {
-    let errMessage = '';
-    if (error instanceof ResponseError) {
-      const responseBody = await error.response.json();
-      if (responseBody.message) {
-        errMessage = responseBody.message;
-      } else {
-        errMessage = error.response.statusText;
-      }
-    } else if (error instanceof Error) {
-      errMessage = error.message;
-    }
-    warn(errMessage);
-  };
-
   async function updatePassword() {
     if (!authUser || !hasValidFormValues()) {
       return;
@@ -75,7 +60,7 @@ export default function EditUserPasswordPage() {
       notify('Password successfully updated');
       navigate(USER_ME_URL);
     } catch (error) {
-      await handleRequestError(error);
+      await handleRequestError(error, 'Password could not be updated', warn);
     }
   }
 

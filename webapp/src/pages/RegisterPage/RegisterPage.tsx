@@ -97,7 +97,7 @@ export default function RegisterPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    register().catch((e) => console.error(e));
+    register().catch((e) => warn(e));
   };
 
   return (
