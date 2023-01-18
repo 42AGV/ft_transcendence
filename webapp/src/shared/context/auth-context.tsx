@@ -14,7 +14,7 @@ import {
   ResponseError,
 } from '../generated';
 import { useData } from '../hooks/UseData';
-import { authApi, usersApi } from "../services/ApiService";
+import { authApi, usersApi } from '../services/ApiService';
 import socket from '../socket';
 import { HOST_URL } from '../urls';
 import { useNotificationContext } from './NotificationContext';
@@ -123,7 +123,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
           }
         } else if (authUser) {
-          notify(`Successfully set ${userToRole.id} to ${userToRole.role}`);
+          notify(
+            `Successfully set ${userToRole.id} to ${userToRole.role}=${isAdd}`,
+          );
         }
       };
 

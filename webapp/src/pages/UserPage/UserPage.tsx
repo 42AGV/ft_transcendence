@@ -135,15 +135,16 @@ export default function UserPage() {
           YCoordinate: user?.avatarY ?? 0,
         }}
         button={
-          (blockRelation && {
-            disabled:
-              (blockRelation.amIBlocked || blockRelation.isUserBlocked) ??
-              false,
-            variant: ButtonVariant.SUBMIT,
-            iconVariant: IconVariant.SEND,
-            children: 'Send message',
-            onClick: () => navigate(`${CHAT_URL}/${user?.username}`),
-          }) ||
+          (!overridePermissions &&
+            blockRelation && {
+              disabled:
+                (blockRelation.amIBlocked || blockRelation.isUserBlocked) ??
+                false,
+              variant: ButtonVariant.SUBMIT,
+              iconVariant: IconVariant.SEND,
+              children: 'Send message',
+              onClick: () => navigate(`${CHAT_URL}/${user?.username}`),
+            }) ||
           undefined
         }
       >
@@ -162,14 +163,14 @@ export default function UserPage() {
           >
             {user?.email ?? ''}
           </Text>
-          {blockRelation && (
+          {!overridePermissions && blockRelation && (
             <ToggleSwitch
               label={blockRelation.isUserBlocked ? 'Unblock' : 'Block'}
               isToggled={blockRelation.isUserBlocked ?? false}
               onToggle={blockRelation.isUserBlocked ? unblockUser : blockUser}
             />
           )}
-          {user && user.isFriend !== null && (
+          {!overridePermissions && user && user.isFriend !== null && (
             <ToggleSwitch
               label={isToggled ? 'Unfollow' : 'Follow'}
               isToggled={isToggled}
