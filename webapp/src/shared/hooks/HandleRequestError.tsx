@@ -15,5 +15,7 @@ export const handleRequestError = (
     });
   } else if (error instanceof Error) {
     logger(error.message);
+  } else {
+    logger(msg);
   }
 };
