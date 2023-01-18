@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } else if (authUser) {
           notify(
-            `Successfully set ${userToRole.id} to ${userToRole.role}=${isAdd}`,
+            `Successfully set '${userToRole.username}' to ${userToRole.role} = ${isAdd}`,
           );
         }
       };
