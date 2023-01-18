@@ -35,11 +35,14 @@ import { ChatControllerGetChatroomMembersRequest } from '../../shared/generated/
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { Query } from '../../shared/types';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
+import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 export default function ChatroomDetailsPage() {
   // TODO: is the authUser is not a chatroom member, maybe this should return
   // a notfound. Otherwise, the api will return error responses, but we will
   // still draw the page. Check such authentication validation in other pages
+  const { authUser } = useAuth();
   const { warn } = useNotificationContext();
   const { chatroomId } = useParams();
   const { pathname } = useLocation();
@@ -50,9 +53,9 @@ export default function ChatroomDetailsPage() {
     [chatroomId],
   );
   const { data: chatroom } = useData<Chatroom>(getChatroom);
-  const { authUser } = useAuth();
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
   const { userStatus } = useUserStatus();
+  const crm = useGetChatroomMember(chatroomId!, authUser?.id);
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     const memberDetails = () => {
       if (member.owner) {
@@ -141,6 +144,15 @@ export default function ChatroomDetailsPage() {
       iconVariant: IconVariant.LOGOUT,
       onClick: leaveChatroom,
     };
+  }
+  if (!crm && !overridePermissions) {
+    return (
+      <div className="chatroom-details-page-not-found">
+        <div className="chatroom-details-page-not-found">
+          <NotFoundPage />
+        </div>
+      </div>
+    );
   }
   if (!(authUser && chatroom)) {
     return (

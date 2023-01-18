@@ -31,8 +31,17 @@ export function CanEdit({
   authUserId,
   isGlobalAdmin,
 }: CanEditParams): boolean[] {
-  if (!(chatroom && destCrMember && destUser && authCrMember && authUserId))
-    return [false, false];
+  if (
+    !(
+      chatroom &&
+      destCrMember &&
+      destUser &&
+      (authCrMember || isGlobalAdmin) &&
+      authUserId
+    )
+  )
+    return [false, false, false];
+  if (!(authCrMember && isGlobalAdmin)) return [true, true, true];
   const isAuthOwner = authUserId === chatroom.ownerId;
   const isDestOwner = chatroom.ownerId === destUser.id;
   return [

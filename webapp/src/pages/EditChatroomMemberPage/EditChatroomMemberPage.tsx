@@ -27,6 +27,7 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
 import Text from '../../shared/components/Text/Text';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
+import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
@@ -50,23 +51,13 @@ export default function EditChatroomMemberPage() {
   const { data: destUser, isLoading: isDestUserLoading } =
     useData(getUserByUserName);
 
-  const useGetChatroomMember = (id?: string) =>
-    useCallback(() => {
-      if (!id) {
-        return Promise.reject(new Error('The chatroom member could not load'));
-      }
-      return chatApi.chatControllerGetChatroomMember({
-        chatroomId: chatroomId!,
-        userId: id,
-      });
-    }, [id]);
   const { data: destCrMember, isLoading: isDestCrMemberLoading } = useData(
-    useGetChatroomMember(destUser?.id),
+    useGetChatroomMember(chatroomId!, destUser?.id),
     useCallback(() => {}, []),
   );
 
   const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
-    useGetChatroomMember(authUser?.id),
+    useGetChatroomMember(chatroomId!, authUser?.id),
     useCallback(() => {}, []),
   );
   const { userStatus } = useUserStatus();
@@ -90,7 +81,11 @@ export default function EditChatroomMemberPage() {
         chatroomId: chatroomId,
         userId: destUser.id,
       });
-      navigate(`${CHATROOM_URL}/${chatroomId}/details`);
+      navigate(
+        `${
+          overridePermissions ? ADMIN_URL : ''
+        }${CHATROOM_URL}/${chatroomId}/details`,
+      );
     } catch (error: unknown) {
       if (error instanceof ResponseError) {
         const responseBody = await error.response.json();
@@ -121,6 +116,7 @@ export default function EditChatroomMemberPage() {
     isDestUserLoading ||
     isAuthUserLoading ||
     isAuthCrMemberLoading;
+  console.log(overridePermissions);
   return (
     <div className="edit-chatroom-member-page">
       <AvatarPageTemplate
@@ -152,7 +148,13 @@ export default function EditChatroomMemberPage() {
         }
         button={button}
         isNotFound={
-          !(chatroom && destCrMember && destUser && authUser && authCrMember)
+          !(
+            chatroom &&
+            destCrMember &&
+            destUser &&
+            authUser &&
+            (authCrMember || overridePermissions)
+          )
         }
       >
         <>
