@@ -35,7 +35,7 @@ export default function UserPage() {
     [username],
   );
   const { data: user, isLoading } = useData(getUserByUserName);
-  const isAdminLoc = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
+  const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
   const { blockRelation, unblockUser, blockUser } = useBlock(user);
   const { userStatus } = useUserStatus();
   const [isToggled, setIsToggled] = useState(false);
@@ -49,12 +49,12 @@ export default function UserPage() {
         }),
       );
     };
-    if (isAdminLoc) {
+    if (overridePermissions) {
       getUser().catch((e: unknown) => {
         if (e instanceof Error) warn(e.message);
       });
     }
-  }, [warn, isAdminLoc, username]);
+  }, [warn, overridePermissions, username]);
   const { userFriends } = useFriend();
 
   useEffect(() => {

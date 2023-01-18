@@ -18,7 +18,7 @@ import {
   CHATROOM_URL,
   ADMIN_URL,
 } from '../../shared/urls';
-import { useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback } from 'react';
 import './ChatroomDetailsPage.css';
@@ -39,9 +39,6 @@ import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 export default function ChatroomDetailsPage() {
-  // TODO: is the authUser is not a chatroom member, maybe this should return
-  // a notfound. Otherwise, the api will return error responses, but we will
-  // still draw the page. Check such authentication validation in other pages
   const { authUser } = useAuth();
   const { warn } = useNotificationContext();
   const { chatroomId } = useParams();
@@ -55,7 +52,11 @@ export default function ChatroomDetailsPage() {
   const { data: chatroom } = useData<Chatroom>(getChatroom);
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
   const { userStatus } = useUserStatus();
-  const crm = useGetChatroomMember(chatroomId!, authUser?.id);
+  const { data: crm, isLoading: isCrmLoading } = useGetChatroomMember(
+    chatroomId!,
+    authUser?.id,
+  );
+  const isCrm: boolean = !!crm && !isCrmLoading;
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     const memberDetails = () => {
       if (member.owner) {
@@ -145,14 +146,8 @@ export default function ChatroomDetailsPage() {
       onClick: leaveChatroom,
     };
   }
-  if (!crm && !overridePermissions) {
-    return (
-      <div className="chatroom-details-page-not-found">
-        <div className="chatroom-details-page-not-found">
-          <NotFoundPage />
-        </div>
-      </div>
-    );
+  if (!isCrm && !overridePermissions) {
+    return <NotFoundPage />;
   }
   if (!(authUser && chatroom)) {
     return (
@@ -174,11 +169,17 @@ export default function ChatroomDetailsPage() {
         chat details
       </Header>
       <div className="chatroom-briefing">
-        <MediumAvatar
-          url={`${AVATAR_EP_URL}/${chatroom.avatarId}`}
-          XCoordinate={chatroom.avatarX}
-          YCoordinate={chatroom.avatarY}
-        />
+        <Link
+          to={`${
+            overridePermissions ? ADMIN_URL : ''
+          }${CHATROOM_URL}/${chatroomId}`}
+        >
+          <MediumAvatar
+            url={`${AVATAR_EP_URL}/${chatroom.avatarId}`}
+            XCoordinate={chatroom.avatarX}
+            YCoordinate={chatroom.avatarY}
+          />
+        </Link>
         <div className="chatroom-text-info">
           <Text
             variant={TextVariant.SUBHEADING}

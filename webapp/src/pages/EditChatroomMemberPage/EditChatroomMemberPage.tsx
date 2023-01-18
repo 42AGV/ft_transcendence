@@ -51,15 +51,11 @@ export default function EditChatroomMemberPage() {
   const { data: destUser, isLoading: isDestUserLoading } =
     useData(getUserByUserName);
 
-  const { data: destCrMember, isLoading: isDestCrMemberLoading } = useData(
-    useGetChatroomMember(chatroomId!, destUser?.id),
-    useCallback(() => {}, []),
-  );
+  const { data: destCrMember, isLoading: isDestCrMemberLoading } =
+    useGetChatroomMember(chatroomId!, destUser?.id);
 
-  const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
-    useGetChatroomMember(chatroomId!, authUser?.id),
-    useCallback(() => {}, []),
-  );
+  const { data: authCrMember, isLoading: isAuthCrMemberLoading } =
+    useGetChatroomMember(chatroomId!, authUser?.id);
   const { userStatus } = useUserStatus();
   const chatroomMemberStatus = userStatus(destCrMember?.userId);
 

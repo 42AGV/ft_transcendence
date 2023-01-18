@@ -32,10 +32,8 @@ export default function EditChatroomDetailsPage() {
   const { chatroomId } = useParams();
   const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
-  const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
-    useGetChatroomMember(chatroomId!, authUser?.id),
-    useCallback(() => {}, []),
-  );
+  const { data: authCrMember, isLoading: isAuthCrMemberLoading } =
+    useGetChatroomMember(chatroomId!, authUser?.id);
 
   const getChatRoomById = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
