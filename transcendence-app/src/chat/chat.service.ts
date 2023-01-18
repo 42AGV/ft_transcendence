@@ -29,8 +29,6 @@ import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { AvatarService } from '../shared/avatar/avatar.service';
-import { MongoAbility } from '@casl/ability';
-import { Action } from '../shared/enums/action.enum';
 
 @Injectable()
 export class ChatService {
@@ -156,18 +154,14 @@ export class ChatService {
   }
 
   async updateChatroom(
-    ability: MongoAbility,
+    chatroom: Chatroom,
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {
     const { oldPassword, confirmationPassword, ...updateChatroom } =
       updateChatroomDto;
-    const chatroom = await this.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
-    }
-    if (ability.cannot(Action.Update, chatroom)) {
-      throw new ForbiddenException();
     }
 
     // If the user doesn't update the password, we can update the chatroom without any checks

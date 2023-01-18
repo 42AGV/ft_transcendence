@@ -353,12 +353,16 @@ export class ChatController {
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
-    if (!authCrm) {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!authCrm || !chatroom) {
       throw new UnprocessableEntityException();
     }
     const ability = this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    if (ability.cannot(Action.Update, chatroom)) {
+      throw new ForbiddenException();
+    }
     const updatedChatroom = await this.chatService.updateChatroom(
-      ability,
+      chatroom,
       chatroomId,
       updateChatroomDto,
     );
