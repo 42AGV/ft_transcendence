@@ -23,6 +23,7 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import './EditChatroomDetailsPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 
 export default function EditChatroomDetailsPage() {
   const { pathname } = useLocation();
@@ -31,18 +32,8 @@ export default function EditChatroomDetailsPage() {
   const { chatroomId } = useParams();
   const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
-  const useGetChatroomMember = (id?: string) =>
-    useCallback(() => {
-      if (!id) {
-        return Promise.reject(new Error('The chatroom member could not load'));
-      }
-      return chatApi.chatControllerGetChatroomMember({
-        chatroomId: chatroomId!,
-        userId: id,
-      });
-    }, [id]);
   const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
-    useGetChatroomMember(authUser?.id),
+    useGetChatroomMember(chatroomId!, authUser?.id),
     useCallback(() => {}, []),
   );
 
@@ -224,7 +215,9 @@ export default function EditChatroomDetailsPage() {
         title={`edit/${chatroom.name}`}
         avatarProps={{
           url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
-          editUrl: `${CHATROOM_URL}/${chatroom.id}/edit/avatar`,
+          editUrl: overridePermissions
+            ? undefined
+            : `${CHATROOM_URL}/${chatroom.id}/edit/avatar`,
           XCoordinate: chatroom?.avatarX,
           YCoordinate: chatroom?.avatarY,
         }}

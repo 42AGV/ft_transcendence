@@ -134,7 +134,7 @@ export default function ChatroomDetailsPage() {
     button = {
       buttonSize: ButtonSize.SMALL,
       variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.ARROW_FORWARD,
+      iconVariant: IconVariant.EDIT,
       onClick: editChatroom,
     };
   } else {
