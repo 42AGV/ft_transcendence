@@ -85,6 +85,7 @@ export default function EditChatroomMemberPage() {
         `${
           overridePermissions ? ADMIN_URL : ''
         }${CHATROOM_URL}/${chatroomId}/details`,
+        { replace: true },
       );
     } catch (error: unknown) {
       if (error instanceof ResponseError) {
