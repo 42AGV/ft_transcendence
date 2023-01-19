@@ -348,12 +348,21 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
   async updateChatroom(
-    @GetUser() userMe: User,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
     @Body() updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom> {
+    const chatroom = await this.chatService.getChatroomById(chatroomId);
+    if (!authCrm || !chatroom) {
+      throw new UnprocessableEntityException();
+    }
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    if (ability.cannot(Action.Update, chatroom)) {
+      throw new ForbiddenException();
+    }
     const updatedChatroom = await this.chatService.updateChatroom(
-      userMe,
+      chatroom,
       chatroomId,
       updateChatroomDto,
     );
@@ -368,14 +377,16 @@ export class ChatController {
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailabe' })
   async deleteChatroom(
-    @GetUser() userMe: User,
+    @GetAuthCrMember('chatroomId', AuthChatroomMemberPipe)
+    authCrm: ChatroomMemberWithAuthorization | null,
     @Param('chatroomId', ParseUUIDPipe) chatroomId: string,
   ): Promise<Chatroom> {
     const chatroom = await this.chatService.getChatroomById(chatroomId);
-    if (!chatroom) {
+    if (!chatroom || !authCrm) {
       throw new NotFoundException();
     }
-    if (userMe.id !== chatroom.ownerId) {
+    const ability = this.caslAbilityFactory.defineAbilitiesFor(authCrm);
+    if (ability.cannot(Action.Delete, chatroom)) {
       throw new ForbiddenException();
     }
     const deletedChatroom = await this.chatService.deleteChatroom(chatroomId);

@@ -10,11 +10,11 @@ import {
   TextVariant,
 } from '../../shared/components';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import { ResponseError } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { chatApi } from '../../shared/services/ApiService';
 import { AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function JoinChatroomPage() {
   const { chatroomId } = useParams();
@@ -54,18 +54,7 @@ function JoinChatroom({ chatroomId }: JoinChatroomProps) {
       notify('You joined a chatroom');
       navigate(`${CHATROOM_URL}/${chatroomId}`, { replace: true });
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not join the chatroom');
-      }
+      handleRequestError(error, 'Could not join the chatroom', warn);
     }
   };
 

@@ -1,12 +1,12 @@
 import { ToggleSwitch } from '../../../shared/components';
 import { UpdateChatroomMemberDto } from '../../../shared/generated/models/UpdateChatroomMemberDto';
-import { ResponseError } from '../../../shared/generated';
 import React, { useEffect, useState } from 'react';
 import { chatApi } from '../../../shared/services/ApiService';
 import { useNotificationContext } from '../../../shared/context/NotificationContext';
 import { ChatroomMember } from '../../../shared/generated/models/ChatroomMember';
 import { Chatroom } from '../../../shared/generated/models/Chatroom';
 import { User } from '../../../shared/generated/models/User';
+import { handleRequestError } from '../../../shared/utils/HandleRequestError';
 
 type CanEditParams = {
   chatroom: Chatroom | null;
@@ -14,6 +14,7 @@ type CanEditParams = {
   destUser: User | null;
   authCrMember: ChatroomMember | null;
   authUserId: string | null;
+  isGlobalAdmin: boolean;
 };
 
 type ToggleSwitchSetProps = {
@@ -28,16 +29,23 @@ export function CanEdit({
   destUser,
   authCrMember,
   authUserId,
+  isGlobalAdmin,
 }: CanEditParams): boolean[] {
-  if (!(chatroom && destCrMember && destUser && authCrMember && authUserId))
-    return [false, false];
+  if (!(chatroom && destCrMember && destUser && authUserId))
+    return [false, false, false];
+  if (!authCrMember) {
+    if (isGlobalAdmin) return [true, true, true];
+    return [false, false, false];
+  }
   const isAuthOwner = authUserId === chatroom.ownerId;
   const isDestOwner = chatroom.ownerId === destUser.id;
   return [
-    (isAuthOwner ||
+    ((isAuthOwner ||
       (authCrMember.admin && !authCrMember.banned && !destCrMember.admin)) &&
-      !isDestOwner,
+      !isDestOwner) ||
+      isGlobalAdmin,
     isAuthOwner,
+    isGlobalAdmin,
   ];
 }
 
@@ -56,10 +64,18 @@ export default function ToggleSwitchSet({
       banned: canEditParams.destCrMember.banned,
     });
   }, [canEditParams.destCrMember]);
-  const { warn } = useNotificationContext();
+  const { notify, warn } = useNotificationContext();
 
-  const [canEdit, isAuthOwner] = CanEdit(canEditParams);
+  const [canEdit, isAuthOwner, isGlobalAdmin] = CanEdit(canEditParams);
 
+  const dtoToKey = (
+    dto: UpdateChatroomMemberDto,
+  ): keyof UpdateChatroomMemberDto => {
+    if (dto.admin !== undefined) return 'admin';
+    if (dto.muted !== undefined) return 'muted';
+    if (dto.banned !== undefined) return 'banned';
+    throw new Error('Bad dto');
+  };
   const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
     return async () => {
       if (isLoading || !canEdit) {
@@ -67,7 +83,7 @@ export default function ToggleSwitchSet({
         return;
       }
       try {
-        if (!isAuthOwner && dto.admin !== undefined) {
+        if (!isAuthOwner && dto.admin !== undefined && !isGlobalAdmin) {
           warn('You cannot make new admins');
           return;
         }
@@ -78,19 +94,19 @@ export default function ToggleSwitchSet({
           updateChatroomMemberDto: dto,
         });
         setUpdateChatroomMemberDto({ ...oldUpdateChatroomMember, ...dto });
-      } catch (error: unknown) {
-        if (error instanceof ResponseError) {
-          const responseBody = await error.response.json();
-          if (responseBody.message) {
-            warn(responseBody.message);
-          } else {
-            warn(error.response.statusText);
-          }
-        } else if (error instanceof Error) {
-          warn(error.message);
-        } else {
-          warn('Could not update the chat member');
+        const { username } = canEditParams.destUser!;
+        try {
+          const key = dtoToKey(dto);
+          notify(
+            dto[key]
+              ? `Added ${key} role to ${username}`
+              : `Removed ${key} role from ${username}`,
+          );
+        } catch {
+          notify(`${username} chatroom member successfully updated`);
         }
+      } catch (error: unknown) {
+        handleRequestError(error, 'Could not update the chat member', warn);
       }
     };
   };

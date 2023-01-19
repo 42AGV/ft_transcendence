@@ -12,14 +12,18 @@ import {
   Text,
   ButtonProps,
 } from '../../shared/components';
-import { AVATAR_EP_URL, CHATS_URL, CHATROOM_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
+import {
+  AVATAR_EP_URL,
+  CHATS_URL,
+  CHATROOM_URL,
+  ADMIN_URL,
+} from '../../shared/urls';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback } from 'react';
 import './ChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
-import { ResponseError } from '../../shared/generated';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
@@ -30,22 +34,29 @@ import { ChatControllerGetChatroomMembersRequest } from '../../shared/generated/
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { Query } from '../../shared/types';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
+import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function ChatroomDetailsPage() {
-  // TODO: is the authUser is not a chatroom member, maybe this should return
-  // a notfound. Otherwise, the api will return error responses, but we will
-  // still draw the page. Check such authentication validation in other pages
+  const { authUser, isLoading } = useAuth();
   const { warn } = useNotificationContext();
   const { chatroomId } = useParams();
+  const { pathname } = useLocation();
+  const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
   const { goBack, navigate } = useNavigation();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
   );
-  const { data: chatroom } = useData<Chatroom>(getChatroom);
-  const { authUser } = useAuth();
+  const { data: chatroom, isLoading: crIsLoading } =
+    useData<Chatroom>(getChatroom);
   const isOwner: boolean = authUser?.id === chatroom?.ownerId;
   const { userStatus } = useUserStatus();
+  const { data: crm, isLoading: isCrmLoading } = useGetChatroomMember(
+    chatroomId!,
+    authUser?.id,
+  );
   const mapChatMemberToRow = (member: ChatroomMemberWithUser): RowItem => {
     const memberDetails = () => {
       if (member.owner) {
@@ -70,8 +81,9 @@ export default function ChatroomDetailsPage() {
         XCoordinate: member.avatarX,
         YCoordinate: member.avatarY,
       },
-      // TODO: Decide where does this url point to when the auth user is not an owner or admin
-      url: `${CHATROOM_URL}/${chatroomId}/member/${member.username}/edit`,
+      url: `${
+        overridePermissions ? ADMIN_URL : ''
+      }${CHATROOM_URL}/${chatroomId}/member/${member.username}/edit`,
       title: member.username,
       subtitle: memberDetails(),
       key: member.userId,
@@ -83,25 +95,18 @@ export default function ChatroomDetailsPage() {
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
       navigate(`${CHATS_URL}`);
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not leave the chatroom');
-      }
+      handleRequestError(error, 'Could not leave the chatroom', warn);
     }
   }, [warn, chatroomId, navigate]);
 
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
-    navigate(`${CHATROOM_URL}/${chatroomId}/edit`);
-  }, [chatroomId, navigate]);
+    navigate(
+      `${
+        overridePermissions ? ADMIN_URL : ''
+      }${CHATROOM_URL}/${chatroomId}/edit`,
+    );
+  }, [overridePermissions, chatroomId, navigate]);
 
   const getChatroomMembers = useCallback(
     <T extends Query>(requestParameters: T) =>
@@ -115,11 +120,11 @@ export default function ChatroomDetailsPage() {
 
   let button: ButtonProps;
 
-  if (isOwner) {
+  if (isOwner || overridePermissions) {
     button = {
       buttonSize: ButtonSize.SMALL,
       variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.ARROW_FORWARD,
+      iconVariant: IconVariant.EDIT,
       onClick: editChatroom,
     };
   } else {
@@ -130,7 +135,7 @@ export default function ChatroomDetailsPage() {
       onClick: leaveChatroom,
     };
   }
-  if (!(authUser && chatroom)) {
+  if (isLoading || isCrmLoading || crIsLoading) {
     return (
       <div className="chatroom-details-page">
         <div className="chatroom-details-page-loading">
@@ -138,6 +143,9 @@ export default function ChatroomDetailsPage() {
         </div>
       </div>
     );
+  }
+  if ((!crm && !overridePermissions) || !chatroom) {
+    return <NotFoundPage />;
   }
   return (
     <div className="chatroom-details-page">
@@ -150,11 +158,17 @@ export default function ChatroomDetailsPage() {
         chat details
       </Header>
       <div className="chatroom-briefing">
-        <MediumAvatar
-          url={`${AVATAR_EP_URL}/${chatroom.avatarId}`}
-          XCoordinate={chatroom.avatarX}
-          YCoordinate={chatroom.avatarY}
-        />
+        <Link
+          to={`${
+            overridePermissions ? ADMIN_URL : ''
+          }${CHATROOM_URL}/${chatroomId}`}
+        >
+          <MediumAvatar
+            url={`${AVATAR_EP_URL}/${chatroom.avatarId}`}
+            XCoordinate={chatroom.avatarX}
+            YCoordinate={chatroom.avatarY}
+          />
+        </Link>
         <div className="chatroom-text-info">
           <Text
             variant={TextVariant.SUBHEADING}

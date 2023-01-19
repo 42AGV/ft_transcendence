@@ -10,10 +10,11 @@ import {
 } from '../../shared/components';
 import { CHATS_URL } from '../../shared/urls';
 import React, { useState } from 'react';
-import { CreateChatroomDto, ResponseError } from '../../shared/generated';
+import { CreateChatroomDto } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function CreateChatroomPage() {
   const { warn, notify } = useNotificationContext();
@@ -59,11 +60,11 @@ export default function CreateChatroomPage() {
       notify('Registration complete');
       navigate(CHATS_URL);
     } catch (error) {
-      if (error instanceof ResponseError) {
-        warn(error.response.statusText);
-      } else if (error instanceof Error) {
-        warn(error.message);
-      }
+      handleRequestError(
+        error,
+        'Could not complete chatroom registration',
+        warn,
+      );
     }
   }
 

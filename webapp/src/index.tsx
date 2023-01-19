@@ -27,7 +27,6 @@ import {
   EditUserPasswordPage,
   FriendsPage,
   EditChatroomAvatarPage,
-  AdminPage,
   EnableTwoFactorAuthPage,
   ValidateTwoFactorAuthPage,
 } from './pages';
@@ -62,6 +61,7 @@ import { NotificationContextProvider } from './shared/context/NotificationContex
 import { UserStatusProvider } from './shared/context/UserStatusContext';
 import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
+import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -248,19 +248,67 @@ function AppRoutes() {
         }
       />
       <Route
-        path={ADMIN_URL}
-        element={
-          <RequireAuth>
-            <AdminPage />
-          </RequireAuth>
-        }
-      />
-      <Route
         path={TWO_FACTOR_AUTH_ENABLE_URL}
         element={
           <RequireAuth>
             <EnableTwoFactorAuthPage />
           </RequireAuth>
+        }
+      />
+      <Route
+        path={ADMIN_URL}
+        element={
+          <RequireAdmin>
+            <UsersPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATS_URL}`}
+        element={
+          <RequireAdmin>
+            <DiscoverChatsPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${USER_URL}/:username`}
+        element={
+          <RequireAdmin>
+            <UserPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId`}
+        element={
+          <RequireAdmin>
+            <ChatroomPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId/edit`}
+        element={
+          <RequireAdmin>
+            <EditChatroomDetailsPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId/member/:username/edit`}
+        element={
+          <RequireAdmin>
+            <EditChatroomMemberPage />
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path={`${ADMIN_URL}${CHATROOM_URL}/:chatroomId/details`}
+        element={
+          <RequireAdmin>
+            <ChatroomDetailsPage />
+          </RequireAdmin>
         }
       />
       <Route

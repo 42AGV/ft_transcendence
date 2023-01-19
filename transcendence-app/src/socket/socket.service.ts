@@ -101,10 +101,14 @@ export class SocketService {
         userToRoleDto,
       );
       if (newRole) {
-        this.socket.to(authUserId).emit('addedUserToRole', { ...newRole });
-        this.socket
-          .to(userToRoleDto.id)
-          .emit('addedUserToRole', { ...newRole });
+        this.socket.to(authUserId).emit('addedUserToRole', {
+          ...newRole,
+          username: destAuthUser.username,
+        });
+        this.socket.to(userToRoleDto.id).emit('addedUserToRole', {
+          ...newRole,
+          username: destAuthUser.username,
+        });
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -138,12 +142,14 @@ export class SocketService {
         userToRoleDto,
       );
       if (deletedRole) {
-        this.socket
-          .to(authUserId)
-          .emit('deletedUserToRole', { ...deletedRole });
-        this.socket
-          .to(userToRoleDto.id)
-          .emit('deletedUserToRole', { ...deletedRole });
+        this.socket.to(authUserId).emit('deletedUserToRole', {
+          ...deletedRole,
+          username: destAuthUser.username,
+        });
+        this.socket.to(userToRoleDto.id).emit('deletedUserToRole', {
+          ...deletedRole,
+          username: destAuthUser.username,
+        });
       }
     } catch (e) {
       if (e instanceof Error) {

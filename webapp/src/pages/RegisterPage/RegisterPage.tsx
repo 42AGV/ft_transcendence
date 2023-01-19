@@ -22,6 +22,7 @@ import {
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 import './RegisterPage.css';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function RegisterPage() {
   const initialFormValues: RegisterUserDto = {
@@ -97,7 +98,9 @@ export default function RegisterPage() {
   }
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    register().catch((e) => console.error(e));
+    register().catch((e) =>
+      handleRequestError(e, 'Could not register user', warn),
+    );
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer } from 'react';
 import { ResponseError, UserResponseDto } from '../generated';
 import { usersApi } from '../services/ApiService';
+import { useNotificationContext } from '../context/NotificationContext';
 
 export type BlockRelation = {
   isUserBlocked: boolean;
@@ -45,6 +46,7 @@ const blockReducerCallback = (
 
 export function useBlock(user: UserResponseDto | null) {
   const [blockRelation, dispatch] = useReducer(blockReducerCallback, null);
+  const { warn } = useNotificationContext();
 
   useEffect(() => {
     if (user && user.blockRelation) {
@@ -64,12 +66,12 @@ export function useBlock(user: UserResponseDto | null) {
       } catch (error) {
         if (error instanceof ResponseError && error.response.status === 422) {
           dispatch({ type: 'BLOCK_USER' });
-        } else {
-          console.error(error);
+        } else if (error instanceof Error) {
+          warn(error.message);
         }
       }
     }
-  }, [user]);
+  }, [user, warn]);
 
   const unblockUser = useCallback(async () => {
     if (user) {
@@ -79,12 +81,12 @@ export function useBlock(user: UserResponseDto | null) {
       } catch (error) {
         if (error instanceof ResponseError && error.response.status === 404) {
           dispatch({ type: 'UNBLOCK_USER' });
-        } else {
-          console.error(error);
+        } else if (error instanceof Error) {
+          warn(error.message);
         }
       }
     }
-  }, [user]);
+  }, [warn, user]);
 
   return { blockRelation, blockUser, unblockUser };
 }

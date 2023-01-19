@@ -9,24 +9,33 @@ import {
   TextWeight,
 } from '../../shared/components';
 import './EditChatroomMemberPage.css';
-import { AVATAR_EP_URL, CHATROOM_URL, USER_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
+import {
+  ADMIN_URL,
+  AVATAR_EP_URL,
+  CHATROOM_URL,
+  USER_URL,
+} from '../../shared/urls';
+import { useLocation, useParams } from 'react-router-dom';
 import { useCallback } from 'react';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
 import Text from '../../shared/components/Text/Text';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
+import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
-  const { warn } = useNotificationContext();
+  const { warn, notify } = useNotificationContext();
   const { navigate } = useNavigation();
+  const { pathname } = useLocation();
+  const { authUser, isLoading: isAuthUserLoading } = useAuth();
+  const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
 
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
@@ -42,24 +51,11 @@ export default function EditChatroomMemberPage() {
   const { data: destUser, isLoading: isDestUserLoading } =
     useData(getUserByUserName);
 
-  const useGetChatroomMember = (id?: string) =>
-    useCallback(() => {
-      if (!id) {
-        return Promise.reject(new Error('The chatroom member could not load'));
-      }
-      return chatApi.chatControllerGetChatroomMember({
-        chatroomId: chatroomId!,
-        userId: id,
-      });
-    }, [id]);
-  const { data: destCrMember, isLoading: isDestCrMemberLoading } = useData(
-    useGetChatroomMember(destUser?.id),
-  );
+  const { data: destCrMember, isLoading: isDestCrMemberLoading } =
+    useGetChatroomMember(chatroomId!, destUser?.id);
 
-  const { authUser, isLoading: isAuthUserLoading } = useAuth();
-  const { data: authCrMember, isLoading: isAuthCrMemberLoading } = useData(
-    useGetChatroomMember(authUser?.id),
-  );
+  const { data: authCrMember, isLoading: isAuthCrMemberLoading } =
+    useGetChatroomMember(chatroomId!, authUser?.id);
   const { userStatus } = useUserStatus();
   const chatroomMemberStatus = userStatus(destCrMember?.userId);
 
@@ -69,6 +65,7 @@ export default function EditChatroomMemberPage() {
     destUser,
     authCrMember,
     authUserId: authUser?.id ?? null,
+    isGlobalAdmin: overridePermissions,
   });
 
   const removeChatMember = useCallback(async () => {
@@ -80,22 +77,17 @@ export default function EditChatroomMemberPage() {
         chatroomId: chatroomId,
         userId: destUser.id,
       });
-      navigate(`${CHATROOM_URL}/${chatroomId}/details`);
+      notify(`${destUser.username} successfully removed from chatroom`);
+      navigate(
+        `${
+          overridePermissions ? ADMIN_URL : ''
+        }${CHATROOM_URL}/${chatroomId}/details`,
+        { replace: true },
+      );
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not remove the chat member');
-      }
+      handleRequestError(error, 'Could not kick chatroom member', warn);
     }
-  }, [chatroomId, destUser, navigate, warn]);
+  }, [overridePermissions, chatroomId, destUser, navigate, warn, notify]);
 
   const button: ButtonProps | undefined = canEdit
     ? {
@@ -142,7 +134,13 @@ export default function EditChatroomMemberPage() {
         }
         button={button}
         isNotFound={
-          !(chatroom && destCrMember && destUser && authUser && authCrMember)
+          !(
+            chatroom &&
+            destCrMember &&
+            destUser &&
+            authUser &&
+            (authCrMember || overridePermissions)
+          )
         }
       >
         <>
@@ -154,7 +152,9 @@ export default function EditChatroomMemberPage() {
               YCoordinate: destUser?.avatarY ?? 0,
             }}
             iconVariant={IconVariant.USERS}
-            url={`${USER_URL}/${username}`}
+            url={`${
+              overridePermissions ? ADMIN_URL : ''
+            }${USER_URL}/${username}`}
             title={username}
             subtitle="level x"
           />
@@ -167,6 +167,7 @@ export default function EditChatroomMemberPage() {
               destUser,
               authUserId: authUser?.id ?? '',
               authCrMember,
+              isGlobalAdmin: overridePermissions,
             }}
           />
         </>

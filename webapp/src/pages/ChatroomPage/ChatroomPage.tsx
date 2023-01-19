@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
-import { CHATS_URL, CHATROOM_URL } from '../../shared/urls';
+import { Navigate, useLocation, useParams } from 'react-router-dom';
+import { CHATS_URL, CHATROOM_URL, ADMIN_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
@@ -22,11 +22,18 @@ import { ChatMessage } from '../../shared/components/templates/ChatMessagingTemp
 export default function ChatroomPage() {
   const { chatroomId } = useParams();
   const { authUser } = useAuth();
+  const { pathname } = useLocation();
 
   if (!chatroomId || !authUser) {
-    return null;
+    return <></>;
   }
-  return <Chatroom chatroomId={chatroomId} authUser={authUser} />;
+  return (
+    <Chatroom
+      chatroomId={chatroomId}
+      authUser={authUser}
+      overridePermissions={pathname.slice(0, ADMIN_URL.length) === ADMIN_URL}
+    />
+  );
 }
 
 type ChatroomProps = {
@@ -122,7 +129,7 @@ function Chatroom({
       return <Navigate to={`${CHATROOM_URL}/${chatroomId}/join`} replace />;
     }
 
-    if (chatroomMember.banned) {
+    if (chatroomMember.banned && !overridePermissions) {
       return <Navigate to={`${CHATS_URL}`} replace />;
     }
   }
@@ -130,7 +137,9 @@ function Chatroom({
   return (
     <ChatMessagingTemplate
       title={chatroom.name}
-      titleNavigationUrl={`${CHATROOM_URL}/${chatroomId}/details`}
+      titleNavigationUrl={`${
+        overridePermissions ? ADMIN_URL : ''
+      }${CHATROOM_URL}/${chatroomId}/details`}
       to={chatroomId}
       chatEvent="chatroomMessage"
       fetchMessagesCallback={fetchMessagesCallback}

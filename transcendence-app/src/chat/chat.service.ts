@@ -154,19 +154,14 @@ export class ChatService {
   }
 
   async updateChatroom(
-    userMe: User,
+    chatroom: Chatroom,
     chatroomId: string,
     updateChatroomDto: UpdateChatroomDto,
   ): Promise<Chatroom | null> {
     const { oldPassword, confirmationPassword, ...updateChatroom } =
       updateChatroomDto;
-    const chatroom = await this.getChatroomById(chatroomId);
     if (!chatroom) {
       throw new NotFoundException();
-    }
-
-    if (userMe.id !== chatroom.ownerId) {
-      throw new ForbiddenException();
     }
 
     // If the user doesn't update the password, we can update the chatroom without any checks
@@ -181,10 +176,10 @@ export class ChatService {
     if (
       chatroom.password &&
       (!updateChatroomDto.oldPassword ||
-        (await Password.compare(
+        !(await Password.compare(
           chatroom.password,
           updateChatroomDto.oldPassword,
-        )) === false)
+        )))
     ) {
       throw new ForbiddenException('Incorrect password');
     }

@@ -7,21 +7,34 @@ import {
   Loading,
   ToggleSwitch,
 } from '../../shared/components';
-import { CHATS_URL, AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
+import {
+  CHATS_URL,
+  AVATAR_EP_URL,
+  CHATROOM_URL,
+  ADMIN_URL,
+} from '../../shared/urls';
+import { useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ResponseError, UpdateChatroomDto } from '../../shared/generated';
+import { UpdateChatroomDto } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import './EditChatroomDetailsPage.css';
+import { useAuth } from '../../shared/hooks/UseAuth';
+import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
-export default function CreateChatroomPage() {
+export default function EditChatroomDetailsPage() {
+  const { pathname } = useLocation();
+  const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
+  const { authUser } = useAuth();
   const { chatroomId } = useParams();
   const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
+  const { data: authCrMember, isLoading: isAuthCrMemberLoading } =
+    useGetChatroomMember(chatroomId!, authUser?.id);
 
   const getChatRoomById = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
@@ -96,22 +109,6 @@ export default function CreateChatroomPage() {
     return true;
   }
 
-  // TODO: We can move this function to shared directory
-  const handleRequestError = async (error: unknown) => {
-    let errMessage = '';
-    if (error instanceof ResponseError) {
-      const responseBody = await error.response.json();
-      if (responseBody.message) {
-        errMessage = responseBody.message;
-      } else {
-        errMessage = error.response.statusText;
-      }
-    } else if (error instanceof Error) {
-      errMessage = error.message;
-    }
-    warn(errMessage);
-  };
-
   async function updateChatroomDetails() {
     if (!chatroom || !chatroomId || !hasValidFormValues()) {
       return;
@@ -153,9 +150,13 @@ export default function CreateChatroomPage() {
         updateChatroomDto,
       });
       notify('Chatroom details successfully updated');
-      navigate(CHATS_URL);
+      navigate(
+        `${
+          overridePermissions ? ADMIN_URL : ''
+        }${CHATROOM_URL}/${chatroomId}/details`,
+      );
     } catch (error) {
-      handleRequestError(error);
+      handleRequestError(error, "Couldn't update chatroom", warn);
     }
   }
 
@@ -170,14 +171,14 @@ export default function CreateChatroomPage() {
           chatroomId: chatroomId!,
         });
         notify('Chatroom successfully deleted');
-        navigate(CHATS_URL);
+        navigate(`${overridePermissions ? ADMIN_URL : ''}${CHATS_URL}`);
       } catch (error) {
-        handleRequestError(error);
+        handleRequestError(error, "Couldn't delete chatroom", warn);
       }
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isAuthCrMemberLoading) {
     return (
       <div className="edit-chatroom-details">
         <div className="edit-chatroom-details-loading">
@@ -187,7 +188,10 @@ export default function CreateChatroomPage() {
     );
   }
 
-  if (!chatroom) {
+  if (
+    !chatroom ||
+    ((!authCrMember || !authCrMember.owner) && !overridePermissions)
+  ) {
     return <NotFoundPage />;
   }
 
@@ -198,7 +202,9 @@ export default function CreateChatroomPage() {
         title={`edit/${chatroom.name}`}
         avatarProps={{
           url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
-          editUrl: `${CHATROOM_URL}/${chatroom.id}/edit/avatar`,
+          editUrl: overridePermissions
+            ? undefined
+            : `${CHATROOM_URL}/${chatroom.id}/edit/avatar`,
           XCoordinate: chatroom?.avatarX,
           YCoordinate: chatroom?.avatarY,
         }}
