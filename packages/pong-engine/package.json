@@ -17,9 +17,6 @@
     "url": "https://github.com/42AGV/ft_transcendence/issues"
   },
   "homepage": "https://github.com/42AGV/ft_transcendence#readme",
-  "dependencies": {
-    "typescript": "^4.9.4"
-  },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts"
 }
