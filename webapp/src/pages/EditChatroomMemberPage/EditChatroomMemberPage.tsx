@@ -21,13 +21,13 @@ import { chatApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { ResponseError } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
 import Text from '../../shared/components/Text/Text';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
@@ -85,18 +85,7 @@ export default function EditChatroomMemberPage() {
         { replace: true },
       );
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not remove the chat member');
-      }
+      handleRequestError(error, 'Could not kick chatroom member', warn);
     }
   }, [overridePermissions, chatroomId, destUser, navigate, warn, notify]);
 

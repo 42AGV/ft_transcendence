@@ -1,12 +1,12 @@
 import { ToggleSwitch } from '../../../shared/components';
 import { UpdateChatroomMemberDto } from '../../../shared/generated/models/UpdateChatroomMemberDto';
-import { ResponseError } from '../../../shared/generated';
 import React, { useEffect, useState } from 'react';
 import { chatApi } from '../../../shared/services/ApiService';
 import { useNotificationContext } from '../../../shared/context/NotificationContext';
 import { ChatroomMember } from '../../../shared/generated/models/ChatroomMember';
 import { Chatroom } from '../../../shared/generated/models/Chatroom';
 import { User } from '../../../shared/generated/models/User';
+import { handleRequestError } from '../../../shared/utils/HandleRequestError';
 
 type CanEditParams = {
   chatroom: Chatroom | null;
@@ -106,18 +106,7 @@ export default function ToggleSwitchSet({
           notify(`${username} chatroom member successfully updated`);
         }
       } catch (error: unknown) {
-        if (error instanceof ResponseError) {
-          const responseBody = await error.response.json();
-          if (responseBody.message) {
-            warn(responseBody.message);
-          } else {
-            warn(error.response.statusText);
-          }
-        } else if (error instanceof Error) {
-          warn(error.message);
-        } else {
-          warn('Could not update the chat member');
-        }
+        handleRequestError(error, 'Could not update the chat member', warn);
       }
     };
   };

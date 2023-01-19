@@ -24,7 +24,6 @@ import React, { useCallback } from 'react';
 import './ChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
-import { ResponseError } from '../../shared/generated';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
@@ -37,6 +36,7 @@ import { Query } from '../../shared/types';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function ChatroomDetailsPage() {
   const { authUser, isLoading } = useAuth();
@@ -95,18 +95,7 @@ export default function ChatroomDetailsPage() {
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
       navigate(`${CHATS_URL}`);
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not leave the chatroom');
-      }
+      handleRequestError(error, 'Could not leave the chatroom', warn);
     }
   }, [warn, chatroomId, navigate]);
 
