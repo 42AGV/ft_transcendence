@@ -3,8 +3,9 @@ import { ResponseError } from '../generated';
 export const handleRequestError = (
   error: unknown,
   msg: string,
-  logger: (arg0: any) => void = console.error,
+  loggerParam?: (arg0: any) => void,
 ) => {
+  const logger = loggerParam ? loggerParam : (arg0: any) => console.error(arg0);
   if (error instanceof ResponseError) {
     error.response.json().then((responseBody) => {
       if (responseBody.message) {

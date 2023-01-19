@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 type DataReturn<T> = {
@@ -8,11 +9,13 @@ type DataReturn<T> = {
 
 export function useData<T>(
   fetchFn: () => Promise<T>,
-  logger: (arg0: any) => void = console.error,
+  loggerParam?: (arg0: any) => void,
 ): DataReturn<T> {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const loggerLocal = React.useCallback((msg: any) => console.log(msg), []);
+  const logger = loggerParam ? loggerParam : loggerLocal;
 
   useEffect(() => {
     let ignore = false;
