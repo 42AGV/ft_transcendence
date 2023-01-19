@@ -7,7 +7,8 @@ services:
   webapp:
     image: ft_transcendence/webapp-dev
     build:
-      context: ./webapp
+      context: .
+      dockerfile: ./webapp/Dockerfile
       target: development
     volumes:
       - ./webapp/src:/webapp/src:ro

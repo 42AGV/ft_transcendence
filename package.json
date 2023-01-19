@@ -8,7 +8,8 @@
     "transcendence-app"
   ],
   "scripts": {
-    "build-packages": "npm run build -w packages/pong-engine"
+    "build-packages": "npm run build -w packages/pong-engine",
+    "start-webapp": "npm run start -w webapp"
   },
   "repository": {
     "type": "git",
