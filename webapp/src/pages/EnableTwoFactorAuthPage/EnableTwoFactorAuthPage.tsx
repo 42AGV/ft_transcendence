@@ -70,7 +70,7 @@ export default function EnableTwoFactorAuthPage() {
       <div className="enable-two-factor-auth-page-main">
         <img
           className="enable-two-factor-auth-page-qrcode"
-          src={TWO_FACTOR_AUTH_QR_EP_URL}
+          src={TWO_FACTOR_AUTH_QR_EP_URL + `?date=${Date.now()}`}
           alt="QR Code"
         />
         <form
