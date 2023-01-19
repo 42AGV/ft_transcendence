@@ -31,7 +31,7 @@ import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();
-  const { warn } = useNotificationContext();
+  const { warn, notify } = useNotificationContext();
   const { navigate } = useNavigation();
   const { pathname } = useLocation();
   const { authUser, isLoading: isAuthUserLoading } = useAuth();
@@ -77,6 +77,7 @@ export default function EditChatroomMemberPage() {
         chatroomId: chatroomId,
         userId: destUser.id,
       });
+      notify(`${destUser.username} successfully removed from chatroom`);
       navigate(
         `${
           overridePermissions ? ADMIN_URL : ''
