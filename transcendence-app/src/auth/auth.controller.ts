@@ -222,6 +222,8 @@ export class AuthController {
   @UseGuards(TwoFactorAuthenticatedGuard)
   @Header('Content-Type', 'image/png')
   @Header('Content-Disposition', 'inline')
+  @Header('Cache-Control', 'no-cache')
+  @Header('Expires', '0')
   @ApiProduces('image/png')
   @ApiOkResponse({
     schema: {
