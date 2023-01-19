@@ -18,6 +18,7 @@ import {
   LOGIN_EP_URL,
   REGISTER_URL,
   HOST_URL,
+  TWO_FACTOR_AUTH_VALIDATE_URL,
 } from '../../shared/urls';
 import './LoginPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
@@ -38,10 +39,14 @@ export default function LoginPage() {
       const authUser = await authApi.authControllerLoginLocalUser({
         loginUserDto: { username, password },
       });
-      const { gOwner, gAdmin, gBanned } =
-        await authApi.authControllerRetrieveAuthUserWithRoles();
-      setAuthUser({ ...authUser, gOwner, gAdmin, gBanned });
-      navigate(DEFAULT_LOGIN_REDIRECT_URL, { replace: true });
+      if (authUser.isTwoFactorAuthenticationEnabled) {
+        navigate(TWO_FACTOR_AUTH_VALIDATE_URL, { replace: true });
+      } else {
+        const { gOwner, gAdmin, gBanned } =
+          await authApi.authControllerRetrieveAuthUserWithRoles();
+        setAuthUser({ ...authUser, gOwner, gAdmin, gBanned });
+        navigate(DEFAULT_LOGIN_REDIRECT_URL, { replace: true });
+      }
     } catch (error) {
       let errMessage = '';
       if (error instanceof ResponseError) {

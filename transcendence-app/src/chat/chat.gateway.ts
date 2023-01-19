@@ -25,6 +25,7 @@ import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { Action } from '../shared/enums/action.enum';
+import { instanceToPlain } from 'class-transformer';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -111,7 +112,9 @@ export class ChatGateway {
       content,
     });
     if (message) {
-      this.server.to(chatroomId).emit('chatroomMessage', { ...message, user });
+      this.server
+        .to(chatroomId)
+        .emit('chatroomMessage', { ...message, user: instanceToPlain(user) });
     } else {
       throw new WsException(
         'The message could not be sent. Service Unavailable',

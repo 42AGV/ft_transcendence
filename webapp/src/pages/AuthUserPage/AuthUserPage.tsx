@@ -1,5 +1,6 @@
 import {
   AvatarPageTemplate,
+  ButtonProps,
   ButtonVariant,
   IconVariant,
   Row,
@@ -10,10 +11,46 @@ import {
 } from '../../shared/components';
 import './AuthUserPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { AVATAR_EP_URL, EDIT_USER_URL } from '../../shared/urls';
+import {
+  AVATAR_EP_URL,
+  EDIT_USER_URL,
+  TWO_FACTOR_AUTH_ENABLE_URL,
+} from '../../shared/urls';
+import { authApi } from '../../shared/services/ApiService';
+import { useNavigate } from 'react-router-dom';
+import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 export default function AuthUserPage() {
-  const { authUser, logout, isLoading: isAuthUserLoading } = useAuth();
+  const {
+    authUser,
+    setAuthUser,
+    logout,
+    isLoading: isAuthUserLoading,
+  } = useAuth();
+  const navigate = useNavigate();
+  const enableTwoFactorAuthButtonProps: ButtonProps = {
+    variant: ButtonVariant.SUBMIT,
+    onClick: () => navigate(TWO_FACTOR_AUTH_ENABLE_URL),
+    children: 'Enable 2FA',
+  };
+  const { warn } = useNotificationContext();
+  const disableTwoFactorHandler = async () => {
+    if (!authUser) {
+      return;
+    }
+    try {
+      await authApi.authControllerDisableTwoFactorAuthentication();
+      setAuthUser({ ...authUser, isTwoFactorAuthenticationEnabled: false });
+    } catch (error) {
+      warn('Service Unavailable');
+    }
+  };
+  const disableTwoFactorAuthButtonProps: ButtonProps = {
+    variant: ButtonVariant.WARNING,
+    onClick: disableTwoFactorHandler,
+    children: 'Disable 2FA',
+  };
+
   return (
     <div className="auth-user-page">
       <AvatarPageTemplate
@@ -32,6 +69,11 @@ export default function AuthUserPage() {
           onClick: logout,
           children: 'Logout',
         }}
+        secondaryButton={
+          authUser?.isTwoFactorAuthenticationEnabled
+            ? disableTwoFactorAuthButtonProps
+            : enableTwoFactorAuthButtonProps
+        }
         isNotFound={authUser === null}
       >
         <>

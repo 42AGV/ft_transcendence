@@ -28,6 +28,8 @@ import {
   FriendsPage,
   EditChatroomAvatarPage,
   AdminPage,
+  EnableTwoFactorAuthPage,
+  ValidateTwoFactorAuthPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -50,6 +52,8 @@ import {
   PLAY_GAME_TRAIN_URL,
   PLAY_GAME_URL,
   ADMIN_URL,
+  TWO_FACTOR_AUTH_ENABLE_URL,
+  TWO_FACTOR_AUTH_VALIDATE_URL,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -250,6 +254,18 @@ function AppRoutes() {
             <AdminPage />
           </RequireAuth>
         }
+      />
+      <Route
+        path={TWO_FACTOR_AUTH_ENABLE_URL}
+        element={
+          <RequireAuth>
+            <EnableTwoFactorAuthPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={TWO_FACTOR_AUTH_VALIDATE_URL}
+        element={<ValidateTwoFactorAuthPage />}
       />
       {developmentMode && (
         <Route path={COMPONENTS_BOOK_URL} element={<ComponentsBookPage />} />
