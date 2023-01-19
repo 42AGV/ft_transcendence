@@ -87,7 +87,7 @@ export default function EditChatroomMemberPage() {
     } catch (error: unknown) {
       handleRequestError(error, 'Could not kick chatroom member', warn);
     }
-  }, [overridePermissions, chatroomId, destUser, navigate, warn]);
+  }, [overridePermissions, chatroomId, destUser, navigate, warn, notify]);
 
   const button: ButtonProps | undefined = canEdit
     ? {
