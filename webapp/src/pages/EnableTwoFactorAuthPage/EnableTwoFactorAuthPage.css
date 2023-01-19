@@ -1,0 +1,28 @@
+.enable-two-factor-auth-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  gap: 8rem;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    'header'
+    'main'
+    '...';
+}
+
+.enable-two-factor-auth-page .header {
+  grid-area: 'header';
+}
+
+.enable-two-factor-auth-page-main {
+  grid-area: 'main';
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+}
