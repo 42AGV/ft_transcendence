@@ -11,7 +11,6 @@ import {
   Post,
   Redirect,
   Req,
-  Request as GetRequest,
   UnprocessableEntityException,
   UseGuards,
   Res,
@@ -75,8 +74,10 @@ export class AuthController {
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   @UseGuards(OAuth42Guard)
   @Redirect('/')
-  oauth42Login() {
-    // Guard implementation
+  oauth42Login(@GetUser() user: User) {
+    if (user.isTwoFactorAuthenticationEnabled) {
+      return { url: '/login/2fa' };
+    }
   }
 
   @Delete('logout')
@@ -85,7 +86,7 @@ export class AuthController {
   @ApiOkResponse({ description: 'Logout successfully' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   logout(
-    @GetRequest() req: Request,
+    @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
   ) {
@@ -217,20 +218,20 @@ export class AuthController {
     );
   }
 
-  @Post('2fa/generate')
+  @Get('2fa/qrcode')
   @UseGuards(TwoFactorAuthenticatedGuard)
   @Header('Content-Type', 'image/png')
   @Header('Content-Disposition', 'inline')
   @ApiProduces('image/png')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     schema: {
       type: 'file',
       format: 'binary',
     },
-    description: 'Generate a QR code for TOTP 2FA',
+    description: 'Display a QR code for TOTP 2FA',
   })
   @ApiForbiddenResponse({ description: 'Forbidden' })
-  async twoFactorGenerate(@Res() response: Response, @GetUser() user: User) {
+  async twoFactorQrCode(@Res() response: Response, @GetUser() user: User) {
     const { otpAuthUrl } =
       await this.authService.generateTwoFactorAuthenticationSecret(user);
     return this.authService.pipeQrCodeStream(response, otpAuthUrl);
@@ -245,17 +246,19 @@ export class AuthController {
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async enableTwoFactorAuthentication(
     @Res({ passthrough: true }) response: Response,
-    @GetUser('id') userId: string,
+    @GetUser() user: User,
     @Body() { code }: TwoFactorAuthenticationCodeDto,
   ) {
-    const isValidCode =
-      await this.authService.isTwoFactorAuthenticationCodeValid(code, userId);
+    const isValidCode = this.authService.isTwoFactorAuthenticationCodeValid(
+      code,
+      user,
+    );
 
     if (!isValidCode) {
       throw new BadRequestException('Wrong authentication code');
     }
     const updatedUser = await this.userService.enableTwoFactorAuthentication(
-      userId,
+      user.id,
     );
     if (!updatedUser) {
       throw new ServiceUnavailableException();
@@ -267,7 +270,7 @@ export class AuthController {
     );
   }
 
-  @Delete('2fa')
+  @Delete('2fa/disable')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(TwoFactorAuthenticatedGuard)
   @ApiNoContentResponse({ description: 'Disable 2FA' })
@@ -295,17 +298,19 @@ export class AuthController {
   @Post('2fa/validate')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthenticatedGuard)
-  @ApiOkResponse({ description: 'Validate 2FA' })
+  @ApiOkResponse({ description: 'Validate 2FA', type: User })
   @ApiBadRequestResponse({ description: 'Wrong authentication code' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
-  async validateTwoFactorAuthentication(
+  validateTwoFactorAuthentication(
     @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
     @Body()
     { code }: TwoFactorAuthenticationCodeDto,
-  ) {
-    const isValidCode =
-      await this.authService.isTwoFactorAuthenticationCodeValid(code, user.id);
+  ): User {
+    const isValidCode = this.authService.isTwoFactorAuthenticationCodeValid(
+      code,
+      user,
+    );
     if (!isValidCode) {
       throw new BadRequestException('Wrong authentication code');
     }

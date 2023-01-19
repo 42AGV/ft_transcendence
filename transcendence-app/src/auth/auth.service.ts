@@ -70,7 +70,8 @@ export class AuthService {
   }
 
   async generateTwoFactorAuthenticationSecret(user: User) {
-    const secret = authenticator.generateSecret();
+    const secret =
+      user.twoFactorAuthenticationSecret || authenticator.generateSecret();
     const otpAuthUrl = authenticator.keyuri(
       user.email,
       TWO_FACTOR_AUTHENTICATION_APP_NAME,
@@ -84,11 +85,10 @@ export class AuthService {
     return toFileStream(stream, otpAuthUrl);
   }
 
-  async isTwoFactorAuthenticationCodeValid(
+  isTwoFactorAuthenticationCodeValid(
     twoFactorAuthenticationCode: string,
-    userId: string,
+    user: User,
   ) {
-    const user = await this.userService.retrieveUserWithId(userId);
     if (!user?.twoFactorAuthenticationSecret) {
       return false;
     }
