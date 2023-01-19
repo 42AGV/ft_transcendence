@@ -6,7 +6,7 @@ import { useNotificationContext } from '../../../shared/context/NotificationCont
 import { ChatroomMember } from '../../../shared/generated/models/ChatroomMember';
 import { Chatroom } from '../../../shared/generated/models/Chatroom';
 import { User } from '../../../shared/generated/models/User';
-import { handleRequestError } from '../../../shared/utils';
+import { handleRequestError } from '../../../shared/utils/HandleRequestError';
 
 type CanEditParams = {
   chatroom: Chatroom | null;

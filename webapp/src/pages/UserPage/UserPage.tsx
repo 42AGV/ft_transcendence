@@ -25,7 +25,7 @@ import {
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
-import { handleRequestError } from '../../shared/utils';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function UserPage() {
   const { warn } = useNotificationContext();

@@ -11,7 +11,7 @@ import { UpdateUserDto } from '../../shared/generated';
 import { usersApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { handleRequestError } from '../../shared/utils';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function EditUserPasswordPage() {
   const { authUser, isLoading } = useAuth();
