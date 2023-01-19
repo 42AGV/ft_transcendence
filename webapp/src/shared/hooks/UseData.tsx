@@ -15,7 +15,7 @@ export function useData<T>(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const loggerLocal = React.useCallback((msg: any) => console.log(msg), []);
-  const logger = loggerParam ? loggerParam : loggerLocal;
+  const logger = loggerParam ?? loggerLocal;
 
   useEffect(() => {
     let ignore = false;
