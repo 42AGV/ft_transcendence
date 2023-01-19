@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
-import { instanceToPlain } from 'class-transformer';
 import { User } from '../user/infrastructure/db/user.entity';
 import { UserService } from '../user/user.service';
 
@@ -16,6 +15,6 @@ export class SessionSerializer extends PassportSerializer {
 
   async deserializeUser(userId: string, done: CallableFunction) {
     const user = await this.userService.retrieveUserWithId(userId);
-    done(null, instanceToPlain(user));
+    done(null, user);
   }
 }

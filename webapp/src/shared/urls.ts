@@ -21,6 +21,8 @@ export const CREATE_CHATROOM_URL = `${CHATROOM_URL}/createchatroom`;
 export const EDIT_CHATROOM_AVATAR_URL = `${CHATROOM_URL}/:chatroomId/edit/avatar`;
 export const COMPONENTS_BOOK_URL = '/components-book';
 export const DEFAULT_LOGIN_REDIRECT_URL = `${FRIENDS_URL}`;
+export const TWO_FACTOR_AUTH_ENABLE_URL = `${USER_ME_URL}/2fa`;
+export const TWO_FACTOR_AUTH_VALIDATE_URL = `${LOGIN_OPTIONS_URL}/2fa`;
 
 // transcendence-app
 const API_ENDPOINT_URL = '/api/v1';
@@ -29,6 +31,7 @@ export const LOGOUT_EP_URL = `${API_ENDPOINT_URL}/auth/logout`;
 export const USERS_EP_URL = `${API_ENDPOINT_URL}${USERS_URL}`;
 export const CHATROOM_EP_URL = `${API_ENDPOINT_URL}/chat/room`;
 export const AVATAR_EP_URL = `${API_ENDPOINT_URL}/avatar`;
+export const TWO_FACTOR_AUTH_QR_EP_URL = `${API_ENDPOINT_URL}/auth/2fa/qrcode`;
 
 // others
 export const WILDCARD_AVATAR_URL = 'https://i.pravatar.cc/1000';
