@@ -1,14 +1,13 @@
 import * as React from 'react';
 
 import socket from '../../socket';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import { CANVAS_WIDTH, CANVAS_HEIGHT, GameCommand } from 'pong-engine';
 import {
   useGameControls,
   useGameAnimation,
   useClientGameEngine,
 } from './hooks';
 import { GameStateContextProvider } from './context';
-import { GameCommand } from './models';
 
 import './Game.css';
 

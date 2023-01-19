@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "pong-engine",
   "version": "1.0.0",
   "description": "Pong engine with models, physics and constants",

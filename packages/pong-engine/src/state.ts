@@ -10,6 +10,7 @@ import {
 import {
   GameBall,
   GamePaddle,
+  GameState,
   GamePaddleMoveCommand,
   GamePaddleDragCommand,
 } from './models';
@@ -20,12 +21,6 @@ import {
   PADDLE_HEIGHT,
   BALL_RADIUS,
 } from './constants';
-
-export type GameState = {
-  ball: GameBall;
-  paddle: GamePaddle;
-  score: number;
-};
 
 type Act<Type extends string, Payload extends {}> = {
   type: Type;
