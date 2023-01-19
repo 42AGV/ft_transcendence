@@ -1,10 +1,10 @@
 {
-  "name": "@transcendence/pong-engine",
+  "name": "pong-engine",
   "version": "1.0.0",
   "description": "Pong engine with models, physics and constants",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf ./lib && tsc ./src/index.ts"
+    "build": "rm -rf ./lib && tsc"
   },
   "author": "",
   "license": "ISC",
