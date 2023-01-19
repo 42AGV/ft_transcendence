@@ -14,7 +14,7 @@ import { CreateChatroomDto } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
-import { handleRequestError } from '../../shared/hooks/HandleRequestError';
+import { handleRequestError } from '../../shared/utils';
 
 export default function CreateChatroomPage() {
   const { warn, notify } = useNotificationContext();

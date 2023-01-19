@@ -24,7 +24,7 @@ import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import './EditChatroomDetailsPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
-import { handleRequestError } from '../../shared/hooks/HandleRequestError';
+import { handleRequestError } from '../../shared/utils';
 
 export default function EditChatroomDetailsPage() {
   const { pathname } = useLocation();

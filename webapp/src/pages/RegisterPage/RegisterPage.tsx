@@ -22,7 +22,7 @@ import {
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 
 import './RegisterPage.css';
-import { handleRequestError } from '../../shared/hooks/HandleRequestError';
+import { handleRequestError } from '../../shared/utils';
 
 export default function RegisterPage() {
   const initialFormValues: RegisterUserDto = {

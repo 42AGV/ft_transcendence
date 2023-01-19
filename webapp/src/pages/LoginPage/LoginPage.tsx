@@ -22,7 +22,7 @@ import {
 import './LoginPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import { handleRequestError } from '../../shared/hooks/HandleRequestError';
+import { handleRequestError } from '../../shared/utils';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');

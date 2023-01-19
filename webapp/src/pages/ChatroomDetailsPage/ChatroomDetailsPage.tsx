@@ -36,7 +36,7 @@ import { Query } from '../../shared/types';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
-import { handleRequestError } from '../../shared/hooks/HandleRequestError';
+import { handleRequestError } from '../../shared/utils';
 
 export default function ChatroomDetailsPage() {
   const { authUser, isLoading } = useAuth();

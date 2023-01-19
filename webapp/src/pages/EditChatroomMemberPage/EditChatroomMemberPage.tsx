@@ -27,7 +27,7 @@ import ToggleSwitchSet, { CanEdit } from './components/ToggleSwitchSet';
 import Text from '../../shared/components/Text/Text';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
-import { handleRequestError } from '../../shared/hooks/HandleRequestError';
+import { handleRequestError } from '../../shared/utils';
 
 export default function EditChatroomMemberPage() {
   const { chatroomId, username } = useParams();

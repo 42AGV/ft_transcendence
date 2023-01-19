@@ -14,7 +14,7 @@ import { useData } from '../../shared/hooks/UseData';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { chatApi } from '../../shared/services/ApiService';
 import { AVATAR_EP_URL, CHATROOM_URL } from '../../shared/urls';
-import { handleRequestError } from '../../shared/hooks/HandleRequestError';
+import { handleRequestError } from '../../shared/utils';
 
 export default function JoinChatroomPage() {
   const { chatroomId } = useParams();

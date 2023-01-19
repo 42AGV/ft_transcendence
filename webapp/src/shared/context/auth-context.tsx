@@ -17,7 +17,7 @@ import { authApi } from '../services/ApiService';
 import socket from '../socket';
 import { HOST_URL } from '../urls';
 import { useNotificationContext } from './NotificationContext';
-import { handleRequestError } from '../hooks/HandleRequestError';
+import { handleRequestError } from '../utils';
 
 export interface AuthContextType {
   isLoggedIn: boolean;
