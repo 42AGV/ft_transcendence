@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "name": "ft_transcendence",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "webapp",
+    "transcendence-app"
+  ],
+  "scripts": {
+    "build-packages": "npm run build -w packages/pong-engine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/42AGV/ft_transcendence.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/42AGV/ft_transcendence/issues"
+  },
+  "homepage": "https://github.com/42AGV/ft_transcendence#readme"
+}

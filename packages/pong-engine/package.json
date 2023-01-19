@@ -20,16 +20,6 @@
   "dependencies": {
     "typescript": "^4.9.4"
   },
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "main": "./lib/index.js"
-    },
-    "./state": {
-      "types": "./lib/state.d.ts",
-      "main": "./lib/state.js"
-    }
-  },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts"
 }
