@@ -64,10 +64,18 @@ export default function ToggleSwitchSet({
       banned: canEditParams.destCrMember.banned,
     });
   }, [canEditParams.destCrMember]);
-  const { warn } = useNotificationContext();
+  const { notify, warn } = useNotificationContext();
 
   const [canEdit, isAuthOwner, isGlobalAdmin] = CanEdit(canEditParams);
 
+  const dtoToKey = (
+    dto: UpdateChatroomMemberDto,
+  ): keyof UpdateChatroomMemberDto => {
+    if (dto.admin !== undefined) return 'admin';
+    if (dto.muted !== undefined) return 'muted';
+    if (dto.banned !== undefined) return 'banned';
+    throw new Error('Bad dto');
+  };
   const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
     return async () => {
       if (isLoading || !canEdit) {
@@ -86,6 +94,16 @@ export default function ToggleSwitchSet({
           updateChatroomMemberDto: dto,
         });
         setUpdateChatroomMemberDto({ ...oldUpdateChatroomMember, ...dto });
+        const { username } = canEditParams.destUser!;
+        try {
+          notify(
+            `${username} chatroom member successfully set to ${dtoToKey(
+              dto,
+            )} = ${dto.admin ?? dto.banned ?? dto.muted}`,
+          );
+        } catch {
+          notify(`${username} chatroom member successfully updated`);
+        }
       } catch (error: unknown) {
         if (error instanceof ResponseError) {
           const responseBody = await error.response.json();
