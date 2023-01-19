@@ -16,7 +16,7 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { authApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
-import { ResponseError } from '../../shared/generated';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function EnableTwoFactorAuthPage() {
   const { authUser, setAuthUser, isLoading } = useAuth();
@@ -39,18 +39,7 @@ export default function EnableTwoFactorAuthPage() {
       notify('You enabled 2FA');
       navigate(USER_ME_URL, { replace: true });
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not enable 2FA');
-      }
+      handleRequestError(error, 'Could not enable 2FA', warn);
     }
   };
 

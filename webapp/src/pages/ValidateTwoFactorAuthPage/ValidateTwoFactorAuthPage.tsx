@@ -13,8 +13,8 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { authApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
-import { ResponseError } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
+import { handleRequestError } from '../../shared/utils/HandleRequestError';
 
 export default function ValidateTwoFactorAuthPage() {
   const { goBack } = useNavigation();
@@ -36,18 +36,7 @@ export default function ValidateTwoFactorAuthPage() {
       setAuthUser({ ...authUser, gOwner, gAdmin, gBanned });
       navigate(DEFAULT_LOGIN_REDIRECT_URL, { replace: true });
     } catch (error: unknown) {
-      if (error instanceof ResponseError) {
-        const responseBody = await error.response.json();
-        if (responseBody.message) {
-          warn(responseBody.message);
-        } else {
-          warn(error.response.statusText);
-        }
-      } else if (error instanceof Error) {
-        warn(error.message);
-      } else {
-        warn('Could not validate 2FA');
-      }
+      handleRequestError(error, 'Could not validate 2FA', warn);
     }
   };
 
