@@ -75,7 +75,7 @@ export default function UserPage() {
           await usersApi.userControllerUnfollowUser({ userId: user.id });
         }
       } catch (error) {
-        handleRequestError(error, 'Could not toggle friends', warn);
+        handleRequestError(error, 'Could not toggle followship', warn);
       }
     }
   };
