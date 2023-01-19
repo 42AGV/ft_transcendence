@@ -1,6 +1,6 @@
 import {
   AvatarPageTemplate,
-  Button,
+  ButtonProps,
   ButtonVariant,
   IconVariant,
   Row,
@@ -28,14 +28,11 @@ export default function AuthUserPage() {
     isLoading: isAuthUserLoading,
   } = useAuth();
   const navigate = useNavigate();
-  const enableTwoFactorAuthButton = (
-    <Button
-      variant={ButtonVariant.SUBMIT}
-      onClick={() => navigate(TWO_FACTOR_AUTH_ENABLE_URL)}
-    >
-      Enable 2FA
-    </Button>
-  );
+  const enableTwoFactorAuthButtonProps: ButtonProps = {
+    variant: ButtonVariant.SUBMIT,
+    onClick: () => navigate(TWO_FACTOR_AUTH_ENABLE_URL),
+    children: 'Enable 2FA',
+  };
   const { warn } = useNotificationContext();
   const disableTwoFactorHandler = async () => {
     if (!authUser) {
@@ -48,11 +45,11 @@ export default function AuthUserPage() {
       warn('Service Unavailable');
     }
   };
-  const disableTwoFactorAuthButton = (
-    <Button variant={ButtonVariant.WARNING} onClick={disableTwoFactorHandler}>
-      Disable 2FA
-    </Button>
-  );
+  const disableTwoFactorAuthButtonProps: ButtonProps = {
+    variant: ButtonVariant.WARNING,
+    onClick: disableTwoFactorHandler,
+    children: 'Disable 2FA',
+  };
 
   return (
     <div className="auth-user-page">
@@ -72,6 +69,11 @@ export default function AuthUserPage() {
           onClick: logout,
           children: 'Logout',
         }}
+        secondaryButton={
+          authUser?.isTwoFactorAuthenticationEnabled
+            ? disableTwoFactorAuthButtonProps
+            : enableTwoFactorAuthButtonProps
+        }
         isNotFound={authUser === null}
       >
         <>
@@ -94,9 +96,6 @@ export default function AuthUserPage() {
             url={EDIT_USER_URL}
             title="Edit profile"
           />
-          {authUser?.isTwoFactorAuthenticationEnabled
-            ? disableTwoFactorAuthButton
-            : enableTwoFactorAuthButton}
         </>
       </AvatarPageTemplate>
     </div>
