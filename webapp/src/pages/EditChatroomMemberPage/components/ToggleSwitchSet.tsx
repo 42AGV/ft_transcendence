@@ -96,10 +96,9 @@ export default function ToggleSwitchSet({
         setUpdateChatroomMemberDto({ ...oldUpdateChatroomMember, ...dto });
         const { username } = canEditParams.destUser!;
         try {
+          const key = dtoToKey(dto);
           notify(
-            `${username} chatroom member successfully set to ${dtoToKey(
-              dto,
-            )} = ${dto.admin ?? dto.banned ?? dto.muted}`,
+            `${username} chatroom member successfully set to ${key} = ${dto[key]}`,
           );
         } catch {
           notify(`${username} chatroom member successfully updated`);
