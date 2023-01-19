@@ -98,7 +98,7 @@ export default function EditChatroomMemberPage() {
         warn('Could not remove the chat member');
       }
     }
-  }, [overridePermissions, chatroomId, destUser, navigate, warn]);
+  }, [overridePermissions, chatroomId, destUser, navigate, warn, notify]);
 
   const button: ButtonProps | undefined = canEdit
     ? {
