@@ -98,7 +98,9 @@ export default function ToggleSwitchSet({
         try {
           const key = dtoToKey(dto);
           notify(
-            `${username} chatroom member successfully set to ${key} = ${dto[key]}`,
+            dto[key]
+              ? `Added ${key} role to ${username}`
+              : `Removed ${key} role from ${username}`,
           );
         } catch {
           notify(`${username} chatroom member successfully updated`);
