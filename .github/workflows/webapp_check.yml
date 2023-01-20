@@ -16,16 +16,18 @@ jobs:
           node-version: "18.12.1"
           cache: "npm"
           cache-dependency-path: |
-            webapp/package-lock.json
+            ./package-lock.json
       - name: Install dependencies
-        run: npm install --prefix webapp
+        run: npm install -w webapp
+      - name: Build packages
+        run: npm run build-packages
       - name: Generate code
         run: make gen
       - name: Compile
-        run: npm run build --prefix webapp
+        run: npm run build -w webapp
       - name: Check style
-        run: npm run style --prefix webapp
+        run: npm run style -w webapp
       - name: Lint
-        run: npm run lint --prefix webapp
+        run: npm run lint -w webapp
       - name: Test
-        run: npm run test-ci --prefix webapp
+        run: npm run test-ci -w webapp

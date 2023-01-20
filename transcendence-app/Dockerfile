@@ -10,7 +10,7 @@ RUN apk add --no-cache dumb-init \
   && mkdir -p ${TRANSCENDENCE_APP_DATA} \
   && chown -R node:node ${TRANSCENDENCE_APP_DATA}
 WORKDIR  /service
-COPY ["package.json", "package-lock.json", "."]
+COPY ["package.json", "package-lock.json", "./"]
 COPY ["packages/pong-engine", "packages/pong-engine"]
 COPY ["transcendence-app", "transcendence-app"]
 RUN npm clean-install && npm run build-packages
@@ -27,7 +27,7 @@ RUN apk add --no-cache dumb-init \
   && mkdir -p ${TRANSCENDENCE_APP_DATA} \
   && chown -R node:node ${TRANSCENDENCE_APP_DATA}
 WORKDIR  /service
-COPY ["package.json", "package-lock.json", "."]
+COPY ["package.json", "package-lock.json", "./"]
 COPY --from=development --chown=node:node /service/transcendence-app/dist ./transcendence-app/dist
 COPY --from=development --chown=node:node /service/packages ./packages
 RUN npm clean-install --omit=dev

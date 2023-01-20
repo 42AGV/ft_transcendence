@@ -16,16 +16,18 @@ jobs:
           node-version: "18.12.1"
           cache: "npm"
           cache-dependency-path: |
-            transcendence-app/package-lock.json
+            ./package-lock.json
       - name: Install dependencies
-        run: npm install --prefix transcendence-app
+        run: npm install -w transcendence-app
+      - name: Build packages
+        run: npm run build-packages
       - name: Compile
-        run: npm run build --prefix transcendence-app
+        run: npm run build -w transcendence-app
       - name: Check style
-        run: npm run style --prefix transcendence-app
+        run: npm run style -w transcendence-app
       - name: Lint
-        run: npm run lint --prefix transcendence-app
+        run: npm run lint -w transcendence-app
       - name: Test
-        run: npm run test --prefix transcendence-app
+        run: npm run test -w transcendence-app
       - name: Test e2e
-        run: npm run test:e2e --prefix transcendence-app
+        run: npm run test:e2e -w transcendence-app

@@ -6,7 +6,7 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS development
 WORKDIR /service
 ENV NODE_ENV=development
 RUN apk add --no-cache dumb-init
-COPY ["package.json", "package-lock.json", "."]
+COPY ["package.json", "package-lock.json", "./"]
 COPY ["packages/pong-engine", "packages/pong-engine"]
 COPY ["webapp", "webapp"]
 RUN npm clean-install && npm run build-packages
@@ -18,7 +18,7 @@ WORKDIR /service
 ENV NODE_ENV=production
 ARG REACT_APP_NAME
 ENV REACT_APP_NAME=${REACT_APP_NAME}
-COPY ["package.json", "package-lock.json", "."]
+COPY ["package.json", "package-lock.json", "./"]
 COPY ["packages/pong-engine", "packages/pong-engine"]
 COPY ["webapp", "webapp"]
 RUN npm clean-install --omit=dev && npm run build-packages

@@ -23,12 +23,5 @@
   "bugs": {
     "url": "https://github.com/42AGV/ft_transcendence/issues"
   },
-  "homepage": "https://github.com/42AGV/ft_transcendence#readme",
-  "devDependencies": {
-    "@types/jest": "^29.2.4",
-    "@types/node": "^18.11.11",
-    "eslint": "^8.29.0",
-    "prettier": "2.8.1",
-    "typescript": "^4.9.4"
-  }
+  "homepage": "https://github.com/42AGV/ft_transcendence#readme"
 }
