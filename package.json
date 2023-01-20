@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "build-packages": "npm run build -w packages/pong-engine",
-    "start-webapp": "npm run start -w webapp"
+    "start-webapp": "npm run start -w webapp",
+    "start-app-dev": "npm run start:dev -w transcendence-app",
+    "build-swagger-api": "npm run swagger:gen -w transcendence-app"
   },
   "repository": {
     "type": "git",

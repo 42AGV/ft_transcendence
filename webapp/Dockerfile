@@ -11,7 +11,7 @@ COPY ["packages/pong-engine", "packages/pong-engine"]
 COPY ["webapp", "webapp"]
 RUN npm clean-install
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["npm", "start-webapp"]
+CMD ["npm", "run", "start-webapp"]
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
 WORKDIR /service
