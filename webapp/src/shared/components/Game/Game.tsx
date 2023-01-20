@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import socket from '../../socket';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, GameCommand } from 'pong-engine';
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
 import {
   useGameControls,
   useGameAnimation,
@@ -16,19 +16,10 @@ const GAME_SERVER_MESSAGE = 'gameServerMessage';
 const Game = () => {
   const { renderFrame, deltaTimeRef } = useGameAnimation();
   const { runGameFrame } = useClientGameEngine();
+  useGameControls();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const requestFrameRef = React.useRef<number | null>(null);
   const [score, setScore] = React.useState<number>(0);
-  const sendGameCommand = React.useCallback(
-    (command: GameCommand) =>
-      socket.emit(GAME_SERVER_MESSAGE, {
-        id: 1,
-        command,
-      }),
-    [],
-  );
-
-  useGameControls(sendGameCommand);
 
   const gameLoop = React.useCallback(() => {
     const canvasContext = canvasRef.current?.getContext('2d');
