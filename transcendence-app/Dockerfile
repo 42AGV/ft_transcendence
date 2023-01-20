@@ -13,7 +13,7 @@ WORKDIR  /service
 COPY ["package.json", "package-lock.json", "."]
 COPY ["packages/pong-engine", "packages/pong-engine"]
 COPY ["transcendence-app", "transcendence-app"]
-RUN npm clean-install
+RUN npm clean-install && npm run build-packages
 RUN npm run build -w transcendence-app
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
@@ -28,12 +28,13 @@ RUN apk add --no-cache dumb-init \
   && chown -R node:node ${TRANSCENDENCE_APP_DATA}
 WORKDIR  /service
 COPY ["package.json", "package-lock.json", "."]
+COPY --from=development --chown=node:node /service/transcendence-app/dist ./transcendence-app/dist
+COPY --from=development --chown=node:node /service/packages ./packages
 RUN npm clean-install --omit=dev
-COPY --from=development --chown=node:node /service/transcendence-app/dist ./dist
 USER node
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["node", "dist/src/main"]
+CMD ["node", "transcendence-app/dist/src/main"]
 
 FROM development AS swagger
 ENTRYPOINT ["npm", "run", "build-swagger-api"]

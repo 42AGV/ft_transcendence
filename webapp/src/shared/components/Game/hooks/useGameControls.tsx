@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useGameStateContext } from '../context';
-import { GameCommand } from '../models';
+import { GameCommand } from 'pong-engine';
 import { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 

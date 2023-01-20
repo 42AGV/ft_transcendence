@@ -9,7 +9,7 @@ RUN apk add --no-cache dumb-init
 COPY ["package.json", "package-lock.json", "."]
 COPY ["packages/pong-engine", "packages/pong-engine"]
 COPY ["webapp", "webapp"]
-RUN npm clean-install
+RUN npm clean-install && npm run build-packages
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["npm", "run", "start-webapp"]
 
@@ -21,7 +21,8 @@ ENV REACT_APP_NAME=${REACT_APP_NAME}
 COPY ["package.json", "package-lock.json", "."]
 COPY ["packages/pong-engine", "packages/pong-engine"]
 COPY ["webapp", "webapp"]
-RUN npm clean-install --omit=dev
+RUN npm clean-install --omit=dev && npm run build-packages
+RUN npm run build -w webapp
 
 FROM nginx:${NGINX_VERSION}-alpine AS production
 COPY --from=builder --chown=nginx:nginx /service/webapp/build /usr/share/nginx/html

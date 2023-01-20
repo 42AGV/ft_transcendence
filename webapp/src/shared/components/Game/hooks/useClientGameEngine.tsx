@@ -5,8 +5,9 @@ import {
   BRICK_WIDTH,
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
-} from '../constants';
-import { GameBall, GameState } from '../models';
+  GameBall,
+  GameState,
+} from 'pong-engine';
 import { useGameStateContext } from '../context';
 
 const useClientGameEngine = () => {
