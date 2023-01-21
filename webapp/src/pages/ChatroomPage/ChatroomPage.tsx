@@ -12,12 +12,10 @@ import {
 } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
-import {
-  ChatMessagingTemplate,
-  ChatMessagingLoading,
-} from '../../shared/components';
+import { ChatMessagingTemplate } from '../../shared/components';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { ChatMessage } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
+import { LoadingPage } from '../index';
 
 export default function ChatroomPage() {
   const { chatroomId } = useParams();
@@ -117,7 +115,7 @@ function Chatroom({
   }, [warn, enableNotifications]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
-    return <ChatMessagingLoading />;
+    return <LoadingPage />;
   }
 
   if (!chatroom) {

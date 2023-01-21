@@ -5,7 +5,6 @@ import {
   EditableAvatar,
   Header,
   IconVariant,
-  Loading,
   Row,
 } from '../..';
 import React, { useCallback, useState } from 'react';
@@ -17,6 +16,7 @@ import {
 import { useNavigation } from '../../../hooks/UseNavigation';
 import NotFoundPage from '../../../../pages/NotFoundPage/NotFoundPage';
 import { Avatar } from '../../../types';
+import { LoadingPage } from '../../../../pages';
 
 type ImgData = {
   imgName: string | null;
@@ -85,13 +85,7 @@ export default function EditAvatarPage<T extends Avatar>({
   };
 
   if (isLoading) {
-    return (
-      <div className="edit-avatar-page">
-        <div className="edit-avatar-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (!model) {

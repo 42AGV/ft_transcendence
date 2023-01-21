@@ -4,7 +4,6 @@ import {
   IconVariant,
   Input,
   InputVariant,
-  Loading,
   ToggleSwitch,
 } from '../../shared/components';
 import {
@@ -25,6 +24,7 @@ import './EditChatroomDetailsPage.css';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
+import { LoadingPage } from '../index';
 
 export default function EditChatroomDetailsPage() {
   const { pathname } = useLocation();
@@ -179,13 +179,7 @@ export default function EditChatroomDetailsPage() {
   };
 
   if (isLoading || isAuthCrMemberLoading) {
-    return (
-      <div className="edit-chatroom-details">
-        <div className="edit-chatroom-details-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (

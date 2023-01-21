@@ -13,13 +13,6 @@
   grid-template-columns: 1fr;
 }
 
-.chat-template-loading {
-  grid-column: 1/-1;
-  grid-row: 1/-1;
-  align-self: center;
-  justify-self: center;
-}
-
 .chat-template-header {
   grid-area: header;
 }

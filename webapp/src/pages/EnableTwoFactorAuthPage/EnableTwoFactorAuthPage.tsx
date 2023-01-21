@@ -7,7 +7,6 @@ import {
   IconVariant,
   Input,
   InputVariant,
-  Loading,
 } from '../../shared/components';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { TWO_FACTOR_AUTH_QR_EP_URL, USER_ME_URL } from '../../shared/urls';
@@ -17,6 +16,7 @@ import { authApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
+import { LoadingPage } from '../index';
 
 export default function EnableTwoFactorAuthPage() {
   const { authUser, setAuthUser, isLoading } = useAuth();
@@ -44,7 +44,7 @@ export default function EnableTwoFactorAuthPage() {
   };
 
   if (isLoading) {
-    return <Loading />;
+    return <LoadingPage />;
   }
 
   if (!authUser || authUser.isTwoFactorAuthenticationEnabled) {

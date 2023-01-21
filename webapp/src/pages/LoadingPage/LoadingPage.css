@@ -1,0 +1,16 @@
+.loading-page {
+  margin: 0;
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.loading-page .loading {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+  align-self: center;
+  justify-self: center;
+}
