@@ -58,47 +58,44 @@ export default function ToggleSwitchSet({
     useState<UpdateChatroomMemberDto | null>(null);
   useEffect(() => {
     if (!canEditParams.destCrMember) return;
+    const { admin, muted, banned } = canEditParams.destCrMember;
     setUpdateChatroomMemberDto({
-      admin: canEditParams.destCrMember.admin,
-      muted: canEditParams.destCrMember.muted,
-      banned: canEditParams.destCrMember.banned,
+      admin,
+      muted,
+      banned,
     });
   }, [canEditParams.destCrMember]);
   const { notify, warn } = useNotificationContext();
 
   const [canEdit, isAuthOwner, isGlobalAdmin] = CanEdit(canEditParams);
 
-  const dtoToKey = (
-    dto: UpdateChatroomMemberDto,
-  ): keyof UpdateChatroomMemberDto => {
-    if (dto.admin !== undefined) return 'admin';
-    if (dto.muted !== undefined) return 'muted';
-    if (dto.banned !== undefined) return 'banned';
-    throw new Error('Bad dto');
-  };
-  const genericOnToggle = (dto: UpdateChatroomMemberDto): (() => void) => {
+  const genericOnToggle = (
+    key: keyof UpdateChatroomMemberDto,
+  ): (() => void) => {
     return async () => {
       if (isLoading || !canEdit) {
         if (!canEdit) warn("You can't modify this setting");
         return;
       }
       try {
-        if (!isAuthOwner && dto.admin !== undefined && !isGlobalAdmin) {
+        if (!isAuthOwner && key === 'admin' && !isGlobalAdmin) {
           warn('You cannot make new admins');
           return;
         }
-        const oldUpdateChatroomMember = updateChatroomMemberDto;
+        const newValue = !updateChatroomMemberDto?.[key] ?? false;
         await chatApi.chatControllerUpdateChatroomMember({
           chatroomId: chatroomId,
           userId: canEditParams.destUser!.id,
-          updateChatroomMemberDto: dto,
+          updateChatroomMemberDto: { [key]: newValue },
         });
-        setUpdateChatroomMemberDto({ ...oldUpdateChatroomMember, ...dto });
+        setUpdateChatroomMemberDto({
+          ...updateChatroomMemberDto,
+          [key]: newValue,
+        });
         const { username } = canEditParams.destUser!;
         try {
-          const key = dtoToKey(dto);
           notify(
-            dto[key]
+            newValue
               ? `Added ${key} role to ${username}`
               : `Removed ${key} role from ${username}`,
           );
@@ -110,29 +107,24 @@ export default function ToggleSwitchSet({
       }
     };
   };
+  const keysOfUpdateChatroomMemberDto: (keyof UpdateChatroomMemberDto)[] = [
+    'admin',
+    'muted',
+    'banned',
+  ];
   return (
     <>
-      <ToggleSwitch
-        label="Admin"
-        isToggled={updateChatroomMemberDto?.admin ?? false}
-        onToggle={genericOnToggle({
-          admin: !updateChatroomMemberDto?.admin,
-        })}
-      />
-      <ToggleSwitch
-        label="Muted"
-        isToggled={updateChatroomMemberDto?.muted ?? false}
-        onToggle={genericOnToggle({
-          muted: !updateChatroomMemberDto?.muted,
-        })}
-      />
-      <ToggleSwitch
-        label="Banned"
-        isToggled={updateChatroomMemberDto?.banned ?? false}
-        onToggle={genericOnToggle({
-          banned: !updateChatroomMemberDto?.banned,
-        })}
-      />
+      {keysOfUpdateChatroomMemberDto.map(
+        (key: keyof UpdateChatroomMemberDto) => {
+          return (
+            <ToggleSwitch
+              label={key}
+              isToggled={updateChatroomMemberDto?.[key] ?? false}
+              onToggle={genericOnToggle(key)}
+            />
+          );
+        },
+      )}
     </>
   );
 }
