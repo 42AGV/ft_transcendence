@@ -73,7 +73,12 @@ export default function ToggleSwitchSet({
     key: keyof UpdateChatroomMemberDto,
   ): (() => void) => {
     return async () => {
-      if (isLoading || !canEdit) {
+      if (
+        isLoading ||
+        !canEdit ||
+        !updateChatroomMemberDto ||
+        !canEditParams.destUser
+      ) {
         if (!canEdit) warn("You can't modify this setting");
         return;
       }
@@ -82,7 +87,7 @@ export default function ToggleSwitchSet({
           warn('You cannot make new admins');
           return;
         }
-        const newValue = !updateChatroomMemberDto?.[key] ?? false;
+        const newValue = !updateChatroomMemberDto[key];
         await chatApi.chatControllerUpdateChatroomMember({
           chatroomId: chatroomId,
           userId: canEditParams.destUser!.id,
@@ -92,7 +97,7 @@ export default function ToggleSwitchSet({
           ...updateChatroomMemberDto,
           [key]: newValue,
         });
-        const { username } = canEditParams.destUser!;
+        const { username } = canEditParams.destUser;
         try {
           notify(
             newValue
