@@ -5,6 +5,9 @@
   "description": "Pong engine with models, physics and constants",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "style": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx}\" --fix",
     "build": "rm -rf ./lib && tsc"
   },
   "author": "",

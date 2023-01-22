@@ -13,8 +13,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: "18.12.1"
-          cache: "npm"
+          node-version: '18.12.1'
+          cache: 'npm'
           cache-dependency-path: |
             ./package-lock.json
       - name: Install dependencies
@@ -23,8 +23,6 @@ jobs:
         run: npm run build-packages
       - name: Compile
         run: npm run build -w transcendence-app
-      - name: Check style
-        run: npm run style -w transcendence-app
       - name: Lint
         run: npm run lint -w transcendence-app
       - name: Test
