@@ -21,9 +21,19 @@
 ## 📝 Table of Contents
 
 - [About](#about)
-- [Getting Started](#getting_started)
+- [Getting Started](#start)
+  - [Prerequisites](#start-prerequisites)
+  - [Deploy locally](#start-local-deployment)
+  - [Developing and installing dependencies](#start-installing-dependencies)
+  - [OpenAPI](#start-openapi)
+  - [Migrate the database schema](#start-migrations)
+  - [Seed the database](#start-seeds)
+  - [Testing and linting](#tests-and-lint)
+- [Two-factor authentication](#2fa)
+- [Exploring DB](#db)
 - [Deployment](#deployment)
-- [Usage](#usage)
+  - [Prerequisites](#deployment-prerequisites)
+  - [Installing](#deployment-installing)
 - [Built Using](#built_using)
 - [Contributing](#contributing)
 - [Acknowledgments](#acknowledgement)
@@ -32,11 +42,11 @@
 
 The primary purpose of this website is to play pong against other players and show everyone how good you are!
 
-## 🏁 Getting Started <a name = "getting_started"></a>
+## 🏁 Getting Started <a name = "start"></a>
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
 
-### Prerequisites
+### Prerequisites <a name = "start-prerequisites"></a>
 
 What things do you need to install the software, and how to install them.
 
@@ -54,7 +64,7 @@ What things do you need to install the software, and how to install them.
 
 [make](https://www.gnu.org/software/make/)
 
-### Installing
+### Deploy locally <a name = "start-local-deployment"></a>
 
 A step-by-step series of examples that tell you how to get a development environment running.
 
@@ -147,7 +157,21 @@ After a config file change, please run the following command to recreate the ima
 make re
 ```
 
-### OpenAPI
+### Developing and installing dependencies <a name = "start-installing-dependencies"></a>
+
+This project is a [monorepo](https://monorepo.tools/#what-is-a-monorepo). We use a very simple setup taking advantage of [npm workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces). This allows us to have local libraries and share code across different services.
+
+You may need to start developing, in order to do so, you should install dependencies and build packages (note that previous local deployment point explained how to deploy the app on a docker environment, no locally). From the root of the project just run:
+
+`npm i` to install dependencies
+
+and then, to build packages:
+
+`npm run build-packages`
+
+You may want to add a new dependency to a service. Just run `npm i` inside of the service path as you would do normally.
+
+### OpenAPI <a name = "start-openapi"></a>
 
 We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the OpenAPI specifications at `transcendence-app/swagger-spec/swagger-spec.yaml`.
 
@@ -162,7 +186,7 @@ make gen
 
 `make gen` creates both yaml file and generated webapp files. To generate only webapp generated files run `make gen-webapp`. To generate only swagger spec run `make spec`.
 
-### Migrate the database schema
+### Migrate the database schema <a name = "start-migrations"></a>
 
 We use knex to migrate the database schema, more info [here](https://knexjs.org/guide/migrations.html#migration-cli).
 
@@ -178,7 +202,7 @@ To create a migration, run the following command from the transcendence-app dire
 npx knex migrate:make migration_name
 ```
 
-### Seed the database
+### Seed the database <a name = "start-seeds"></a>
 
 We use knex to seed the database, more info [here](https://knexjs.org/guide/migrations.html#seed-files).
 
@@ -196,7 +220,7 @@ npx knex seed:make 00X_seed_name
 
 > **_NOTE:_**  Knex executes the seed files in alphabetical order
 
-## 🔧 Running the tests <a name = "tests"></a>
+## 🔧 Testing and linting <a name = "tests-and-lint"></a>
 
 Change the working directory to `webapp` or `transcendence-app`
 
@@ -215,7 +239,7 @@ cd transcendence-app
 npm run style
 ```
 
-## Two-factor authentication
+## 🔐 Two-factor authentication <a name = "2fa"></a>
 
 We use the [otplib](https://www.npmjs.com/package/otplib) library to generate and validate TOTP tokens and the [qrcode](https://www.npmjs.com/package/qrcode) library to display a QR code with the 2FA info.
 
@@ -225,13 +249,9 @@ When the user logs out, we delete the 2FA cookie.
 
 We use the `TwoFactorAuthenticatedGuard` to check if the user is authenticated + authorized and also two-factor authenticated (this guard uses the `canActivate` method from the `AuthenticatedGuard` when the user doesn't have 2FA enabled)
 
-## 🗄️ Exploring DB <a name = "tests"></a>
+## 🗄️ Exploring DB <a name = "db"></a>
 
 You may want to make some test DB queries when developing. Just go to `localhost:5050` and log in with `admin@admin.com`, `admin` to access the [pg-admin](https://www.pgadmin.org/) client.
-
-## 🎈 Usage <a name="usage"></a>
-
-TODO: Add notes about how to use the system.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
@@ -239,7 +259,7 @@ This section is for deploying the app on a production system.
 
 > **_NOTE:_**  The application runs on port 80 in the production environment. If another service uses that port, please shut it down before running it.
 
-### Prerequisites
+### Prerequisites <a name = "deployment-prerequisites"></a>
 
 What things do you need to install the software, and how to install them.
 
@@ -249,7 +269,7 @@ What things do you need to install the software, and how to install them.
 
 [make](https://www.gnu.org/software/make/)
 
-### Installing
+### Installing <a name = "deployment-installing"></a>
 
 Register a new OAuth application on the [42 intranet](https://profile.intra.42.fr/oauth/applications/new)
 

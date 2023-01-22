@@ -6,7 +6,7 @@ import {
   initialBallState,
   initialPaddleState,
   reducer,
-} from './state';
+} from 'pong-engine';
 
 type GameStateContextType = {
   gameStateRef: React.MutableRefObject<GameState>;

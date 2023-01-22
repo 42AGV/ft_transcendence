@@ -1,0 +1,32 @@
+{
+  "private": true,
+  "name": "pong-engine",
+  "version": "1.0.0",
+  "description": "Pong engine with models, physics and constants",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "style": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx}\" --fix",
+    "build": "rm -rf ./lib && tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/42AGV/ft_transcendence.git"
+  },
+  "bugs": {
+    "url": "https://github.com/42AGV/ft_transcendence/issues"
+  },
+  "homepage": "https://github.com/42AGV/ft_transcendence#readme",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1"
+  }
+}

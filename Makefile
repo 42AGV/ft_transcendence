@@ -85,12 +85,12 @@ get-ip:
 
 .PHONY: seed
 seed:
-	$(DOCKER_COMPOSE) exec transcendence-app npm run knex:seed:run
+	$(DOCKER_COMPOSE) exec transcendence-app npm run knex:seed:run -w transcendence-app
 
 .PHONY: migrate
 migrate:
-	$(DOCKER_COMPOSE) exec transcendence-app npm run knex:migrate:dev
+	$(DOCKER_COMPOSE) exec transcendence-app npm run knex:migrate:dev -w transcendence-app
 
 .PHONY: prod-migrate
 prod-migrate:
-	$(DOCKER_COMPOSE) exec transcendence-app npm run knex:migrate:prod
+	$(DOCKER_COMPOSE) exec transcendence-app npm run knex:migrate:prod -w transcendence-app

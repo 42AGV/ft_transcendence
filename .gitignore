@@ -12,6 +12,7 @@ coverage
 # production
 build
 dist
+lib
 
 # generated code
 transcendence-app/swagger-spec/swagger-spec.yaml

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
 import {
   useGameControls,
   useGameAnimation,

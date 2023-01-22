@@ -3,12 +3,13 @@ services:
   swagger:
     image: ft_transcendence/swagger
     build:
-      context: ../transcendence-app
+      context: ../
+      dockerfile: transcendence-app/Dockerfile
       target: swagger
     volumes:
       - transcendence-app-data:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
-      - ../transcendence-app/src:/transcendence-app/src:ro
-      - ../transcendence-app/swagger-spec:/transcendence-app/swagger-spec
+      - ../transcendence-app/src:/service/transcendence-app/src:ro
+      - ../transcendence-app/swagger-spec:/service/transcendence-app/swagger-spec
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
