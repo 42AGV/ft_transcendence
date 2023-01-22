@@ -29,6 +29,7 @@ RUN apk add --no-cache dumb-init \
 WORKDIR  /service
 COPY ["package.json", "package-lock.json", "./"]
 COPY --from=development --chown=node:node /service/transcendence-app/dist ./transcendence-app/dist
+COPY --from=development --chown=node:node /service/transcendence-app/package.json ./transcendence-app/package.json
 COPY --from=development --chown=node:node /service/packages ./packages
 RUN npm clean-install --omit=dev
 USER node
