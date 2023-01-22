@@ -3,10 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { chatApi, usersApi } from '../../shared/services/ApiService';
-import {
-  ChatMessagingTemplate,
-  ChatMessagingLoading,
-} from '../../shared/components';
+import { ChatMessagingTemplate } from '../../shared/components';
 import { ChatMessageWithUser, User } from '../../shared/generated';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { useData } from '../../shared/hooks/UseData';
@@ -15,6 +12,7 @@ import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
+import { LoadingPage } from '..';
 
 type ChatWithUserProps = {
   username: string;
@@ -46,7 +44,7 @@ function ChatWithUser({ username }: ChatWithUserProps) {
   const { data: user, isLoading: isUserLoading } = useData(fetchUser);
 
   if (isUserLoading) {
-    return <ChatMessagingLoading />;
+    return <LoadingPage />;
   } else if (!user) {
     return <NotFoundPage />;
   }

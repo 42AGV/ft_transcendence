@@ -27,7 +27,6 @@ import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
-import Loading from '../../shared/components/Loading/Loading';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
 import { ChatControllerGetChatroomMembersRequest } from '../../shared/generated/apis/ChatApi';
@@ -37,6 +36,7 @@ import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
+import { LoadingPage } from '..';
 
 export default function ChatroomDetailsPage() {
   const { authUser, isLoading } = useAuth();
@@ -136,13 +136,7 @@ export default function ChatroomDetailsPage() {
     };
   }
   if (isLoading || isCrmLoading || crIsLoading) {
-    return (
-      <div className="chatroom-details-page">
-        <div className="chatroom-details-page-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
   if ((!crm && !overridePermissions) || !chatroom) {
     return <NotFoundPage />;

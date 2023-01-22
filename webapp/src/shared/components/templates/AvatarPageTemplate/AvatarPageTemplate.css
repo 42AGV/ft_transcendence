@@ -12,13 +12,6 @@
   overflow: scroll;
 }
 
-.avatar-page-template-loading {
-  grid-column: 1/-1;
-  grid-row: 1/-1;
-  align-self: center;
-  justify-self: center;
-}
-
 .avatar-page-center-element-wrapper {
   overflow-y: scroll;
   overflow-x: clip;

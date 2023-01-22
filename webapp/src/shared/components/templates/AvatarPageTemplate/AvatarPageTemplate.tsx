@@ -6,11 +6,11 @@ import {
   IconVariant,
   LargeAvatar,
   LargeAvatarProps,
-  Loading,
   StatusVariant,
 } from '../../index';
 import { useNavigation } from '../../../hooks/UseNavigation';
 import NotFoundPage from '../../../../pages/NotFoundPage/NotFoundPage';
+import { LoadingPage } from '../../../../pages';
 
 type AvatarPageTemplateProps = {
   isLoading: boolean;
@@ -38,13 +38,7 @@ export default function AvatarPageTemplate({
   const { goBack } = useNavigation();
 
   if (isLoading) {
-    return (
-      <div className="avatar-page-template">
-        <div className="avatar-page-template-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (isNotFound) {

@@ -1,8 +1,8 @@
 import { Navigate, useNavigate } from 'react-router-dom';
+import { LoadingPage } from '..';
 import {
   Button,
   ButtonVariant,
-  Loading,
   Text,
   TextColor,
   TextVariant,
@@ -25,13 +25,7 @@ export default function Landing() {
   }
 
   if (isLoading) {
-    return (
-      <div className="loading">
-        <div className="landing-loading">
-          <Loading />
-        </div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   return (

@@ -1,7 +1,7 @@
 export enum chatMessageKeys {
   ID = '"id"',
   SENDER_ID = '"senderId"',
-  RECIPIENT_ID = '"senderId"',
+  RECIPIENT_ID = '"recipientId"',
   CONTENT = '"content"',
   CREATED_AT = '"createdAt"',
 }

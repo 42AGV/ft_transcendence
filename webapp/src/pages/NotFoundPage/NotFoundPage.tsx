@@ -18,7 +18,7 @@ export default function NotFoundPage() {
       </Header>
       <div className="not-found-page__message">
         <Text variant={TextVariant.SUBTITLE} weight={TextWeight.BOLD}>
-          ⚠️ 404 Not Found
+          ⚠️ Not Found
         </Text>
       </div>
     </div>
