@@ -1,4 +1,4 @@
-name: webapp check
+name: style check
 
 on:
   pull_request:
@@ -17,15 +17,13 @@ jobs:
           cache: 'npm'
           cache-dependency-path: |
             ./package-lock.json
-      - name: Install dependencies
-        run: npm install -w webapp
-      - name: Build packages
-        run: npm run build-packages
-      - name: Generate code
-        run: make gen
-      - name: Compile
-        run: npm run build -w webapp
-      - name: Lint
-        run: npm run lint -w webapp
-      - name: Test
-        run: npm run test-ci -w webapp
+      - name: Install global dependencies
+        run: npm install --workspaces=false
+      - name: Check webapp style
+        run: npm run style -w webapp
+      - name: Check transcendence-app style
+        run: npm run style -w webapp
+      - name: Check packages style
+        run: npm run style -w packages/pong-engine
+      # - name: Lint
+      #   run: npm run lint -w webapp

@@ -22,7 +22,8 @@ jobs:
       - name: Build transcendence-app docker image
         uses: docker/build-push-action@v2
         with:
-          context: ./transcendence-app
+          context: .
+          file: ./transcendence-app/Dockerfile
           target: production
           push: false
           load: true
@@ -32,7 +33,8 @@ jobs:
       - name: Build swagger docker image
         uses: docker/build-push-action@v2
         with:
-          context: ./transcendence-app
+          context: .
+          file: ./transcendence-app/Dockerfile
           target: swagger
           push: false
           load: true
@@ -44,7 +46,8 @@ jobs:
       - name: Build webapp docker image
         uses: docker/build-push-action@v2
         with:
-          context: ./webapp
+          context: .
+          file: ./webapp/Dockerfile
           target: production
           push: false
           load: true

@@ -7,10 +7,12 @@ services:
   webapp:
     image: ft_transcendence/webapp-dev
     build:
-      context: ./webapp
+      context: .
+      dockerfile: ./webapp/Dockerfile
       target: development
     volumes:
-      - ./webapp/src:/webapp/src:ro
+      - ./webapp/src:/service/webapp/src:ro
+      - ./packages/pong-engine:/service/packages/pong-engine:ro
     environment:
       - REACT_APP_NAME=webapp-dev
       - PORT=80
@@ -19,14 +21,16 @@ services:
   transcendence-app:
     image: ft_transcendence/transcendence-app-dev
     build:
-      context: ./transcendence-app
+      context: .
+      dockerfile: ./transcendence-app/Dockerfile
       target: development
     volumes:
       - transcendence-app-data-dev:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
-      - ./transcendence-app/src:/transcendence-app/src:ro
-      - ./transcendence-app/test:/transcendence-app/test:ro
-      - ./transcendence-app/seeds:/transcendence-app/seeds:ro
-      - ./transcendence-app/migrations:/transcendence-app/migrations:ro
+      - ./transcendence-app/src:/service/transcendence-app/src:ro
+      - ./transcendence-app/test:/service/transcendence-app/test:ro
+      - ./transcendence-app/seeds:/service/transcendence-app/seeds:ro
+      - ./transcendence-app/migrations:/service/transcendence-app/migrations:ro
+      - ./packages/pong-engine:/service/packages/pong-engine:ro
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

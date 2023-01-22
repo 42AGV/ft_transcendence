@@ -7,7 +7,8 @@ services:
   webapp:
     image: ft_transcendence/webapp-prod
     build:
-      context: ./webapp
+      context: .
+      dockerfile: ./webapp/Dockerfile
       target: production
       args:
         - REACT_APP_NAME=webapp-prod
@@ -17,7 +18,8 @@ services:
   transcendence-app:
     image: ft_transcendence/transcendence-app-prod
     build:
-      context: ./transcendence-app
+      context: .
+      dockerfile: ./transcendence-app/Dockerfile
       target: production
     volumes:
       - transcendence-app-data-prod:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}

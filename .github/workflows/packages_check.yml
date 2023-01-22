@@ -1,4 +1,4 @@
-name: webapp check
+name: packages check
 
 on:
   pull_request:
@@ -18,14 +18,8 @@ jobs:
           cache-dependency-path: |
             ./package-lock.json
       - name: Install dependencies
-        run: npm install -w webapp
+        run: npm install -w packages/pong-engine
       - name: Build packages
         run: npm run build-packages
-      - name: Generate code
-        run: make gen
-      - name: Compile
-        run: npm run build -w webapp
       - name: Lint
-        run: npm run lint -w webapp
-      - name: Test
-        run: npm run test-ci -w webapp
+        run: npm run lint -w packages/pong-engine

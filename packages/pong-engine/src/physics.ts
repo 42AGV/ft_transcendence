@@ -4,6 +4,7 @@ import {
   MAX_PADDLE_BOUNCE_ANGLE,
   MIN_PADDLE_BOUNCE_ANGLE,
   PADDLE_WIDTH,
+  PADDLE_SLIDE_SPEED,
   BALL_RADIUS,
 } from './constants';
 import { GameBall, GamePaddle, Coord } from './models';
@@ -117,4 +118,44 @@ export const getPaddlePos = (
     };
   }
   return paddle;
+};
+
+export const dragPaddle = (
+  paddle: GamePaddle,
+  dragPrevPos: number,
+  dragCurrPos: number,
+): GamePaddle => {
+  let deltaX = paddle.x - (dragPrevPos - dragCurrPos);
+
+  if (deltaX < 0) {
+    deltaX = 0;
+  } else if (deltaX > CANVAS_WIDTH - PADDLE_WIDTH) {
+    deltaX = CANVAS_WIDTH - PADDLE_WIDTH;
+  }
+
+  return {
+    ...paddle,
+    x: deltaX,
+  };
+};
+
+export const movePaddleRight = (paddle: GamePaddle): GamePaddle => {
+  return {
+    ...paddle,
+    slide: PADDLE_SLIDE_SPEED,
+  };
+};
+
+export const movePaddleLeft = (paddle: GamePaddle): GamePaddle => {
+  return {
+    ...paddle,
+    slide: -1 * PADDLE_SLIDE_SPEED,
+  };
+};
+
+export const stopPaddle = (paddle: GamePaddle): GamePaddle => {
+  return {
+    ...paddle,
+    slide: 0,
+  };
 };

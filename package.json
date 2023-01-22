@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "name": "ft_transcendence",
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "webapp",
+    "transcendence-app"
+  ],
+  "scripts": {
+    "build-packages": "npm run build -w packages/pong-engine",
+    "start-webapp": "npm run start -w webapp",
+    "start-app-dev": "npm run start:dev -w transcendence-app",
+    "build-swagger-api": "npm run swagger:gen -w transcendence-app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/42AGV/ft_transcendence.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/42AGV/ft_transcendence/issues"
+  },
+  "homepage": "https://github.com/42AGV/ft_transcendence#readme",
+  "devDependencies": {
+    "eslint": "^8.29.0",
+    "prettier": "2.8.3"
+  }
+}

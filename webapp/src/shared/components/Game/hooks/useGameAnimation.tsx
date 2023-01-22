@@ -6,8 +6,10 @@ import {
   BRICK_HEIGHT,
   BALL_RADIUS,
   CANVAS_HEIGHT,
-} from '../constants';
-import { GameBall, GamePaddle, GameState } from '../models';
+  GameBall,
+  GamePaddle,
+  GameState,
+} from 'pong-engine';
 
 const useGameAnimation = () => {
   const deltaTimeRef = React.useRef<number>(0);
