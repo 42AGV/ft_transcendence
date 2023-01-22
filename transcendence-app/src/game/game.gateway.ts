@@ -1,6 +1,5 @@
 import {
   ClassSerializerInterceptor,
-  ParseUUIDPipe,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -11,11 +10,12 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  // WsException,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
+import { GameInputDto } from './dto/game-input.dto';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -24,11 +24,23 @@ import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authent
 export class GameGateway {
   @WebSocketServer() server!: Server;
 
-  @SubscribeMessage('gameMessage')
+  @SubscribeMessage('gameServerMessage')
   async handleChatMessage(
-    @MessageBody('gameId', ParseUUIDPipe) gameId: string,
+    @MessageBody() gameInputDto: GameInputDto,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log(client, gameId);
+    const { id, command } = gameInputDto;
+
+    const sender = client.request.user;
+
+    const state = { id, command };
+
+    if (state) {
+      this.server.to(sender.id).emit('chatMessage', { ...state });
+    } else {
+      throw new WsException(
+        'The message could not be sent. Service Unavailable',
+      );
+    }
   }
 }
