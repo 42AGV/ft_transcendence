@@ -58,7 +58,7 @@ export const reducer = (
   state: GameState,
   { type, payload }: Action,
 ): GameState => {
-  const {ball, paddle, score} = state;
+  const { ball, paddle, score } = state;
 
   switch (type) {
     case 'move':
