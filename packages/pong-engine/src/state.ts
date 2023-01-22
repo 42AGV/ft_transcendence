@@ -22,14 +22,14 @@ import {
   BALL_RADIUS,
 } from './constants';
 
-type Act<Type extends string, Payload extends {}> = {
+type Act<Type extends string, Payload extends object> = {
   type: Type;
   payload: Payload;
 };
 
 export type Action =
   | Act<'move', { deltaTime: number }>
-  | Act<'lose' | 'win' | GamePaddleMoveCommand, {}>
+  | Act<'lose' | 'win' | GamePaddleMoveCommand, object>
   | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
 
 export const initialBallState = (): GameBall => {
