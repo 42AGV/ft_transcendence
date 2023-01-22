@@ -15,7 +15,7 @@ const GAME_SERVER_MESSAGE = 'gameServerMessage';
 
 const Game = () => {
   const { renderFrame, deltaTimeRef } = useGameAnimation();
-  const { runGameFrame } = useClientGameEngine();
+  const { runClientGameFrame } = useClientGameEngine();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const requestFrameRef = React.useRef<number | null>(null);
   const [score, setScore] = React.useState<number>(0);
@@ -32,12 +32,12 @@ const Game = () => {
 
   const gameLoop = React.useCallback(() => {
     const canvasContext = canvasRef.current?.getContext('2d');
-    const gameState = runGameFrame(deltaTimeRef.current);
+    const gameState = runClientGameFrame(deltaTimeRef.current);
 
     setScore(gameState.score);
     canvasContext && renderFrame(canvasContext, gameState);
     window.requestAnimationFrame(() => gameLoop());
-  }, [runGameFrame, renderFrame, deltaTimeRef]);
+  }, [runClientGameFrame, renderFrame, deltaTimeRef]);
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
