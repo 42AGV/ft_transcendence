@@ -29,6 +29,7 @@ import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { AvatarService } from '../shared/avatar/avatar.service';
+import { GenericChat } from './infrastructure/generic-chat.entity';
 
 @Injectable()
 export class ChatService {
@@ -281,5 +282,12 @@ export class ChatService {
       await this.avatarService.deleteAvatar(previousAvatarId);
     }
     return updatedChatroom;
+  }
+
+  async getAuthUserChats(
+    userMeId: string,
+    paginationQueryDto?: Required<PaginationQueryDto>,
+  ): Promise<GenericChat[] | null> {
+    return this.chatMessageRepository.getAuthUserChats(userMeId);
   }
 }

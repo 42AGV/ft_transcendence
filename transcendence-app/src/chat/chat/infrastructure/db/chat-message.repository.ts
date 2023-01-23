@@ -12,6 +12,6 @@ export abstract class IChatMessageRepository {
   ): Promise<ChatMessageWithUser[] | null>;
   abstract getAuthUserChats(
     userMeId: string,
-    paginationQueryDto: Required<PaginationQueryDto>,
-  ): Promise<GenericChat[] |null>;
+    paginationQueryDto?: Required<PaginationQueryDto>,
+  ): Promise<GenericChat[] | null>;
 }

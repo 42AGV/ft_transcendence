@@ -48,7 +48,7 @@ export class ChatMessagePostgresRepository
 
   async getAuthUserChats(
     userMeId: string,
-    paginationQueryDto: Required<PaginationQueryDto>,
+    paginationQueryDto?: Required<PaginationQueryDto>,
   ): Promise<GenericChat[] | null> {
     const messages = await makeQuery<GenericChat>(this.pool, {
       text: `
