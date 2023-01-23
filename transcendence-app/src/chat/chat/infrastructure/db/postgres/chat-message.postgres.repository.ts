@@ -81,6 +81,7 @@ export class ChatMessagePostgresRepository
                INNER JOIN msgData md on u."id" = md."id";`,
       values: [userMeId],
     });
-    return messages?.map((message) => new GenericChat(message)) ?? null;
+    if (messages === null || messages.length === 0) return null;
+    return messages.map((message) => new GenericChat(message));
   }
 }

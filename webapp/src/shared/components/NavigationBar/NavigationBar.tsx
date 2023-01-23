@@ -31,7 +31,7 @@ const NAV_ITEMS_CONTENT: NavItemContent[] = [
 
 export default function NavigationBar() {
   const { isLoading, authUser } = useAuth();
-  const [navItems, setNavItems] = useState<NavItemContent[]>(NAV_ITEMS_CONTENT);
+  const [navItems, setNavItems] = useState<NavItemContent[] | null>(null);
   useEffect(() => {
     if (!isLoading && authUser) {
       if (authUser.gAdmin || authUser.gOwner) {
@@ -52,15 +52,16 @@ export default function NavigationBar() {
   return (
     <nav className="navigation-bar">
       <ul>
-        {navItems.map((item: NavItemContent) => (
-          <li key={item.title}>
-            <NavigationItem
-              iconVariant={item.icon}
-              title={item.title}
-              urlNavigation={item.url}
-            />
-          </li>
-        ))}
+        {navItems &&
+          navItems.map((item: NavItemContent) => (
+            <li key={item.title}>
+              <NavigationItem
+                iconVariant={item.icon}
+                title={item.title}
+                urlNavigation={item.url}
+              />
+            </li>
+          ))}
       </ul>
     </nav>
   );
