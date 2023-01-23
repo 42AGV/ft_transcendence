@@ -48,6 +48,7 @@ export class ChatMessagePostgresRepository
 
   async getAuthUserChats(
     userMeId: string,
+    userMeUsername: string,
     paginationQueryDto?: Required<PaginationQueryDto>,
   ): Promise<GenericChat[] | null> {
     const messages = await makeQuery<GenericChat>(this.pool, {
@@ -64,7 +65,8 @@ export class ChatMessagePostgresRepository
                         FROM dateProvider dp
                                INNER JOIN msg m ON m.${chatMessageKeys.CREATED_AT} = dp."lastDate"
                         GROUP BY m.${chatMessageKeys.CREATED_AT}),
-             msgData AS (SELECT CASE WHEN (cm.${chatMessageKeys.SENDER_ID} = $1) THEN cm.${chatMessageKeys.RECIPIENT_ID} ELSE cm.${chatMessageKeys.SENDER_ID} END as "userId",
+             msgData AS (SELECT CASE WHEN (cm.${chatMessageKeys.SENDER_ID} = $1) THEN cm.${chatMessageKeys.RECIPIENT_ID} ELSE cm.${chatMessageKeys.SENDER_ID} END AS "userId",
+                                cm.${chatMessageKeys.SENDER_ID} AS "lastMsgSenderId",
                                 cm.${chatMessageKeys.CONTENT},
                                 cm.${chatMessageKeys.CREATED_AT}
                          FROM ${this.table} cm
@@ -73,16 +75,19 @@ export class ChatMessagePostgresRepository
         SELECT u.${userKeys.AVATAR_ID},
                u.${userKeys.AVATAR_X},
                u.${userKeys.AVATAR_Y},
-               'chat/' || u.${userKeys.USERNAME}          AS "url",
-               u.${userKeys.USERNAME}                     AS "name",
-               md.${chatMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
-               md.${chatMessageKeys.CREATED_AT}           AS "lastMessageDate"
+               'chat/' || u.${userKeys.USERNAME}           AS "url",
+               u.${userKeys.USERNAME}                      AS "name",
+               (SELECT CASE WHEN (md."lastMsgSenderId" = $1)
+                   THEN $2 ELSE u.${userKeys.USERNAME} END AS "lastMsgSenderUsername"),
+               md.${chatMessageKeys.CONTENT}::varchar(20)  AS "lastMessage",
+               md.${chatMessageKeys.CREATED_AT}            AS "lastMessageDate"
         FROM ${table.USERS} u
                INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"
         ORDER BY md.${chatMessageKeys.CREATED_AT};`,
-      values: [userMeId],
+      values: [userMeId, userMeUsername],
     });
-    if (messages === null || messages.length === 0) return null;
-    return messages.map((message) => new GenericChat(message));
+    return messages && messages.length
+      ? messages.map((message) => new GenericChat(message))
+      : null;
   }
 }

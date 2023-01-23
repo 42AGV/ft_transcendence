@@ -207,7 +207,9 @@ export class ChatController {
     if (!chatrooms) {
       throw new ServiceUnavailableException();
     }
-    console.log(await this.chatService.getAuthUserChats(user.id));
+    console.log(
+      await this.chatService.getAuthUserChats(user.id, user.username),
+    );
     return chatrooms;
   }
 

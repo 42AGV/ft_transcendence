@@ -286,8 +286,12 @@ export class ChatService {
 
   async getAuthUserChats(
     userMeId: string,
+    userMeUsername: string,
     paginationQueryDto?: Required<PaginationQueryDto>,
   ): Promise<GenericChat[] | null> {
-    return this.chatMessageRepository.getAuthUserChats(userMeId);
+    return this.chatMessageRepository.getAuthUserChats(
+      userMeId,
+      userMeUsername,
+    );
   }
 }
