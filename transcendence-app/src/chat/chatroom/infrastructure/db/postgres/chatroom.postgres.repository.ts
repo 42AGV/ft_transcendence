@@ -16,6 +16,7 @@ import {
   ChatroomMember,
   ChatroomMemberKeys,
 } from '../../../chatroom-member/infrastructure/db/chatroom-member.entity';
+import { GenericChat } from '../../../../infrastructure/generic-chat.entity';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -101,6 +102,13 @@ export class ChatroomPostgresRepository
     return chatroomsData
       ? chatroomsData.map((chatroom) => new this.ctor(chatroom))
       : null;
+  }
+
+  async getAuthUserPaginatedChatsAndChatrooms(
+    authUserId: string,
+    queryDto: Required<PaginationWithSearchQueryDto>,
+  ): Promise<GenericChat[] | null> {
+    return Promise.reject(new Error('Stuff'));
   }
 
   async addAvatarAndAddChatroom(
