@@ -52,33 +52,33 @@ export class ChatMessagePostgresRepository
   ): Promise<GenericChat[] | null> {
     const messages = await makeQuery<GenericChat>(this.pool, {
       text: `
-        WITH msg as (SELECT array [least(m."senderId", m."recipientId"),
-                              greatest(m."senderId", m."recipientId")] as data,
-                            m.id,
-                            m."createdAt"
+        WITH msg as (SELECT array [least(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID}),
+                              greatest(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID})] as data,
+                            m.${chatMessageKeys.ID},
+                            m.${chatMessageKeys.CREATED_AT}
                      FROM ${this.table} m
-                     WHERE (m."senderId" = $1
-                       OR m."recipientId" = $1)),
-             dateProvider as (select msg.data, max(msg."createdAt") as "lastDate" from msg group by msg.data),
-             msgIds as (SELECT max(m."id"::text)::uuid as "messId"
+                     WHERE (m.${chatMessageKeys.SENDER_ID} = $1
+                       OR m.${chatMessageKeys.RECIPIENT_ID} = $1)),
+             dateProvider as (select msg.data, max(msg.${chatMessageKeys.CREATED_AT}) as "lastDate" from msg group by msg.data),
+             msgIds as (SELECT max(m.${chatMessageKeys.ID}::text)::uuid as "messId"
                         from dateProvider dp
-                               INNER JOIN msg m on m."createdAt" = dp."lastDate"
-                        group by m."createdAt"),
-             msgData as (SELECT CASE WHEN (cm."senderId" = $1) THEN cm."recipientId" ELSE cm."senderId" END as "id",
-                                cm.content,
-                                cm."createdAt"
+                               INNER JOIN msg m on m.${chatMessageKeys.CREATED_AT} = dp."lastDate"
+                        group by m.${chatMessageKeys.CREATED_AT}),
+             msgData as (SELECT CASE WHEN (cm.${chatMessageKeys.SENDER_ID} = $1) THEN cm.${chatMessageKeys.RECIPIENT_ID} ELSE cm.${chatMessageKeys.SENDER_ID} END as "id",
+                                cm.${chatMessageKeys.CONTENT},
+                                cm.${chatMessageKeys.CREATED_AT}
                          FROM ${this.table} cm
-                                INNER JOIN msgIds mi ON cm.id = mi."messId"
-                         ORDER BY cm."createdAt")
-        SELECT u."avatarId",
-               u."avatarX",
-               u."avatarY",
-               'chat/' || u."username"   as "url",
-               u."username"              as "name",
-               md."content"::varchar(20) as "lastMessage",
-               md."createdAt"            as "lastMessageDate"
+                                INNER JOIN msgIds mi ON cm.${chatMessageKeys.ID} = mi."messId"
+                         ORDER BY cm.${chatMessageKeys.CREATED_AT})
+        SELECT u.${userKeys.AVATAR_ID},
+               u.${userKeys.AVATAR_X},
+               u.${userKeys.AVATAR_Y},
+               'chat/' || u.${userKeys.USERNAME}   as "url",
+               u.${userKeys.USERNAME}              as "name",
+               md.${chatMessageKeys.CONTENT}::varchar(20) as "lastMessage",
+               md.${chatMessageKeys.CREATED_AT}            as "lastMessageDate"
         FROM ${table.USERS} u
-               INNER JOIN msgData md on u."id" = md."id";`,
+               INNER JOIN msgData md on u.${userKeys.ID} = md.${chatMessageKeys.ID};`,
       values: [userMeId],
     });
     if (messages === null || messages.length === 0) return null;
