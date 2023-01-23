@@ -78,7 +78,8 @@ export class ChatMessagePostgresRepository
                md.${chatMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
                md.${chatMessageKeys.CREATED_AT}           AS "lastMessageDate"
         FROM ${table.USERS} u
-               INNER JOIN msgData md ON u.${userKeys.ID} = md."userId";`,
+               INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"
+        ORDER BY md.${chatMessageKeys.CREATED_AT};`,
       values: [userMeId],
     });
     if (messages === null || messages.length === 0) return null;
