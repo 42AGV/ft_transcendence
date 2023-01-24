@@ -67,20 +67,49 @@ export class ChatroomPostgresRepository
 
   async getPaginatedChatrooms(
     paginationDto: Required<PaginationWithSearchQueryDto>,
-  ): Promise<Chatroom[] | null> {
-    const { limit, offset, sort, search } = paginationDto;
-    const orderBy =
-      sort === BooleanString.True ? ChatroomKeys.NAME : ChatroomKeys.ID;
-    const chatroomsData = await makeQuery<Chatroom>(this.pool, {
-      text: `SELECT *
-             FROM ${this.table}
-             WHERE ${ChatroomKeys.NAME} ILIKE $1
-             ORDER BY ${orderBy}
+  ): Promise<GenericChat[] | null> {
+    const { limit, offset, search } = paginationDto;
+    const chatroomsData = await makeQuery<GenericChatData>(this.pool, {
+      text: `WITH crMsg AS (SELECT m."chatroomId",
+                                   m."userId",
+                                   m."id",
+                                   m."createdAt"
+                            FROM ${table.CHATROOM_MESSAGE} m),
+                  crDateProvider AS (SELECT m."chatroomId",
+                                            ROW_NUMBER() OVER (
+                                                PARTITION BY m."chatroomId" ORDER BY m."createdAt" DESC
+                                                ) AS "rowNumber",
+                                            m."id"
+                                     FROM crmsg m),
+                  crMsgIds AS (SELECT dp."id" AS "msgId"
+                               FROM crDateProvider dp
+                               WHERE dp."rowNumber" = 1),
+                  crMsgData AS (SELECT cm."chatroomId",
+                                       u."username" AS "lastMsgSenderUsername",
+                                       cm."content",
+                                       cm."createdAt"
+                                FROM ${table.CHATROOM_MESSAGE} cm
+                                         INNER JOIN crmsgIds mi ON cm."id" = mi."msgId"
+                                         LEFT JOIN ${table.USERS} u ON cm."userId" = u."id"
+                                ORDER BY cm."createdAt")
+             SELECT cr."avatarId",
+                    cr."avatarX",
+                    cr."avatarY",
+                    'chatroom/' || cr."id"    AS "url",
+                    cr."name",
+                    crmd."lastMsgSenderUsername",
+                    crmd.content::varchar(20) AS "lastMessage",
+                    crmd."createdAt"          AS "lastMessageDate"
+             FROM crMsgData crmd
+                      INNER JOIN ${this.table} cr
+                                 ON crmd."chatroomId" = cr.id
+             WHERE cr."name" ILIKE $1
+             ORDER BY "lastMessageDate" DESC
              LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
     return chatroomsData
-      ? chatroomsData.map((chatroom) => new this.ctor(chatroom))
+      ? chatroomsData.map((chatroom) => new GenericChat(chatroom))
       : null;
   }
 

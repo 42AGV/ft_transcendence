@@ -48,7 +48,7 @@ export class ChatService {
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: PaginationWithSearchQueryDto): Promise<Chatroom[] | null> {
+  }: PaginationWithSearchQueryDto): Promise<GenericChat[] | null> {
     return this.chatroomRepository.getPaginatedChatrooms({
       limit,
       offset,

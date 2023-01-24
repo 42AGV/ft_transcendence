@@ -174,13 +174,13 @@ export class ChatController {
   @Get('room')
   @ApiOkResponse({
     description: `Lists all chatrooms (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [Chatroom],
+    type: [GenericChat],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getChatrooms(
     @Query() chatsPaginationQueryDto: PaginationWithSearchQueryDto,
-  ): Promise<Chatroom[]> {
+  ): Promise<GenericChat[]> {
     const chatrooms = await this.chatService.retrieveChatrooms(
       chatsPaginationQueryDto,
     );
