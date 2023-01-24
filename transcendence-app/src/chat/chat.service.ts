@@ -57,23 +57,6 @@ export class ChatService {
     });
   }
 
-  async retrieveChatroomsforAuthUser(
-    user: User,
-    {
-      limit = MAX_ENTRIES_PER_PAGE,
-      offset = 0,
-      sort = BooleanString.False,
-      search = '',
-    }: PaginationWithSearchQueryDto,
-  ): Promise<Chatroom[] | null> {
-    return this.chatroomRepository.getAuthUserPaginatedChatrooms(user.id, {
-      limit,
-      offset,
-      sort,
-      search,
-    });
-  }
-
   private async addAvatarAndChatroom(
     avatarId: string,
     avatarDto: LocalFileDto,

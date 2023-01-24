@@ -6,7 +6,6 @@ import {
   makeQuery,
   makeTransactionalQuery,
 } from '../../../../../shared/db/postgres/utils';
-import { BooleanString } from '../../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { Chatroom, ChatroomKeys } from '../chatroom.entity';
 import { IChatroomRepository } from '../chatroom.repository';
@@ -110,32 +109,6 @@ export class ChatroomPostgresRepository
     });
     return chatroomsData
       ? chatroomsData.map((chatroom) => new GenericChat(chatroom))
-      : null;
-  }
-
-  async getAuthUserPaginatedChatrooms(
-    authUserId: string,
-    queryDto: Required<PaginationWithSearchQueryDto>,
-  ): Promise<Chatroom[] | null> {
-    const { limit, offset, sort, search } = queryDto;
-    const orderBy =
-      sort === BooleanString.True
-        ? ChatroomMemberKeys.JOINED_AT
-        : ChatroomKeys.NAME;
-    const chatroomsData = await makeQuery<Chatroom>(this.pool, {
-      text: `SELECT c.*
-             FROM ${this.table} c
-                    INNER JOIN ${table.CHATROOM_MEMBERS} cm
-                               ON cm.${ChatroomMemberKeys.USERID} = $4
-                                 AND cm.${ChatroomMemberKeys.CHATID} = c.${ChatroomKeys.ID}
-             WHERE cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL
-               AND c.${ChatroomKeys.NAME} ILIKE $1
-             ORDER BY ${orderBy}
-             LIMIT $2 OFFSET $3;`,
-      values: [`%${search}%`, limit, offset, authUserId],
-    });
-    return chatroomsData
-      ? chatroomsData.map((chatroom) => new this.ctor(chatroom))
       : null;
   }
 
