@@ -229,12 +229,12 @@ export class ChatroomPostgresRepository
              merged AS ((SELECT * FROM lChatMessages) UNION (SELECT * FROM lChatroomMessages))
         SELECT *
         from merged m
-        WHERE m.name ILIKE $2
+        WHERE m.${ChatroomKeys.NAME} ILIKE $2
         ORDER BY m."lastMessageDate" DESC
         LIMIT $3 OFFSET $4;`,
       values: [authUserId, `%${search}%`, limit, offset],
     });
-    return messages && messages.length
+    return messages
       ? messages.map((message) => new GenericChat(message))
       : null;
   }
