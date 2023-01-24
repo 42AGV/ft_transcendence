@@ -11,7 +11,7 @@ import {
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
-import { Chatroom } from '../../../shared/generated';
+import { GenericChat } from '../../../shared/generated';
 import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../../shared/constants';
@@ -20,7 +20,7 @@ import { Query } from '../../../shared/types';
 type ChatPageTemplateProps = {
   fetchFn: <RequestType extends Query>(
     requestParams: RequestType,
-  ) => Promise<Chatroom[]>;
+  ) => Promise<GenericChat[]>;
   buttonUrl: string;
   buttonIconVariant: IconVariant;
   buttonLabel: string;
@@ -35,18 +35,16 @@ export default function ChatsPageTemplate({
   const navigate = useNavigate();
   const overridePermissions =
     buttonUrl.slice(0, ADMIN_URL.length) === ADMIN_URL;
-  const mapChatToRow = (chatroom: Chatroom): RowItem => {
+  const mapChatToRow = (chatroom: GenericChat): RowItem => {
     return {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: {
         url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
       },
-      url: `${overridePermissions ? ADMIN_URL : ''}${CHATROOM_URL}/${
-        chatroom.id
-      }`,
+      url: `${overridePermissions ? ADMIN_URL : ''}/${chatroom.url}`,
       title: chatroom.name,
-      subtitle: 'last message',
-      key: chatroom.id,
+      subtitle: chatroom.lastMessage,
+      key: chatroom.url,
     };
   };
   let chatButtons: ButtonProps[] = [
