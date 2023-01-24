@@ -98,7 +98,7 @@ export default function ChatroomDetailsPage() {
     } catch (error: unknown) {
       handleRequestError(error, 'Could not leave the chatroom', warn);
     }
-  }, [warn, chatroomId, navigate]);
+  }, [warn, notify, chatroomId, navigate]);
 
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
