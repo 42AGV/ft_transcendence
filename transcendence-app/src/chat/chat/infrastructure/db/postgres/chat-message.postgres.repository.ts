@@ -61,12 +61,14 @@ export class ChatMessagePostgresRepository
                        OR m.${chatMessageKeys.RECIPIENT_ID} = $1)),
              dateProvider AS (SELECT msg."partakers",
                                      ROW_NUMBER() OVER (
-                                         PARTITION BY msg."partakers" ORDER BY msg.${chatMessageKeys.CREATED_AT} DESC
-                                         ) AS "rn",
+                                         PARTITION BY msg."partakers"
+                                             ORDER BY msg.${chatMessageKeys.CREATED_AT} DESC
+                                         ) AS "rowNumber",
                                     msg.${chatMessageKeys.ID}
                               FROM msg),
              msgIds AS (SELECT dp.${chatMessageKeys.ID} AS "msgId"
-                        FROM dateProvider dp WHERE dp."rn" = 1),
+                        FROM dateProvider dp
+                        WHERE dp."rowNumber" = 1),
              msgData AS (SELECT CASE WHEN (cm.${chatMessageKeys.SENDER_ID} = $1) THEN cm.${chatMessageKeys.RECIPIENT_ID} ELSE cm.${chatMessageKeys.SENDER_ID} END AS "userId",
                                 u.${userKeys.USERNAME} AS "lastMsgSenderUsername",
                                 cm.${chatMessageKeys.CONTENT},
