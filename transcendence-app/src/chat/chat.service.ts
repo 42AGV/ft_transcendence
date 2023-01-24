@@ -296,4 +296,24 @@ export class ChatService {
       userMeId,
     );
   }
+
+  async getAuthUserPaginatedChatsAndChatrooms(
+    userMeId: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ) {
+    return this.chatroomRepository.getAuthUserPaginatedChatsAndChatrooms(
+      userMeId,
+      {
+        limit,
+        offset,
+        sort,
+        search,
+      },
+    );
+  }
 }

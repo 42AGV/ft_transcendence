@@ -63,6 +63,7 @@ import { CrMemberPoliciesGuard } from '../authorization/guards/crm-policies.guar
 import { AnyMongoAbility } from '@casl/ability';
 import { ConfigParam } from '../authorization/decorators/configure-param.decorator';
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
+import { GenericChat } from './infrastructure/generic-chat.entity';
 
 @Controller('chat')
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -192,26 +193,22 @@ export class ChatController {
   @Get('room/member')
   @ApiOkResponse({
     description: `Lists all chatrooms the auth user is subscribed to (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [Chatroom],
+    type: [GenericChat],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getAuthChatrooms(
     @GetUser() user: User,
     @Query() chatsPaginationQueryDto: PaginationWithSearchQueryDto,
-  ): Promise<Chatroom[]> {
-    const chatrooms = await this.chatService.retrieveChatroomsforAuthUser(
-      user,
-      chatsPaginationQueryDto,
-    );
+  ): Promise<GenericChat[]> {
+    const chatrooms =
+      await this.chatService.getAuthUserPaginatedChatsAndChatrooms(
+        user.id,
+        chatsPaginationQueryDto,
+      );
     if (!chatrooms) {
       throw new ServiceUnavailableException();
     }
-    console.log(
-      await this.chatService.getAuthUserPaginatedChatroomsWithLastMessage(
-        user.id,
-      ),
-    );
     return chatrooms;
   }
 
