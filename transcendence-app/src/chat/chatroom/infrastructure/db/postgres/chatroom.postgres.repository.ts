@@ -65,8 +65,6 @@ export class ChatroomPostgresRepository
     return chatrooms && chatrooms.length ? chatrooms[0] : null;
   }
 
-  private COMMON_CHATS_QUERY: string = ``;
-
   async getPaginatedChatrooms(
     paginationDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<GenericChat[] | null> {
