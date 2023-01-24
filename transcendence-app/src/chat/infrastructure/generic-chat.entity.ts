@@ -4,6 +4,7 @@ export interface GenericChatData {
   avatarY: number;
   url: string;
   name: string;
+  id: string;
   lastMsgSenderUsername: string;
   lastMessage: string;
   lastMessageDate: Date;
@@ -15,6 +16,7 @@ export class GenericChat {
   avatarY: number;
   url: string;
   name: string;
+  id: string;
   lastMsgSenderUsername: string;
   lastMessage: string;
   lastMessageDate: Date;
@@ -24,6 +26,7 @@ export class GenericChat {
     this.avatarX = chatData.avatarX;
     this.avatarY = chatData.avatarY;
     this.url = chatData.url;
+    this.id = chatData.id;
     this.name = chatData.name;
     this.lastMsgSenderUsername = chatData.lastMsgSenderUsername;
     this.lastMessage = chatData.lastMessage;

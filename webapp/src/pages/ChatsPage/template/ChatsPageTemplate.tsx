@@ -8,6 +8,9 @@ import {
 import {
   ADMIN_URL,
   AVATAR_EP_URL,
+  CHATROOM_URL,
+  CHATS_URL,
+  CHAT_URL,
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
 import { GenericChat } from '../../../shared/generated';
@@ -15,6 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../../shared/constants';
 import { Query } from '../../../shared/types';
+import { useFriend } from '../../../shared/hooks/UseFriend';
+import { useUserStatus } from '../../../shared/hooks/UseUserStatus';
 
 type ChatPageTemplateProps = {
   fetchFn: <RequestType extends Query>(
@@ -31,6 +36,8 @@ export default function ChatsPageTemplate({
   buttonIconVariant,
   buttonLabel,
 }: ChatPageTemplateProps) {
+  const { userStatus } = useUserStatus();
+  const { userFriends } = useFriend();
   const navigate = useNavigate();
   const overridePermissions =
     buttonUrl.slice(0, ADMIN_URL.length) === ADMIN_URL;
@@ -41,8 +48,13 @@ export default function ChatsPageTemplate({
         url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
         XCoordinate: chatroom.avatarX,
         YCoordinate: chatroom.avatarY,
+        status:
+          chatroom.url.slice(0, CHATROOM_URL.length) !== CHATROOM_URL &&
+          userFriends(chatroom.id)
+            ? userStatus(chatroom.id)
+            : undefined,
       },
-      url: `${overridePermissions ? ADMIN_URL : ''}/${chatroom.url}`,
+      url: `${overridePermissions ? ADMIN_URL : ''}${chatroom.url}`,
       title: chatroom.name,
       subtitle: `${chatroom.lastMsgSenderUsername}: ${chatroom.lastMessage}`,
       key: chatroom.url,
