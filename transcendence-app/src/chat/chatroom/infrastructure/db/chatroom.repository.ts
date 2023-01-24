@@ -20,10 +20,6 @@ export abstract class IChatroomRepository {
     authUserId: string,
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Chatroom[] | null>;
-  abstract getAuthUserPaginatedChatroomsWithLastMessage(
-    authUserId: string,
-    queryDto?: Required<PaginationWithSearchQueryDto>,
-  ): Promise<GenericChat[] | null>;
   abstract getAuthUserPaginatedChatsAndChatrooms(
     authUserId: string,
     queryDto: Required<PaginationWithSearchQueryDto>,

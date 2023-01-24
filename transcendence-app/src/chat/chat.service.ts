@@ -284,19 +284,6 @@ export class ChatService {
     return updatedChatroom;
   }
 
-  async getAuthUserChats(
-    userMeId: string,
-    paginationQueryDto?: Required<PaginationQueryDto>,
-  ): Promise<GenericChat[] | null> {
-    return this.chatMessageRepository.getAuthUserChats(userMeId);
-  }
-
-  async getAuthUserPaginatedChatroomsWithLastMessage(userMeId: string) {
-    return this.chatroomRepository.getAuthUserPaginatedChatroomsWithLastMessage(
-      userMeId,
-    );
-  }
-
   async getAuthUserPaginatedChatsAndChatrooms(
     userMeId: string,
     {

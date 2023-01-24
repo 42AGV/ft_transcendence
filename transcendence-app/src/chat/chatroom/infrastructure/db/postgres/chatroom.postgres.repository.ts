@@ -20,7 +20,6 @@ import {
   GenericChat,
   GenericChatData,
 } from '../../../../infrastructure/generic-chat.entity';
-import { ChatroomMessageKeys } from '../../../chatroom-message/infrastructure/db/chatroom-message.entity';
 import { chatMessageKeys } from '../../../../chat/infrastructure/db/chat-message.entity';
 import { userKeys } from '../../../../../user/infrastructure/db/user.entity';
 
@@ -231,59 +230,6 @@ export class ChatroomPostgresRepository
           ORDER BY m."lastMessageDate" DESC
           LIMIT $3 OFFSET $4;`,
       values: [authUserId, `%${search}%`, limit, offset],
-    });
-    return messages && messages.length
-      ? messages.map((message) => new GenericChat(message))
-      : null;
-  }
-
-  async getAuthUserPaginatedChatroomsWithLastMessage(
-    authUserId: string,
-    queryDto?: Required<PaginationWithSearchQueryDto>,
-  ): Promise<GenericChat[] | null> {
-    const messages = await makeQuery<GenericChatData>(this.pool, {
-      text: `WITH lchatrooms as
-                    (SELECT c.*
-                     FROM ${this.table} c
-                            INNER JOIN ${table.CHATROOM_MEMBERS} cm
-                                       ON cm."userId" = $1
-                                         AND cm."chatId" = c."id"
-                     WHERE cm."joinedAt" IS NOT NULL),
-                  crMsg AS (SELECT m."chatroomId",
-                                   m."userId",
-                                   m."id",
-                                   m."createdAt"
-                            FROM ${table.CHATROOM_MESSAGE} m
-                                   INNER JOIN "lchatrooms" cr ON cr."id" = m."chatroomId"),
-                  crDateProvider AS (SELECT m."chatroomId",
-                                            ROW_NUMBER() OVER (
-                                              PARTITION BY m."chatroomId" ORDER BY m."createdAt" DESC
-                                              ) AS "rowNumber",
-                                            m."id"
-                                     FROM crmsg m),
-                  crMsgIds AS (SELECT dp."id" AS "msgId"
-                               FROM crDateProvider dp
-                               WHERE dp."rowNumber" = 1),
-                  crMsgData AS (SELECT cm."chatroomId",
-                                       u."username" AS "lastMsgSenderUsername",
-                                       cm."content",
-                                       cm."createdAt"
-                                FROM ${table.CHATROOM_MESSAGE} cm
-                                       INNER JOIN crmsgIds mi ON cm."id" = mi."msgId"
-                                       LEFT JOIN ${table.USERS} u ON cm."userId" = u."id"
-                                ORDER BY cm."createdAt")
-             SELECT cr."avatarId",
-                    cr."avatarX",
-                    cr."avatarY",
-                    'chatroom/' || cr."id"    AS "url",
-                    cr."name",
-                    crmd."lastMsgSenderUsername",
-                    crmd.content::varchar(20) AS "lastMessage",
-                    crmd."createdAt"          AS "lastMessageDate"
-             FROM crMsgData crmd
-                    INNER JOIN ${this.table} cr
-                               ON crmd."chatroomId" = cr.id;`,
-      values: [authUserId],
     });
     return messages && messages.length
       ? messages.map((message) => new GenericChat(message))

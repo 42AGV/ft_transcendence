@@ -1,23 +1,23 @@
 export interface GenericChatData {
-  avatarId: string | null;
-  avatarX: number | null;
-  avatarY: number | null;
+  avatarId: string;
+  avatarX: number;
+  avatarY: number;
   url: string;
   name: string;
   lastMsgSenderUsername: string;
-  lastMessage?: string;
-  lastMessageDate?: Date;
+  lastMessage: string;
+  lastMessageDate: Date;
 }
 
 export class GenericChat {
-  avatarId: string | null;
-  avatarX: number | null;
-  avatarY: number | null;
+  avatarId: string;
+  avatarX: number;
+  avatarY: number;
   url: string;
   name: string;
   lastMsgSenderUsername: string;
-  lastMessage: string | undefined;
-  lastMessageDate: Date | undefined;
+  lastMessage: string;
+  lastMessageDate: Date;
 
   constructor(chatData: GenericChatData) {
     this.avatarId = chatData.avatarId;
@@ -26,7 +26,7 @@ export class GenericChat {
     this.url = chatData.url;
     this.name = chatData.name;
     this.lastMsgSenderUsername = chatData.lastMsgSenderUsername;
-    this.lastMessage = chatData?.lastMessage;
-    this.lastMessageDate = chatData?.lastMessageDate;
+    this.lastMessage = chatData.lastMessage;
+    this.lastMessageDate = chatData.lastMessageDate;
   }
 }
