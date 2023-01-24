@@ -30,8 +30,8 @@ type Act<Type extends string, Payload extends object> = {
 };
 
 export type Action =
-  | Act<'move' | 'win', { deltaTime: number }>
-  | Act<'lose' | GamePaddleMoveCommand, EmptyPayload>
+  | Act<'move' | 'addPoint', { deltaTime: number }>
+  | Act<'losePoint' | GamePaddleMoveCommand, EmptyPayload>
   | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
 
 export const initialBallState = (): GameBall => {
@@ -69,13 +69,13 @@ export const reducer = (
         ball: getBallPos(ball, paddle, payload.deltaTime),
         paddle: getPaddlePos(paddle, payload.deltaTime),
       };
-    case 'lose':
+    case 'losePoint':
       return {
         ...state,
         ball: initialBallState(),
         score: score - 1,
       };
-    case 'win':
+    case 'addPoint':
       return {
         ...state,
         ball: getBallPos(ball, paddle, payload.deltaTime),

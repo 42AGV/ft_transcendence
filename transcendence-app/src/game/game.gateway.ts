@@ -36,7 +36,7 @@ export class GameGateway {
     const state = { id, command };
 
     if (state) {
-      this.server.to(sender.id).emit('chatMessage', { ...state });
+      this.server.to(sender.id).emit('gameServerMessage', { ...state });
     } else {
       throw new WsException(
         'The message could not be sent. Service Unavailable',

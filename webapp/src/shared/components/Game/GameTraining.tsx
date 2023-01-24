@@ -1,18 +1,14 @@
 import * as React from 'react';
 
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
-import {
-  useGameControls,
-  useGameAnimation,
-  useClientGameEngine,
-} from './hooks';
+import { useGameControls, useGameAnimation, useGameEngine } from './hooks';
 import { GameStateContextProvider } from './context';
 
 import './Game.css';
 
 const GameTraining = () => {
-  const { renderFrame, deltaTimeRef } = useGameAnimation();
-  const { runClientGameFrame } = useClientGameEngine();
+  const { renderFrame } = useGameAnimation();
+  const { runGameFrame } = useGameEngine();
   useGameControls();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const requestFrameRef = React.useRef<number | null>(null);
@@ -20,12 +16,12 @@ const GameTraining = () => {
 
   const gameLoop = React.useCallback(() => {
     const canvasContext = canvasRef.current?.getContext('2d');
-    const gameState = runClientGameFrame(deltaTimeRef.current);
+    const gameState = runGameFrame();
 
     setScore(gameState.score);
     canvasContext && renderFrame(canvasContext, gameState);
     window.requestAnimationFrame(() => gameLoop());
-  }, [runClientGameFrame, renderFrame, deltaTimeRef]);
+  }, [runGameFrame, renderFrame]);
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
