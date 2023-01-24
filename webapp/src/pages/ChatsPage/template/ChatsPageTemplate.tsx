@@ -9,8 +9,6 @@ import {
   ADMIN_URL,
   AVATAR_EP_URL,
   CHATROOM_URL,
-  CHATS_URL,
-  CHAT_URL,
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
 import { GenericChat } from '../../../shared/generated';
