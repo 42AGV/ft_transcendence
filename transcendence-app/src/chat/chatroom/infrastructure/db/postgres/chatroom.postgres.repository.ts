@@ -17,6 +17,7 @@ import {
   ChatroomMemberKeys,
 } from '../../../chatroom-member/infrastructure/db/chatroom-member.entity';
 import { GenericChat } from '../../../../infrastructure/generic-chat.entity';
+import { ChatroomMessageKeys } from "../../../chatroom-message/infrastructure/db/chatroom-message.entity";
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -108,6 +109,15 @@ export class ChatroomPostgresRepository
     authUserId: string,
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<GenericChat[] | null> {
+    const { limit, offset, sort, search } = queryDto;
+    const orderBy =
+      sort === BooleanString.True
+        ? ChatroomMemberKeys.JOINED_AT
+        : ChatroomKeys.NAME;
+    const chatroomsData = await makeQuery<Chatroom>(this.pool, {
+      text: `SELECT ARRAY [${ChatroomMessageKeys.USER_ID}, ${ChatroomMessageKeys.CHATROOM_ID}] as key from ${table.CHATROOM_MESSAGE}`,
+      values: [`%${search}%`, limit, offset, authUserId],
+    });
     return Promise.reject(new Error('Stuff'));
   }
 
