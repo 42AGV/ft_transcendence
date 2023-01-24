@@ -78,33 +78,33 @@ export class ChatroomPostgresRepository
                                    m.${ChatroomMessageKeys.CREATED_AT}
                             FROM ${table.CHATROOM_MESSAGE} m),
                   crDateProvider AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
-                                         ROW_NUMBER() OVER (
-                                             PARTITION BY m.${ChatroomMessageKeys.CHATROOM_ID} ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC
-                                             ) AS "rowNumber",
-                                         m.${ChatroomMessageKeys.ID}
-                                  FROM crMsg m),
-               crMsgIds AS (SELECT dp.${ChatroomMessageKeys.ID} AS "msgId"
-                            FROM crDateProvider dp
-                            WHERE dp."rowNumber" = 1),
-               crMsgData AS (SELECT cm.${ChatroomMessageKeys.CHATROOM_ID},
-                                    u.${userKeys.USERNAME} AS "lastMsgSenderUsername",
-                                    cm.${ChatroomMessageKeys.CONTENT},
-                                    cm.${ChatroomMessageKeys.CREATED_AT}
-                             FROM ${table.CHATROOM_MESSAGE} cm
-                                      INNER JOIN crMsgIds mi ON cm.${ChatroomMessageKeys.ID} = mi."msgId"
-                                      LEFT JOIN ${table.USERS} u ON cm.${ChatroomMessageKeys.USER_ID} = u.${userKeys.ID}
-                             ORDER BY cm.${ChatroomMessageKeys.CREATED_AT})
+                                            ROW_NUMBER() OVER (
+                                              PARTITION BY m.${ChatroomMessageKeys.CHATROOM_ID} ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC
+                                              ) AS "rowNumber",
+                                            m.${ChatroomMessageKeys.ID}
+                                     FROM crMsg m),
+                  crMsgIds AS (SELECT dp.${ChatroomMessageKeys.ID} AS "msgId"
+                               FROM crDateProvider dp
+                               WHERE dp."rowNumber" = 1),
+                  crMsgData AS (SELECT cm.${ChatroomMessageKeys.CHATROOM_ID},
+                                       u.${userKeys.USERNAME} AS "lastMsgSenderUsername",
+                                       cm.${ChatroomMessageKeys.CONTENT},
+                                       cm.${ChatroomMessageKeys.CREATED_AT}
+                                FROM ${table.CHATROOM_MESSAGE} cm
+                                       INNER JOIN crMsgIds mi ON cm.${ChatroomMessageKeys.ID} = mi."msgId"
+                                       LEFT JOIN ${table.USERS} u ON cm.${ChatroomMessageKeys.USER_ID} = u.${userKeys.ID}
+                                ORDER BY cm.${ChatroomMessageKeys.CREATED_AT})
              SELECT cr.${ChatroomKeys.AVATAR_ID},
                     cr.${ChatroomKeys.AVATAR_X},
                     cr.${ChatroomKeys.AVATAR_Y},
-                    '/chatroom/' || cr.${ChatroomKeys.ID}    AS "url",
+                    '/chatroom/' || cr.${ChatroomKeys.ID}            AS "url",
                     cr.${ChatroomKeys.NAME},
                     crmd."lastMsgSenderUsername",
                     crmd.${ChatroomMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
-                    crmd.${ChatroomMessageKeys.CREATED_AT}          AS "lastMessageDate"
+                    crmd.${ChatroomMessageKeys.CREATED_AT}           AS "lastMessageDate"
              FROM crMsgData crmd
-                      INNER JOIN ${this.table} cr
-                                 ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
+                    INNER JOIN ${this.table} cr
+                               ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
              WHERE cr.${ChatroomKeys.NAME} ILIKE $1
              ORDER BY "lastMessageDate" DESC
              LIMIT $2 OFFSET $3;`,
@@ -148,92 +148,92 @@ export class ChatroomPostgresRepository
     const { limit, offset, search } = queryDto;
     const messages = await makeQuery<GenericChatData>(this.pool, {
       text: `
-          WITH msg as (SELECT ARRAY [least(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID}),
-                                  greatest(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID})] AS "partakers",
-                              m.${chatMessageKeys.ID},
-                              m.${chatMessageKeys.CREATED_AT}
-                       FROM ${table.CHAT_MESSAGE} m
-                       WHERE (m.${chatMessageKeys.SENDER_ID} = $1
-                           OR m.${chatMessageKeys.RECIPIENT_ID} = $1)),
-               dateProvider AS (SELECT msg."partakers",
+        WITH msg as (SELECT ARRAY [least(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID}),
+                              greatest(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID})] AS "partakers",
+                            m.${chatMessageKeys.ID},
+                            m.${chatMessageKeys.CREATED_AT}
+                     FROM ${table.CHAT_MESSAGE} m
+                     WHERE (m.${chatMessageKeys.SENDER_ID} = $1
+                       OR m.${chatMessageKeys.RECIPIENT_ID} = $1)),
+             dateProvider AS (SELECT msg."partakers",
+                                     ROW_NUMBER() OVER (
+                                       PARTITION BY msg."partakers"
+                                       ORDER BY msg.${chatMessageKeys.CREATED_AT} DESC
+                                       ) AS "rowNumber",
+                                     msg.${chatMessageKeys.ID}
+                              FROM msg),
+             msgIds AS (SELECT dp.${chatMessageKeys.ID} AS "msgId"
+                        FROM dateProvider dp
+                        WHERE dp."rowNumber" = 1),
+             msgData
+               AS (SELECT CASE WHEN (cm.${chatMessageKeys.SENDER_ID} = $1) THEN cm.${chatMessageKeys.RECIPIENT_ID} ELSE cm.${chatMessageKeys.SENDER_ID} END AS "userId",
+                          u.${userKeys.USERNAME}                                                                                                            AS "lastMsgSenderUsername",
+                          cm.${chatMessageKeys.CONTENT},
+                          cm.${chatMessageKeys.CREATED_AT}
+                   FROM ${table.CHAT_MESSAGE} cm
+                          INNER JOIN msgIds mi ON cm.${chatMessageKeys.ID} = mi."msgId"
+                          LEFT JOIN ${table.USERS} u ON cm.${chatMessageKeys.SENDER_ID} = u.${userKeys.ID}
+                   ORDER BY cm.${chatMessageKeys.CREATED_AT}),
+             lChatMessages as (SELECT u.${userKeys.AVATAR_ID},
+                                      u.${userKeys.AVATAR_X},
+                                      u.${userKeys.AVATAR_Y},
+                                      '/chat/' || u.${userKeys.USERNAME}         AS "url",
+                                      u.${userKeys.USERNAME}                     AS "name",
+                                      u.${userKeys.ID}                           AS "id",
+                                      md."lastMsgSenderUsername",
+                                      md.${chatMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
+                                      md.${chatMessageKeys.CREATED_AT}           AS "lastMessageDate"
+                               FROM ${table.USERS} u
+                                      INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"
+                               ORDER BY md.${chatMessageKeys.CREATED_AT}),
+             lchatrooms AS
+               (SELECT c.*
+                FROM ${this.table} c
+                       INNER JOIN ${table.CHATROOM_MEMBERS} cm
+                                  ON cm.${ChatroomMemberKeys.USERID} = $1
+                                    AND cm.${ChatroomMemberKeys.CHATID} = c.${ChatroomKeys.ID}
+                WHERE cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL),
+             crMsg AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
+                              m.${ChatroomMessageKeys.USER_ID},
+                              m.${ChatroomMessageKeys.ID},
+                              m.${ChatroomMessageKeys.CREATED_AT}
+                       FROM ${table.CHATROOM_MESSAGE} m
+                              INNER JOIN "lchatrooms" cr ON cr.${ChatroomKeys.ID} = m.${ChatroomMessageKeys.CHATROOM_ID}),
+             crDateProvider AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
                                        ROW_NUMBER() OVER (
-                                           PARTITION BY msg."partakers"
-                                           ORDER BY msg.${chatMessageKeys.CREATED_AT} DESC
-                                           ) AS "rowNumber",
-                                       msg.${chatMessageKeys.ID}
-                                FROM msg),
-               msgIds AS (SELECT dp.${chatMessageKeys.ID} AS "msgId"
-                          FROM dateProvider dp
+                                         PARTITION BY m.${ChatroomMessageKeys.CHATROOM_ID} ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC
+                                         ) AS "rowNumber",
+                                       m.${ChatroomMessageKeys.ID}
+                                FROM crMsg m),
+             crMsgIds AS (SELECT dp.${ChatroomMessageKeys.ID} AS "msgId"
+                          FROM crDateProvider dp
                           WHERE dp."rowNumber" = 1),
-               msgData
-                   AS (SELECT CASE WHEN (cm.${chatMessageKeys.SENDER_ID} = $1) THEN cm.${chatMessageKeys.RECIPIENT_ID} ELSE cm.${chatMessageKeys.SENDER_ID} END AS "userId",
-                              u.${userKeys.USERNAME}                                                                                                            AS "lastMsgSenderUsername",
-                              cm.${chatMessageKeys.CONTENT},
-                              cm.${chatMessageKeys.CREATED_AT}
-                       FROM ${table.CHAT_MESSAGE} cm
-                                INNER JOIN msgIds mi ON cm.${chatMessageKeys.ID} = mi."msgId"
-                                LEFT JOIN ${table.USERS} u ON cm.${chatMessageKeys.SENDER_ID} = u.${userKeys.ID}
-                       ORDER BY cm.${chatMessageKeys.CREATED_AT}),
-               lChatMessages as (SELECT u.${userKeys.AVATAR_ID},
-                                        u.${userKeys.AVATAR_X},
-                                        u.${userKeys.AVATAR_Y},
-                                        '/chat/' || u.${userKeys.USERNAME}         AS "url",
-                                        u.${userKeys.USERNAME}                     AS "name",
-                                        u.${userKeys.ID}                           AS "id",
-                                        md."lastMsgSenderUsername",
-                                        md.${chatMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
-                                        md.${chatMessageKeys.CREATED_AT}           AS "lastMessageDate"
-                                 FROM ${table.USERS} u
-                                          INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"
-                                 ORDER BY md.${chatMessageKeys.CREATED_AT}),
-               lchatrooms AS
-                   (SELECT c.*
-                    FROM ${this.table} c
-                             INNER JOIN ${table.CHATROOM_MEMBERS} cm
-                                        ON cm.${ChatroomMemberKeys.USERID} = $1
-                                            AND cm.${ChatroomMemberKeys.CHATID} = c.${ChatroomKeys.ID}
-                    WHERE cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL),
-               crMsg AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
-                                m.${ChatroomMessageKeys.USER_ID},
-                                m.${ChatroomMessageKeys.ID},
-                                m.${ChatroomMessageKeys.CREATED_AT}
-                         FROM ${table.CHATROOM_MESSAGE} m
-                                  INNER JOIN "lchatrooms" cr ON cr.${ChatroomKeys.ID} = m.${ChatroomMessageKeys.CHATROOM_ID}),
-               crDateProvider AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
-                                         ROW_NUMBER() OVER (
-                                             PARTITION BY m.${ChatroomMessageKeys.CHATROOM_ID} ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC
-                                             ) AS "rowNumber",
-                                         m.${ChatroomMessageKeys.ID}
-                                  FROM crMsg m),
-               crMsgIds AS (SELECT dp.${ChatroomMessageKeys.ID} AS "msgId"
-                            FROM crDateProvider dp
-                            WHERE dp."rowNumber" = 1),
-               crMsgData AS (SELECT cm.${ChatroomMessageKeys.CHATROOM_ID},
-                                    u.${userKeys.USERNAME} AS "lastMsgSenderUsername",
-                                    cm.${ChatroomMessageKeys.CONTENT},
-                                    cm.${ChatroomMessageKeys.CREATED_AT}
-                             FROM ${table.CHATROOM_MESSAGE} cm
-                                      INNER JOIN crMsgIds mi ON cm.${ChatroomMessageKeys.ID} = mi."msgId"
-                                      LEFT JOIN ${table.USERS} u ON cm.${ChatroomMessageKeys.USER_ID} = u.${userKeys.ID}
-                             ORDER BY cm.${ChatroomMessageKeys.CREATED_AT}),
-               lChatroomMessages AS (SELECT cr.${ChatroomKeys.AVATAR_ID},
-                                            cr.${ChatroomKeys.AVATAR_X},
-                                            cr.${ChatroomKeys.AVATAR_Y},
-                                            '/chatroom/' || cr.${ChatroomKeys.ID}            AS "url",
-                                            cr.${ChatroomKeys.NAME},
-                                            cr.${ChatroomKeys.ID}                            AS "id",
-                                            crmd."lastMsgSenderUsername",
-                                            crmd.${ChatroomMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
-                                            crmd.${ChatroomMessageKeys.CREATED_AT}           AS "lastMessageDate"
-                                     FROM crMsgData crmd
-                                              INNER JOIN ${this.table} cr
-                                                         ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}),
-               merged AS ((SELECT * FROM lChatMessages) UNION (SELECT * FROM lChatroomMessages))
-          SELECT *
-          from merged m
-          WHERE m.name ILIKE $2
-          ORDER BY m."lastMessageDate" DESC
-          LIMIT $3 OFFSET $4;`,
+             crMsgData AS (SELECT cm.${ChatroomMessageKeys.CHATROOM_ID},
+                                  u.${userKeys.USERNAME} AS "lastMsgSenderUsername",
+                                  cm.${ChatroomMessageKeys.CONTENT},
+                                  cm.${ChatroomMessageKeys.CREATED_AT}
+                           FROM ${table.CHATROOM_MESSAGE} cm
+                                  INNER JOIN crMsgIds mi ON cm.${ChatroomMessageKeys.ID} = mi."msgId"
+                                  LEFT JOIN ${table.USERS} u ON cm.${ChatroomMessageKeys.USER_ID} = u.${userKeys.ID}
+                           ORDER BY cm.${ChatroomMessageKeys.CREATED_AT}),
+             lChatroomMessages AS (SELECT cr.${ChatroomKeys.AVATAR_ID},
+                                          cr.${ChatroomKeys.AVATAR_X},
+                                          cr.${ChatroomKeys.AVATAR_Y},
+                                          '/chatroom/' || cr.${ChatroomKeys.ID}            AS "url",
+                                          cr.${ChatroomKeys.NAME},
+                                          cr.${ChatroomKeys.ID}                            AS "id",
+                                          crmd."lastMsgSenderUsername",
+                                          crmd.${ChatroomMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
+                                          crmd.${ChatroomMessageKeys.CREATED_AT}           AS "lastMessageDate"
+                                   FROM crMsgData crmd
+                                          INNER JOIN ${this.table} cr
+                                                     ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}),
+             merged AS ((SELECT * FROM lChatMessages) UNION (SELECT * FROM lChatroomMessages))
+        SELECT *
+        from merged m
+        WHERE m.name ILIKE $2
+        ORDER BY m."lastMessageDate" DESC
+        LIMIT $3 OFFSET $4;`,
       values: [authUserId, `%${search}%`, limit, offset],
     });
     return messages && messages.length
