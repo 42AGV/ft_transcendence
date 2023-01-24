@@ -9,7 +9,10 @@ import { makeQuery } from '../../../../../shared/db/postgres/utils';
 import { PaginationQueryDto } from '../../../../../shared/dtos/pagination.query.dto';
 import { userKeys } from '../../../../../user/infrastructure/db/user.entity';
 import { ChatMessageWithUser } from '../chat-message-with-user.entity';
-import { GenericChat } from '../../../../infrastructure/generic-chat.entity';
+import {
+  GenericChat,
+  GenericChatData,
+} from '../../../../infrastructure/generic-chat.entity';
 
 @Injectable()
 export class ChatMessagePostgresRepository
@@ -50,7 +53,7 @@ export class ChatMessagePostgresRepository
     userMeId: string,
     paginationQueryDto?: Required<PaginationQueryDto>,
   ): Promise<GenericChat[] | null> {
-    const messages = await makeQuery<GenericChat>(this.pool, {
+    const messages = await makeQuery<GenericChatData>(this.pool, {
       text: `
         WITH msg as (SELECT ARRAY [least(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID}),
                               greatest(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID})] AS "partakers",

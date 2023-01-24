@@ -290,4 +290,10 @@ export class ChatService {
   ): Promise<GenericChat[] | null> {
     return this.chatMessageRepository.getAuthUserChats(userMeId);
   }
+
+  async getAuthUserPaginatedChatroomsWithLastMessage(userMeId: string) {
+    return this.chatroomRepository.getAuthUserPaginatedChatroomsWithLastMessage(
+      userMeId,
+    );
+  }
 }

@@ -16,8 +16,11 @@ import {
   ChatroomMember,
   ChatroomMemberKeys,
 } from '../../../chatroom-member/infrastructure/db/chatroom-member.entity';
-import { GenericChat } from '../../../../infrastructure/generic-chat.entity';
-import { ChatroomMessageKeys } from "../../../chatroom-message/infrastructure/db/chatroom-message.entity";
+import {
+  GenericChat,
+  GenericChatData,
+} from '../../../../infrastructure/generic-chat.entity';
+import { ChatroomMessageKeys } from '../../../chatroom-message/infrastructure/db/chatroom-message.entity';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -105,20 +108,57 @@ export class ChatroomPostgresRepository
       : null;
   }
 
-  async getAuthUserPaginatedChatsAndChatrooms(
+  async getAuthUserPaginatedChatroomsWithLastMessage(
     authUserId: string,
-    queryDto: Required<PaginationWithSearchQueryDto>,
+    queryDto?: Required<PaginationWithSearchQueryDto>,
   ): Promise<GenericChat[] | null> {
-    const { limit, offset, sort, search } = queryDto;
-    const orderBy =
-      sort === BooleanString.True
-        ? ChatroomMemberKeys.JOINED_AT
-        : ChatroomKeys.NAME;
-    const chatroomsData = await makeQuery<Chatroom>(this.pool, {
-      text: `SELECT ARRAY [${ChatroomMessageKeys.USER_ID}, ${ChatroomMessageKeys.CHATROOM_ID}] as key from ${table.CHATROOM_MESSAGE}`,
-      values: [`%${search}%`, limit, offset, authUserId],
+    const messages = await makeQuery<GenericChatData>(this.pool, {
+      text: `WITH lchatrooms as
+                    (SELECT c.*
+                     FROM ${this.table} c
+                            INNER JOIN ${table.CHATROOM_MEMBERS} cm
+                                       ON cm."userId" = $1
+                                         AND cm."chatId" = c."id"
+                     WHERE cm."joinedAt" IS NOT NULL),
+                  crMsg AS (SELECT m."chatroomId",
+                                   m."userId",
+                                   m."id",
+                                   m."createdAt"
+                            FROM ${table.CHATROOM_MESSAGE} m
+                                   INNER JOIN "lchatrooms" cr ON cr."id" = m."chatroomId"),
+                  crDateProvider AS (SELECT m."chatroomId",
+                                            ROW_NUMBER() OVER (
+                                              PARTITION BY m."chatroomId" ORDER BY m."createdAt" DESC
+                                              ) AS "rowNumber",
+                                            m."id"
+                                     FROM crmsg m),
+                  crMsgIds AS (SELECT dp."id" AS "msgId"
+                               FROM crDateProvider dp
+                               WHERE dp."rowNumber" = 1),
+                  crMsgData AS (SELECT cm."chatroomId",
+                                       u."username" AS "lastMsgSenderUsername",
+                                       cm."content",
+                                       cm."createdAt"
+                                FROM ${table.CHATROOM_MESSAGE} cm
+                                       INNER JOIN crmsgIds mi ON cm."id" = mi."msgId"
+                                       LEFT JOIN ${table.USERS} u ON cm."userId" = u."id"
+                                ORDER BY cm."createdAt")
+             SELECT cr."avatarId",
+                    cr."avatarX",
+                    cr."avatarY",
+                    'chatroom/' || cr."id"    AS "url",
+                    cr."name",
+                    crmd."lastMsgSenderUsername",
+                    crmd.content::varchar(20) AS "lastMessage",
+                    crmd."createdAt"          AS "lastMessageDate"
+             FROM crMsgData crmd
+                    INNER JOIN ${this.table} cr
+                               ON crmd."chatroomId" = cr.id;`,
+      values: [authUserId],
     });
-    return Promise.reject(new Error('Stuff'));
+    return messages && messages.length
+      ? messages.map((message) => new GenericChat(message))
+      : null;
   }
 
   async addAvatarAndAddChatroom(

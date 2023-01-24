@@ -20,9 +20,9 @@ export abstract class IChatroomRepository {
     authUserId: string,
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Chatroom[] | null>;
-  abstract getAuthUserPaginatedChatsAndChatrooms(
+  abstract getAuthUserPaginatedChatroomsWithLastMessage(
     authUserId: string,
-    queryDto: Required<PaginationWithSearchQueryDto>,
+    queryDto?: Required<PaginationWithSearchQueryDto>,
   ): Promise<GenericChat[] | null>;
   abstract addAvatarAndAddChatroom(
     avatar: LocalFile,
