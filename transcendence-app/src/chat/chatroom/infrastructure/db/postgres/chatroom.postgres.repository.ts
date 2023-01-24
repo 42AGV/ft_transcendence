@@ -22,6 +22,7 @@ import {
 } from '../../../../infrastructure/generic-chat.entity';
 import { chatMessageKeys } from '../../../../chat/infrastructure/db/chat-message.entity';
 import { userKeys } from '../../../../../user/infrastructure/db/user.entity';
+import { ChatroomMessageKeys } from '../../../chatroom-message/infrastructure/db/chatroom-message.entity';
 
 @Injectable()
 export class ChatroomPostgresRepository
@@ -174,7 +175,7 @@ export class ChatroomPostgresRepository
                lChatMessages as (SELECT u.${userKeys.AVATAR_ID},
                                         u.${userKeys.AVATAR_X},
                                         u.${userKeys.AVATAR_Y},
-                                        '/chat/' || u.${userKeys.USERNAME}          AS "url",
+                                        '/chat/' || u.${userKeys.USERNAME}         AS "url",
                                         u.${userKeys.USERNAME}                     AS "name",
                                         u.${userKeys.ID}                           AS "id",
                                         md."lastMsgSenderUsername",
@@ -205,26 +206,26 @@ export class ChatroomPostgresRepository
                crMsgIds AS (SELECT dp."id" AS "msgId"
                             FROM crDateProvider dp
                             WHERE dp."rowNumber" = 1),
-               crMsgData AS (SELECT cm."chatroomId",
-                                    u."username" AS "lastMsgSenderUsername",
-                                    cm."content",
-                                    cm."createdAt"
+               crMsgData AS (SELECT cm.${ChatroomMessageKeys.CHATROOM_ID},
+                                    u.${userKeys.USERNAME} AS "lastMsgSenderUsername",
+                                    cm.${ChatroomMessageKeys.CONTENT},
+                                    cm.${ChatroomMessageKeys.CREATED_AT}
                              FROM ${table.CHATROOM_MESSAGE} cm
-                                      INNER JOIN crmsgIds mi ON cm."id" = mi."msgId"
-                                      LEFT JOIN ${table.USERS} u ON cm."userId" = u."id"
-                             ORDER BY cm."createdAt"),
-               lChatroomMessages AS (SELECT cr."avatarId",
-                                            cr."avatarX",
-                                            cr."avatarY",
-                                            '/chatroom/' || cr."id"    AS "url",
-                                            cr."name",
-                                            cr.${ChatroomKeys.ID}     AS "id",
+                                      INNER JOIN crMsgIds mi ON cm.${ChatroomMessageKeys.ID} = mi."msgId"
+                                      LEFT JOIN ${table.USERS} u ON cm.${ChatroomMessageKeys.USER_ID} = u.${userKeys.ID}
+                             ORDER BY cm.${ChatroomMessageKeys.CREATED_AT}),
+               lChatroomMessages AS (SELECT cr.${ChatroomKeys.AVATAR_ID},
+                                            cr.${ChatroomKeys.AVATAR_X},
+                                            cr.${ChatroomKeys.AVATAR_Y},
+                                            '/chatroom/' || cr.${ChatroomKeys.ID}            AS "url",
+                                            cr.${ChatroomKeys.NAME},
+                                            cr.${ChatroomKeys.ID}                            AS "id",
                                             crmd."lastMsgSenderUsername",
-                                            crmd.content::varchar(20) AS "lastMessage",
-                                            crmd."createdAt"          AS "lastMessageDate"
+                                            crmd.${ChatroomMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
+                                            crmd.${ChatroomMessageKeys.CREATED_AT}           AS "lastMessageDate"
                                      FROM crMsgData crmd
                                               INNER JOIN ${this.table} cr
-                                                         ON crmd."chatroomId" = cr.id),
+                                                         ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}),
                merged AS ((SELECT * FROM lChatMessages) UNION (SELECT * FROM lChatroomMessages))
           SELECT *
           from merged m
