@@ -55,7 +55,7 @@ export default function ChatsPageTemplate({
       url: `${overridePermissions ? ADMIN_URL : ''}${chatroom.url}`,
       title: chatroom.name,
       subtitle: `${chatroom.lastMsgSenderUsername}: ${chatroom.lastMessage}`,
-      key: chatroom.url,
+      key: chatroom.id,
     };
   };
   let chatButtons: ButtonProps[] = [
