@@ -39,6 +39,8 @@ export default function ChatsPageTemplate({
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: {
         url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
+        XCoordinate: chatroom.avatarX,
+        YCoordinate: chatroom.avatarY,
       },
       url: `${overridePermissions ? ADMIN_URL : ''}/${chatroom.url}`,
       title: chatroom.name,
