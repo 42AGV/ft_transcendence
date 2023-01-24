@@ -68,7 +68,7 @@ export class ChatroomPostgresRepository
     paginationDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<GenericChat[] | null> {
     const { limit, offset, search } = paginationDto;
-    const chatroomsData = await makeQuery<GenericChatData>(this.pool, {
+    const chatrooms = await makeQuery<GenericChatData>(this.pool, {
       text: `WITH crMsg AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
                                    m.${ChatroomMessageKeys.USER_ID},
                                    m.${ChatroomMessageKeys.ID},
@@ -107,8 +107,8 @@ export class ChatroomPostgresRepository
              LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
-    return chatroomsData
-      ? chatroomsData.map((chatroom) => new GenericChat(chatroom))
+    return chatrooms
+      ? chatrooms.map((chatroom) => new GenericChat(chatroom))
       : null;
   }
 
@@ -117,7 +117,7 @@ export class ChatroomPostgresRepository
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<GenericChat[] | null> {
     const { limit, offset, search } = queryDto;
-    const messages = await makeQuery<GenericChatData>(this.pool, {
+    const chats = await makeQuery<GenericChatData>(this.pool, {
       text: `
         WITH msg as (SELECT ARRAY [least(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID}),
                               greatest(m.${chatMessageKeys.SENDER_ID}, m.${chatMessageKeys.RECIPIENT_ID})] AS "partakers",
@@ -207,9 +207,7 @@ export class ChatroomPostgresRepository
         LIMIT $3 OFFSET $4;`,
       values: [authUserId, `%${search}%`, limit, offset],
     });
-    return messages
-      ? messages.map((message) => new GenericChat(message))
-      : null;
+    return chats ? chats.map((chat) => new GenericChat(chat)) : null;
   }
 
   async addAvatarAndAddChatroom(
