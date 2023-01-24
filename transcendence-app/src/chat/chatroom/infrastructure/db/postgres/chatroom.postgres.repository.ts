@@ -184,26 +184,26 @@ export class ChatroomPostgresRepository
                                  FROM ${table.USERS} u
                                           INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"
                                  ORDER BY md.${chatMessageKeys.CREATED_AT}),
-               lchatrooms as
+               lchatrooms AS
                    (SELECT c.*
                     FROM ${this.table} c
                              INNER JOIN ${table.CHATROOM_MEMBERS} cm
-                                        ON cm."userId" = $1
-                                            AND cm."chatId" = c."id"
-                    WHERE cm."joinedAt" IS NOT NULL),
-               crMsg AS (SELECT m."chatroomId",
-                                m."userId",
-                                m."id",
-                                m."createdAt"
+                                        ON cm.${ChatroomMemberKeys.USERID} = $1
+                                            AND cm.${ChatroomMemberKeys.CHATID} = c.${ChatroomKeys.ID}
+                    WHERE cm.${ChatroomMemberKeys.JOINED_AT} IS NOT NULL),
+               crMsg AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
+                                m.${ChatroomMessageKeys.USER_ID},
+                                m.${ChatroomMessageKeys.ID},
+                                m.${ChatroomMessageKeys.CREATED_AT}
                          FROM ${table.CHATROOM_MESSAGE} m
-                                  INNER JOIN "lchatrooms" cr ON cr."id" = m."chatroomId"),
-               crDateProvider AS (SELECT m."chatroomId",
+                                  INNER JOIN "lchatrooms" cr ON cr.${ChatroomKeys.ID} = m.${ChatroomMessageKeys.CHATROOM_ID}),
+               crDateProvider AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
                                          ROW_NUMBER() OVER (
-                                             PARTITION BY m."chatroomId" ORDER BY m."createdAt" DESC
+                                             PARTITION BY m.${ChatroomMessageKeys.CHATROOM_ID} ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC
                                              ) AS "rowNumber",
-                                         m."id"
-                                  FROM crmsg m),
-               crMsgIds AS (SELECT dp."id" AS "msgId"
+                                         m.${ChatroomMessageKeys.ID}
+                                  FROM crMsg m),
+               crMsgIds AS (SELECT dp.${ChatroomMessageKeys.ID} AS "msgId"
                             FROM crDateProvider dp
                             WHERE dp."rowNumber" = 1),
                crMsgData AS (SELECT cm.${ChatroomMessageKeys.CHATROOM_ID},
