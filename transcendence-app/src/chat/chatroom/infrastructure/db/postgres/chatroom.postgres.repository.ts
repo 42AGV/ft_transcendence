@@ -106,7 +106,7 @@ export class ChatroomPostgresRepository
                              crmd.${ChatroomMessageKeys.CREATED_AT} IS NULL)
                              THEN cr.${ChatroomKeys.CREATED_AT}
                          ELSE crmd.${ChatroomMessageKeys.CREATED_AT}
-                    END)                            AS "lastMessageDate"
+                        END)                            AS "lastMessageDate"
              FROM crMsgData crmd
                       FULL OUTER JOIN ${this.table} cr
                                       ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
