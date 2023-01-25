@@ -66,6 +66,7 @@ export default function ChatsPageTemplate({
         ? `${chatroom.lastMsgSenderUsername}: ${chatroom.lastMessage}`
         : `${chatroom.isPublic ? 'public' : 'private'}`,
       key: chatroom.id,
+      altText: `${chatroom.lastMessageDate}`,
     };
   };
   let chatButtons: ButtonProps[] = [

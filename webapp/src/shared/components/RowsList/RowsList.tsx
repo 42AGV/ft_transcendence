@@ -7,6 +7,7 @@ import './RowsList.css';
 
 export type RowItem = RowProps & {
   key: string;
+  altText?: string;
 };
 
 type RowsListProps = {
@@ -27,12 +28,13 @@ export default function RowsList({ rows, onLastRowVisible }: RowsListProps) {
     <ul className="rows-list">
       {rows &&
         rows.map((rowItem, index) => {
-          const { key, ...rowProps } = rowItem;
+          const { key, altText, ...rowProps } = rowItem;
           return (
             <li
               ref={rows.length === index + 1 ? ref : undefined}
               className="rows-list-item"
               key={key}
+              title={altText}
             >
               <Row {...rowProps} />
             </li>
