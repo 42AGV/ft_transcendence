@@ -97,6 +97,8 @@ export class ChatroomPostgresRepository
                     cr.${ChatroomKeys.AVATAR_Y},
                     '${ChatType.CHATROOM}'                 AS "rtti",
                     cr.${ChatroomKeys.NAME},
+                    cr.${ChatroomKeys.ID},
+                    cr.${ChatroomKeys.PASSWORD} IS NULL    AS "isPublic",
                     crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"
              FROM crMsgData crmd
                     INNER JOIN ${this.table} cr
@@ -150,6 +152,7 @@ export class ChatroomPostgresRepository
                                       '${ChatType.ONE_TO_ONE}'         AS "rtti",
                                       u.${userKeys.USERNAME}           AS "name",
                                       u.${userKeys.ID}                 AS "id",
+                                      false                            AS "isPublic",
                                       md."lastMsgSenderUsername",
                                       md.${chatMessageKeys.CONTENT}    AS "lastMessage",
                                       md.${chatMessageKeys.CREATED_AT} AS "lastMessageDate"
@@ -192,6 +195,7 @@ export class ChatroomPostgresRepository
                                           '${ChatType.CHATROOM}'                 AS "rtti",
                                           cr.${ChatroomKeys.NAME},
                                           cr.${ChatroomKeys.ID}                  AS "id",
+                                          cr.${ChatroomKeys.PASSWORD} IS NULL    AS "isPublic",
                                           crmd."lastMsgSenderUsername",
                                           crmd.${ChatroomMessageKeys.CONTENT}    AS "lastMessage",
                                           crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"

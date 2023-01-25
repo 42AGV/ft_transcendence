@@ -61,7 +61,7 @@ export default function ChatsPageTemplate({
       title: chatroom.name,
       subtitle: chatroom.lastMsgSenderUsername
         ? `${chatroom.lastMsgSenderUsername}: ${chatroom.lastMessage}`
-        : undefined,
+        : `${chatroom.isPublic ? 'public' : 'private'}`,
       key: chatroom.id,
     };
   };
