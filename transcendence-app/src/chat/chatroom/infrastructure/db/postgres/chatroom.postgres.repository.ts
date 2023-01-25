@@ -16,6 +16,7 @@ import {
   ChatroomMemberKeys,
 } from '../../../chatroom-member/infrastructure/db/chatroom-member.entity';
 import {
+  ChatType,
   GenericChat,
   GenericChatData,
 } from '../../../../infrastructure/generic-chat.entity';
@@ -94,11 +95,9 @@ export class ChatroomPostgresRepository
              SELECT cr.${ChatroomKeys.AVATAR_ID},
                     cr.${ChatroomKeys.AVATAR_X},
                     cr.${ChatroomKeys.AVATAR_Y},
-                    '/chatroom/' || cr.${ChatroomKeys.ID}            AS "url",
+                    '${ChatType.CHATROOM}'                 AS "rtti",
                     cr.${ChatroomKeys.NAME},
-                    crmd."lastMsgSenderUsername",
-                    crmd.${ChatroomMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
-                    crmd.${ChatroomMessageKeys.CREATED_AT}           AS "lastMessageDate"
+                    crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"
              FROM crMsgData crmd
                     INNER JOIN ${this.table} cr
                                ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
@@ -148,12 +147,12 @@ export class ChatroomPostgresRepository
              lChatMessages as (SELECT u.${userKeys.AVATAR_ID},
                                       u.${userKeys.AVATAR_X},
                                       u.${userKeys.AVATAR_Y},
-                                      '/chat/' || u.${userKeys.USERNAME}         AS "url",
-                                      u.${userKeys.USERNAME}                     AS "name",
-                                      u.${userKeys.ID}                           AS "id",
+                                      '${ChatType.ONE_TO_ONE}'         AS "rtti",
+                                      u.${userKeys.USERNAME}           AS "name",
+                                      u.${userKeys.ID}                 AS "id",
                                       md."lastMsgSenderUsername",
-                                      md.${chatMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
-                                      md.${chatMessageKeys.CREATED_AT}           AS "lastMessageDate"
+                                      md.${chatMessageKeys.CONTENT}    AS "lastMessage",
+                                      md.${chatMessageKeys.CREATED_AT} AS "lastMessageDate"
                                FROM ${table.USERS} u
                                       INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"
                                ORDER BY md.${chatMessageKeys.CREATED_AT}),
@@ -190,12 +189,12 @@ export class ChatroomPostgresRepository
              lChatroomMessages AS (SELECT cr.${ChatroomKeys.AVATAR_ID},
                                           cr.${ChatroomKeys.AVATAR_X},
                                           cr.${ChatroomKeys.AVATAR_Y},
-                                          '/chatroom/' || cr.${ChatroomKeys.ID}            AS "url",
+                                          '${ChatType.CHATROOM}'                 AS "rtti",
                                           cr.${ChatroomKeys.NAME},
-                                          cr.${ChatroomKeys.ID}                            AS "id",
+                                          cr.${ChatroomKeys.ID}                  AS "id",
                                           crmd."lastMsgSenderUsername",
-                                          crmd.${ChatroomMessageKeys.CONTENT}::varchar(20) AS "lastMessage",
-                                          crmd.${ChatroomMessageKeys.CREATED_AT}           AS "lastMessageDate"
+                                          crmd.${ChatroomMessageKeys.CONTENT}    AS "lastMessage",
+                                          crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"
                                    FROM crMsgData crmd
                                           INNER JOIN ${this.table} cr
                                                      ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}),

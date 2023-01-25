@@ -8,10 +8,11 @@ import {
 import {
   ADMIN_URL,
   AVATAR_EP_URL,
+  CHAT_URL,
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
-import { GenericChat } from '../../../shared/generated';
+import { GenericChat, GenericChatRttiEnum } from '../../../shared/generated';
 import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../../shared/constants';
@@ -47,14 +48,20 @@ export default function ChatsPageTemplate({
         XCoordinate: chatroom.avatarX,
         YCoordinate: chatroom.avatarY,
         status:
-          chatroom.url.slice(0, CHATROOM_URL.length) !== CHATROOM_URL &&
+          chatroom.rtti === GenericChatRttiEnum.OneToOne &&
           userFriends(chatroom.id)
             ? userStatus(chatroom.id)
             : undefined,
       },
-      url: `${overridePermissions ? ADMIN_URL : ''}${chatroom.url}`,
+      url: `${overridePermissions ? ADMIN_URL : ''}${
+        chatroom.rtti === GenericChatRttiEnum.OneToOne
+          ? `${CHAT_URL}/${chatroom.name}`
+          : `${CHATROOM_URL}/${chatroom.id}`
+      }`,
       title: chatroom.name,
-      subtitle: `${chatroom.lastMsgSenderUsername}: ${chatroom.lastMessage}`,
+      subtitle: chatroom.lastMsgSenderUsername
+        ? `${chatroom.lastMsgSenderUsername}: ${chatroom.lastMessage}`
+        : undefined,
       key: chatroom.id,
     };
   };
