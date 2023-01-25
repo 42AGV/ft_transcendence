@@ -10,7 +10,6 @@ export interface GenericChatData {
   rtti: ChatType;
   name: string;
   id: string;
-  chatCreationDate: Date | null;
   isPublic: boolean | null;
   lastMsgSenderUsername: string | null;
   lastMessage: string | null;
