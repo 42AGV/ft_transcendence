@@ -97,29 +97,19 @@ export default function ToggleSwitchSet({
           ...updateChatroomMemberDto,
           [key]: newValue,
         });
-        const { username } = canEditParams.destUser;
-        try {
-          notify(
-            newValue
-              ? `Added ${key} role to ${username}`
-              : `Removed ${key} role from ${username}`,
-          );
-        } catch {
-          notify(`${username} chatroom member successfully updated`);
-        }
+        notify(
+          newValue
+            ? `Added ${key} role to ${canEditParams.destUser}`
+            : `Removed ${key} role from ${canEditParams.destUser}`,
+        );
       } catch (error: unknown) {
         handleRequestError(error, 'Could not update the chat member', warn);
       }
     };
   };
-  const keysOfUpdateChatroomMemberDto: (keyof UpdateChatroomMemberDto)[] = [
-    'admin',
-    'muted',
-    'banned',
-  ];
   return (
     <>
-      {keysOfUpdateChatroomMemberDto.map(
+      {(['admin', 'muted', 'banned'] as (keyof UpdateChatroomMemberDto)[]).map(
         (key: keyof UpdateChatroomMemberDto) => {
           return (
             <ToggleSwitch

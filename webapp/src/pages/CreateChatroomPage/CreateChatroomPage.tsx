@@ -8,7 +8,7 @@ import {
   TextVariant,
   TextWeight,
 } from '../../shared/components';
-import { CHATS_URL } from '../../shared/urls';
+import { CHATROOM_URL } from '../../shared/urls';
 import React, { useState } from 'react';
 import { CreateChatroomDto } from '../../shared/generated';
 import { chatApi } from '../../shared/services/ApiService';
@@ -50,7 +50,7 @@ export default function CreateChatroomPage() {
       return;
     }
     try {
-      await chatApi.chatControllerCreateChatroom({
+      const newChatroom = await chatApi.chatControllerCreateChatroom({
         createChatroomDto: {
           ...formValues,
           password: formValues.password || null,
@@ -58,7 +58,7 @@ export default function CreateChatroomPage() {
         },
       });
       notify('Registration complete');
-      navigate(CHATS_URL);
+      navigate(`${CHATROOM_URL}/${newChatroom.id}`, { replace: true });
     } catch (error) {
       handleRequestError(
         error,

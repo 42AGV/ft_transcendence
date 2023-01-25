@@ -28,19 +28,18 @@ export class ChatMessagePostgresRepository
 
     const messages = await makeQuery<ChatMessageWithUser>(this.pool, {
       text: `SELECT m.*,
-        u.${userKeys.USERNAME},
-        u.${userKeys.AVATAR_ID},
-        u.${userKeys.AVATAR_X},
-        u.${userKeys.AVATAR_Y}
-      FROM ${this.table} m
-      INNER JOIN ${table.USERS} u
-        ON (m.${chatMessageKeys.SENDER_ID} =
-            u.${userKeys.ID})
-      WHERE (m."senderId" = $1 AND m."recipientId" = $2)
-        OR  (m."senderId" = $2 AND m."recipientId" = $1)
-      ORDER BY m.${chatMessageKeys.CREATED_AT} DESC, m.${chatMessageKeys.ID}
-      LIMIT $3
-      OFFSET $4;`,
+                    u.${userKeys.USERNAME},
+                    u.${userKeys.AVATAR_ID},
+                    u.${userKeys.AVATAR_X},
+                    u.${userKeys.AVATAR_Y}
+             FROM ${this.table} m
+                    INNER JOIN ${table.USERS} u
+                               ON (m.${chatMessageKeys.SENDER_ID} =
+                                   u.${userKeys.ID})
+             WHERE (m.${chatMessageKeys.SENDER_ID} = $1 AND m.${chatMessageKeys.RECIPIENT_ID} = $2)
+                OR (m.${chatMessageKeys.SENDER_ID} = $2 AND m.${chatMessageKeys.RECIPIENT_ID} = $1)
+             ORDER BY m.${chatMessageKeys.CREATED_AT} DESC, m.${chatMessageKeys.ID}
+             LIMIT $3 OFFSET $4;`,
       values: [userMeId, recipientId, limit, offset],
     });
     return messages?.map((message) => new ChatMessageWithUser(message)) ?? null;

@@ -13,6 +13,7 @@ import { WsException } from '../../shared/types';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { LoadingPage } from '..';
+import { USER_URL } from '../../shared/urls';
 
 type ChatWithUserProps = {
   username: string;
@@ -95,6 +96,7 @@ function Chat({ user }: ChatProps) {
     <ChatMessagingTemplate
       title={user.username}
       to={user.id}
+      titleNavigationUrl={`${USER_URL}/${user.username}`}
       fetchMessagesCallback={fetchMessagesCallback}
       chatEvent="chatMessage"
       messageMapper={messageMapper}

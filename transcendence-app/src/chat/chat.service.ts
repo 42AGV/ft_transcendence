@@ -29,6 +29,7 @@ import { LocalFileDto } from '../shared/local-file/local-file.dto';
 import { ChatroomDto } from './chatroom/dto/chatroom.dto';
 import { ChatMessageWithUser } from './chat/infrastructure/db/chat-message-with-user.entity';
 import { AvatarService } from '../shared/avatar/avatar.service';
+import { GenericChat } from './infrastructure/generic-chat.entity';
 
 @Injectable()
 export class ChatService {
@@ -47,25 +48,8 @@ export class ChatService {
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: PaginationWithSearchQueryDto): Promise<Chatroom[] | null> {
+  }: PaginationWithSearchQueryDto): Promise<GenericChat[] | null> {
     return this.chatroomRepository.getPaginatedChatrooms({
-      limit,
-      offset,
-      sort,
-      search,
-    });
-  }
-
-  async retrieveChatroomsforAuthUser(
-    user: User,
-    {
-      limit = MAX_ENTRIES_PER_PAGE,
-      offset = 0,
-      sort = BooleanString.False,
-      search = '',
-    }: PaginationWithSearchQueryDto,
-  ): Promise<Chatroom[] | null> {
-    return this.chatroomRepository.getAuthUserPaginatedChatrooms(user.id, {
       limit,
       offset,
       sort,
@@ -281,5 +265,25 @@ export class ChatService {
       await this.avatarService.deleteAvatar(previousAvatarId);
     }
     return updatedChatroom;
+  }
+
+  async getAuthUserPaginatedChatsAndChatrooms(
+    userMeId: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ) {
+    return this.chatroomRepository.getAuthUserPaginatedChatsAndChatrooms(
+      userMeId,
+      {
+        limit,
+        offset,
+        sort,
+        search,
+      },
+    );
   }
 }

@@ -8,19 +8,25 @@ import {
 import {
   ADMIN_URL,
   AVATAR_EP_URL,
+  CHAT_URL,
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
-import { Chatroom } from '../../../shared/generated';
+import {
+  GenericChat,
+  GenericChatChatTypeEnum,
+} from '../../../shared/generated';
 import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../../shared/constants';
 import { Query } from '../../../shared/types';
+import { useFriend } from '../../../shared/hooks/UseFriend';
+import { useUserStatus } from '../../../shared/hooks/UseUserStatus';
 
 type ChatPageTemplateProps = {
   fetchFn: <RequestType extends Query>(
     requestParams: RequestType,
-  ) => Promise<Chatroom[]>;
+  ) => Promise<GenericChat[]>;
   buttonUrl: string;
   buttonIconVariant: IconVariant;
   buttonLabel: string;
@@ -32,21 +38,35 @@ export default function ChatsPageTemplate({
   buttonIconVariant,
   buttonLabel,
 }: ChatPageTemplateProps) {
+  const { userStatus } = useUserStatus();
+  const { userFriends } = useFriend();
   const navigate = useNavigate();
   const overridePermissions =
     buttonUrl.slice(0, ADMIN_URL.length) === ADMIN_URL;
-  const mapChatToRow = (chatroom: Chatroom): RowItem => {
+  const mapChatToRow = (chatroom: GenericChat): RowItem => {
     return {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: {
         url: `${AVATAR_EP_URL}/${chatroom.avatarId}`,
+        XCoordinate: chatroom.avatarX,
+        YCoordinate: chatroom.avatarY,
+        status:
+          chatroom.chatType === GenericChatChatTypeEnum.OneToOne &&
+          userFriends(chatroom.id)
+            ? userStatus(chatroom.id)
+            : undefined,
       },
-      url: `${overridePermissions ? ADMIN_URL : ''}${CHATROOM_URL}/${
-        chatroom.id
+      url: `${overridePermissions ? ADMIN_URL : ''}${
+        chatroom.chatType === GenericChatChatTypeEnum.OneToOne
+          ? `${CHAT_URL}/${chatroom.name}`
+          : `${CHATROOM_URL}/${chatroom.id}`
       }`,
       title: chatroom.name,
-      subtitle: 'last message',
+      subtitle: chatroom.lastMsgSenderUsername
+        ? `${chatroom.lastMsgSenderUsername}: ${chatroom.lastMessage}`
+        : `${chatroom.isPublic ? 'public' : 'private'}`,
       key: chatroom.id,
+      altText: `${chatroom.lastMessageDate}`,
     };
   };
   let chatButtons: ButtonProps[] = [

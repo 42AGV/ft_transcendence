@@ -40,7 +40,7 @@ import { LoadingPage } from '..';
 
 export default function ChatroomDetailsPage() {
   const { authUser, isLoading } = useAuth();
-  const { warn } = useNotificationContext();
+  const { warn, notify } = useNotificationContext();
   const { chatroomId } = useParams();
   const { pathname } = useLocation();
   const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
@@ -93,11 +93,12 @@ export default function ChatroomDetailsPage() {
     if (!chatroomId) return;
     try {
       await chatApi.chatControllerLeaveChatroom({ chatroomId: chatroomId });
-      navigate(`${CHATS_URL}`);
+      navigate(`${CHATS_URL}`, { replace: true });
+      notify('Succesfully left chatroom');
     } catch (error: unknown) {
       handleRequestError(error, 'Could not leave the chatroom', warn);
     }
-  }, [warn, chatroomId, navigate]);
+  }, [warn, notify, chatroomId, navigate]);
 
   const editChatroom = useCallback(async () => {
     if (!chatroomId) return;
