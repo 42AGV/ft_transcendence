@@ -77,8 +77,8 @@ export class ChatroomPostgresRepository
                             FROM ${table.CHATROOM_MESSAGE} m),
                   crDateProvider AS (SELECT m.${ChatroomMessageKeys.CHATROOM_ID},
                                             ROW_NUMBER() OVER (
-                                              PARTITION BY m.${ChatroomMessageKeys.CHATROOM_ID} ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC
-                                              ) AS "rowNumber",
+                                                PARTITION BY m.${ChatroomMessageKeys.CHATROOM_ID} ORDER BY m.${ChatroomMessageKeys.CREATED_AT} DESC
+                                                ) AS "rowNumber",
                                             m.${ChatroomMessageKeys.ID}
                                      FROM crMsg m),
                   crMsgIds AS (SELECT dp.${ChatroomMessageKeys.ID} AS "msgId"
@@ -89,20 +89,27 @@ export class ChatroomPostgresRepository
                                        cm.${ChatroomMessageKeys.CONTENT},
                                        cm.${ChatroomMessageKeys.CREATED_AT}
                                 FROM ${table.CHATROOM_MESSAGE} cm
-                                       INNER JOIN crMsgIds mi ON cm.${ChatroomMessageKeys.ID} = mi."msgId"
-                                       LEFT JOIN ${table.USERS} u ON cm.${ChatroomMessageKeys.USER_ID} = u.${userKeys.ID}
+                                         INNER JOIN crMsgIds mi ON cm.${ChatroomMessageKeys.ID} = mi."msgId"
+                                         LEFT JOIN ${table.USERS} u ON cm.${ChatroomMessageKeys.USER_ID} = u.${userKeys.ID}
                                 ORDER BY cm.${ChatroomMessageKeys.CREATED_AT})
              SELECT cr.${ChatroomKeys.AVATAR_ID},
                     cr.${ChatroomKeys.AVATAR_X},
                     cr.${ChatroomKeys.AVATAR_Y},
-                    '${ChatType.CHATROOM}'                 AS "rtti",
+                    '${ChatType.CHATROOM}'              AS "rtti",
                     cr.${ChatroomKeys.NAME},
                     cr.${ChatroomKeys.ID},
-                    cr.${ChatroomKeys.PASSWORD} IS NULL    AS "isPublic",
-                    crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"
+                    cr.${ChatroomKeys.PASSWORD} IS NULL AS "isPublic",
+                    NULL::TEXT                          AS "lastMsgSenderUsername",
+                    NULL::TEXT                          AS "lastMessage",
+                    (CASE
+                         WHEN (
+                             crmd.${ChatroomMessageKeys.CREATED_AT} IS NULL)
+                             THEN cr.${ChatroomKeys.CREATED_AT}
+                         ELSE crmd.${ChatroomMessageKeys.CREATED_AT}
+                    END)                            AS "lastMessageDate"
              FROM crMsgData crmd
-                    FULL OUTER JOIN ${this.table} cr
-                               ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
+                      FULL OUTER JOIN ${this.table} cr
+                                      ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
              WHERE cr.${ChatroomKeys.NAME} ILIKE $1
              ORDER BY "lastMessageDate" DESC
              LIMIT $2 OFFSET $3;`,
@@ -152,7 +159,7 @@ export class ChatroomPostgresRepository
                                       '${ChatType.ONE_TO_ONE}'         AS "rtti",
                                       u.${userKeys.USERNAME}           AS "name",
                                       u.${userKeys.ID}                 AS "id",
-                                      false                            AS "isPublic",
+                                      NULL::BOOLEAN                    AS "isPublic",
                                       md."lastMsgSenderUsername",
                                       md.${chatMessageKeys.CONTENT}    AS "lastMessage",
                                       md.${chatMessageKeys.CREATED_AT} AS "lastMessageDate"
@@ -198,7 +205,12 @@ export class ChatroomPostgresRepository
                                           cr.${ChatroomKeys.PASSWORD} IS NULL    AS "isPublic",
                                           crmd."lastMsgSenderUsername",
                                           crmd.${ChatroomMessageKeys.CONTENT}    AS "lastMessage",
-                                          crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"
+                                          (CASE
+                                             WHEN (
+                                               crmd.${ChatroomMessageKeys.CREATED_AT} IS NULL)
+                                               THEN cr.${ChatroomKeys.CREATED_AT}
+                                             ELSE crmd.${ChatroomMessageKeys.CREATED_AT}
+                                            END)                                 AS "lastMessageDate"
                                    FROM crMsgData crmd
                                           FULL OUTER JOIN lchatrooms cr
                                                      ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}),

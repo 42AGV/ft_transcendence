@@ -10,9 +10,10 @@ export interface GenericChatData {
   rtti: ChatType;
   name: string;
   id: string;
-  isPublic?: boolean;
-  lastMsgSenderUsername?: string;
-  lastMessage?: string;
+  chatCreationDate: Date | null;
+  isPublic: boolean | null;
+  lastMsgSenderUsername: string | null;
+  lastMessage: string | null;
   lastMessageDate: Date;
 }
 
@@ -23,9 +24,9 @@ export class GenericChat {
   rtti: ChatType;
   name: string;
   id: string;
-  isPublic?: boolean;
-  lastMsgSenderUsername?: string;
-  lastMessage?: string;
+  isPublic: boolean | null;
+  lastMsgSenderUsername: string | null;
+  lastMessage: string | null;
   lastMessageDate: Date;
 
   constructor(chatData: GenericChatData) {
