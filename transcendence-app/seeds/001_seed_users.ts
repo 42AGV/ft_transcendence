@@ -6,7 +6,7 @@ import { configService, createRandomAvatar, defaultUsernames } from './utils';
 import { join } from 'path';
 import { AVATARS_PATH } from '../src/shared/constants';
 
-const USERS_NUMBER = 5000;
+const USERS_NUMBER = 30;
 
 const createRandomUser = (avatarId: string) => {
   const firstName = faker.name.firstName();

@@ -3,9 +3,9 @@ import { faker } from '@faker-js/faker';
 import { User } from '../src/user/infrastructure/db/user.entity';
 import { createRandomAvatar, defaultUsernames } from './utils';
 
-const CHATROOMS_NUMBER = 100;
-const MESSAGES_PER_USER = 5;
-const EXTRA_CHATROOM_MEMBERS = 100;
+const CHATROOMS_NUMBER = 20;
+const MESSAGES_PER_USER = 2;
+const EXTRA_CHATROOM_MEMBERS = 10;
 
 const createRandomChatroom = (user: User, avatarId: string) => {
   const name = faker.helpers.unique(faker.random.words);
@@ -16,11 +16,16 @@ const createRandomChatroom = (user: User, avatarId: string) => {
   };
 };
 
+let startTime = new Date(Date.now());
+
 const createRandomChatroomMessage = (chatroomId: string, userId: string) => {
+  const oldDate = startTime;
+  startTime.setSeconds(1 + startTime.getSeconds());
   return {
     chatroomId,
     userId,
     content: faker.lorem.lines(),
+    createdAt: oldDate,
   };
 };
 
