@@ -101,7 +101,7 @@ export class ChatroomPostgresRepository
                     cr.${ChatroomKeys.PASSWORD} IS NULL    AS "isPublic",
                     crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"
              FROM crMsgData crmd
-                    INNER JOIN ${this.table} cr
+                    FULL OUTER JOIN ${this.table} cr
                                ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
              WHERE cr.${ChatroomKeys.NAME} ILIKE $1
              ORDER BY "lastMessageDate" DESC
@@ -200,7 +200,7 @@ export class ChatroomPostgresRepository
                                           crmd.${ChatroomMessageKeys.CONTENT}    AS "lastMessage",
                                           crmd.${ChatroomMessageKeys.CREATED_AT} AS "lastMessageDate"
                                    FROM crMsgData crmd
-                                          INNER JOIN ${this.table} cr
+                                          FULL OUTER JOIN lchatrooms cr
                                                      ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}),
              merged AS ((SELECT * FROM lChatMessages) UNION (SELECT * FROM lChatroomMessages))
         SELECT *
