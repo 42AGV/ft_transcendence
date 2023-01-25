@@ -7,7 +7,7 @@ export interface GenericChatData {
   avatarId: string;
   avatarX: number;
   avatarY: number;
-  rtti: ChatType;
+  chatType: ChatType;
   name: string;
   id: string;
   isPublic: boolean | null;
@@ -20,7 +20,7 @@ export class GenericChat {
   avatarId: string;
   avatarX: number;
   avatarY: number;
-  rtti: ChatType;
+  chatType: ChatType;
   name: string;
   id: string;
   isPublic: boolean | null;
@@ -32,7 +32,7 @@ export class GenericChat {
     this.avatarId = chatData.avatarId;
     this.avatarX = chatData.avatarX;
     this.avatarY = chatData.avatarY;
-    this.rtti = chatData.rtti;
+    this.chatType = chatData.chatType;
     this.id = chatData.id;
     this.isPublic = chatData.isPublic;
     this.name = chatData.name;

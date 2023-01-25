@@ -95,7 +95,7 @@ export class ChatroomPostgresRepository
              SELECT cr.${ChatroomKeys.AVATAR_ID},
                     cr.${ChatroomKeys.AVATAR_X},
                     cr.${ChatroomKeys.AVATAR_Y},
-                    '${ChatType.CHATROOM}'              AS "rtti",
+                    '${ChatType.CHATROOM}'              AS "chatType",
                     cr.${ChatroomKeys.NAME},
                     cr.${ChatroomKeys.ID},
                     cr.${ChatroomKeys.PASSWORD} IS NULL AS "isPublic",
@@ -111,7 +111,7 @@ export class ChatroomPostgresRepository
                       FULL OUTER JOIN ${this.table} cr
                                       ON crmd.${ChatroomMessageKeys.CHATROOM_ID} = cr.${ChatroomKeys.ID}
              WHERE cr.${ChatroomKeys.NAME} ILIKE $1
-             ORDER BY "lastMessageDate" DESC
+             ORDER BY "lastMessageDate" DESC, cr.${ChatroomKeys.ID}
              LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
@@ -156,7 +156,7 @@ export class ChatroomPostgresRepository
              lChatMessages as (SELECT u.${userKeys.AVATAR_ID},
                                       u.${userKeys.AVATAR_X},
                                       u.${userKeys.AVATAR_Y},
-                                      '${ChatType.ONE_TO_ONE}'         AS "rtti",
+                                      '${ChatType.ONE_TO_ONE}'         AS "chatType",
                                       u.${userKeys.USERNAME}           AS "name",
                                       u.${userKeys.ID}                 AS "id",
                                       NULL::BOOLEAN                    AS "isPublic",
@@ -164,8 +164,7 @@ export class ChatroomPostgresRepository
                                       md.${chatMessageKeys.CONTENT}    AS "lastMessage",
                                       md.${chatMessageKeys.CREATED_AT} AS "lastMessageDate"
                                FROM ${table.USERS} u
-                                      INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"
-                               ORDER BY md.${chatMessageKeys.CREATED_AT}),
+                                      INNER JOIN msgData md ON u.${userKeys.ID} = md."userId"),
              lchatrooms AS
                (SELECT c.*
                 FROM ${this.table} c
@@ -199,7 +198,7 @@ export class ChatroomPostgresRepository
              lChatroomMessages AS (SELECT cr.${ChatroomKeys.AVATAR_ID},
                                           cr.${ChatroomKeys.AVATAR_X},
                                           cr.${ChatroomKeys.AVATAR_Y},
-                                          '${ChatType.CHATROOM}'                 AS "rtti",
+                                          '${ChatType.CHATROOM}'                 AS "chatType",
                                           cr.${ChatroomKeys.NAME},
                                           cr.${ChatroomKeys.ID}                  AS "id",
                                           cr.${ChatroomKeys.PASSWORD} IS NULL    AS "isPublic",
@@ -218,7 +217,7 @@ export class ChatroomPostgresRepository
         SELECT *
         from merged m
         WHERE m.${ChatroomKeys.NAME} ILIKE $2
-        ORDER BY m."lastMessageDate" DESC
+        ORDER BY m."lastMessageDate" DESC, m.${ChatroomKeys.ID}
         LIMIT $3 OFFSET $4;`,
       values: [authUserId, `%${search}%`, limit, offset],
     });

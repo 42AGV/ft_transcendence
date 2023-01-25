@@ -12,7 +12,10 @@ import {
   CHATROOM_URL,
   CREATE_CHATROOM_URL,
 } from '../../../shared/urls';
-import { GenericChat, GenericChatRttiEnum } from '../../../shared/generated';
+import {
+  GenericChat,
+  GenericChatChatTypeEnum,
+} from '../../../shared/generated';
 import { useNavigate } from 'react-router-dom';
 import { SearchContextProvider } from '../../../shared/context/SearchContext';
 import { ENTRIES_LIMIT } from '../../../shared/constants';
@@ -48,13 +51,13 @@ export default function ChatsPageTemplate({
         XCoordinate: chatroom.avatarX,
         YCoordinate: chatroom.avatarY,
         status:
-          chatroom.rtti === GenericChatRttiEnum.OneToOne &&
+          chatroom.chatType === GenericChatChatTypeEnum.OneToOne &&
           userFriends(chatroom.id)
             ? userStatus(chatroom.id)
             : undefined,
       },
       url: `${overridePermissions ? ADMIN_URL : ''}${
-        chatroom.rtti === GenericChatRttiEnum.OneToOne
+        chatroom.chatType === GenericChatChatTypeEnum.OneToOne
           ? `${CHAT_URL}/${chatroom.name}`
           : `${CHATROOM_URL}/${chatroom.id}`
       }`,
