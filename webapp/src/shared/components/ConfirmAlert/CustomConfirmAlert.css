@@ -26,12 +26,16 @@ body.react-confirm-alert-body-element {
 }
 
 .react-confirm-alert-body {
-  width: 400px;
-  padding: 30px;
+  width: 25rem;
+  padding: 2rem;
   text-align: left;
   background: var(--color-dark);
-  border-radius: 10px;
+  border-radius: 0.5rem;
   color: var(--color-light);
+}
+
+.react-confirm-alert-body h4 {
+  margin-top: 0;
 }
 
 .react-confirm-alert-svg {
@@ -40,49 +44,10 @@ body.react-confirm-alert-body-element {
   left: 0;
 }
 
-.react-confirm-alert-body > h1 {
-  margin-top: 0;
-}
-
-.react-confirm-alert-body > h3 {
-  margin: 0;
-  font-size: 16px;
-}
-
 .react-confirm-alert-button-group {
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
   display: flex;
-  justify-content: flex-start;
-  margin-top: 20px;
-}
-
-.react-confirm-alert-button-group > [label='No'] {
-  outline: none;
-  background: var(--color-submit);
-  border: none;
-  display: inline-block;
-  padding: 6px 18px;
-  color: var(--color-light);
-  margin-right: 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.react-confirm-alert-button-group > [label='Yes'] {
-  outline: none;
-  background: var(--color-warning);
-  border: none;
-  display: inline-block;
-  padding: 6px 18px;
-  color: var(--color-light);
-  margin-right: 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  cursor: pointer;
+  justify-content: space-between;
+  margin-top: 2rem;
 }
 
 @-webkit-keyframes react-confirm-alert-fadeIn {
