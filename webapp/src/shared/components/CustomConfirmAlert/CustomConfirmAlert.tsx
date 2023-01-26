@@ -21,6 +21,7 @@ export default function CustomConfirmAlert({
   buttons,
 }: CustomConfirmAlertProps): void {
   confirmAlert({
+    closeOnClickOutside: false,
     customUI: ({ onClose }) => {
       return (
         <div className="react-confirm-alert-body">
