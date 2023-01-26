@@ -3,6 +3,7 @@ import { Text, TextVariant } from '../index';
 import './Timer.css';
 
 type TimerProps = {
+  textVariant?: TextVariant;
   timeString?: string;
   isBackwardsCount?: boolean;
   onTimeOut?: () => void;
@@ -39,6 +40,7 @@ function parseTime(input: string): clockType {
 }
 
 export default function Timer({
+  textVariant = TextVariant.TITLE,
   timeString = '00:01:00',
   isBackwardsCount = true,
   onTimeOut,
@@ -76,13 +78,13 @@ export default function Timer({
   return (
     <div className="timer">
       {(hours && (
-        <Text variant={TextVariant.HEADING}>{`${hours
+        <Text variant={textVariant}>{`${hours
           .toString()
           .padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
           .toString()
           .padStart(2, '0')}`}</Text>
       )) || (
-        <Text variant={TextVariant.HEADING}>{`${minutes
+        <Text variant={textVariant}>{`${minutes
           .toString()
           .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`}</Text>
       )}
