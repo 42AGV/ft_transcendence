@@ -25,7 +25,7 @@ const secondsToClockType = (seconds: number): clockType => {
   };
 };
 
-function parseTime(input: string): clockType {
+const parseTime = (input: string): clockType => {
   let a = input.split(':'); // split it at the colons
   if (a[0] && a[1] && a[2]) {
     return {
@@ -37,7 +37,7 @@ function parseTime(input: string): clockType {
     };
   }
   throw new Error('Bad time format');
-}
+};
 
 export default function Timer({
   textVariant = TextVariant.TITLE,
