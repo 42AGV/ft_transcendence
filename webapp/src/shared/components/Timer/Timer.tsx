@@ -3,6 +3,7 @@ import { Text, TextVariant } from '../index';
 import './Timer.css';
 
 type TimerProps = {
+  shouldRun?: boolean;
   textVariant?: TextVariant;
   timeString?: string;
   isBackwardsCount?: boolean;
@@ -40,6 +41,7 @@ const parseTime = (input: string): clockType => {
 };
 
 export default function Timer({
+  shouldRun = true,
   textVariant = TextVariant.TITLE,
   timeString = '00:01:00',
   isBackwardsCount = true,
@@ -59,22 +61,30 @@ export default function Timer({
           },
     );
   useEffect(() => {
-    setTimeout(() => {
-      if (isBackwardsCount) {
-        if (timeInSeconds === 0) {
-          onTimeOut && onTimeOut();
-          return;
+    if (shouldRun) {
+      setTimeout(() => {
+        if (isBackwardsCount) {
+          if (timeInSeconds === 0) {
+            onTimeOut && onTimeOut();
+            return;
+          }
+          setTime(secondsToClockType(timeInSeconds - 1));
+        } else {
+          if (timeInSeconds === startDate.timeInSeconds) {
+            onTimeOut && onTimeOut();
+            return;
+          }
+          setTime(secondsToClockType(timeInSeconds + 1));
         }
-        setTime(secondsToClockType(timeInSeconds - 1));
-      } else {
-        if (timeInSeconds === startDate.timeInSeconds) {
-          onTimeOut && onTimeOut();
-          return;
-        }
-        setTime(secondsToClockType(timeInSeconds + 1));
-      }
-    }, 1000);
-  }, [timeInSeconds, isBackwardsCount, onTimeOut, startDate.timeInSeconds]);
+      }, 1000);
+    }
+  }, [
+    timeInSeconds,
+    isBackwardsCount,
+    onTimeOut,
+    startDate.timeInSeconds,
+    shouldRun,
+  ]);
   return (
     <div className="timer">
       {(hours && (
