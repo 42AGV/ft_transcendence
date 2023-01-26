@@ -9,7 +9,7 @@ export default function GameSpinner({
 }: GameSpinnerProps) {
   return (
     <span
-      className="loader"
+      className="game-spinner"
       style={{ transform: `scale(${scaleInPercent}%)` }}
     ></span>
   );

@@ -1,4 +1,4 @@
-.loader {
+.game-spinner {
   display: block;
   position: relative;
   height: 40px;
@@ -6,7 +6,7 @@
   color: var(--color-light);
   animation: paddles 0.75s ease-out infinite;
 }
-.loader:before {
+.game-spinner:before {
   content: '';
   position: absolute;
   margin: 0 auto;
@@ -48,3 +48,5 @@
     transform: translateX(-20px);
   }
 }
+
+/* credit to https://cssloaders.github.io/ id pngPong*/
