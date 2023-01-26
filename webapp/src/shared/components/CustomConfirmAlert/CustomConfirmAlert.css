@@ -9,7 +9,7 @@ body.react-confirm-alert-body-element {
   right: 0;
   bottom: 0;
   z-index: 99;
-  background: var(--color-background);
+  background: rgb(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
