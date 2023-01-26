@@ -194,7 +194,6 @@ export default function EditChatroomDetailsPage() {
           children: 'No',
           variant: ButtonVariant.WARNING,
           buttonSize: ButtonSize.CHIP,
-          onClick: () => {},
         },
       ],
     });
