@@ -18,11 +18,14 @@ type clockType = {
 };
 
 const secondsToClockType = (seconds: number): clockType => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor(seconds / 60) - hours * 60;
+  const lseconds = Math.floor(seconds % 60);
   return {
     timeInSeconds: seconds,
-    hours: Math.floor(seconds / 3600),
-    minutes: Math.floor(seconds / 60),
-    seconds: Math.floor(seconds % 60),
+    hours,
+    minutes,
+    seconds: lseconds,
   };
 };
 
