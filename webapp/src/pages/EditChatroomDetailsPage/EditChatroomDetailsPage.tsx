@@ -25,6 +25,8 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
 import { LoadingPage } from '../index';
+import { confirmAlert } from 'react-confirm-alert';
+import '../../shared/components/ConfirmAlert/react-confirm-alert-custom.css';
 
 export default function EditChatroomDetailsPage() {
   const { pathname } = useLocation();
@@ -164,18 +166,32 @@ export default function EditChatroomDetailsPage() {
     e.preventDefault();
     updateChatroomDetails().catch((e) => console.error(e));
   };
+
   const deleteChatoom = async () => {
-    if (window.confirm('Are you sure you want to delete the chatroom?')) {
-      try {
-        chatApi.chatControllerDeleteChatroom({
-          chatroomId: chatroomId!,
-        });
-        notify('Chatroom successfully deleted');
-        navigate(`${overridePermissions ? ADMIN_URL : ''}${CHATS_URL}`);
-      } catch (error) {
-        handleRequestError(error, "Couldn't delete chatroom", warn);
-      }
-    }
+    confirmAlert({
+      title: 'Confirm to delete',
+      message: 'Are you sure you want to delete the chatroom?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => {
+            try {
+              chatApi.chatControllerDeleteChatroom({
+                chatroomId: chatroomId!,
+              });
+              notify('Chatroom successfully deleted');
+              navigate(`${overridePermissions ? ADMIN_URL : ''}${CHATS_URL}`);
+            } catch (error) {
+              handleRequestError(error, "Couldn't delete chatroom", warn);
+            }
+          },
+        },
+        {
+          label: 'No',
+          onClick: () => {},
+        },
+      ],
+    });
   };
 
   if (isLoading || isAuthCrMemberLoading) {
