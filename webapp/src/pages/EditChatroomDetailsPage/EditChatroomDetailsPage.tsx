@@ -1,5 +1,6 @@
 import {
   AvatarPageTemplate,
+  ButtonSize,
   ButtonVariant,
   IconVariant,
   Input,
@@ -7,10 +8,10 @@ import {
   ToggleSwitch,
 } from '../../shared/components';
 import {
-  CHATS_URL,
+  ADMIN_URL,
   AVATAR_EP_URL,
   CHATROOM_URL,
-  ADMIN_URL,
+  CHATS_URL,
 } from '../../shared/urls';
 import { useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
@@ -25,8 +26,9 @@ import { useAuth } from '../../shared/hooks/UseAuth';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
 import { LoadingPage } from '../index';
+import CustomConfirmAlert from '../../shared/components/ConfirmAlert/CustomConfirmAlert';
 import { confirmAlert } from 'react-confirm-alert';
-import '../../shared/components/ConfirmAlert/react-confirm-alert-custom.css';
+import '../../shared/components/ConfirmAlert/CustomConfirmAlert.css';
 
 export default function EditChatroomDetailsPage() {
   const { pathname } = useLocation();
@@ -168,12 +170,38 @@ export default function EditChatroomDetailsPage() {
   };
 
   const deleteChatoom = async () => {
-    confirmAlert({
+    // confirmAlert({
+    //   title: 'Confirm to delete',
+    //   message: 'Are you sure you want to delete the chatroom?',
+    //   buttons: [
+    //     {
+    //       label: 'Yes',
+    //       onClick: () => {
+    //         try {
+    //           chatApi.chatControllerDeleteChatroom({
+    //             chatroomId: chatroomId!,
+    //           });
+    //           notify('Chatroom successfully deleted');
+    //           navigate(`${overridePermissions ? ADMIN_URL : ''}${CHATS_URL}`);
+    //         } catch (error) {
+    //           handleRequestError(error, "Couldn't delete chatroom", warn);
+    //         }
+    //       },
+    //     },
+    //     {
+    //       label: 'No',
+    //       onClick: () => {},
+    //     },
+    //   ],
+    // });
+    CustomConfirmAlert({
       title: 'Confirm to delete',
       message: 'Are you sure you want to delete the chatroom?',
       buttons: [
         {
-          label: 'Yes',
+          children: 'Yes',
+          variant: ButtonVariant.SUBMIT,
+          buttonSize: ButtonSize.CHIP,
           onClick: () => {
             try {
               chatApi.chatControllerDeleteChatroom({
@@ -187,7 +215,9 @@ export default function EditChatroomDetailsPage() {
           },
         },
         {
-          label: 'No',
+          children: 'No',
+          variant: ButtonVariant.WARNING,
+          buttonSize: ButtonSize.CHIP,
           onClick: () => {},
         },
       ],
