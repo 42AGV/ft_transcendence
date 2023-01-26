@@ -12,25 +12,16 @@ config({ path: `.env.${process.env.NODE_ENV}` });
 export const configService = new ConfigService<EnvironmentVariables>();
 
 export const createRandomAvatar = async () => {
-  try {
-    const postgresPool = new PostgresPool(configService);
-    const localFileRepository: ILocalFileRepository =
-      new LocalFilePostgresRepository(postgresPool);
-    const localFileService = new LocalFileService(
-      configService,
-      localFileRepository,
-    );
-    try {
-      const avatarDto = await localFileService.createRandomSVGFile(12, 512);
-      return { id: uuidv4(), ...avatarDto };
-    } catch (e) {
-      console.error('Failed in createRandomSVGFile');
-      throw e;
-    }
-  } catch (e) {
-    console.error('Failed in preparations in createRandomAvatar');
-    throw e;
-  }
+  const postgresPool = new PostgresPool(configService);
+  const localFileRepository: ILocalFileRepository =
+    new LocalFilePostgresRepository(postgresPool);
+  const localFileService = new LocalFileService(
+    configService,
+    localFileRepository,
+  );
+  const avatarDto = await localFileService.createRandomSVGFile(12, 512);
+
+  return { id: uuidv4(), ...avatarDto };
 };
 
 export const defaultUsernames = 'abcdefghijklmnopqrstuvwxyz'.split('');

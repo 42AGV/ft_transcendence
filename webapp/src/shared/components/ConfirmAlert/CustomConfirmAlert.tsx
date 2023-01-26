@@ -44,6 +44,7 @@ export default function CustomConfirmAlert({
                   );
                 }
               }
+              return <></>;
             })}
           </div>
         </div>
