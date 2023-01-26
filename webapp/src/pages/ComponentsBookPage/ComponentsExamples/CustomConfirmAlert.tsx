@@ -30,7 +30,7 @@ const buttonAction = async () => {
 
 export const CustomConfirmAlertExample = () => (
   <BookSection title="Custom confirm alert">
-    <BookSubsection title="Small submit type with icon">
+    <BookSubsection title="regular alert">
       <Button
         variant={ButtonVariant.SUBMIT}
         iconVariant={IconVariant.ARROW_FORWARD}
