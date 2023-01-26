@@ -1,0 +1,52 @@
+body.react-confirm-alert-body-element {
+  overflow: hidden;
+}
+
+.react-confirm-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  background: rgb(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: react-confirm-alert-fadeIn 0s forwards;
+}
+
+.react-confirm-alert-body {
+  width: 22rem;
+  padding: 1.6rem;
+  text-align: left;
+  background: var(--color-dark);
+  border-radius: 1rem;
+  color: var(--color-light);
+}
+
+.react-confirm-alert-body h4 {
+  margin-top: 0;
+}
+
+.react-confirm-alert-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.react-confirm-alert-button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+@keyframes react-confirm-alert-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

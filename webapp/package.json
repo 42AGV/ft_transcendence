@@ -6,6 +6,7 @@
     "@types/react-dom": "^18.0.9",
     "pong-engine": "^1.0.0",
     "react": "^18.2.0",
+    "react-confirm-alert": "^3.0.6",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.5",
     "react-scripts": "^5.0.1",
