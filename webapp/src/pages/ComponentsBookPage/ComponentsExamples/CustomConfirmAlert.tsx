@@ -19,12 +19,19 @@ const buttonAction = async () => {
         onClick: () => {},
       },
       {
-        children: 'No',
+        children: 'Nnoooo',
         variant: ButtonVariant.WARNING,
         buttonSize: ButtonSize.CHIP,
         onClick: () => {},
       },
     ],
+  });
+};
+
+const buttonActionTwo = async () => {
+  CustomConfirmAlert({
+    message: 'Are you sure you want to do this default?',
+    buttons: [{}, {}],
   });
 };
 
@@ -36,7 +43,16 @@ export const CustomConfirmAlertExample = () => (
         iconVariant={IconVariant.ARROW_FORWARD}
         onClick={buttonAction}
       >
-        click me to see an alert
+        regular alert
+      </Button>
+    </BookSubsection>
+    <BookSubsection title="all defaults">
+      <Button
+        variant={ButtonVariant.SUBMIT}
+        iconVariant={IconVariant.ARROW_FORWARD}
+        onClick={buttonActionTwo}
+      >
+        very brief alert
       </Button>
     </BookSubsection>
   </BookSection>
