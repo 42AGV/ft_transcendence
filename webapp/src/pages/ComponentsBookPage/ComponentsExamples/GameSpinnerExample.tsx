@@ -4,7 +4,7 @@ import GameSpinner from '../../../shared/components/GameSpinner/GameSpinner';
 export function GameSpinnerExample() {
   return (
     <BookSection title="GameSpinner component">
-      <GameSpinner />
+      <GameSpinner scaleInPercent={100} />
     </BookSection>
   );
 }
