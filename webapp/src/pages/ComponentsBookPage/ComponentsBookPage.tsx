@@ -23,6 +23,7 @@ import {
 } from './ComponentsExamples';
 import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
 import { CustomConfirmAlertExample } from './ComponentsExamples/CustomConfirmAlert';
+import { GameSpinnerExample } from './ComponentsExamples/GameSpinnerExample';
 
 export default function ComponentsBookPage() {
   return (
@@ -50,6 +51,7 @@ export default function ComponentsBookPage() {
       <ToggleSwitchExample />
       <SnackBarExample />
       <CustomConfirmAlertExample />
+      <GameSpinnerExample />
     </div>
   );
 }

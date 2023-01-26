@@ -52,3 +52,5 @@ export { default as Game } from './Game/Game';
 export { default as GameTraining } from './Game/GameTraining';
 
 export { default as CustomConfirmAlert } from './CustomConfirmAlert/CustomConfirmAlert';
+
+export { default as GameSpinner } from './GameSpinner/GameSpinner';
