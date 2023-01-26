@@ -1,6 +1,5 @@
 import {
   AvatarPageTemplate,
-  ButtonSize,
   ButtonVariant,
   IconVariant,
   Input,
@@ -174,8 +173,6 @@ export default function EditChatroomDetailsPage() {
       buttons: [
         {
           children: 'Yes',
-          variant: ButtonVariant.SUBMIT,
-          buttonSize: ButtonSize.CHIP,
           onClick: () => {
             try {
               chatApi.chatControllerDeleteChatroom({
@@ -192,8 +189,6 @@ export default function EditChatroomDetailsPage() {
         },
         {
           children: 'No',
-          variant: ButtonVariant.WARNING,
-          buttonSize: ButtonSize.CHIP,
         },
       ],
     });
