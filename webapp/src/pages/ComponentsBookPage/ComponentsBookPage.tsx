@@ -22,6 +22,7 @@ import {
   SnackBarExample,
 } from './ComponentsExamples';
 import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
+import { CustomConfirmAlertExample } from './ComponentsExamples/CustomConfirmAlert';
 
 export default function ComponentsBookPage() {
   return (
@@ -48,6 +49,7 @@ export default function ComponentsBookPage() {
       <ChatBubbleExample />
       <ToggleSwitchExample />
       <SnackBarExample />
+      <CustomConfirmAlertExample />
     </div>
   );
 }
