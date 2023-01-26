@@ -22,29 +22,26 @@ export default function CustomConfirmAlert({
           <div className="react-confirm-alert-button-group">
             {buttons.map((prop, i) => {
               const { onClick, ...restProps } = prop;
-              if (onClick) {
-                if (i === 0) {
-                  const newClick: React.MouseEventHandler<HTMLButtonElement> = (
-                    e,
-                  ) => {
-                    onClick(e);
-                    onClose();
-                  };
-                  return (
-                    <Button {...{ ...restProps, onClick: newClick }} key={i} />
-                  );
-                } else {
-                  const newClick: React.MouseEventHandler<
-                    HTMLButtonElement
-                  > = () => {
-                    onClose();
-                  };
-                  return (
-                    <Button {...{ ...restProps, onClick: newClick }} key={i} />
-                  );
-                }
+              if (i === 0) {
+                const newClick: React.MouseEventHandler<HTMLButtonElement> = (
+                  e,
+                ) => {
+                  onClick && onClick(e);
+                  onClose();
+                };
+                return (
+                  <Button {...{ ...restProps, onClick: newClick }} key={i} />
+                );
+              } else {
+                const newClick: React.MouseEventHandler<
+                  HTMLButtonElement
+                > = () => {
+                  onClose();
+                };
+                return (
+                  <Button {...{ ...restProps, onClick: newClick }} key={i} />
+                );
               }
-              return <></>;
             })}
           </div>
         </div>
