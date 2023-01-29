@@ -22,6 +22,10 @@
   align-items: center;
 }
 
+.game-wait-text {
+  margin-top: 4rem;
+}
+
 .game-arena {
   border: solid 0.125rem var(--color-light);
   border-bottom: dashed;

@@ -4,24 +4,26 @@ import { GameState, runGameFrame as runEngineGameFrame } from 'pong-engine';
 import { useGameStateContext } from '../context';
 import useGameAnimation from './useGameAnimation';
 
-type Callback = () => void;
+type Callback = (game: GameState) => void;
 
-const useGameEngine = (
-  updateWithServer?: (cb: Callback) => void,
-  serverInitGameHandshake?: (deltaTime: number) => void,
-) => {
-  const { gameStateRef, dispatch } = useGameStateContext();
+const useGameEngine = (updateWithServer?: (cb: Callback) => void) => {
+  const { gameStateRef } = useGameStateContext();
   const { deltaTimeRef } = useGameAnimation();
-  const updateGameState = React.useCallback(() => {}, []);
 
   const runGameFrame = React.useCallback((): GameState => {
-    const state = gameStateRef.current;
-    const action = runEngineGameFrame(deltaTimeRef.current, state);
-    updateWithServer && updateWithServer(updateGameState);
+    if (updateWithServer) {
+      updateWithServer((state: GameState) => {
+        gameStateRef.current = state;
+      });
+    } else {
+      const state = gameStateRef.current;
+      const newState = runEngineGameFrame(deltaTimeRef.current, state);
 
-    dispatch(action);
+      gameStateRef.current = newState;
+    }
+
     return gameStateRef.current;
-  }, [dispatch, gameStateRef, updateWithServer, updateGameState, deltaTimeRef]);
+  }, [gameStateRef, updateWithServer, deltaTimeRef]);
 
   return { runGameFrame };
 };

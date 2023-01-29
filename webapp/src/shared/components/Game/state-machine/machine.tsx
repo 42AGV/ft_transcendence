@@ -16,9 +16,8 @@ export const gameMachine = createMachine({
       },
     },
     play: {
-      invoke: {
-        src: 'playAction',
-        onDone: { target: 'end' },
+      on: {
+        END: 'end',
       },
     },
     end: {

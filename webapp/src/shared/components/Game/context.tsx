@@ -1,16 +1,9 @@
 import * as React from 'react';
 
-import {
-  GameState,
-  Action,
-  initialBallState,
-  initialPaddleState,
-  reducer,
-} from 'pong-engine';
+import { GameState, newGame } from 'pong-engine';
 
 type GameStateContextType = {
   gameStateRef: React.MutableRefObject<GameState>;
-  dispatch: (action: Action) => void;
 };
 
 type GameStateContextProps = {
@@ -24,18 +17,10 @@ const GameStateContext = React.createContext<GameStateContextType | undefined>(
 export const GameStateContextProvider = ({
   children,
 }: GameStateContextProps) => {
-  const gameStateRef = React.useRef<GameState>({
-    ball: initialBallState(),
-    paddle: initialPaddleState(),
-    score: 0,
-  });
-
-  const dispatch = React.useCallback((action: Action) => {
-    gameStateRef.current = reducer(gameStateRef.current, action);
-  }, []);
+  const gameStateRef = React.useRef<GameState>(newGame());
 
   return (
-    <GameStateContext.Provider value={{ gameStateRef, dispatch }}>
+    <GameStateContext.Provider value={{ gameStateRef }}>
       {children}
     </GameStateContext.Provider>
   );

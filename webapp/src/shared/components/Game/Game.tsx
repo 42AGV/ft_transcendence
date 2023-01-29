@@ -12,8 +12,11 @@ import {
   useStateMachineContext,
 } from './state-machine/context';
 import Button, { ButtonVariant } from '../Button/Button';
-import Loading from '../Loading/Loading';
 import Text, { TextVariant } from '../Text/Text';
+import GameSpinner from '../GameSpinner/GameSpinner';
+import Header from '../Header/Header';
+import { IconVariant } from '../Icon/Icon';
+import { useNavigation } from '../../hooks/UseNavigation';
 
 import './Game.css';
 
@@ -22,16 +25,12 @@ const Play = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const requestFrameRef = React.useRef<number | null>(null);
   const [score, setScore] = React.useState<number>(0);
-  const { sendGameCommandToServer, updateWithServer, serverInitGameHandshake } =
-    useOnlineGame();
+  const { sendGameCommand, updateGame } = useOnlineGame();
   // Refactor para decorar o hacer HOC con estos componentes
   // De esta forma usar versión online de los controles y versión online del gameEngine
   // usamos hook online dentro de la versión decorada
-  useGameControls(sendGameCommandToServer);
-  const { runGameFrame } = useGameEngine(
-    updateWithServer,
-    serverInitGameHandshake,
-  );
+  useGameControls(sendGameCommand);
+  const { runGameFrame } = useGameEngine(updateGame);
 
   const gameLoop = React.useCallback(() => {
     const canvasContext = canvasRef.current?.getContext('2d');
@@ -81,8 +80,10 @@ const Start = () => {
 const Wait = () => {
   return (
     <div className="game-wait">
-      <Loading />
-      <Text variant={TextVariant.PARAGRAPH}>Loading game...</Text>
+      <GameSpinner scaleInPercent={150} />
+      <div className="game-wait-text">
+        <Text variant={TextVariant.PARAGRAPH}>Loading game...</Text>
+      </div>
     </div>
   );
 };
@@ -98,8 +99,8 @@ const Game = () => {
         return <Wait />;
       case 'play':
         return <Play />;
-      case 'end':
-        return <Play />;
+      // case 'end':
+      //   return <End />;
       default:
         return <Start />;
     }
@@ -109,27 +110,37 @@ const Game = () => {
 };
 
 export default function GameWithContext() {
-  const handshake = React.useCallback((): Promise<string> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve('bien por ti');
-      }, 2000);
-    });
-  }, []);
+  const { initHandshake, handleInitHandshake, leaveGame } = useOnlineGame();
+  const { goBack } = useNavigation();
 
-  const handshakeNum = React.useCallback((): Promise<string> => {
+  const handshake = React.useCallback((): Promise<string> => {
+    initHandshake();
+
     return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve('42');
-      }, 2000);
+      const handler = (handshake: { res: string }) => {
+        resolve(handshake.res);
+      };
+      handleInitHandshake(handler);
     });
-  }, []);
+  }, [initHandshake, handleInitHandshake]);
 
   return (
-    <GameStateContextProvider>
-      <StateMachineContextProvider services={{ handshake, handshakeNum }}>
-        <Game />
-      </StateMachineContextProvider>
-    </GameStateContextProvider>
+    <>
+      {/* TODO , this is a temporal fix, replace with a menu */}
+      <Header
+        icon={IconVariant.ARROW_BACK}
+        onClick={() => {
+          leaveGame();
+          goBack();
+        }}
+      >
+        Hit the brick!
+      </Header>
+      <GameStateContextProvider>
+        <StateMachineContextProvider services={{ handshake }}>
+          <Game />
+        </StateMachineContextProvider>
+      </GameStateContextProvider>
+    </>
   );
 }

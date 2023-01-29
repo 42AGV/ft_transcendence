@@ -8,7 +8,7 @@ const GAME_COMMANDS = [
 ];
 
 // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
-type GameCommandType = typeof GAME_COMMANDS[number];
+type GameCommandType = (typeof GAME_COMMANDS)[number];
 
 const isGameCommandType = (value: string): value is GameCommandType =>
   GAME_COMMANDS.includes(value);
