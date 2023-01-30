@@ -4,6 +4,7 @@ import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
 import { PoliciesGuard } from './base-policies.guard';
 import { UserWithAuthorization } from '../infrastructure/db/user-with-authorization.entity';
+import { Request } from 'express';
 
 @Injectable()
 export class GlobalPoliciesGuard extends PoliciesGuard {
@@ -14,8 +15,8 @@ export class GlobalPoliciesGuard extends PoliciesGuard {
   ) {
     super(reflector, caslAbilityFactory, authorizationService);
   }
-  override async getAbilityFromContext(ctx: ExecutionContext) {
-    const authId = ctx.switchToHttp().getRequest().user.id;
+  override async getAbilityFromRequest(req: Request, param?: string) {
+    const authId = req.user.id;
     const userWithAuthorization: UserWithAuthorization =
       await this.authorizationService.getUserWithAuthorizationFromId(authId);
     return this.caslAbilityFactory.defineAbilitiesFor(userWithAuthorization);
