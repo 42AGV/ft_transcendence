@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Text, TextVariant } from '../index';
 import './Timer.css';
 
@@ -29,16 +29,25 @@ const secondsToClockType = (seconds: number): clockType => {
   };
 };
 
+const isValidInterval = (clock: clockType): boolean => {
+  if (clock.hours < 0 && clock.hours >= 24) return false;
+  if (clock.minutes < 0 && clock.hours >= 60) return false;
+  if (clock.seconds < 0 && clock.seconds >= 60) return false;
+  return true;
+};
+
 const parseTime = (input: string): clockType => {
-  let a = input.split(':'); // split it at the colons
-  if (a[0] && a[1] && a[2]) {
-    return {
+  const cleanInput = input.trim();
+  let a = cleanInput.split(':');
+  if (!cleanInput.includes('.') && a.length === 3 && a[0] && a[1] && a[2]) {
+    const ret = {
       timeInSeconds:
         parseInt(a[0]) * 60 * 60 + parseInt(a[1]) * 60 + parseInt(a[2]),
       hours: parseInt(a[0]),
       minutes: parseInt(a[1]),
       seconds: parseInt(a[2]),
     };
+    if (isValidInterval(ret)) return ret;
   }
   throw new Error('Bad time format');
 };
@@ -50,8 +59,7 @@ export default function Timer({
   isBackwardsCount = true,
   onTimeOut,
 }: TimerProps) {
-  const [startDate, _] = useState<clockType>(parseTime(timeString));
-  void _;
+  const startDate = useMemo(() => parseTime(timeString), [timeString]);
   const [{ timeInSeconds, hours, minutes, seconds }, setTime] =
     useState<clockType>(
       isBackwardsCount
@@ -65,17 +73,17 @@ export default function Timer({
     );
   useEffect(() => {
     if (shouldRun) {
-      setTimeout(() => {
+      const id: NodeJS.Timeout = setTimeout(() => {
         if (isBackwardsCount) {
           if (timeInSeconds === 0) {
             onTimeOut && onTimeOut();
-            return;
+            return clearTimeout(id);
           }
           setTime(secondsToClockType(timeInSeconds - 1));
         } else {
           if (timeInSeconds === startDate.timeInSeconds) {
             onTimeOut && onTimeOut();
-            return;
+            return clearTimeout(id);
           }
           setTime(secondsToClockType(timeInSeconds + 1));
         }
