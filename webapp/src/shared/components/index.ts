@@ -54,3 +54,5 @@ export { default as GameTraining } from './Game/GameTraining';
 export { default as CustomConfirmAlert } from './CustomConfirmAlert/CustomConfirmAlert';
 
 export { default as GameSpinner } from './GameSpinner/GameSpinner';
+
+export { default as Timer } from './Timer/Timer';
