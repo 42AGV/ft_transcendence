@@ -59,7 +59,7 @@ export default function Timer({
   isBackwardsCount = true,
   onTimeOut,
 }: TimerProps) {
-  const startDate = useMemo(() => parseTime(timeString), [timeString]);
+  const startDate = useMemo(() => parseTime(timeString), [timeString]); // TODO: push the parsing up to the parent component: we don't want a JSX.Element that possibly throws
   const [{ timeInSeconds, hours, minutes, seconds }, setTime] =
     useState<clockType>(
       isBackwardsCount
