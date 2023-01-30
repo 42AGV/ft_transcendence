@@ -114,6 +114,7 @@ export class SocketGateway
         gameRoomId: this.waitingGameRoom,
       });
     } else {
+      // TODO: from two different tabs, or just reloading, we can get here, which is not cool
       const gameRoomId = this.waitingGameRoom;
       this.waitingGameRooms.set(user.id, gameRoomId);
       client.join(gameRoomId);
