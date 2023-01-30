@@ -1,13 +1,8 @@
-import {
-  ExecutionContext,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
 import { PoliciesGuard } from './base-policies.guard';
-import { CONFIG_PARAM_KEY } from '../decorators/configure-param.decorator';
 import { Request } from 'express';
 
 @Injectable()

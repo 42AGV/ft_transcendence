@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
@@ -16,6 +16,7 @@ export class GlobalPoliciesGuard extends PoliciesGuard {
     super(reflector, caslAbilityFactory, authorizationService);
   }
   override async getAbilityFromRequest(req: Request, param?: string) {
+    void param;
     const authId = req.user.id;
     const userWithAuthorization: UserWithAuthorization =
       await this.authorizationService.getUserWithAuthorizationFromId(authId);
