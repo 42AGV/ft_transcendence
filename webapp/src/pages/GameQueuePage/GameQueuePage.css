@@ -1,0 +1,40 @@
+.game-queue-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  grid-column-gap: var(--column-gap);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 12rem 1fr auto;
+  grid-row-gap: var(--row-gap);
+}
+
+.game-queue-page h4 {
+  grid-column: 1/-1;
+  grid-row: 2/3;
+  align-self: center;
+  justify-self: center;
+}
+
+.game-queue-page .header {
+  grid-column: 1/-1;
+  grid-row: 1/2;
+  align-self: center;
+  justify-self: center;
+}
+
+.game-queue-page .game-spinner {
+  grid-column: 1/-1;
+  grid-row: 3/4;
+  align-self: center;
+  justify-self: center;
+}
+
+.game-queue-page .button {
+  grid-column: 1/-1;
+  grid-row: 4/5;
+  align-self: center;
+  justify-self: center;
+}

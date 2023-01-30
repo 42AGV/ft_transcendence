@@ -20,8 +20,10 @@ import { SocketService } from './socket.service';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 type UserId = string;
+type GameId = string;
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -31,6 +33,8 @@ export class SocketGateway
 {
   @WebSocketServer() server!: Server;
   onlineUserIds = new Set<UserId>();
+  waitingGameRoom: GameId | null = null;
+  waitingGameRooms = new Map<UserId, GameId>();
   constructor(
     private socketService: SocketService,
     private authorizationService: AuthorizationService,
@@ -96,6 +100,38 @@ export class SocketGateway
       await this.socketService.deleteUserWithRoles(userToRoleDto, client);
     } else {
       await this.socketService.addUserWithRoles(userToRoleDto, client);
+    }
+  }
+
+  @SubscribeMessage('joinGameQueue')
+  async joinGameQueue(@ConnectedSocket() client: Socket): Promise<void> {
+    const user = client.request.user;
+    if (!this.waitingGameRoom) {
+      this.waitingGameRoom = uuidv4();
+      this.waitingGameRooms.set(user.id, this.waitingGameRoom);
+      client.join(this.waitingGameRoom);
+      this.server.emit('waitingForGame', {
+        gameRoomId: this.waitingGameRoom,
+      });
+    } else {
+      const gameRoomId = this.waitingGameRoom;
+      this.waitingGameRooms.set(user.id, gameRoomId);
+      client.join(gameRoomId);
+      this.waitingGameRoom = null;
+      this.server.emit('gameReady', {
+        accepted: true,
+        gameRoomId,
+      });
+    }
+  }
+
+  @SubscribeMessage('leaveGameRoom')
+  async handleLeaveGameRoom(@ConnectedSocket() client: Socket) {
+    const user = client.request.user;
+    const gameRoom = this.waitingGameRooms.get(user.id);
+    if (gameRoom) {
+      client.leave(gameRoom);
+      this.waitingGameRooms.delete(gameRoom);
     }
   }
 }

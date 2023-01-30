@@ -9,6 +9,9 @@ export interface GameMatchingContextType {
   isWaitingToPlay: boolean;
   isPlaying: boolean;
   gameRoomId: string | null;
+  setGameCtx?: React.Dispatch<
+    React.SetStateAction<GameMatchingContextType | null>
+  >;
 }
 
 type GameChallengeDto = {
@@ -28,6 +31,10 @@ type GameReadyDto = {
   gameRoomId: string;
 }; // TODO: this is a draft. Implement this
 
+type WaitingForGameDto = {
+  gameRoomId: string;
+}; // TODO: this is a draft. Implement this
+
 export const GameMatchingContext = createContext<GameMatchingContextType>(
   null!,
 );
@@ -36,12 +43,12 @@ export const GameMatchProvider = ({ children }: { children: ReactNode }) => {
   const { authUser } = useAuth();
   const { navigate, goBack } = useNavigation();
   const { warn, notify } = useNotificationContext();
-  const [gameCtx, setGameCtx] = useState<GameMatchingContextType>({
+  const [gameCtx, setGameCtx] = useState<GameMatchingContextType | null>({
     isWaitingToPlay: false,
     isPlaying: false,
     gameRoomId: null,
   });
-  const { isWaitingToPlay, isPlaying, gameRoomId } = gameCtx;
+  const { isWaitingToPlay, isPlaying, gameRoomId } = gameCtx!;
   useEffect(() => {
     const gameReadyListener = ({ accepted, gameRoomId }: GameReadyDto) => {
       if (accepted) {
@@ -61,6 +68,14 @@ export const GameMatchProvider = ({ children }: { children: ReactNode }) => {
         });
         goBack(); // TODO: maybe navigate to somewhere in particular
       }
+    };
+
+    const waitingForGameListener = ({ gameRoomId }: WaitingForGameDto) => {
+      setGameCtx({
+        gameRoomId: gameRoomId,
+        isPlaying: false,
+        isWaitingToPlay: true,
+      });
     };
 
     const challengeListener = ({
@@ -123,6 +138,7 @@ export const GameMatchProvider = ({ children }: { children: ReactNode }) => {
 
     if (authUser) {
       socket.on('gameReady', gameReadyListener);
+      socket.on('waitingForGame', waitingForGameListener);
       socket.on('gameChallengeResponse', gameReadyListener);
       socket.on('gameChallenge', challengeListener);
     }
@@ -147,6 +163,7 @@ export const GameMatchProvider = ({ children }: { children: ReactNode }) => {
     isWaitingToPlay,
     isPlaying,
     gameRoomId,
+    setGameCtx,
   };
 
   return (
