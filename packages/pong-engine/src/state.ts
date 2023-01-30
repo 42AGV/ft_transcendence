@@ -13,6 +13,7 @@ import {
   GameState,
   GamePaddleMoveCommand,
   GamePaddleDragCommand,
+  GamePaddleOpponentMoveCommand,
 } from './models';
 import {
   CANVAS_WIDTH,
@@ -34,6 +35,7 @@ export type Action =
   | Act<'addPoint', { deltaTime: number }>
   | Act<'losePoint', EmptyPayload>
   | Act<GamePaddleMoveCommand, EmptyPayload>
+  | Act<GamePaddleOpponentMoveCommand, EmptyPayload>
   | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
 
 export const initialBallState = (): GameBall => {
@@ -58,11 +60,20 @@ export const initialPaddleState = (): GamePaddle => ({
   color: '#FFF',
 });
 
+export const initialPaddleOpponentState = (): GamePaddle => ({
+  x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
+  y: 0 + 2 * PADDLE_HEIGHT,
+  slide: 0,
+  width: PADDLE_WIDTH,
+  height: PADDLE_HEIGHT,
+  color: '#FFF',
+});
+
 export const reducer = (
   state: GameState,
   { type, payload }: Action,
 ): GameState => {
-  const { ball, paddle, score } = state;
+  const { ball, paddle, paddleOpponent, score } = state;
 
   switch (type) {
     case 'move':
@@ -84,6 +95,8 @@ export const reducer = (
         paddle: getPaddlePos(paddle, payload.deltaTime),
         score: score + 1,
       };
+    // case 'addPointMultiplayer':
+    // case 'losePointMultiplayer':
     case 'paddleMoveRight':
       return {
         ...state,
@@ -105,6 +118,27 @@ export const reducer = (
         ...state,
         paddle: dragPaddle(paddle, dragPrevPos, dragCurrPos),
       };
+    case 'paddleOpponentMoveRight':
+      if (paddleOpponent) {
+        return {
+          ...state,
+          paddleOpponent: movePaddleRight(paddleOpponent),
+        };
+      }
+    case 'paddleOpponentMoveLeft':
+      if (paddleOpponent) {
+        return {
+          ...state,
+          paddleOpponent: movePaddleLeft(paddleOpponent),
+        };
+      }
+    case 'paddleOpponentStop':
+      if (paddleOpponent) {
+        return {
+          ...state,
+          paddleOpponent: stopPaddle(paddle),
+        };
+      }
     default:
       return state;
   }

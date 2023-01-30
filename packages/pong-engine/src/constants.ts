@@ -8,5 +8,9 @@ export const PADDLE_WIDTH = 80;
 export const PADDLE_HEIGHT = 8;
 export const PADDLE_SLIDE_SPEED = 400;
 export const BALL_RADIUS = 8;
-export const MAX_PADDLE_BOUNCE_ANGLE = (5 / 6) * Math.PI;
+export const MAX_PADDLE_BOUNCE_ANGLE = (5 / 6) * Math.PI; // 150deg
 export const MIN_PADDLE_BOUNCE_ANGLE = Math.PI - MAX_PADDLE_BOUNCE_ANGLE;
+export const MAX_PADDLE_OPPONENT_BOUNCE_ANGLE =
+  MAX_PADDLE_BOUNCE_ANGLE + Math.PI;
+export const MIN_PADDLE_OPPONENT_BOUNCE_ANGLE =
+  MIN_PADDLE_BOUNCE_ANGLE + Math.PI;

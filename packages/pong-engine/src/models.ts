@@ -9,6 +9,11 @@ export type GamePaddleMoveCommand =
   | 'paddleMoveLeft'
   | 'paddleStop';
 
+export type GamePaddleOpponentMoveCommand =
+  | 'paddleOpponentMoveRight'
+  | 'paddleOpponentMoveLeft'
+  | 'paddleOpponentStop';
+
 export type GamePaddleDragCommand = 'paddleDrag';
 
 export type GameCommand = GamePaddleMoveCommand | GamePaddleDragCommand;
@@ -33,5 +38,7 @@ export type Coord = {
 export type GameState = {
   ball: GameBall;
   paddle: GamePaddle;
+  paddleOpponent?: GamePaddle;
   score: number;
+  scoreOpponent?: number;
 };
