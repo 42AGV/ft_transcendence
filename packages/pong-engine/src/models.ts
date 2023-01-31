@@ -16,7 +16,10 @@ export type GamePaddleOpponentMoveCommand =
 
 export type GamePaddleDragCommand = 'paddleDrag';
 
-export type GameCommand = GamePaddleMoveCommand | GamePaddleDragCommand;
+export type GameCommand =
+  | GamePaddleMoveCommand
+  | GamePaddleOpponentMoveCommand
+  | GamePaddleDragCommand;
 
 export type GamePaddle = GameElement & {
   slide: number;
@@ -38,7 +41,7 @@ export type Coord = {
 export type GameState = {
   ball: GameBall;
   paddle: GamePaddle;
-  paddleOpponent?: GamePaddle;
+  paddleOpponent: GamePaddle;
   score: number;
-  scoreOpponent?: number;
+  scoreOpponent: number;
 };

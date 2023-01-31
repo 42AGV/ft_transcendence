@@ -8,6 +8,7 @@ import {
   PADDLE_WIDTH,
   PADDLE_SLIDE_SPEED,
   BALL_RADIUS,
+  PADDLE_HEIGHT,
 } from './constants';
 import { GameBall, GamePaddle, Coord } from './models';
 
@@ -94,8 +95,8 @@ const vertWallCollision = (ball: GameBall) =>
 const horWallCollision = (ball: GameBall) => ball.y <= BALL_RADIUS;
 
 const paddleOpponentCollision = (ball: GameBall, paddle: GamePaddle) =>
-  ball.y > paddle.y + BALL_RADIUS &&
-  ball.y < paddle.y - BALL_RADIUS &&
+  ball.y > paddle.y - BALL_RADIUS + PADDLE_HEIGHT &&
+  ball.y < paddle.y + BALL_RADIUS + PADDLE_HEIGHT &&
   ball.x > paddle.x - BALL_RADIUS &&
   ball.x < paddle.x + paddle.width + BALL_RADIUS;
 
@@ -121,8 +122,8 @@ export const getBallPosMultiplayer = (
   paddleOpponent: GamePaddle,
   deltaTime: number,
 ): GameBall => {
-  if (horWallCollision(ball)) {
-    return bounceHor(ball, deltaTime);
+  if (vertWallCollision(ball)) {
+    return bounceVert(ball, deltaTime);
   } else if (paddleCollision(ball, paddle)) {
     return bounceArkanoid(ball, paddle, deltaTime);
   } else if (paddleOpponentCollision(ball, paddleOpponent)) {

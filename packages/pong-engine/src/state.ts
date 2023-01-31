@@ -6,6 +6,7 @@ import {
   movePaddleLeft,
   stopPaddle,
   dragPaddle,
+  getBallPosMultiplayer,
 } from './physics';
 import {
   GameBall,
@@ -32,8 +33,11 @@ type Act<Type extends string, Payload extends object> = {
 
 export type Action =
   | Act<'move', { deltaTime: number }>
+  | Act<'moveMultiplayer', { deltaTime: number }>
   | Act<'addPoint', { deltaTime: number }>
+  | Act<'addPointMultiplayer', EmptyPayload>
   | Act<'losePoint', EmptyPayload>
+  | Act<'losePointMultiplayer', EmptyPayload>
   | Act<GamePaddleMoveCommand, EmptyPayload>
   | Act<GamePaddleOpponentMoveCommand, EmptyPayload>
   | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
@@ -62,7 +66,7 @@ export const initialPaddleState = (): GamePaddle => ({
 
 export const initialPaddleOpponentState = (): GamePaddle => ({
   x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
-  y: 0 + 2 * PADDLE_HEIGHT,
+  y: PADDLE_HEIGHT,
   slide: 0,
   width: PADDLE_WIDTH,
   height: PADDLE_HEIGHT,
@@ -73,7 +77,7 @@ export const reducer = (
   state: GameState,
   { type, payload }: Action,
 ): GameState => {
-  const { ball, paddle, paddleOpponent, score } = state;
+  const { ball, paddle, paddleOpponent, score, scoreOpponent } = state;
 
   switch (type) {
     case 'move':
@@ -81,6 +85,18 @@ export const reducer = (
         ...state,
         ball: getBallPos(ball, paddle, payload.deltaTime),
         paddle: getPaddlePos(paddle, payload.deltaTime),
+      };
+    case 'moveMultiplayer':
+      return {
+        ...state,
+        ball: getBallPosMultiplayer(
+          ball,
+          paddle,
+          paddleOpponent,
+          payload.deltaTime,
+        ),
+        paddle: getPaddlePos(paddle, payload.deltaTime),
+        paddleOpponent: getPaddlePos(paddleOpponent, payload.deltaTime),
       };
     case 'losePoint':
       return {
@@ -95,8 +111,18 @@ export const reducer = (
         paddle: getPaddlePos(paddle, payload.deltaTime),
         score: score + 1,
       };
-    // case 'addPointMultiplayer':
-    // case 'losePointMultiplayer':
+    case 'addPointMultiplayer':
+      return {
+        ...state,
+        ball: initialBallState(),
+        score: score + 1,
+      };
+    case 'losePointMultiplayer':
+      return {
+        ...state,
+        ball: initialBallState(),
+        scoreOpponent: scoreOpponent + 1,
+      };
     case 'paddleMoveRight':
       return {
         ...state,
@@ -119,26 +145,20 @@ export const reducer = (
         paddle: dragPaddle(paddle, dragPrevPos, dragCurrPos),
       };
     case 'paddleOpponentMoveRight':
-      if (paddleOpponent) {
-        return {
-          ...state,
-          paddleOpponent: movePaddleRight(paddleOpponent),
-        };
-      }
+      return {
+        ...state,
+        paddleOpponent: movePaddleRight(paddleOpponent),
+      };
     case 'paddleOpponentMoveLeft':
-      if (paddleOpponent) {
-        return {
-          ...state,
-          paddleOpponent: movePaddleLeft(paddleOpponent),
-        };
-      }
+      return {
+        ...state,
+        paddleOpponent: movePaddleLeft(paddleOpponent),
+      };
     case 'paddleOpponentStop':
-      if (paddleOpponent) {
-        return {
-          ...state,
-          paddleOpponent: stopPaddle(paddle),
-        };
-      }
+      return {
+        ...state,
+        paddleOpponent: stopPaddle(paddleOpponent),
+      };
     default:
       return state;
   }

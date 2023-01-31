@@ -12,10 +12,11 @@ import {
   initialPaddleOpponentState,
 } from './state';
 
-// const losePointMultiplayer
+const losePointMultiplayer = (ball: GameBall) =>
+  ball.y + BALL_RADIUS >= CANVAS_HEIGHT;
 const losePoint = (ball: GameBall) => ball.y > 1.5 * CANVAS_HEIGHT;
 
-// const addPointMultiplayer
+const addPointMultiplayer = (ball: GameBall) => ball.y - BALL_RADIUS <= 0;
 const addPoint = (ball: GameBall) =>
   ball.y <= BALL_RADIUS &&
   ball.x >= CANVAS_WIDTH / 2 - BRICK_WIDTH / 2 &&
@@ -60,14 +61,9 @@ export const paddleDrag = (
 export const newGame = (): GameState => ({
   ball: initialBallState(),
   paddle: initialPaddleState(),
-  score: 0,
-});
-
-export const newGameMultiplayer = (): GameState => ({
-  ball: initialBallState(),
-  paddle: initialPaddleState(),
   paddleOpponent: initialPaddleOpponentState(),
   score: 0,
+  scoreOpponent: 0,
 });
 
 export const runGameFrame = (
@@ -92,10 +88,13 @@ export const runGameMultiplayerFrame = (
   const { ball } = state;
 
   if (losePointMultiplayer(ball)) {
-    return reducer(state, { type: 'losePoint', payload: {} });
+    return reducer(state, { type: 'losePointMultiplayer', payload: {} });
   }
-  if (addPoint(ball)) {
-    return reducer(state, { type: 'addPoint', payload: { deltaTime } });
+  if (addPointMultiplayer(ball)) {
+    return reducer(state, {
+      type: 'addPointMultiplayer',
+      payload: {},
+    });
   }
-  return reducer(state, { type: 'move', payload: { deltaTime } });
+  return reducer(state, { type: 'moveMultiplayer', payload: { deltaTime } });
 };
