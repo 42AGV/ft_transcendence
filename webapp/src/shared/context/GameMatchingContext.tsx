@@ -4,6 +4,8 @@ import socket from '../socket';
 import { ButtonVariant, CustomConfirmAlert } from '../components';
 import { useNavigation } from '../hooks/UseNavigation';
 import { useNotificationContext } from './NotificationContext';
+import { useLocation } from 'react-router-dom';
+import { PLAY_GAME_QUEUE } from '../urls';
 
 export interface GameMatchingContextType {
   isWaitingToPlay: boolean;
@@ -43,12 +45,20 @@ export const GameMatchProvider = ({ children }: { children: ReactNode }) => {
   const { authUser } = useAuth();
   const { navigate, goBack } = useNavigation();
   const { warn, notify } = useNotificationContext();
+  const { pathname } = useLocation();
+  const inGameQueue =
+    pathname.slice(0, PLAY_GAME_QUEUE.length) === PLAY_GAME_QUEUE;
   const [gameCtx, setGameCtx] = useState<GameMatchingContextType | null>({
     isWaitingToPlay: false,
     isPlaying: false,
     gameRoomId: null,
   });
   const { isWaitingToPlay, isPlaying, gameRoomId } = gameCtx!;
+  useEffect(() => {
+    if (authUser && !inGameQueue && isWaitingToPlay) {
+      navigate(PLAY_GAME_QUEUE);
+    }
+  }, [inGameQueue, isWaitingToPlay, authUser]);
   useEffect(() => {
     const gameReadyListener = ({ accepted, gameRoomId }: GameReadyDto) => {
       if (accepted) {
