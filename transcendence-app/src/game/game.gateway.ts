@@ -1,5 +1,6 @@
 import {
   ClassSerializerInterceptor,
+  ParseUUIDPipe,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -22,83 +23,165 @@ import {
   paddleStop,
   runGameFrame,
   newGame,
+  paddleOpponentMoveRight,
+  paddleOpponentMoveLeft,
+  paddleOpponentStop,
 } from 'pong-engine';
 
-type UserId = string;
+type GameId = string;
 const FPS = 60;
 const DELTA_TIME = 1 / FPS;
+
+type GameMatch = {
+  playerOneId?: string;
+  playerTwoId?: string;
+};
+
+type GameInfo = {
+  playerOneState: GameState;
+  playerTwoState: GameState;
+  playerOneId: string;
+  playerTwoId: string;
+};
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(BadRequestTransformationFilter)
 export class GameGateway {
   @WebSocketServer() server!: Server;
-  games = new Map<UserId, GameState>();
+  games = new Map<GameId, GameInfo>();
+  gamesMatch = new Map<GameId, GameMatch>();
   intervalId: NodeJS.Timer | undefined = undefined;
 
   runServerGameFrame() {
-    this.games.forEach((gameState: GameState, userId: UserId) => {
-      const state = runGameFrame(DELTA_TIME, gameState);
-      this.games.set(userId, state);
+    this.games.forEach((gameInfo: GameInfo, gameId: GameId) => {
+      const playerOneState = runGameFrame(DELTA_TIME, gameInfo.playerOneState);
+      const playerTwoState = runGameFrame(DELTA_TIME, gameInfo.playerTwoState);
+      this.games.set(gameId, { ...gameInfo, playerOneState, playerTwoState });
     });
   }
 
   sendGamesUpdates() {
-    this.games.forEach((gameState: GameState, userId: UserId) => {
-      this.sendGameUpdate(gameState, userId);
+    this.games.forEach((gameInfo: GameInfo) => {
+      this.server
+        .to(gameInfo.playerOneId)
+        .emit('updateGame', gameInfo.playerOneState);
+      this.server
+        .to(gameInfo.playerTwoId)
+        .emit('updateGame', gameInfo.playerTwoState);
     });
   }
 
-  sendGameUpdate(gameState: GameState, userId: UserId) {
-    this.server.to(userId).emit('updateGame', gameState, Date.now());
-  }
-
   @SubscribeMessage('joinGame')
-  handleGameJoin(@ConnectedSocket() client: Socket) {
+  handleGameJoin(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
+  ) {
     const userId = client.request.user.id;
-    // just intended to simulate wait, to be deleted
-    setTimeout(() => {
-      if (!this.games.has(userId)) {
-        this.games.set(userId, newGame());
-        if (!this.intervalId) {
-          // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
-          this.intervalId = setInterval(() => {
-            this.runServerGameFrame();
-            this.sendGamesUpdates();
-          }, DELTA_TIME * 1000);
-        }
+    client.join(gameRoomId);
+    const gameMatch = this.games.get(gameRoomId);
+    const playerOneId = gameMatch && gameMatch.playerOneId;
+    if (gameMatch && playerOneId) {
+      this.games.set(gameRoomId, {
+        playerOneState: newGame(),
+        playerTwoState: newGame(),
+        playerOneId,
+        playerTwoId: userId,
+      });
+      this.server.to(playerOneId).to(userId).emit('joinGame', { res: 'ok' });
+      if (!this.intervalId) {
+        // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
+        this.intervalId = setInterval(() => {
+          this.runServerGameFrame();
+          this.sendGamesUpdates();
+        }, DELTA_TIME * 1000);
       }
-      this.server.to(userId).emit('joinGame', { res: 'ok' });
-    }, 2000);
+      this.gamesMatch.delete(gameRoomId);
+    } else {
+      this.gamesMatch.set(gameRoomId, { playerOneId: userId });
+    }
   }
 
   @SubscribeMessage('leaveGame')
-  handleGameLeave(@ConnectedSocket() client: Socket) {
+  handleGameLeave(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
+  ) {
     const userId = client.request.user.id;
-    this.games.delete(userId);
+    const game = this.games.get(gameRoomId);
+    if (!game) {
+      return;
+    }
+    this.games.delete(gameRoomId);
     if (this.games.size === 0) {
       clearInterval(this.intervalId);
       this.intervalId = undefined;
     }
-    this.server.to(userId).emit('leaveGame', { res: 'ok' });
+    this.server
+      .to(game.playerOneId)
+      .to(game.playerTwoId)
+      .emit('leaveGame', { res: 'ok' });
+    if (userId === game.playerOneId || userId === game.playerTwoId) {
+      this.server.socketsLeave(gameRoomId);
+    }
   }
 
   @SubscribeMessage('gameCommand')
   handleGameMessage(
     @MessageBody() gameInputDto: GameInputDto,
     @ConnectedSocket() client: Socket,
+    @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
   ) {
-    const userId = client.request.user.id;
+    const userId: string = client.request.user.id;
     const { command } = gameInputDto;
-    const gameState = this.games.get(userId);
+    const gameInfo = this.games.get(gameRoomId);
 
-    if (gameState) {
-      if (command === 'paddleMoveRight') {
-        this.games.set(userId, paddleMoveRight(gameState));
-      } else if (command === 'paddleMoveLeft') {
-        this.games.set(userId, paddleMoveLeft(gameState));
-      } else if (command === 'paddleStop') {
-        this.games.set(userId, paddleStop(gameState));
+    if (gameInfo) {
+      const isPlayerOne = userId === gameInfo.playerOneId;
+      const isPlayerTwo = userId === gameInfo.playerTwoId;
+      if (!isPlayerOne || !isPlayerTwo) {
+        return;
+      }
+      if (isPlayerOne) {
+        if (command === 'paddleMoveRight') {
+          this.games.set(gameRoomId, {
+            ...gameInfo,
+            playerOneState: paddleMoveRight(gameInfo.playerOneState),
+            playerTwoState: paddleOpponentMoveRight(gameInfo.playerTwoState),
+          });
+        } else if (command === 'paddleMoveLeft') {
+          this.games.set(gameRoomId, {
+            ...gameInfo,
+            playerOneState: paddleMoveLeft(gameInfo.playerOneState),
+            playerTwoState: paddleOpponentMoveLeft(gameInfo.playerTwoState),
+          });
+        } else if (command === 'paddleStop') {
+          this.games.set(gameRoomId, {
+            ...gameInfo,
+            playerOneState: paddleStop(gameInfo.playerOneState),
+            playerTwoState: paddleOpponentStop(gameInfo.playerTwoState),
+          });
+        }
+      } else {
+        if (command === 'paddleMoveRight') {
+          this.games.set(gameRoomId, {
+            ...gameInfo,
+            playerOneState: paddleMoveRight(gameInfo.playerTwoState),
+            playerTwoState: paddleOpponentMoveRight(gameInfo.playerOneState),
+          });
+        } else if (command === 'paddleMoveLeft') {
+          this.games.set(gameRoomId, {
+            ...gameInfo,
+            playerOneState: paddleMoveLeft(gameInfo.playerTwoState),
+            playerTwoState: paddleOpponentMoveLeft(gameInfo.playerOneState),
+          });
+        } else if (command === 'paddleStop') {
+          this.games.set(gameRoomId, {
+            ...gameInfo,
+            playerOneState: paddleStop(gameInfo.playerTwoState),
+            playerTwoState: paddleOpponentStop(gameInfo.playerOneState),
+          });
+        }
       }
     }
   }
