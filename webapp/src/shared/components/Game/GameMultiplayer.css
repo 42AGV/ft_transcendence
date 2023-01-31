@@ -28,6 +28,8 @@
 
 .game-multiplayer-arena {
   border: solid 0.125rem var(--color-light);
+  border-bottom: dashed;
+  border-top: dashed;
   align-self: center;
   justify-self: center;
   object-fit: contain;

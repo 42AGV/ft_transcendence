@@ -13,10 +13,11 @@ import {
 } from './state';
 
 const losePointMultiplayer = (ball: GameBall) =>
-  ball.y + BALL_RADIUS >= CANVAS_HEIGHT;
+  ball.y + BALL_RADIUS >= CANVAS_HEIGHT * 1.5;
 const losePoint = (ball: GameBall) => ball.y > 1.5 * CANVAS_HEIGHT;
 
-const addPointMultiplayer = (ball: GameBall) => ball.y - BALL_RADIUS <= 0;
+const addPointMultiplayer = (ball: GameBall) =>
+  ball.y - BALL_RADIUS <= -0.5 * CANVAS_HEIGHT;
 const addPoint = (ball: GameBall) =>
   ball.y <= BALL_RADIUS &&
   ball.x >= CANVAS_WIDTH / 2 - BRICK_WIDTH / 2 &&
