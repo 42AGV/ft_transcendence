@@ -38,8 +38,7 @@ type GameMatch = {
 };
 
 type GameInfo = {
-  playerOneState: GameState;
-  playerTwoState: GameState;
+  state: GameState;
   playerOneId: string;
   playerTwoId: string;
 };
@@ -55,26 +54,10 @@ export class GameGateway {
 
   runServerGameFrame() {
     this.games.forEach((gameInfo: GameInfo, gameId: GameId) => {
-      const playerOneState = runGameMultiplayerFrame(
-        DELTA_TIME,
-        gameInfo.playerOneState,
-      );
-      const playerTwoState = runGameMultiplayerFrame(
-        DELTA_TIME,
-        gameInfo.playerTwoState,
-      );
-      this.games.set(gameId, { ...gameInfo, playerOneState, playerTwoState });
-    });
-  }
-
-  sendGamesUpdates() {
-    this.games.forEach((gameInfo: GameInfo) => {
-      this.server
-        .to(gameInfo.playerOneId)
-        .emit('updateGame', gameInfo.playerOneState);
-      this.server
-        .to(gameInfo.playerTwoId)
-        .emit('updateGame', gameInfo.playerTwoState);
+      const gameState = runGameMultiplayerFrame(DELTA_TIME, gameInfo.state);
+      this.games.set(gameId, { ...gameInfo, state: gameState });
+      // Send game update
+      this.server.to(gameId).emit('updateGame', gameInfo);
     });
   }
 
@@ -85,12 +68,22 @@ export class GameGateway {
   ) {
     const userId = client.request.user.id;
     client.join(gameRoomId);
+
+    // Check if the client want to join an existing game
+    const game = this.games.get(gameRoomId);
+    if (game) {
+      return;
+    }
+
     const gameMatch = this.gamesMatch.get(gameRoomId);
     const playerOneId = gameMatch && gameMatch.playerOneId;
-    if (gameMatch && playerOneId) {
+
+    // Check if there is a game match for this gameId
+    // Add the user as player two and create the game
+    if (gameMatch && playerOneId && playerOneId !== userId) {
+      const gameState = newGame();
       this.games.set(gameRoomId, {
-        playerOneState: newGame(),
-        playerTwoState: newGame(),
+        state: gameState,
         playerOneId,
         playerTwoId: userId,
       });
@@ -99,10 +92,10 @@ export class GameGateway {
         // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
         this.intervalId = setInterval(() => {
           this.runServerGameFrame();
-          this.sendGamesUpdates();
         }, DELTA_TIME * 1000);
       }
       this.gamesMatch.delete(gameRoomId);
+      // Create a game match for this gameId and add the user as player one
     } else {
       this.gamesMatch.set(gameRoomId, { playerOneId: userId });
     }
@@ -118,16 +111,19 @@ export class GameGateway {
     if (!game) {
       return;
     }
-    this.games.delete(gameRoomId);
-    if (this.games.size === 0) {
-      clearInterval(this.intervalId);
-      this.intervalId = undefined;
-    }
-    this.server.to(gameRoomId).emit('leaveGame', { res: 'ok' });
+    client.leave(gameRoomId);
+
+    // TODO: Think how to deal with this case when a player leaves the game
+    //       Also, the players could connect from multiple browsers/devices
     if (userId === game.playerOneId || userId === game.playerTwoId) {
+      this.games.delete(gameRoomId);
+      if (this.games.size === 0) {
+        clearInterval(this.intervalId);
+        this.intervalId = undefined;
+      }
+      this.server.to(gameRoomId).emit('leaveGame', { res: 'ok' });
       this.server.socketsLeave(gameRoomId);
     }
-    //client.leave(gameRoomId);
   }
 
   @SubscribeMessage('gameCommand')
@@ -149,40 +145,34 @@ export class GameGateway {
         if (command === 'paddleMoveRight') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleMoveRight(gameInfo.playerOneState),
-            playerTwoState: paddleOpponentMoveRight(gameInfo.playerTwoState),
+            state: paddleMoveRight(gameInfo.state),
           });
         } else if (command === 'paddleMoveLeft') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleMoveLeft(gameInfo.playerOneState),
-            playerTwoState: paddleOpponentMoveLeft(gameInfo.playerTwoState),
+            state: paddleMoveLeft(gameInfo.state),
           });
         } else if (command === 'paddleStop') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleStop(gameInfo.playerOneState),
-            playerTwoState: paddleOpponentStop(gameInfo.playerTwoState),
+            state: paddleStop(gameInfo.state),
           });
         }
       } else {
         if (command === 'paddleMoveRight') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleOpponentMoveRight(gameInfo.playerOneState),
-            playerTwoState: paddleMoveRight(gameInfo.playerTwoState),
+            state: paddleOpponentMoveRight(gameInfo.state),
           });
         } else if (command === 'paddleMoveLeft') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleOpponentMoveLeft(gameInfo.playerOneState),
-            playerTwoState: paddleMoveLeft(gameInfo.playerTwoState),
+            state: paddleOpponentMoveLeft(gameInfo.state),
           });
         } else if (command === 'paddleStop') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleOpponentStop(gameInfo.playerOneState),
-            playerTwoState: paddleStop(gameInfo.playerTwoState),
+            state: paddleOpponentStop(gameInfo.state),
           });
         }
       }

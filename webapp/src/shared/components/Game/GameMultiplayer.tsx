@@ -21,7 +21,7 @@ const GameMultiplayerTraining = () => {
 
     setScore(gameState.score);
     setOpponentScore(gameState.scoreOpponent);
-    canvasContext && renderMultiplayerFrame(canvasContext, gameState);
+    canvasContext && renderMultiplayerFrame(canvasContext, gameState, true);
     window.requestAnimationFrame(() => gameLoop());
   }, [runGameMultiplayerFrame, renderMultiplayerFrame]);
 

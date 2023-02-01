@@ -1,3 +1,5 @@
+import { GameState } from 'pong-engine';
+
 export enum Color {
   WARNING = 'text-color-warning',
   SUBMIT = 'text-color-submit',
@@ -27,4 +29,10 @@ export type Avatar = {
   avatarId: string;
   avatarX: number;
   avatarY: number;
+};
+
+export type GameInfo = {
+  state: GameState;
+  playerOneId: string;
+  playerTwoId: string;
 };

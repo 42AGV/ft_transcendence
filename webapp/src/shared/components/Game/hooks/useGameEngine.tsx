@@ -7,32 +7,31 @@ import {
 } from 'pong-engine';
 import { useGameStateContext } from '../context/gameStateContext';
 import useGameAnimation from './useGameAnimation';
+import { GameInfo } from '../../../types';
+import { useAuth } from '../../../hooks/UseAuth';
 
-type Callback = (game: GameState) => void;
+type Callback = (game: GameInfo) => void;
 
 const useGameEngine = (updateWithServer?: (cb: Callback) => void) => {
   const { gameStateRef } = useGameStateContext();
   const { deltaTimeRef } = useGameAnimation();
+  const { authUser } = useAuth();
+  const isPlayerOneRef = React.useRef(false);
 
   const runGameFrame = React.useCallback((): GameState => {
-    if (updateWithServer) {
-      updateWithServer((state: GameState) => {
-        gameStateRef.current = state;
-      });
-    } else {
-      const state = gameStateRef.current;
-      const newState = runEngineGameFrame(deltaTimeRef.current, state);
+    const state = gameStateRef.current;
+    const newState = runEngineGameFrame(deltaTimeRef.current, state);
 
-      gameStateRef.current = newState;
-    }
+    gameStateRef.current = newState;
 
     return gameStateRef.current;
-  }, [gameStateRef, updateWithServer, deltaTimeRef]);
+  }, [gameStateRef, deltaTimeRef]);
 
   const runGameMultiplayerFrame = React.useCallback((): GameState => {
     if (updateWithServer) {
-      updateWithServer((state: GameState) => {
-        gameStateRef.current = state;
+      updateWithServer((info: GameInfo) => {
+        gameStateRef.current = info.state;
+        isPlayerOneRef.current = info.playerOneId === authUser?.id;
       });
     } else {
       const state = gameStateRef.current;
@@ -45,9 +44,13 @@ const useGameEngine = (updateWithServer?: (cb: Callback) => void) => {
     }
 
     return gameStateRef.current;
-  }, [gameStateRef, updateWithServer, deltaTimeRef]);
+  }, [gameStateRef, updateWithServer, deltaTimeRef, isPlayerOneRef, authUser]);
 
-  return { runGameFrame, runGameMultiplayerFrame };
+  return {
+    runGameFrame,
+    runGameMultiplayerFrame,
+    isPlayerOneRef,
+  };
 };
 
 export default useGameEngine;

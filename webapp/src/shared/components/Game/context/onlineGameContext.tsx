@@ -1,7 +1,7 @@
 import * as React from 'react';
 import socket from '../../../socket';
-import { GameCommand, GameState } from 'pong-engine';
-import { WsException } from '../../../types';
+import { GameCommand } from 'pong-engine';
+import { GameInfo, WsException } from '../../../types';
 import { useNotificationContext } from '../../../context/NotificationContext';
 import { Socket } from 'socket.io-client';
 import DefaultEventsMap from 'socket.io-client';
@@ -19,7 +19,7 @@ type ContextType = {
   sendGameCommand: (
     command: GameCommand,
   ) => Socket<DefaultEventsMapType, DefaultEventsMapType>;
-  updateGame: (cb: (state: GameState) => void) => () => void;
+  updateGame: (cb: (info: GameInfo) => void) => () => void;
   initHandshake: () => void;
   handleInitHandshake: (cb: (handshake: { res: string }) => void) => () => void;
   leaveGame: () => void;
@@ -53,7 +53,7 @@ export const OnlineGameContextProvider = ({
     [],
   );
 
-  const updateGame = React.useCallback((cb: (state: GameState) => void) => {
+  const updateGame = React.useCallback((cb: (info: GameInfo) => void) => {
     socket.on(UPDATE_GAME, cb);
 
     return () => {

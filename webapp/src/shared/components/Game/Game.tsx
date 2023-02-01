@@ -30,7 +30,7 @@ const Play = () => {
   // De esta forma usar versión online de los controles y versión online del gameEngine
   // usamos hook online dentro de la versión decorada
   useGameControls(sendGameCommand);
-  const { runGameMultiplayerFrame } = useGameEngine(updateGame);
+  const { runGameMultiplayerFrame, isPlayerOneRef } = useGameEngine(updateGame);
 
   const gameLoop = React.useCallback(() => {
     const canvasContext = canvasRef.current?.getContext('2d');
@@ -38,9 +38,10 @@ const Play = () => {
 
     setScore(gameState.score);
     setOpponentScore(gameState.scoreOpponent);
-    canvasContext && renderMultiplayerFrame(canvasContext, gameState);
+    canvasContext &&
+      renderMultiplayerFrame(canvasContext, gameState, isPlayerOneRef.current);
     window.requestAnimationFrame(() => gameLoop());
-  }, [runGameMultiplayerFrame, renderMultiplayerFrame]);
+  }, [runGameMultiplayerFrame, renderMultiplayerFrame, isPlayerOneRef]);
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
