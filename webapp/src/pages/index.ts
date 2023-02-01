@@ -22,6 +22,7 @@ export { default as FriendsPage } from './UsersPage/FriendsPage';
 export { default as EditChatroomAvatarPage } from './EditChatroomAvatarPage/EditChatroomAvatarPage';
 export { default as GameTrainPage } from './PlayPage/GameTrainPage';
 export { default as GamePage } from './PlayPage/GamePage';
+export { default as GameMultiplayerPage } from './PlayPage/GameMultiplayerPage';
 export { default as EnableTwoFactorAuthPage } from './EnableTwoFactorAuthPage/EnableTwoFactorAuthPage';
 export { default as ValidateTwoFactorAuthPage } from './ValidateTwoFactorAuthPage/ValidateTwoFactorAuthPage';
 export { default as LoadingPage } from './LoadingPage/LoadingPage';

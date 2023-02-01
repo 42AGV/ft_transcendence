@@ -21,7 +21,7 @@ import {
   paddleMoveRight,
   paddleMoveLeft,
   paddleStop,
-  runGameFrame,
+  runGameMultiplayerFrame,
   newGame,
   paddleOpponentMoveRight,
   paddleOpponentMoveLeft,
@@ -29,7 +29,7 @@ import {
 } from 'pong-engine';
 
 type GameId = string;
-const FPS = 60;
+const FPS = 30;
 const DELTA_TIME = 1 / FPS;
 
 type GameMatch = {
@@ -55,8 +55,14 @@ export class GameGateway {
 
   runServerGameFrame() {
     this.games.forEach((gameInfo: GameInfo, gameId: GameId) => {
-      const playerOneState = runGameFrame(DELTA_TIME, gameInfo.playerOneState);
-      const playerTwoState = runGameFrame(DELTA_TIME, gameInfo.playerTwoState);
+      const playerOneState = runGameMultiplayerFrame(
+        DELTA_TIME,
+        gameInfo.playerOneState,
+      );
+      const playerTwoState = runGameMultiplayerFrame(
+        DELTA_TIME,
+        gameInfo.playerTwoState,
+      );
       this.games.set(gameId, { ...gameInfo, playerOneState, playerTwoState });
     });
   }
@@ -79,7 +85,7 @@ export class GameGateway {
   ) {
     const userId = client.request.user.id;
     client.join(gameRoomId);
-    const gameMatch = this.games.get(gameRoomId);
+    const gameMatch = this.gamesMatch.get(gameRoomId);
     const playerOneId = gameMatch && gameMatch.playerOneId;
     if (gameMatch && playerOneId) {
       this.games.set(gameRoomId, {
@@ -88,7 +94,7 @@ export class GameGateway {
         playerOneId,
         playerTwoId: userId,
       });
-      this.server.to(playerOneId).to(userId).emit('joinGame', { res: 'ok' });
+      this.server.to(gameRoomId).emit('joinGame', { res: 'ok' });
       if (!this.intervalId) {
         // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
         this.intervalId = setInterval(() => {
@@ -117,29 +123,26 @@ export class GameGateway {
       clearInterval(this.intervalId);
       this.intervalId = undefined;
     }
-    this.server
-      .to(game.playerOneId)
-      .to(game.playerTwoId)
-      .emit('leaveGame', { res: 'ok' });
+    this.server.to(gameRoomId).emit('leaveGame', { res: 'ok' });
     if (userId === game.playerOneId || userId === game.playerTwoId) {
       this.server.socketsLeave(gameRoomId);
     }
+    //client.leave(gameRoomId);
   }
 
   @SubscribeMessage('gameCommand')
   handleGameMessage(
     @MessageBody() gameInputDto: GameInputDto,
     @ConnectedSocket() client: Socket,
-    @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
   ) {
     const userId: string = client.request.user.id;
-    const { command } = gameInputDto;
+    const { command, gameRoomId } = gameInputDto;
     const gameInfo = this.games.get(gameRoomId);
 
     if (gameInfo) {
       const isPlayerOne = userId === gameInfo.playerOneId;
       const isPlayerTwo = userId === gameInfo.playerTwoId;
-      if (!isPlayerOne || !isPlayerTwo) {
+      if (!isPlayerOne && !isPlayerTwo) {
         return;
       }
       if (isPlayerOne) {
@@ -166,20 +169,20 @@ export class GameGateway {
         if (command === 'paddleMoveRight') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleMoveRight(gameInfo.playerTwoState),
-            playerTwoState: paddleOpponentMoveRight(gameInfo.playerOneState),
+            playerOneState: paddleOpponentMoveRight(gameInfo.playerOneState),
+            playerTwoState: paddleMoveRight(gameInfo.playerTwoState),
           });
         } else if (command === 'paddleMoveLeft') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleMoveLeft(gameInfo.playerTwoState),
-            playerTwoState: paddleOpponentMoveLeft(gameInfo.playerOneState),
+            playerOneState: paddleOpponentMoveLeft(gameInfo.playerOneState),
+            playerTwoState: paddleMoveLeft(gameInfo.playerTwoState),
           });
         } else if (command === 'paddleStop') {
           this.games.set(gameRoomId, {
             ...gameInfo,
-            playerOneState: paddleStop(gameInfo.playerTwoState),
-            playerTwoState: paddleOpponentStop(gameInfo.playerOneState),
+            playerOneState: paddleOpponentStop(gameInfo.playerOneState),
+            playerTwoState: paddleStop(gameInfo.playerTwoState),
           });
         }
       }

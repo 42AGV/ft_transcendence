@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useGameStateContext } from '../context';
+import { useGameStateContext } from '../context/gameStateContext';
 import { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import {

@@ -8,6 +8,7 @@ import {
   PlayPage,
   GameTrainPage,
   GamePage,
+  GameMultiplayerPage,
   UsersPage,
   UserPage,
   ComponentsBookPage,
@@ -116,6 +117,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <GamePage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${PLAY_GAME_URL}/:gameId`}
+        element={
+          <RequireAuth>
+            <GameMultiplayerPage />
           </RequireAuth>
         }
       />

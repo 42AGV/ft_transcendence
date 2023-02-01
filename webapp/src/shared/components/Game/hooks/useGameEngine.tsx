@@ -5,7 +5,7 @@ import {
   runGameFrame as runEngineGameFrame,
   runGameMultiplayerFrame as runEngineGameMultiplayerFrame,
 } from 'pong-engine';
-import { useGameStateContext } from '../context';
+import { useGameStateContext } from '../context/gameStateContext';
 import useGameAnimation from './useGameAnimation';
 
 type Callback = (game: GameState) => void;
