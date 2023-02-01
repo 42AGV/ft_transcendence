@@ -1,17 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 type UserId = string;
 type GameId = string;
+
+interface GameReadyData {
+  accepted: boolean;
+  gameRoomId: string;
+}
+
+class GameReady {
+  accepted: boolean;
+  gameRoomId: string;
+  constructor({ accepted, gameRoomId }: GameReadyData) {
+    this.accepted = accepted;
+    this.gameRoomId = gameRoomId;
+  }
+}
 
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
   waitingGameRoom: GameId | null = null;
-  waitingGameRooms = new Map<UserId, GameId>();
+  userToGameRoom = new Map<UserId, GameId>();
+  gameRoomToUsers = new Map<GameId, [UserId, UserId]>();
 
-  constructor() {}
+  constructor(private eventEmitter: EventEmitter2) {}
 
   async joinGameQueue(userId: string): Promise<string | null> {
     if (!this.socket) {
@@ -19,7 +35,7 @@ export class GameQueueService {
     }
     if (!this.waitingGameRoom) {
       this.waitingGameRoom = uuidv4();
-      this.waitingGameRooms.set(userId, this.waitingGameRoom);
+      this.userToGameRoom.set(userId, this.waitingGameRoom);
       this.socket.emit('waitingForGame', {
         gameRoomId: this.waitingGameRoom,
       });
@@ -27,21 +43,28 @@ export class GameQueueService {
     } else {
       // TODO: from two different tabs, or just reloading, we can get here, which is not cool
       const gameRoomId = this.waitingGameRoom;
-      this.waitingGameRooms.set(userId, gameRoomId);
+      this.userToGameRoom.set(userId, gameRoomId);
       this.waitingGameRoom = null;
+      this.eventEmitter.emit(
+        'game.ready',
+        new GameReady({
+          accepted: true,
+          gameRoomId,
+        }),
+      );
       this.socket.emit('gameReady', {
         accepted: true,
         gameRoomId,
       });
-      return null;
+      return gameRoomId;
     }
   }
 
   getRoomForUserId(userId: string): GameId | undefined {
-    return this.waitingGameRooms.get(userId);
+    return this.userToGameRoom.get(userId);
   }
 
   deleteRoom(gameRoomId: string) {
-    this.waitingGameRooms.delete(gameRoomId);
+    this.userToGameRoom.delete(gameRoomId);
   }
 }

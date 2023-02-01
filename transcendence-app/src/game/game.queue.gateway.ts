@@ -29,20 +29,20 @@ export class GameGateway {
 
   @SubscribeMessage('joinGameQueue')
   async joinGameQueue(@ConnectedSocket() client: Socket): Promise<void> {
-    const chatId = await this.gameQueueService.joinGameQueue(
+    const gameRoomId = await this.gameQueueService.joinGameQueue(
       client.request.user.id,
     );
-    if (chatId) client.join(chatId);
+    if (gameRoomId) client.join(gameRoomId);
   }
 
   @SubscribeMessage('leaveGameRoom')
   async handleLeaveGameRoom(@ConnectedSocket() client: Socket) {
-    const gameRoom = this.gameQueueService.getRoomForUserId(
+    const gameRoomId = this.gameQueueService.getRoomForUserId(
       client.request.user.id,
     );
-    if (gameRoom) {
-      this.gameQueueService.deleteRoom(gameRoom);
-      client.leave(gameRoom);
+    if (gameRoomId) {
+      this.gameQueueService.deleteRoom(gameRoomId);
+      client.leave(gameRoomId);
     }
   }
 }
