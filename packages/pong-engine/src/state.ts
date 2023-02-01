@@ -30,8 +30,10 @@ type Act<Type extends string, Payload extends object> = {
 };
 
 export type Action =
-  | Act<'move' | 'addPoint', { deltaTime: number }>
-  | Act<'losePoint' | GamePaddleMoveCommand, EmptyPayload>
+  | Act<'move', { deltaTime: number }>
+  | Act<'addPoint', { deltaTime: number }>
+  | Act<'losePoint', EmptyPayload>
+  | Act<GamePaddleMoveCommand, EmptyPayload>
   | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
 
 export const initialBallState = (): GameBall => {

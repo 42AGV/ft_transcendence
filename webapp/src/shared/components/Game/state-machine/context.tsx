@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { useMachine } from '@xstate/react';
 import { gameMachine } from './machine';
-import {
-  StateFrom,
-  AnyStateMachine,
-  InterpreterFrom,
-  Prop,
-  ServiceMap,
-} from 'xstate';
+import { StateFrom, AnyStateMachine, InterpreterFrom, Prop } from 'xstate';
 
 type StateMachineContextType = {
   state: StateFrom<AnyStateMachine>;
