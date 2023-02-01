@@ -19,7 +19,7 @@ import { GameQueueService } from './game.queue.service';
 @UseGuards(TwoFactorAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(BadRequestTransformationFilter)
-export class GameGateway {
+export class GameQueueGateway {
   @WebSocketServer() server!: Server;
   constructor(private gameQueueService: GameQueueService) {}
 

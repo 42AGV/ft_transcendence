@@ -11,7 +11,7 @@ interface GameReadyData {
   gameRoomId: string;
 }
 
-class GameReady {
+export class GameReady {
   accepted: boolean;
   gameRoomId: string;
   constructor({ accepted, gameRoomId }: GameReadyData) {

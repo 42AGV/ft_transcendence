@@ -58,7 +58,7 @@ export const GameMatchProvider = ({ children }: { children: ReactNode }) => {
     if (authUser && !inGameQueue && isWaitingToPlay) {
       navigate(PLAY_GAME_QUEUE);
     }
-  }, [inGameQueue, isWaitingToPlay, authUser]);
+  }, [inGameQueue, isWaitingToPlay, authUser, navigate]);
   useEffect(() => {
     const gameReadyListener = ({ accepted, gameRoomId }: GameReadyDto) => {
       if (accepted) {

@@ -5,6 +5,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+// import { OnEvent } from '@nestjs/event-emitter';
 import {
   ConnectedSocket,
   MessageBody,
@@ -16,6 +17,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
+// import { GameReady } from './game.queue.service';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -31,4 +33,9 @@ export class GameGateway {
   ) {
     console.log(client, gameId);
   }
+
+  /* @OnEvent('game.ready')
+  async handleGameReady(data: GameReady) {
+    console.log(data);
+  } */
 }
