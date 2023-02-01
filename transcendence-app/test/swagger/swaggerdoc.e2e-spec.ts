@@ -28,6 +28,7 @@ import { ChatroomMemberService } from '../../src/chat/chatroom/chatroom-member/c
 import { DbModule } from '../../src/shared/db/db.module';
 import { AvatarModule } from '../../src/shared/avatar/avatar.module';
 import { AuthorizationModule } from '../../src/authorization/authorization.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('[Feature] Swagger works', () => {
   let app: INestApplication;
@@ -43,6 +44,7 @@ describe('[Feature] Swagger works', () => {
           cache: true,
           validate,
         }),
+        EventEmitterModule.forRoot(),
         UserModule,
         AuthModule,
         SocketModule,
