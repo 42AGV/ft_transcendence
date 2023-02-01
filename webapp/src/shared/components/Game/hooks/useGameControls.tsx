@@ -1,8 +1,21 @@
 import * as React from 'react';
 import { useGameStateContext } from '../context';
+import { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
+import {
+  GameCommand,
+  paddleMoveRight,
+  paddleMoveLeft,
+  paddleStop,
+  paddleDrag,
+} from 'pong-engine';
 
-const useGameControls = () => {
-  const { dispatch } = useGameStateContext();
+const useGameControls = (
+  sendGameCommandToServer?: (
+    command: GameCommand,
+  ) => Socket<DefaultEventsMap, DefaultEventsMap>,
+) => {
+  const { gameStateRef } = useGameStateContext();
   const dragRef = React.useRef<number>(0);
 
   const movePaddle = React.useCallback(
@@ -10,12 +23,14 @@ const useGameControls = () => {
       const key = e.key;
 
       if (key === 'ArrowRight') {
-        dispatch({ type: 'paddleMoveRight', payload: {} });
+        gameStateRef.current = paddleMoveRight(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleMoveRight');
       } else if (key === 'ArrowLeft') {
-        dispatch({ type: 'paddleMoveLeft', payload: {} });
+        gameStateRef.current = paddleMoveLeft(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleMoveLeft');
       }
     },
-    [dispatch],
+    [sendGameCommandToServer, gameStateRef],
   );
 
   const dragPaddle = React.useCallback(
@@ -25,10 +40,15 @@ const useGameControls = () => {
       dragRef.current = dragCurrPos;
 
       if (dragPrevPos) {
-        dispatch({ type: 'paddleDrag', payload: { dragCurrPos, dragPrevPos } });
+        gameStateRef.current = paddleDrag(
+          gameStateRef.current,
+          dragCurrPos,
+          dragPrevPos,
+        );
+        sendGameCommandToServer && sendGameCommandToServer('paddleDrag');
       }
     },
-    [dispatch],
+    [sendGameCommandToServer, gameStateRef],
   );
 
   const resetDragPaddle = React.useCallback(() => {
@@ -40,10 +60,11 @@ const useGameControls = () => {
       const key = e.key;
 
       if (key === 'ArrowRight' || key === 'ArrowLeft') {
-        dispatch({ type: 'paddleStop', payload: {} });
+        gameStateRef.current = paddleStop(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleStop');
       }
     },
-    [dispatch],
+    [sendGameCommandToServer, gameStateRef],
   );
 
   React.useEffect(() => {

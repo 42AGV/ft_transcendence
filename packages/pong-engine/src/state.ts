@@ -22,6 +22,8 @@ import {
   BALL_RADIUS,
 } from './constants';
 
+type EmptyPayload = object;
+
 type Act<Type extends string, Payload extends object> = {
   type: Type;
   payload: Payload;
@@ -29,7 +31,9 @@ type Act<Type extends string, Payload extends object> = {
 
 export type Action =
   | Act<'move', { deltaTime: number }>
-  | Act<'lose' | 'win' | GamePaddleMoveCommand, object>
+  | Act<'addPoint', { deltaTime: number }>
+  | Act<'losePoint', EmptyPayload>
+  | Act<GamePaddleMoveCommand, EmptyPayload>
   | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
 
 export const initialBallState = (): GameBall => {
@@ -62,21 +66,22 @@ export const reducer = (
 
   switch (type) {
     case 'move':
-      const { deltaTime } = payload;
       return {
         ...state,
-        ball: getBallPos(ball, paddle, deltaTime),
-        paddle: getPaddlePos(paddle, deltaTime),
+        ball: getBallPos(ball, paddle, payload.deltaTime),
+        paddle: getPaddlePos(paddle, payload.deltaTime),
       };
-    case 'lose':
+    case 'losePoint':
       return {
         ...state,
         ball: initialBallState(),
         score: score - 1,
       };
-    case 'win':
+    case 'addPoint':
       return {
         ...state,
+        ball: getBallPos(ball, paddle, payload.deltaTime),
+        paddle: getPaddlePos(paddle, payload.deltaTime),
         score: score + 1,
       };
     case 'paddleMoveRight':
