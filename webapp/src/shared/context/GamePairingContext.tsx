@@ -12,7 +12,13 @@ import socket from '../socket';
 import { ButtonVariant, CustomConfirmAlert } from '../components';
 import { useNavigation } from '../hooks/UseNavigation';
 import { useNotificationContext } from './NotificationContext';
-import { PLAY_GAME_URL } from '../urls';
+import {
+  GameStatus,
+  GameChallengeDto,
+  GameChallengeStatus,
+  GameStatusUpdateDto,
+  GameChallengeResponseDto,
+} from 'pong-engine';
 
 export interface GamePairingContextType {
   isWaitingToPlay: boolean;
@@ -21,60 +27,11 @@ export interface GamePairingContextType {
   setGameCtx?: Dispatch<SetStateAction<GamePairingContextType>>;
 }
 
-type GameChallengeDto = {
-  gameRoomId: string;
-  from: {
-    username: string;
-    id: string;
-  };
-};
-
-enum GameChallengeStatus {
-  CHALLENGE_DECLINED = 'challengeDeclined',
-  CHALLENGE_ACCEPTED = 'challengeAccepted',
-}
-
-enum GameStatus {
-  READY = 'ready',
-  FINISHED = 'finished',
-}
-
-type GameChallengeResponseDto = {
-  gameRoomId: string;
-  status: GameChallengeStatus;
-};
-
-type GameAcceptedDto = {
-  status: GameChallengeStatus.CHALLENGE_ACCEPTED;
-  gameRoomId: string;
-};
-
-type GameReadyDto = {
-  status: GameStatus.READY;
-  gameRoomId: string;
-};
-
-type GameDeclinedDto = {
-  status: GameChallengeStatus.CHALLENGE_DECLINED;
-  gameRoomId?: never;
-};
-
-type GameFinishedDto = {
-  status: GameStatus.FINISHED;
-  gameRoomId?: never;
-};
-
-type GameStatusUpdateDto =
-  | GameAcceptedDto
-  | GameReadyDto
-  | GameDeclinedDto
-  | GameFinishedDto;
-
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
 
 export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   const { authUser } = useAuth();
-  const { navigate, goBack } = useNavigation();
+  const { navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
   const [gameCtx, setGameCtx] = useState<GamePairingContextType>({
     isWaitingToPlay: false,
@@ -179,7 +136,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       socket.off('gameStatusUpdate');
       socket.off('gameChallenge');
     };
-  }, [authUser, gameCtx, goBack, navigate, warn, notify]);
+  }, [authUser, gameCtx, navigate, warn, notify]);
 
   const contextValue = useMemo(
     () => ({
