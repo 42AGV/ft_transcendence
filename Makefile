@@ -9,6 +9,7 @@ all: gen
 	$(DOCKER_COMPOSE) up --build -d
 	make migrate
 	make seed
+	npm run build-packages
 
 .PHONY: down
 down:

@@ -1,11 +1,21 @@
-import { Game } from '../../shared/components';
+import {
+  GameMultiplayerTraining,
+  Header,
+  IconVariant,
+} from '../../shared/components';
+import { useNavigation } from '../../shared/hooks/UseNavigation';
 
 import './GamePage.css';
 
-export default function GamePage() {
+export default function GameTrainPage() {
+  const { goBack } = useNavigation();
+
   return (
     <div className="game-page">
-      <Game />
+      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
+        Hit the brick!
+      </Header>
+      <GameMultiplayerTraining />
     </div>
   );
 }

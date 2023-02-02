@@ -6,6 +6,7 @@ import {
   movePaddleLeft,
   stopPaddle,
   dragPaddle,
+  getBallPosMultiplayer,
 } from './physics';
 import {
   GameBall,
@@ -13,6 +14,7 @@ import {
   GameState,
   GamePaddleMoveCommand,
   GamePaddleDragCommand,
+  GamePaddleOpponentMoveCommand,
 } from './models';
 import {
   CANVAS_WIDTH,
@@ -31,9 +33,13 @@ type Act<Type extends string, Payload extends object> = {
 
 export type Action =
   | Act<'move', { deltaTime: number }>
+  | Act<'moveMultiplayer', { deltaTime: number }>
   | Act<'addPoint', { deltaTime: number }>
+  | Act<'addPointMultiplayer', EmptyPayload>
   | Act<'losePoint', EmptyPayload>
+  | Act<'losePointMultiplayer', EmptyPayload>
   | Act<GamePaddleMoveCommand, EmptyPayload>
+  | Act<GamePaddleOpponentMoveCommand, EmptyPayload>
   | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
 
 export const initialBallState = (): GameBall => {
@@ -58,11 +64,20 @@ export const initialPaddleState = (): GamePaddle => ({
   color: '#FFF',
 });
 
+export const initialPaddleOpponentState = (): GamePaddle => ({
+  x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
+  y: PADDLE_HEIGHT,
+  slide: 0,
+  width: PADDLE_WIDTH,
+  height: PADDLE_HEIGHT,
+  color: '#FFF',
+});
+
 export const reducer = (
   state: GameState,
   { type, payload }: Action,
 ): GameState => {
-  const { ball, paddle, score } = state;
+  const { ball, paddle, paddleOpponent, score, scoreOpponent } = state;
 
   switch (type) {
     case 'move':
@@ -70,6 +85,18 @@ export const reducer = (
         ...state,
         ball: getBallPos(ball, paddle, payload.deltaTime),
         paddle: getPaddlePos(paddle, payload.deltaTime),
+      };
+    case 'moveMultiplayer':
+      return {
+        ...state,
+        ball: getBallPosMultiplayer(
+          ball,
+          paddle,
+          paddleOpponent,
+          payload.deltaTime,
+        ),
+        paddle: getPaddlePos(paddle, payload.deltaTime),
+        paddleOpponent: getPaddlePos(paddleOpponent, payload.deltaTime),
       };
     case 'losePoint':
       return {
@@ -83,6 +110,18 @@ export const reducer = (
         ball: getBallPos(ball, paddle, payload.deltaTime),
         paddle: getPaddlePos(paddle, payload.deltaTime),
         score: score + 1,
+      };
+    case 'addPointMultiplayer':
+      return {
+        ...state,
+        ball: initialBallState(),
+        score: score + 1,
+      };
+    case 'losePointMultiplayer':
+      return {
+        ...state,
+        ball: initialBallState(),
+        scoreOpponent: scoreOpponent + 1,
       };
     case 'paddleMoveRight':
       return {
@@ -104,6 +143,21 @@ export const reducer = (
       return {
         ...state,
         paddle: dragPaddle(paddle, dragPrevPos, dragCurrPos),
+      };
+    case 'paddleOpponentMoveRight':
+      return {
+        ...state,
+        paddleOpponent: movePaddleRight(paddleOpponent),
+      };
+    case 'paddleOpponentMoveLeft':
+      return {
+        ...state,
+        paddleOpponent: movePaddleLeft(paddleOpponent),
+      };
+    case 'paddleOpponentStop':
+      return {
+        ...state,
+        paddleOpponent: stopPaddle(paddleOpponent),
       };
     default:
       return state;

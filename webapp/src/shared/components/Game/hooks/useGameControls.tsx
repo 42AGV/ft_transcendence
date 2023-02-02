@@ -8,6 +8,9 @@ import {
   paddleMoveLeft,
   paddleStop,
   paddleDrag,
+  paddleOpponentMoveRight,
+  paddleOpponentMoveLeft,
+  paddleOpponentStop,
 } from 'pong-engine';
 
 const useGameControls = (
@@ -28,6 +31,14 @@ const useGameControls = (
       } else if (key === 'ArrowLeft') {
         gameStateRef.current = paddleMoveLeft(gameStateRef.current);
         sendGameCommandToServer && sendGameCommandToServer('paddleMoveLeft');
+      } else if (key === 'd') {
+        gameStateRef.current = paddleOpponentMoveRight(gameStateRef.current);
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleOpponentMoveRight');
+      } else if (key === 'a') {
+        gameStateRef.current = paddleOpponentMoveLeft(gameStateRef.current);
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleOpponentMoveLeft');
       }
     },
     [sendGameCommandToServer, gameStateRef],
@@ -63,8 +74,18 @@ const useGameControls = (
         gameStateRef.current = paddleStop(gameStateRef.current);
         sendGameCommandToServer && sendGameCommandToServer('paddleStop');
       }
+      if (key === 'd' || key === 'a') {
+        gameStateRef.current = paddleOpponentStop(gameStateRef.current);
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleOpponentStop');
+      }
     },
     [sendGameCommandToServer, gameStateRef],
+  );
+
+  const contextMenuHandler = React.useCallback(
+    (e: MouseEvent) => e.preventDefault(),
+    [],
   );
 
   React.useEffect(() => {
@@ -72,15 +93,15 @@ const useGameControls = (
     window.addEventListener('keyup', stopPaddle, false);
     window.addEventListener('touchmove', dragPaddle, false);
     window.addEventListener('touchend', resetDragPaddle, false);
-    window.addEventListener('contextmenu', (e) => e.preventDefault());
+    window.addEventListener('contextmenu', contextMenuHandler);
     return () => {
       window.removeEventListener('keydown', movePaddle);
       window.removeEventListener('keyup', stopPaddle);
       window.removeEventListener('touchmove', dragPaddle);
       window.removeEventListener('touchend', resetDragPaddle);
-      window.removeEventListener('contextmenu', (e) => e.preventDefault());
+      window.removeEventListener('contextmenu', contextMenuHandler);
     };
-  }, [movePaddle, stopPaddle, resetDragPaddle, dragPaddle]);
+  }, [movePaddle, stopPaddle, resetDragPaddle, dragPaddle, contextMenuHandler]);
 };
 
 export default useGameControls;
