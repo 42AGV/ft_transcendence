@@ -12,12 +12,12 @@ import {
 import './GameQueuePage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import socket from '../../shared/socket';
-import { useGameMatching } from '../../shared/hooks/UseGameMatching';
+import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { PLAY_GAME_URL, PLAY_URL } from '../../shared/urls';
 import { useEffect } from 'react';
 
 export default function GameQueuePage() {
-  const { isPlaying, gameRoomId } = useGameMatching();
+  const { isPlaying, gameRoomId } = useGamePairing();
   const { navigate, goBack } = useNavigation();
   useEffect(() => {
     if (isPlaying && gameRoomId) {
