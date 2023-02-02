@@ -165,7 +165,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       socket.off('gameStatusUpdate');
       socket.off('gameChallenge');
     };
-  }, [authUser, gameCtx, navigate, warn, notify]);
+  }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 
   const contextValue = useMemo(
     () => ({
