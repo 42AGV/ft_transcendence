@@ -17,7 +17,7 @@ import { PLAY_GAME_URL, PLAY_URL } from '../../shared/urls';
 import { useEffect } from 'react';
 
 export default function GameQueuePage() {
-  const { isPlaying, gameRoomId } = useGamePairing();
+  const { setGameCtx, isPlaying, gameRoomId } = useGamePairing();
   const { navigate, goBack } = useNavigation();
   useEffect(() => {
     if (isPlaying && gameRoomId) {
@@ -41,8 +41,10 @@ export default function GameQueuePage() {
         variant={ButtonVariant.WARNING}
         iconVariant={IconVariant.LOGOUT}
         onClick={() => {
-          socket.emit('leaveChatroom');
-          navigate(PLAY_URL);
+          socket.emit('gameQuitWaiting');
+          setGameCtx &&
+            setGameCtx({ isPlaying, isWaitingToPlay: false, gameRoomId: null });
+          goBack();
         }}
       >
         {'Quit'}

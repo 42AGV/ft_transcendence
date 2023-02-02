@@ -7,8 +7,10 @@ import { PLAY_GAME_TRAIN_URL, PLAY_GAME_QUEUE } from '../../shared/urls';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { Query } from '../../shared/types';
 import socket from '../../shared/socket';
+import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 
 export default function PlayPage() {
+  const { setGameCtx, isPlaying, gameRoomId } = useGamePairing();
   const navigate = useNavigate();
 
   // To be replaced with real games request
@@ -45,7 +47,13 @@ export default function PlayPage() {
       variant: ButtonVariant.SUBMIT,
       iconVariant: IconVariant.ADD,
       onClick: () => {
-        socket.emit('joinGameQueue');
+        socket.emit('gameQueueJoin');
+        setGameCtx &&
+          setGameCtx({
+            isPlaying: false,
+            isWaitingToPlay: true,
+            gameRoomId: null,
+          });
         navigate(PLAY_GAME_QUEUE);
       },
       children: 'Join game queue',
