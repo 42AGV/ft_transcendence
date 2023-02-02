@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { GameMatchingContext } from '../context/GameMatchingContext';
+import { GamePairingContext } from '../context/GamePairingContext';
 
 export function useGameMatching() {
-  return useContext(GameMatchingContext);
+  return useContext(GamePairingContext);
 }
