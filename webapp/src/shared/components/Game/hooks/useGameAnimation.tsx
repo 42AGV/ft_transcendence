@@ -86,7 +86,21 @@ const useGameAnimation = () => {
     [drawBall, drawPaddle, drawBrick],
   );
 
-  return { renderFrame, deltaTimeRef };
+  const renderMultiplayerFrame = React.useCallback(
+    (canvasContext: CanvasRenderingContext2D, state: GameState) => {
+      const ball = state.ball;
+      const paddle = state.paddle;
+      const paddleOpponent = state.paddleOpponent;
+
+      canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      drawBall(canvasContext, ball);
+      drawPaddle(canvasContext, paddle);
+      drawPaddle(canvasContext, paddleOpponent);
+    },
+    [drawBall, drawPaddle],
+  );
+
+  return { renderFrame, renderMultiplayerFrame, deltaTimeRef };
 };
 
 export default useGameAnimation;

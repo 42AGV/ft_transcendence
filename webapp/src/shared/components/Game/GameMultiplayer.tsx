@@ -4,24 +4,26 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
 import { useGameControls, useGameAnimation, useGameEngine } from './hooks';
 import { GameStateContextProvider } from './context';
 
-import './Game.css';
+import './GameMultiplayer.css';
 
-const GameTraining = () => {
-  const { renderFrame } = useGameAnimation();
-  const { runGameFrame } = useGameEngine();
+const GameMultiplayerTraining = () => {
+  const { renderMultiplayerFrame } = useGameAnimation();
+  const { runGameMultiplayerFrame } = useGameEngine();
   useGameControls();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const requestFrameRef = React.useRef<number | null>(null);
   const [score, setScore] = React.useState<number>(0);
+  const [opponentScore, setOpponentScore] = React.useState<number>(0);
 
   const gameLoop = React.useCallback(() => {
     const canvasContext = canvasRef.current?.getContext('2d');
-    const gameState = runGameFrame();
+    const gameState = runGameMultiplayerFrame();
 
     setScore(gameState.score);
-    canvasContext && renderFrame(canvasContext, gameState);
+    setOpponentScore(gameState.scoreOpponent);
+    canvasContext && renderMultiplayerFrame(canvasContext, gameState);
     window.requestAnimationFrame(() => gameLoop());
-  }, [runGameFrame, renderFrame]);
+  }, [runGameMultiplayerFrame, renderMultiplayerFrame]);
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -40,17 +42,18 @@ const GameTraining = () => {
   }, [gameLoop]);
 
   return (
-    <div className="game">
-      <h1 className="game-score heading-bold">{score}</h1>
-      <canvas className="game-arena" ref={canvasRef} />
+    <div className="game-multiplayer">
+      <h1 className="game-multiplayer-score heading-bold">{opponentScore}</h1>
+      <canvas className="game-multiplayer-arena" ref={canvasRef} />
+      <h1 className="game-multiplayer-score heading-bold">{score}</h1>
     </div>
   );
 };
 
-export default function GameTrainingWithContext() {
+export default function GameMultiplayerTrainingWithContext() {
   return (
     <GameStateContextProvider>
-      <GameTraining />
+      <GameMultiplayerTraining />
     </GameStateContextProvider>
   );
 }
