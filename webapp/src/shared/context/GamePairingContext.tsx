@@ -45,6 +45,8 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       gameRoomId,
     }: GameStatusUpdateDto) => {
       switch (status) {
+        // The handling of these two is similar and should be handled
+        // in the same place. Hence, the fallthrough
         /* FALLTHROUGH */
         // @ts-ignore
         case GameChallengeStatus.CHALLENGE_ACCEPTED: {
@@ -60,6 +62,8 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
           // TODO: implement this navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
           break;
         }
+        // The handling of these two is similar and should be handled
+        // in the same place. Hence, the fallthrough
         /* FALLTHROUGH */
         // @ts-ignore
         case GameChallengeStatus.CHALLENGE_DECLINED: {
@@ -102,7 +106,9 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
                     status: GameChallengeStatus.CHALLENGE_ACCEPTED,
                   } as GameChallengeResponseDto);
                   notify(`Now you'll play a game against ${username}`);
-                  // navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
+                  // Navigating the user from here, or changing its status to
+                  // playing, is not needed. Such responsibility falls on the
+                  // handling of gameStatus {ready} event
                 },
                 variant: ButtonVariant.SUBMIT,
                 children: 'Accept',
