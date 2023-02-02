@@ -13,17 +13,10 @@ import './GameQueuePage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
-import { PLAY_GAME_URL, PLAY_URL } from '../../shared/urls';
-import { useEffect } from 'react';
 
 export default function GameQueuePage() {
-  const { setGameCtx, isPlaying, gameRoomId } = useGamePairing();
-  const { navigate, goBack } = useNavigation();
-  useEffect(() => {
-    if (isPlaying && gameRoomId) {
-      navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
-    }
-  }, [isPlaying, gameRoomId, navigate]);
+  const { setGameCtx, isPlaying } = useGamePairing();
+  const { goBack } = useNavigation();
   return (
     <div className="game-queue-page">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
