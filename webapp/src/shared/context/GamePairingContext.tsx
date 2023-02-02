@@ -38,7 +38,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   const isInGamePage =
     pathname.slice(0, PLAY_GAME_URL.length + 1) === `${PLAY_GAME_URL}/`;
   const { authUser } = useAuth();
-  const { navigate } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
   const [gameCtx, setGameCtx] = useState<GamePairingContextType>({
     isWaitingToPlay: false,
@@ -139,12 +139,19 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
                     ...gameCtx,
                     isWaitingToPlay: false,
                   });
+                  goBack(); // TODO: review where does the goBack() point to.
+                  // We're automatically redirected to queue page when we're
+                  // waiting, so this should take us back to wherever we were.
+                  // but since the alert will be overlayed, maybe we won't
+                  // navigate to queue page? Check this
                 },
                 variant: ButtonVariant.WARNING,
                 children: 'Decline',
               },
             ],
           });
+        } else {
+          // TODO: there should be an automated challenge rejection in this block
         }
       }
     };

@@ -53,7 +53,7 @@ export default function PlayPage() {
             isPlaying: false,
             isWaitingToPlay: true,
             gameRoomId: null,
-          });
+          }); // TODO: these setGameCtx should be broadcasted to all tabs
       },
       children: 'Join game queue',
     },
