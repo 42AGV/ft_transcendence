@@ -64,7 +64,7 @@ import { UserStatusProvider } from './shared/context/UserStatusContext';
 import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
 import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
-import { GameMatchProvider } from './shared/context/GameMatchingContext';
+import { GamePairingProvider } from './shared/context/GamePairingContext';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -74,13 +74,13 @@ function AppContext({ children }: { children: JSX.Element }) {
   return (
     <NotificationContextProvider>
       <AuthProvider>
-        <GameMatchProvider>
+        <GamePairingProvider>
           <UserStatusProvider>
             <UserFriendProvider>
               <UserBlocklistProvider>{children}</UserBlocklistProvider>
             </UserFriendProvider>
           </UserStatusProvider>
-        </GameMatchProvider>
+        </GamePairingProvider>
       </AuthProvider>
     </NotificationContextProvider>
   );
