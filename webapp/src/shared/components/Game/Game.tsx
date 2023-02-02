@@ -6,10 +6,6 @@ import {
   useOnlineGameContext,
   OnlineGameContextProvider,
 } from './context/onlineGameContext';
-import {
-  StateMachineContextProvider,
-  useStateMachineContext,
-} from './state-machine/context';
 import Button, { ButtonVariant } from '../Button/Button';
 import Text, { TextVariant } from '../Text/Text';
 import GameSpinner from '../GameSpinner/GameSpinner';
@@ -18,6 +14,8 @@ import { IconVariant } from '../Icon/Icon';
 import { useNavigation } from '../../hooks/UseNavigation';
 
 import './Game.css';
+import { StateMachineContext } from './state-machine/context';
+import { gameMachine } from './state-machine/machine';
 
 const Play = () => {
   const { renderMultiplayerFrame } = useGameAnimation();
@@ -69,11 +67,14 @@ const Play = () => {
 };
 
 const Start = () => {
-  const { send } = useStateMachineContext();
+  const actorRef = StateMachineContext.useActorRef();
 
   return (
     <div className="game-start">
-      <Button variant={ButtonVariant.SUBMIT} onClick={() => send('READY')}>
+      <Button
+        variant={ButtonVariant.SUBMIT}
+        onClick={() => actorRef.send('READY')}
+      >
         Ready?
       </Button>
     </div>
@@ -92,10 +93,10 @@ const Wait = () => {
 };
 
 const StateMachine = () => {
-  const { state } = useStateMachineContext();
+  const value = StateMachineContext.useSelector((state) => state.value);
 
   const drawMachineState = (): JSX.Element => {
-    switch (state.value) {
+    switch (value) {
       case 'start':
         return <Start />;
       case 'wait':
@@ -132,7 +133,13 @@ const Game = () => {
   }, [initHandshake, handleInitHandshake]);
 
   return (
-    <StateMachineContextProvider services={{ handshake }}>
+    <StateMachineContext.Provider
+      machine={() =>
+        gameMachine.withConfig({
+          services: { handshake },
+        })
+      }
+    >
       {/* TODO , this is a temporal fix, replace with a menu */}
       <Header
         icon={IconVariant.ARROW_BACK}
@@ -144,7 +151,7 @@ const Game = () => {
         Hit the brick!
       </Header>
       <StateMachine />
-    </StateMachineContextProvider>
+    </StateMachineContext.Provider>
   );
 };
 
