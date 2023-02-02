@@ -1,4 +1,4 @@
-.game {
+.game-multiplayer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,29 +11,30 @@
   user-select: none;
 }
 
-.game-start {
+.game-multiplayer-start {
   margin: auto;
 }
 
-.game-wait {
+.game-multiplayer-wait {
   margin: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.game-wait-text {
+.game-multiplayer-wait-text {
   margin-top: 4rem;
 }
 
-.game-arena {
+.game-multiplayer-arena {
   border: solid 0.125rem var(--color-light);
   border-bottom: dashed;
+  border-top: dashed;
   align-self: center;
   justify-self: center;
   object-fit: contain;
 }
 
-.game-score {
+.game-multiplayer-score {
   margin-bottom: 1rem;
 }
