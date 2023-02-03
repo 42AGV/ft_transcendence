@@ -1,6 +1,16 @@
 import { createMachine } from 'xstate';
 
-export const gameMachine = createMachine({
+interface GameContext {
+  gameId: string;
+}
+
+export type GameEvent =
+  | { type: 'READY' }
+  | { type: 'PLAY' }
+  | { type: 'END' }
+  | { type: 'RETRY' };
+
+export const gameMachine = createMachine<GameContext, GameEvent>({
   predictableActionArguments: true,
   initial: 'start',
   states: {
@@ -12,8 +22,8 @@ export const gameMachine = createMachine({
     wait: {
       invoke: {
         src: 'handshake',
-        onDone: { target: 'play' },
       },
+      on: { PLAY: 'play' },
     },
     play: {
       on: {

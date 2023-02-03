@@ -7,7 +7,6 @@ import {
   LandingPage,
   PlayPage,
   GameTrainPage,
-  GamePage,
   GameMultiplayerPage,
   UsersPage,
   UserPage,
@@ -116,7 +115,8 @@ function AppRoutes() {
         path={PLAY_GAME_URL}
         element={
           <RequireAuth>
-            <GamePage />
+            {/* Temporary until we implement the page which list the currently playing games */}
+            <GameTrainPage />
           </RequireAuth>
         }
       />

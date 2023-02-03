@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
-import { useGameControls, useGameAnimation, useGameEngine } from './hooks';
-import { GameStateContextProvider } from './context/gameStateContext';
 import {
-  useOnlineGameContext,
-  OnlineGameContextProvider,
-} from './context/onlineGameContext';
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  GameState,
+  GameCommand,
+} from 'pong-engine';
+import { useGameControls, useGameAnimation } from './hooks';
+import { GameStateContextProvider } from './context/gameStateContext';
 import Button, { ButtonVariant } from '../Button/Button';
 import Text, { TextVariant } from '../Text/Text';
 import GameSpinner from '../GameSpinner/GameSpinner';
@@ -15,31 +16,37 @@ import { useNavigation } from '../../hooks/UseNavigation';
 
 import './Game.css';
 import { StateMachineContext } from './state-machine/context';
-import { gameMachine } from './state-machine/machine';
+import { GameEvent, gameMachine } from './state-machine/machine';
+import socket from '../../socket';
+import { GameInfo } from '../../types';
+import { useAuth } from '../../hooks/UseAuth';
+import { Sender } from 'xstate';
+
+const GAME_COMMAND = 'gameCommand';
+const UPDATE_GAME = 'updateGame';
+const JOIN_GAME = 'joinGame';
+const LEAVE_GAME = 'leaveGame';
 
 const Play = () => {
   const { renderMultiplayerFrame } = useGameAnimation();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const requestFrameRef = React.useRef<number | null>(null);
   const [score, setScore] = React.useState<number>(0);
   const [opponentScore, setOpponentScore] = React.useState<number>(0);
-  const { sendGameCommand, updateGame } = useOnlineGameContext();
-  // Refactor para decorar o hacer HOC con estos componentes
-  // De esta forma usar versión online de los controles y versión online del gameEngine
-  // usamos hook online dentro de la versión decorada
+  const isPlayerOneRef = React.useRef(false);
+  const [gameState, setGameState] = React.useState<GameState | null>(null);
+  const gameId = StateMachineContext.useSelector(
+    (state) => state.context.gameId,
+  );
+  const sendGameCommand = React.useCallback(
+    (command: GameCommand) =>
+      socket.emit(GAME_COMMAND, {
+        command,
+        gameRoomId: gameId,
+      }),
+    [gameId],
+  );
   useGameControls(sendGameCommand);
-  const { runGameMultiplayerFrame, isPlayerOneRef } = useGameEngine(updateGame);
-
-  const gameLoop = React.useCallback(() => {
-    const canvasContext = canvasRef.current?.getContext('2d');
-    const gameState = runGameMultiplayerFrame();
-
-    setScore(gameState.score);
-    setOpponentScore(gameState.scoreOpponent);
-    canvasContext &&
-      renderMultiplayerFrame(canvasContext, gameState, isPlayerOneRef.current);
-    window.requestAnimationFrame(() => gameLoop());
-  }, [runGameMultiplayerFrame, renderMultiplayerFrame, isPlayerOneRef]);
+  const { authUser } = useAuth();
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -47,15 +54,30 @@ const Play = () => {
     if (canvas) {
       canvas.width = CANVAS_WIDTH;
       canvas.height = CANVAS_HEIGHT;
-      requestFrameRef.current = window.requestAnimationFrame(() => gameLoop());
-
-      return () => {
-        if (requestFrameRef.current) {
-          cancelAnimationFrame(requestFrameRef.current);
-        }
-      };
     }
-  }, [gameLoop]);
+  }, []);
+
+  React.useEffect(() => {
+    function updateGame(info: GameInfo) {
+      setGameState(info.state);
+      isPlayerOneRef.current = authUser?.id === info.playerOneId;
+    }
+
+    socket.on(UPDATE_GAME, updateGame);
+
+    return () => {
+      socket.off(UPDATE_GAME);
+    };
+  }, [authUser]);
+
+  if (gameState) {
+    const canvasContext = canvasRef.current?.getContext('2d');
+
+    setScore(gameState.score);
+    setOpponentScore(gameState.scoreOpponent);
+    canvasContext &&
+      renderMultiplayerFrame(canvasContext, gameState, isPlayerOneRef.current);
+  }
 
   return (
     <div className="game-multiplayer">
@@ -113,38 +135,54 @@ const StateMachine = () => {
   return <div className="game">{drawMachineState()}</div>;
 };
 
-type Props = {
+type GameProps = {
   gameId: string;
 };
 
-const Game = () => {
-  const { initHandshake, handleInitHandshake, leaveGame } =
-    useOnlineGameContext();
+const Game = ({ gameId }: GameProps) => {
   const { goBack } = useNavigation();
-  const handshake = React.useCallback((): Promise<string> => {
-    initHandshake();
 
-    return new Promise((resolve) => {
-      const handler = (handshake: { res: string }) => {
-        resolve(handshake.res);
+  const handshake = React.useCallback(
+    () => (send: Sender<GameEvent>) => {
+      const handshakeListener = (payload: { res: string }) => {
+        console.log(payload);
+        if (payload.res === 'ok') {
+          send('READY');
+        }
       };
-      handleInitHandshake(handler);
-    });
-  }, [initHandshake, handleInitHandshake]);
+      console.log('Handshake called');
+
+      socket.on(JOIN_GAME, handshakeListener);
+
+      return () => {
+        socket.off(JOIN_GAME);
+      };
+    },
+    [],
+  );
+
+  React.useEffect(() => {
+    socket.emit(JOIN_GAME, { gameRoomId: gameId });
+
+    return () => {
+      socket.emit(LEAVE_GAME, { gameRoomId: gameId });
+    };
+  }, [gameId]);
 
   return (
     <StateMachineContext.Provider
       machine={() =>
-        gameMachine.withConfig({
-          services: { handshake },
-        })
+        gameMachine
+          .withConfig({
+            services: { handshake },
+          })
+          .withContext({ gameId })
       }
     >
       {/* TODO , this is a temporal fix, replace with a menu */}
       <Header
         icon={IconVariant.ARROW_BACK}
         onClick={() => {
-          leaveGame();
           goBack();
         }}
       >
@@ -155,13 +193,11 @@ const Game = () => {
   );
 };
 
-export default function GameWithContext({ gameId }: Props) {
+export default function GameWithContext({ gameId }: GameProps) {
   return (
     <>
       <GameStateContextProvider>
-        <OnlineGameContextProvider gameRoomId={gameId}>
-          <Game />
-        </OnlineGameContextProvider>
+        <Game gameId={gameId} />
       </GameStateContextProvider>
     </>
   );

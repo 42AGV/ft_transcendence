@@ -67,6 +67,7 @@ export class GameGateway {
     @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
   ) {
     const userId = client.request.user.id;
+    console.log(`joinGame - userId: ${userId} | gameRoomId: ${gameRoomId}`);
     client.join(gameRoomId);
 
     // Check if the client want to join an existing game
@@ -87,6 +88,9 @@ export class GameGateway {
         playerOneId,
         playerTwoId: userId,
       });
+      console.log(
+        `sent handshake joinGame - userId: ${userId} | gameRoomId: ${gameRoomId}`,
+      );
       this.server.to(gameRoomId).emit('joinGame', { res: 'ok' });
       if (!this.intervalId) {
         // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
@@ -107,6 +111,7 @@ export class GameGateway {
     @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
   ) {
     const userId = client.request.user.id;
+    console.log(`leaveGame - userId: ${userId} | gameRoomId: ${gameRoomId}`);
     const game = this.games.get(gameRoomId);
     if (!game) {
       return;
