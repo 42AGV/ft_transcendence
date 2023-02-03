@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-
-type UserId = string;
-type GameId = string;
+import { GameId, UserId } from './infrastructure/db/memoryModels';
+import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
+import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
 
 interface GameReadyData {
   accepted: boolean;
@@ -14,6 +13,7 @@ interface GameReadyData {
 export class GameReady {
   accepted: boolean;
   gameRoomId: string;
+
   constructor({ accepted, gameRoomId }: GameReadyData) {
     this.accepted = accepted;
     this.gameRoomId = gameRoomId;
@@ -23,23 +23,20 @@ export class GameReady {
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
-  waitingGameRoom: GameId | null = null;
-  userToGameRoom = new Map<UserId, GameId>();
-  gameRoomToUsers = new Map<GameId, [UserId, UserId]>();
+  gameQueue: UserId | null = null;
+  constructor(
+    private eventEmitter: EventEmitter2,
+    private gamesOngoing: IGamesOngoingRepository,
+    private challengesPending: IChallengesPendingRepository,
+  ) {}
 
-  constructor(private eventEmitter: EventEmitter2) {}
-
-  async joinGameQueue(userId: string): Promise<string | null> {
+  async gameQueueJoin(userId: string): Promise<string | null> {
     if (!this.socket) {
       return null;
     }
-    if (!this.waitingGameRoom) {
-      this.waitingGameRoom = uuidv4();
-      this.userToGameRoom.set(userId, this.waitingGameRoom);
-      this.socket.emit('waitingForGame', {
-        gameRoomId: this.waitingGameRoom,
-      });
-      return this.waitingGameRoom;
+    if (!this.gameQueue) {
+      this.gameQueue = userId;
+      return userId;
     } else {
       // TODO: from two different tabs, or just reloading, we can get here, which is not cool
       const gameRoomId = this.waitingGameRoom;

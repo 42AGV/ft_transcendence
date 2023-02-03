@@ -27,16 +27,16 @@ export class GameQueueGateway {
     this.gameQueueService.socket = server;
   }
 
-  @SubscribeMessage('joinGameQueue')
-  async joinGameQueue(@ConnectedSocket() client: Socket): Promise<void> {
-    const gameRoomId = await this.gameQueueService.joinGameQueue(
+  @SubscribeMessage('gameQueueJoin')
+  async gameQueueJoin(@ConnectedSocket() client: Socket): Promise<void> {
+    const gameRoomId = await this.gameQueueService.gameQueueJoin(
       client.request.user.id,
     );
     if (gameRoomId) client.join(gameRoomId);
   }
 
-  @SubscribeMessage('leaveGameRoom')
-  async handleLeaveGameRoom(@ConnectedSocket() client: Socket) {
+  @SubscribeMessage('gameQuitWaiting')
+  async gameQuitWaiting(@ConnectedSocket() client: Socket) {
     const gameRoomId = this.gameQueueService.getRoomForUserId(
       client.request.user.id,
     );
