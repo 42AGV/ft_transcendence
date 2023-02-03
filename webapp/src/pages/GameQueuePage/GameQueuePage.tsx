@@ -19,9 +19,15 @@ import { PLAY_URL } from '../../shared/urls';
 export default function GameQueuePage() {
   const { setGameCtx, isPlaying } = useGamePairing();
   const { goBack, navigate } = useNavigation();
+  const quitAndGoBack = () => {
+    socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
+    setGameCtx &&
+      setGameCtx({ isPlaying, isWaitingToPlay: false, gameRoomId: null });
+    goBack();
+  };
   return (
     <div className="game-queue-page">
-      <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
+      <Header icon={IconVariant.ARROW_BACK} onClick={quitAndGoBack}>
         {'game queue'}
       </Header>
       <Text
