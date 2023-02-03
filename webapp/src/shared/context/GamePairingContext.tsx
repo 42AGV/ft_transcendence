@@ -48,7 +48,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     gameRoomId: null,
   });
 
-  useEffect(() => {
+  useEffect(() => { // TODO: forget about this s***. Navigate with the ** buttons
     if (gameCtx.isPlaying && !isInGamePage) {
       navigate(`${PLAY_GAME_URL}/${gameCtx.gameRoomId}`);
     }
@@ -166,7 +166,6 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             ],
           });
         } else {
-          console.log('hitting this');
           socket.emit(gameQueueClientToServerWsEvents.gameChallengeResponse, {
             gameRoomId,
             status: GameChallengeStatus.CHALLENGE_DECLINED,

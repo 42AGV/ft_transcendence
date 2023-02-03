@@ -10,6 +10,7 @@ import {
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 
+// TODO: add WsExceptions
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
