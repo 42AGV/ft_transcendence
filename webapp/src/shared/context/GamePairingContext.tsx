@@ -166,7 +166,11 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             ],
           });
         } else {
-          // TODO: there should be an automated challenge rejection in this block
+          console.log('hitting this');
+          socket.emit(gameQueueClientToServerWsEvents.gameChallengeResponse, {
+            gameRoomId,
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameChallengeResponseDto);
         }
       }
     };

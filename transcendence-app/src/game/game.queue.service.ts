@@ -10,21 +10,6 @@ import {
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 
-interface GameReadyData {
-  accepted: boolean;
-  gameRoomId: string;
-}
-
-export class GameReady {
-  accepted: boolean;
-  gameRoomId: string;
-
-  constructor({ accepted, gameRoomId }: GameReadyData) {
-    this.accepted = accepted;
-    this.gameRoomId = gameRoomId;
-  }
-}
-
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
@@ -83,24 +68,24 @@ export class GameQueueService {
     }
   }
 
-  gameQuitWaiting(userId: string): boolean {
+  gameQuitWaiting(userId: string): GameId | null {
     if (!this.isUserBusy(userId)) {
-      return false;
+      return null;
     }
     if (this.gameQueue && this.getWaitingUserId() === userId) {
+      const gameId = this.getWaitingGameId();
       this.gameQueue = null;
-      return true;
+      return gameId;
     }
     if (this.challengesPending.isPlayerBusy(userId)) {
       const game = this.challengesPending.getGameRoomForPlayer(userId);
-      if (!game) return false;
+      if (!game) return null;
       const [gameRoomId, _] = Object.keys(game);
       void _;
-      return this.challengesPending.deleteGameForId(gameRoomId);
-    } else {
-      // the user must be playing, so noop
-      return false;
+      this.challengesPending.deleteGameForId(gameRoomId);
+      return gameRoomId;
     }
+    return null;
   }
 
   gameUserChallenge(

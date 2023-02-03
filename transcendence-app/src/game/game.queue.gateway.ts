@@ -68,7 +68,14 @@ export class GameQueueGateway {
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameQuitWaiting)
   gameQuitWaiting(@ConnectedSocket() client: Socket): boolean {
-    return this.gameQueueService.gameQuitWaiting(client.request.user.id);
+    const gameRoomId = this.gameQueueService.gameQuitWaiting(
+      client.request.user.id,
+    );
+    if (gameRoomId) {
+      client.leave(gameRoomId);
+      return true;
+    }
+    return false;
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameUserChallenge)
@@ -126,6 +133,12 @@ export class GameQueueGateway {
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
         status: GameChallengeStatus.CHALLENGE_DECLINED,
       } as GameStatusUpdateDto);
+    this.server
+      .in(gameRoomId)
+      .fetchSockets()
+      .then((matchingSockets) =>
+        matchingSockets.map((socket) => socket.leave(gameRoomId)),
+      );
     return false;
   }
 }
