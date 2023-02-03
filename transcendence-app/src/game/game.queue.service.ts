@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Socket, Server } from 'socket.io';
+import { Server } from 'socket.io';
 import { GameId, UserId } from './infrastructure/db/memoryModels';
 import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
 import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
@@ -39,12 +39,14 @@ export class GameQueueService {
     const {
       key: [userA, _],
     } = this.gameQueue;
+    void _;
     return userA;
   }
 
   private getWaitingGameId(): string | null {
     if (!this.gameQueue) return null;
     const [gameId, _] = this.gameQueue.keys;
+    void _;
     return gameId;
   }
 
@@ -68,13 +70,15 @@ export class GameQueueService {
     if (!this.gameQueue) {
       this.gameQueue = this.gamesOngoing.addGame(userId);
       const gameRoomId = this.getWaitingGameId();
-      return [gameRoomId!, false];
+      if (!gameRoomId) return null;
+      return [gameRoomId, false];
     } else {
       // TODO: from two different tabs, or just reloading, we can get here, which is not cool
       const gameRoomId = this.getWaitingGameId();
-      const game = this.gamesOngoing.addUserToGame(gameRoomId!, userId);
+      if (!gameRoomId) return null;
+      this.gamesOngoing.addUserToGame(gameRoomId, userId);
       this.gameQueue = null;
-      return [gameRoomId!, true];
+      return [gameRoomId, true];
     }
   }
 
@@ -87,8 +91,10 @@ export class GameQueueService {
       return true;
     }
     if (this.challengesPending.isPlayerBusy(userId)) {
-      const [gameRoomId, _] =
-        this.challengesPending.getGameRoomForPlayer(userId)!.keys;
+      const game = this.challengesPending.getGameRoomForPlayer(userId);
+      if (!game) return false;
+      const [gameRoomId, _] = game.keys;
+      void _;
       return this.challengesPending.deleteGameForId(gameRoomId);
     } else {
       // the user must be playing, so noop
@@ -101,6 +107,7 @@ export class GameQueueService {
       return false;
     }
     const [gameRoomId, _] = this.challengesPending.addGame(fromId).keys;
+    void _;
     this.socket.to(to).emit(gameQueueServerToClientWsEvents.gameChallenge, {
       gameRoomId,
       from: {
@@ -123,6 +130,7 @@ export class GameQueueService {
       const {
         key: [waitingPlayer, _],
       } = game;
+      void _;
       this.gamesOngoing.addGameWithId(gameRoomId, [
         waitingPlayer,
         acceptingPlayer,

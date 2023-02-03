@@ -27,6 +27,7 @@ export class GamesOngoing
     const waitingGame = this.gameSet.get(gameRoomId);
     if (waitingGame) {
       const [waitingPlayer, _] = waitingGame;
+      void _;
       this.gameSet.set(gameRoomId, [waitingPlayer, userId]);
       return { [gameRoomId]: [waitingPlayer, userId] };
     }

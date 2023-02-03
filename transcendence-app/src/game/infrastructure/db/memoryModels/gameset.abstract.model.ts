@@ -33,6 +33,7 @@ export abstract class GameSet<T> {
 
   getOpponentForPlayer(userId: UserId): UserId | T | null {
     for (const [_, [userA, userB]] of this.gameSet) {
+      void _;
       if (userA === userId) {
         return userB;
       } else if (userB === userId) {
