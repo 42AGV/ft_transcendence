@@ -23,8 +23,8 @@ export enum GameStatus {
 }
 
 export type GameChallengeResponseDto = {
-  gameRoomId: string;
   status: GameChallengeStatus;
+  gameRoomId: string;
 };
 
 type GameAcceptedDto = {

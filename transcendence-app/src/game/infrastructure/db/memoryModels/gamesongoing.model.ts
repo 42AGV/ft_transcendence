@@ -6,28 +6,38 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class GamesOngoing
-  extends GameSet<UserId>
+  extends GameSet<UserId | null>
   implements IGamesOngoingRepository
 {
   constructor() {
     super();
   }
 
-  addGame(
-    userOneId: UserId,
-    userTwoId: UserId,
-  ): Record<GameId, [UserId, UserId]> {
+  addGame(userId: UserId): Record<GameId, [UserId, null]> {
     const gameId: GameId = uuidv4();
-    let ret: Record<GameId, [UserId, UserId]>;
-    if (userOneId > userTwoId) {
-      ret = { [gameId]: [userTwoId, userOneId] };
-      this.gameSet.set(gameId, [userTwoId, userOneId]);
-    } else {
-      ret = { [gameId]: [userOneId, userTwoId] };
-      this.gameSet.set(gameId, [userOneId, userTwoId]);
+    this.gameSet.set(gameId, [userId, null]);
+    this.usersBusy.add(userId);
+    return { [gameId]: [userId, null] };
+  }
+
+  addUserToGame(
+    gameRoomId: GameId,
+    userId: UserId,
+  ): Record<GameId, [UserId, UserId]> | null {
+    const waitingGame = this.gameSet.get(gameRoomId);
+    if (waitingGame) {
+      const [waitingPlayer, _] = waitingGame;
+      this.gameSet.set(gameRoomId, [waitingPlayer, userId]);
+      return { [gameRoomId]: [waitingPlayer, userId] };
     }
-    this.usersBusy.add(userOneId);
-    this.usersBusy.add(userTwoId);
-    return ret;
+    return null;
+  }
+
+  addGameWithId(gameRoomId: string, [userA, userB]: [string, string]): boolean {
+    if (this.gameSet.has(gameRoomId)) {
+      return false;
+    }
+    this.gameSet.set(gameRoomId, [userA, userB]);
+    return true;
   }
 }

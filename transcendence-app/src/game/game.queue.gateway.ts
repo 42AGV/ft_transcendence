@@ -11,11 +11,13 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 import { GameQueueService } from './game.queue.service';
 import {
+  GameChallengeResponseDto,
+  GameChallengeStatus,
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
   GameStatus,
@@ -41,25 +43,25 @@ export class GameQueueGateway {
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameQueueJoin)
   async gameQueueJoin(@ConnectedSocket() client: Socket): Promise<boolean> {
-    const retval = await this.gameQueueService.gameQueueJoin(
-      client,
+    const retVal = await this.gameQueueService.gameQueueJoin(
       client.request.user.id,
     );
-    if (retval) {
-      const [gameRoomId, waitingClient] = retval;
-      waitingClient.join(gameRoomId);
+    if (retVal) {
+      const [gameRoomId, isRoomFull] = retVal;
       client.join(gameRoomId);
-      this.server
-        .to(gameRoomId)
-        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+      if (isRoomFull) {
+        this.server
+          .to(gameRoomId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameStatus.READY,
+            gameRoomId,
+          } as GameStatusUpdateDto);
+        this.eventEmitter.emit('game.ready', {
           status: GameStatus.READY,
           gameRoomId,
         } as GameStatusUpdateDto);
-      this.eventEmitter.emit('game.ready', {
-        status: GameStatus.READY,
-        gameRoomId,
-      } as GameStatusUpdateDto);
-      return true;
+        return true;
+      }
     }
     return false;
   }
@@ -75,10 +77,32 @@ export class GameQueueGateway {
     @MessageBody() gameUserChallengeDto: GameUserChallengeDto,
   ): boolean {
     return this.gameQueueService.gameUserChallenge(
-      client,
       client.request.user.username,
       client.request.user.id,
       gameUserChallengeDto.to.id,
     );
+  }
+
+  @SubscribeMessage(gameQueueClientToServerWsEvents.gameChallengeResponse)
+  gameChallengeResponse(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() gameChallengeResponseDto: GameChallengeResponseDto,
+  ): boolean {
+    const { status, gameRoomId } = gameChallengeResponseDto;
+    if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
+      client.join(gameRoomId);
+      client
+        .to(gameRoomId)
+        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+          status,
+          gameRoomId,
+        } as GameStatusUpdateDto);
+      const acceptingPlayer = client.request.user.id;
+      return this.gameQueueService.updateChallengeStatus(
+        gameChallengeResponseDto,
+        acceptingPlayer,
+      );
+    }
+    return false;
   }
 }

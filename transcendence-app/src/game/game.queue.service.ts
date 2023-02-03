@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { UserId } from './infrastructure/db/memoryModels';
+import { GameId, UserId } from './infrastructure/db/memoryModels';
 import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
 import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
 import {
   GameChallengeDto,
-  gameQueueServerToClientWsEvents
+  GameChallengeResponseDto,
+  GameChallengeStatus,
+  gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 
 interface GameReadyData {
@@ -26,24 +28,35 @@ export class GameReady {
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
-  private gameQueue: [UserId, Socket] | null = null;
+  private gameQueue: Record<GameId, [UserId, null]> | null = null;
   constructor(
     private gamesOngoing: IGamesOngoingRepository,
     private challengesPending: IChallengesPendingRepository,
   ) {}
 
+  private getWaitingUserId(): string | null {
+    if (!this.gameQueue) return null;
+    const {
+      key: [userA, _],
+    } = this.gameQueue;
+    return userA;
+  }
+
+  private getWaitingGameId(): string | null {
+    if (!this.gameQueue) return null;
+    const [gameId, _] = this.gameQueue.keys;
+    return gameId;
+  }
+
   private isUserBusy(userId: string): boolean {
     return (
       this.gamesOngoing.isPlayerBusy(userId) ||
       this.challengesPending.isPlayerBusy(userId) ||
-      ((this.gameQueue && this.gameQueue[0] === userId) ?? false)
+      this.getWaitingUserId() === userId
     );
   }
 
-  async gameQueueJoin(
-    client: Socket,
-    userId: string,
-  ): Promise<[string, Socket] | null> {
+  async gameQueueJoin(userId: string): Promise<[string, boolean] | null> {
     if (!this.socket) {
       return null;
     }
@@ -53,17 +66,15 @@ export class GameQueueService {
       return null;
     }
     if (!this.gameQueue) {
-      this.gameQueue = [userId, client];
-      return null;
+      this.gameQueue = this.gamesOngoing.addGame(userId);
+      const gameRoomId = this.getWaitingGameId();
+      return [gameRoomId!, false];
     } else {
       // TODO: from two different tabs, or just reloading, we can get here, which is not cool
-      const [gameRoomId, _] = this.gamesOngoing.addGame(
-        this.gameQueue[0],
-        userId,
-      ).key;
-      const waitingClient = this.gameQueue[1];
+      const gameRoomId = this.getWaitingGameId();
+      const game = this.gamesOngoing.addUserToGame(gameRoomId!, userId);
       this.gameQueue = null;
-      return [gameRoomId, waitingClient];
+      return [gameRoomId!, true];
     }
   }
 
@@ -71,7 +82,7 @@ export class GameQueueService {
     if (!this.isUserBusy(userId)) {
       return false;
     }
-    if (this.gameQueue && this.gameQueue[0] === userId) {
+    if (this.gameQueue && this.getWaitingUserId() === userId) {
       this.gameQueue = null;
       return true;
     }
@@ -85,12 +96,7 @@ export class GameQueueService {
     }
   }
 
-  gameUserChallenge(
-    client: Socket,
-    fromUsername: string,
-    fromId: UserId,
-    to: UserId,
-  ): boolean {
+  gameUserChallenge(fromUsername: string, fromId: UserId, to: UserId): boolean {
     if (!this.socket || this.isUserBusy(fromId) || this.isUserBusy(to)) {
       return false;
     }
@@ -103,5 +109,25 @@ export class GameQueueService {
       },
     } as GameChallengeDto);
     return true;
+  }
+
+  updateChallengeStatus(
+    gameChallengeResponseDto: GameChallengeResponseDto,
+    acceptingPlayer: UserId,
+  ): boolean {
+    const { status, gameRoomId } = gameChallengeResponseDto;
+    if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
+      const game = this.challengesPending.retrieveGameForId(gameRoomId);
+      this.challengesPending.deleteGameForId(gameRoomId);
+      if (!game) return false;
+      const {
+        key: [waitingPlayer, _],
+      } = game;
+      this.gamesOngoing.addGameWithId(gameRoomId, [
+        waitingPlayer,
+        acceptingPlayer,
+      ]);
+    }
+    return false;
   }
 }
