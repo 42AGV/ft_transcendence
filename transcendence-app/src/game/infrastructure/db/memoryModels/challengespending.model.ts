@@ -6,17 +6,21 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ChallengesPending
-  extends GameSet<null>
+  extends GameSet<UserId>
   implements IChallengesPendingRepository
 {
   constructor() {
     super();
   }
 
-  override addGame(userOneId: UserId): Record<GameId, [UserId, null]> {
+  addGame(
+    userOneId: UserId,
+    userTwoId: UserId,
+  ): Record<GameId, [UserId, UserId]> {
     const gameId: GameId = uuidv4();
-    this.gameSet.set(gameId, [userOneId, null]);
+    this.gameSet.set(gameId, [userOneId, userTwoId]);
     this.usersBusy.add(userOneId);
-    return { [gameId]: [userOneId, null] };
+    this.usersBusy.add(userTwoId);
+    return { [gameId]: [userOneId, userTwoId] };
   }
 }

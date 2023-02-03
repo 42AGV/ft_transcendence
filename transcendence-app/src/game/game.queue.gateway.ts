@@ -118,7 +118,6 @@ export class GameQueueGateway {
     if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
       const ret = this.gameQueueService.updateChallengeStatus(
         gameChallengeResponseDto,
-        acceptingPlayer,
       );
       client.join(gameRoomId);
       this.server

@@ -13,7 +13,7 @@ export class GamesOngoing
     super();
   }
 
-  override addGame(userId: UserId): Record<GameId, [UserId, null]> {
+  addGame(userId: UserId): Record<GameId, [UserId, null]> {
     const gameId: GameId = uuidv4();
     this.gameSet.set(gameId, [userId, null]);
     this.usersBusy.add(userId);
@@ -26,8 +26,7 @@ export class GamesOngoing
   ): Record<GameId, [UserId, UserId]> | null {
     const waitingGame = this.gameSet.get(gameRoomId);
     if (waitingGame) {
-      const [waitingPlayer, _] = waitingGame;
-      void _;
+      const waitingPlayer = waitingGame[0];
       this.gameSet.set(gameRoomId, [waitingPlayer, userId]);
       return { [gameRoomId]: [waitingPlayer, userId] };
     }

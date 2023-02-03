@@ -9,8 +9,6 @@ export abstract class GameSet<T> {
     this.usersBusy = new Set<UserId | T>();
   }
 
-  abstract addGame(userOneId: UserId | T): Record<GameId, [UserId, T]>;
-
   retrieveGameForId(gameId: GameId): Record<GameId, [UserId, T]> | null {
     const game = this.gameSet.get(gameId);
     if (game) return { [gameId]: game };

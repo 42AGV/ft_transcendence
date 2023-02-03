@@ -91,7 +91,9 @@ export class GameQueueService {
     if (!this.socket || this.isUserBusy(fromId) || this.isUserBusy(to)) {
       return null;
     }
-    const gameRoomId = Object.keys(this.challengesPending.addGame(fromId))[0];
+    const gameRoomId = Object.keys(
+      this.challengesPending.addGame(fromId, to),
+    )[0];
     this.socket.to(to).emit(gameQueueServerToClientWsEvents.gameChallenge, {
       gameRoomId,
       from: {
@@ -104,18 +106,14 @@ export class GameQueueService {
 
   updateChallengeStatus(
     gameChallengeResponseDto: GameChallengeResponseDto,
-    acceptingPlayer: UserId,
   ): boolean {
     const { status, gameRoomId } = gameChallengeResponseDto;
     if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
       const game = this.challengesPending.retrieveGameForId(gameRoomId);
       this.challengesPending.deleteGameForId(gameRoomId);
       if (!game) return false;
-      const waitingPlayer = Object.values(game)[0][0];
-      this.gamesOngoing.addGameWithId(gameRoomId, [
-        waitingPlayer,
-        acceptingPlayer,
-      ]);
+      const waitingPlayers = Object.values(game)[0];
+      this.gamesOngoing.addGameWithId(gameRoomId, waitingPlayers);
     }
     return false;
   }
