@@ -4,6 +4,9 @@ import { table } from '../../../../shared/db/models';
 import { Game, gameKeys } from '../../db/game.entity';
 import { IGameRepository } from '../game.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
+import { makeQuery } from 'src/shared/db/postgres/utils';
+import { PaginationWithSearchQueryDto } from 'src/shared/dtos/pagination-with-search.query.dto';
+import { User, userKeys } from 'src/user/infrastructure/db/user.entity';
 
 @Injectable()
 export class GamePostgresRepository
@@ -12,6 +15,10 @@ export class GamePostgresRepository
 {
   constructor(protected pool: PostgresPool) {
     super(pool, table.USERS, Game);
+  }
+
+  addGame(game: Game): Promise<Game | null> {
+    return this.add(game);
   }
 
   async getById(id: string): Promise<Game | null> {
@@ -24,11 +31,20 @@ export class GamePostgresRepository
     return games && games.length ? games[0] : null;
   }
 
-  async updateById(
-    id: string,
-    updateGame: Partial<Game>,
-  ): Promise<Game | null> {
-    const games = await this.updateByKey(gameKeys.ID, id, updateGame);
-    return games && games.length ? games[0] : null;
+  async getPaginatedGames(
+    paginationDto: Required<PaginationWithSearchQueryDto>,
+  ): Promise<Game[] | null> {
+    const { limit, offset, sort, search } = paginationDto;
+    const gamesData = await makeQuery<User>(this.pool, {
+      text: `SELECT *
+      FROM ${this.table}
+      WHERE ${gameKeys.PLAYERONEID} ILIKE $1
+      OR ${gameKeys.PLAYERTWOID} ILIKE $1
+      ORDER BY ${sort}
+      LIMIT $2
+      OFFSET $3;`,
+      values: [`%${search}%`, limit, offset],
+    });
+    return gamesData ? gamesData.map((game) => new this.ctor(game)) : null;
   }
 }
