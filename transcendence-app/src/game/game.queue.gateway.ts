@@ -76,11 +76,21 @@ export class GameQueueGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() gameUserChallengeDto: GameUserChallengeDto,
   ): boolean {
-    return this.gameQueueService.gameUserChallenge(
+    const gameRoomId = this.gameQueueService.gameUserChallenge(
       client.request.user.username,
       client.request.user.id,
       gameUserChallengeDto.to.id,
     );
+    if (gameRoomId) {
+      client.join(gameRoomId);
+      return true;
+    }
+    client
+      .to(client.request.user.id)
+      .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+        status: GameChallengeStatus.CHALLENGE_DECLINED,
+      } as GameStatusUpdateDto);
+    return false;
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameChallengeResponse)
@@ -111,6 +121,11 @@ export class GameQueueGateway {
         acceptingPlayer,
       );
     }
+    client
+      .to(gameRoomId)
+      .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+        status: GameChallengeStatus.CHALLENGE_DECLINED,
+      } as GameStatusUpdateDto);
     return false;
   }
 }

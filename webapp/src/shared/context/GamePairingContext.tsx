@@ -52,8 +52,15 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     if (gameCtx.isPlaying && !isInGamePage) {
       navigate(`${PLAY_GAME_URL}/${gameCtx.gameRoomId}`);
     }
+
     if (gameCtx.isWaitingToPlay && !isInQueuePage) {
       navigate(PLAY_GAME_QUEUE);
+    }
+    if (!gameCtx.isWaitingToPlay && isInQueuePage) {
+      goBack();
+    }
+    if (!gameCtx.isPlaying && isInGamePage) {
+      goBack();
     }
   }, [navigate, gameCtx, isInGamePage, isInQueuePage]);
 

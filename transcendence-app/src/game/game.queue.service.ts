@@ -103,9 +103,13 @@ export class GameQueueService {
     }
   }
 
-  gameUserChallenge(fromUsername: string, fromId: UserId, to: UserId): boolean {
+  gameUserChallenge(
+    fromUsername: string,
+    fromId: UserId,
+    to: UserId,
+  ): GameId | null {
     if (!this.socket || this.isUserBusy(fromId) || this.isUserBusy(to)) {
-      return false;
+      return null;
     }
     const [gameRoomId, _] = Object.keys(this.challengesPending.addGame(fromId));
     void _;
@@ -116,7 +120,7 @@ export class GameQueueService {
         id: fromId,
       },
     } as GameChallengeDto);
-    return true;
+    return gameRoomId;
   }
 
   updateChallengeStatus(
@@ -128,9 +132,11 @@ export class GameQueueService {
       const game = this.challengesPending.retrieveGameForId(gameRoomId);
       this.challengesPending.deleteGameForId(gameRoomId);
       if (!game) return false;
-      const {
-        key: [waitingPlayer, _],
-      } = game;
+      const value = Object.values(game);
+      if (!value) {
+        return false;
+      }
+      const [waitingPlayer, _] = value[0];
       void _;
       this.gamesOngoing.addGameWithId(gameRoomId, [
         waitingPlayer,
