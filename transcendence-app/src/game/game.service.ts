@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IGameRepository } from './infrastructure/db/game.repository';
 import { Game } from './infrastructure/db/game.entity';
-import { MAX_ENTRIES_PER_PAGE } from 'src/shared/constants';
-import { PaginationWithSearchQueryDto } from 'src/shared/dtos/pagination-with-search.query.dto';
-import { BooleanString } from 'src/shared/enums/boolean-string.enum';
+import { MAX_ENTRIES_PER_PAGE } from '../../src/shared/constants';
+import { PaginationWithSearchQueryDto } from '../../src/shared/dtos/pagination-with-search.query.dto';
+import { BooleanString } from '../../src/shared/enums/boolean-string.enum';
 
 @Injectable()
 export class GameService {

@@ -1,5 +1,4 @@
-import { Timestamp } from "rxjs";
-import { GameType } from "src/shared/enums/game-type.enum";
+import { GameMode } from 'src/shared/enums/game-mode.enum';
 
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 export enum gameKeys {
@@ -7,10 +6,10 @@ export enum gameKeys {
   PLAYERONEID = '"playerOneId"',
   PLAYERTWOID = '"playerTwoId"',
   CREATED_AT = '"createdAt"',
-  FINISHED_AT = '"finishedAt"',
+  GAMEDURATION = '"gameDuration"',
   PLAYERONESCORE = '"playerOneScore"',
   PLAYERTWOSCORE = '"playerTwoScore"',
-  GAMETYPE = '"gameType"',
+  GAMEMODE = '"gameMode"',
 }
 
 export interface GameData {
@@ -21,7 +20,7 @@ export interface GameData {
   gameDuration: number;
   playerOneScore: number;
   playerTwoScore: number;
-  gameType: GameType;
+  gameMode: GameMode;
 }
 
 export class Game {
@@ -32,7 +31,7 @@ export class Game {
   gameDuration: number;
   playerOneScore: number;
   playerTwoScore: number;
-  gameType: GameType;
+  gameMode: GameMode;
 
   constructor(gameData: GameData) {
     this.id = gameData.id;
@@ -42,6 +41,6 @@ export class Game {
     this.gameDuration = gameData.gameDuration;
     this.playerOneScore = gameData.playerOneScore;
     this.playerTwoScore = gameData.playerTwoScore;
-    this.gameType = gameData.gameType;
+    this.gameMode = gameData.gameMode;
   }
 }

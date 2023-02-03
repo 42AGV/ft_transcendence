@@ -5,8 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
-  ParseUUIDPipe,
   Post,
   Query,
   ServiceUnavailableException,
@@ -21,7 +19,6 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiParam,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -29,15 +26,6 @@ import {
 import { Game } from './infrastructure/db/game.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
-import { CreateChatroomDto } from 'src/chat/chatroom/dto/create-chatroom.dto';
-import { Chatroom } from 'src/chat/chatroom/infrastructure/db/chatroom.entity';
-import { User } from 'src/user/infrastructure/db/user.entity';
-import { ChatroomMemberWithAuthorization } from 'src/authorization/infrastructure/db/chatroom-member-with-authorization.entity';
-import { GetAuthCrMember } from 'src/chat/chatroom/chatroom-member/decorators/auth-chatroom-member.decorator';
-import { AuthChatroomMemberPipe } from 'src/chat/chatroom/chatroom-member/decorators/auth-chatroom-member.pipe';
-import { GetDestCrMember } from 'src/chat/chatroom/chatroom-member/decorators/dest-chatroom-member.decorator';
-import { DestChatroomMemberPipe } from 'src/chat/chatroom/chatroom-member/decorators/dest-chatroom-member.pipe';
-import { ChatroomMember } from 'src/chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)

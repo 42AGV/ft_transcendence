@@ -4,9 +4,8 @@ import { table } from '../../../../shared/db/models';
 import { Game, gameKeys } from '../../db/game.entity';
 import { IGameRepository } from '../game.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
-import { makeQuery } from 'src/shared/db/postgres/utils';
-import { PaginationWithSearchQueryDto } from 'src/shared/dtos/pagination-with-search.query.dto';
-import { User, userKeys } from 'src/user/infrastructure/db/user.entity';
+import { makeQuery } from '../../../../shared/db/postgres/utils';
+import { PaginationWithSearchQueryDto } from '../../../../../src/shared/dtos/pagination-with-search.query.dto';
 
 @Injectable()
 export class GamePostgresRepository
