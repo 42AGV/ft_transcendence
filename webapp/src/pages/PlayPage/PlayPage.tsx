@@ -3,7 +3,7 @@ import { IconVariant, ButtonVariant } from '../../shared/components';
 import { useNavigate } from 'react-router-dom';
 import { MainTabTemplate } from '../../shared/components/index';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
-import { PLAY_GAME_TRAIN_URL } from '../../shared/urls';
+import { PLAY_GAME_QUEUE, PLAY_GAME_TRAIN_URL } from '../../shared/urls';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { Query } from '../../shared/types';
 import socket from '../../shared/socket';
@@ -55,6 +55,7 @@ export default function PlayPage() {
             isWaitingToPlay: true,
             gameRoomId: null,
           }); // TODO: these setGameCtx should be broadcasted to all tabs
+        navigate(PLAY_GAME_QUEUE);
       },
       children: 'Join game queue',
     },

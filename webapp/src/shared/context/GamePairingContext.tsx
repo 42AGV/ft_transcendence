@@ -21,8 +21,7 @@ import {
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
-import { useLocation } from 'react-router-dom';
-import { PLAY_GAME_QUEUE, PLAY_GAME_URL } from '../urls';
+import { PLAY_GAME_URL, PLAY_URL } from '../urls';
 
 export interface GamePairingContextType {
   isWaitingToPlay: boolean;
@@ -34,11 +33,6 @@ export interface GamePairingContextType {
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
 
 export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
-  const { pathname } = useLocation();
-  const isInQueuePage =
-    pathname.slice(0, PLAY_GAME_QUEUE.length) === PLAY_GAME_QUEUE;
-  const isInGamePage =
-    pathname.slice(0, PLAY_GAME_URL.length + 1) === `${PLAY_GAME_URL}/`;
   const { authUser } = useAuth();
   const { goBack, navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
@@ -47,22 +41,6 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     isPlaying: false,
     gameRoomId: null,
   });
-
-  useEffect(() => { // TODO: forget about this s***. Navigate with the ** buttons
-    if (gameCtx.isPlaying && !isInGamePage) {
-      navigate(`${PLAY_GAME_URL}/${gameCtx.gameRoomId}`);
-    }
-
-    if (gameCtx.isWaitingToPlay && !isInQueuePage) {
-      navigate(PLAY_GAME_QUEUE);
-    }
-    if (!gameCtx.isWaitingToPlay && isInQueuePage) {
-      goBack();
-    }
-    if (!gameCtx.isPlaying && isInGamePage) {
-      goBack();
-    }
-  }, [navigate, gameCtx, isInGamePage, isInQueuePage, goBack]);
 
   useEffect(() => {
     const gameStatusUpdateListener = ({
@@ -83,8 +61,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             isPlaying: true,
             isWaitingToPlay: false,
           });
-          notify(`Now you'll play game id ${gameRoomId}`);
-          // TODO: implement this navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
+          navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
           break;
         }
         // The handling of these two is similar and should be handled
@@ -101,7 +78,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             isPlaying: false,
             isWaitingToPlay: false,
           });
-          // TODO: implement this navigate(`${PLAY_GAME_URL}`);
+          navigate(PLAY_URL);
         }
       }
     };
@@ -154,11 +131,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
                     ...gameCtx,
                     isWaitingToPlay: false,
                   });
-                  goBack(); // TODO: review where does the goBack() point to.
-                  // We're automatically redirected to queue page when we're
-                  // waiting, so this should take us back to wherever we were.
-                  // but since the alert will be overlayed, maybe we won't
-                  // navigate to queue page? Check this
+                  // noop navigation
                 },
                 variant: ButtonVariant.WARNING,
                 children: 'Decline',
@@ -170,6 +143,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             gameRoomId,
             status: GameChallengeStatus.CHALLENGE_DECLINED,
           } as GameChallengeResponseDto);
+          // noop navigation
         }
       }
     };

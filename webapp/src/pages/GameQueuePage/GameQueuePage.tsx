@@ -14,10 +14,11 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'pong-engine';
+import { PLAY_URL } from '../../shared/urls';
 
 export default function GameQueuePage() {
   const { setGameCtx, isPlaying } = useGamePairing();
-  const { goBack } = useNavigation();
+  const { goBack, navigate } = useNavigation();
   return (
     <div className="game-queue-page">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
@@ -38,7 +39,7 @@ export default function GameQueuePage() {
           socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
           setGameCtx &&
             setGameCtx({ isPlaying, isWaitingToPlay: false, gameRoomId: null });
-          goBack();
+          navigate(PLAY_URL);
         }}
       >
         {'Quit'}
