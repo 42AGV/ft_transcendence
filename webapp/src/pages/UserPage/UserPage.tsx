@@ -10,7 +10,12 @@ import {
   AvatarPageTemplate,
   Button,
 } from '../../shared/components';
-import { ADMIN_URL, AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
+import {
+  ADMIN_URL,
+  AVATAR_EP_URL,
+  CHAT_URL,
+  PLAY_GAME_QUEUE,
+} from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -200,6 +205,7 @@ export default function UserPage() {
                         isWaitingToPlay: true,
                         gameRoomId: null,
                       });
+                    navigate(PLAY_GAME_QUEUE);
                   },
                 }}
               >
