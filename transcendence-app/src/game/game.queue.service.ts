@@ -134,4 +134,8 @@ export class GameQueueService {
   isThereAChallengePending(gameRoomId: GameId): boolean {
     return this.challengesPending.retrieveGameForId(gameRoomId) !== null;
   }
+
+  removeChallengeRoom(gameRoomId: GameId): boolean {
+    return this.challengesPending.deleteGameForId(gameRoomId);
+  }
 }

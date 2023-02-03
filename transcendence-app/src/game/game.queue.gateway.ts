@@ -92,7 +92,7 @@ export class GameQueueGateway {
       client.join(gameRoomId);
       return true;
     }
-    client
+    this.server
       .to(client.request.user.id)
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
         status: GameChallengeStatus.CHALLENGE_DECLINED,
@@ -108,7 +108,7 @@ export class GameQueueGateway {
     const acceptingPlayer = client.request.user.id;
     const { status, gameRoomId } = gameChallengeResponseDto;
     if (!this.gameQueueService.isThereAChallengePending(gameRoomId)) {
-      client
+      this.server
         .to(acceptingPlayer)
         .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
           status: GameChallengeStatus.CHALLENGE_DECLINED,
@@ -116,19 +116,21 @@ export class GameQueueGateway {
       return false;
     }
     if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
+      const ret = this.gameQueueService.updateChallengeStatus(
+        gameChallengeResponseDto,
+        acceptingPlayer,
+      );
       client.join(gameRoomId);
-      client
+      this.server
         .to(gameRoomId)
         .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
           status,
           gameRoomId,
         } as GameStatusUpdateDto);
-      return this.gameQueueService.updateChallengeStatus(
-        gameChallengeResponseDto,
-        acceptingPlayer,
-      );
+      return ret;
     }
-    client
+    this.gameQueueService.removeChallengeRoom(gameRoomId);
+    this.server
       .to(gameRoomId)
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
         status: GameChallengeStatus.CHALLENGE_DECLINED,
