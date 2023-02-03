@@ -62,7 +62,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     if (!gameCtx.isPlaying && isInGamePage) {
       goBack();
     }
-  }, [navigate, gameCtx, isInGamePage, isInQueuePage]);
+  }, [navigate, gameCtx, isInGamePage, isInQueuePage, goBack]);
 
   useEffect(() => {
     const gameStatusUpdateListener = ({
