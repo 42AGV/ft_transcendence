@@ -6,16 +6,6 @@ export abstract class IGamesOngoingRepository {
     gameRoomId: GameId,
     userId: UserId,
   ): Record<GameId, [UserId, UserId]> | null;
-  abstract addGameWithId(
-    gameId: string,
-    [userA, userB]: [string, string],
-  ): boolean;
-  abstract retrieveGameForId(
-    gameId: GameId,
-  ): Record<GameId, [UserId, UserId | null]> | null;
-  abstract deleteGameForId(gameId: GameId): boolean;
+  abstract addGameWithId(gameId: string, users: [string, string]): boolean;
   abstract isPlayerBusy(userId: UserId): boolean;
-  abstract getGameRoomForPlayer(
-    userId: UserId,
-  ): Record<GameId, [UserId, UserId | null]> | null;
 }

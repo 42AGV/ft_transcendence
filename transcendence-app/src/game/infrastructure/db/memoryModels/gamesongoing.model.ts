@@ -34,11 +34,11 @@ export class GamesOngoing
     return null;
   }
 
-  addGameWithId(gameRoomId: string, [userA, userB]: [string, string]): boolean {
+  addGameWithId(gameRoomId: string, users: [string, string]): boolean {
     if (this.gameSet.has(gameRoomId)) {
       return false;
     }
-    this.gameSet.set(gameRoomId, [userA, userB]);
+    this.gameSet.set(gameRoomId, users);
     return true;
   }
 }
