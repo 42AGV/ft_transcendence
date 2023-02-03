@@ -10,6 +10,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
@@ -60,10 +61,12 @@ export class GameQueueGateway {
           status: GameStatus.READY,
           gameRoomId,
         } as GameStatusUpdateDto);
-        return true;
       }
+      return true;
     }
-    return false;
+    throw new WsException(
+      'User already in the game queue or waiting for some challenge',
+    );
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameQuitWaiting)
@@ -75,7 +78,7 @@ export class GameQueueGateway {
       client.leave(gameRoomId);
       return true;
     }
-    return false;
+    throw new WsException('User was not waiting, so cannot quit');
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameUserChallenge)
@@ -97,7 +100,9 @@ export class GameQueueGateway {
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
         status: GameChallengeStatus.CHALLENGE_DECLINED,
       } as GameStatusUpdateDto);
-    return false;
+    throw new WsException(
+      'User is busy waiting in the game queue or waiting to resolve some challenge',
+    );
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameChallengeResponse)
@@ -113,12 +118,12 @@ export class GameQueueGateway {
         .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
           status: GameChallengeStatus.CHALLENGE_DECLINED,
         } as GameStatusUpdateDto);
-      return false;
+      throw new WsException(
+        'There is no such challenge pending. Challenger may have cancelled',
+      );
     }
     if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
-      const ret = this.gameQueueService.updateChallengeStatus(
-        gameChallengeResponseDto,
-      );
+      this.gameQueueService.updateChallengeStatus(gameChallengeResponseDto);
       client.join(gameRoomId);
       this.server
         .to(gameRoomId)
@@ -126,7 +131,7 @@ export class GameQueueGateway {
           status,
           gameRoomId,
         } as GameStatusUpdateDto);
-      return ret;
+      return true;
     }
     this.gameQueueService.removeChallengeRoom(gameRoomId);
     this.server

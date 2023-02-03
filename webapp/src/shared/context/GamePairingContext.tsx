@@ -22,6 +22,7 @@ import {
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 import { PLAY_GAME_URL, PLAY_URL } from '../urls';
+import { WsException } from '../types';
 
 export interface GamePairingContextType {
   isWaitingToPlay: boolean;
@@ -39,7 +40,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   const [gameCtx, setGameCtx] = useState<GamePairingContextType>({
     isWaitingToPlay: false,
     isPlaying: false,
-    gameRoomId: null,
+    gameRoomId: null, // TODO: initialize from fetched data so client state is synced with server state
   });
 
   useEffect(() => {
@@ -148,6 +149,10 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
+    socket.on('exception', (wsError: WsException) => {
+      warn(wsError.message);
+    });
+
     if (authUser) {
       socket.on(
         gameQueueServerToClientWsEvents.gameStatusUpdate,
@@ -162,6 +167,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       socket.off(gameQueueServerToClientWsEvents.gameStatusUpdate);
       socket.off(gameQueueServerToClientWsEvents.gameChallenge);
+      socket.off('exception');
     };
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 

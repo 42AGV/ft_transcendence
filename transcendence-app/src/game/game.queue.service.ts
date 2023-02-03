@@ -6,7 +6,6 @@ import { IChallengesPendingRepository } from './infrastructure/db/challengespend
 import {
   GameChallengeDto,
   GameChallengeResponseDto,
-  GameChallengeStatus,
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 
@@ -108,15 +107,13 @@ export class GameQueueService {
   updateChallengeStatus(
     gameChallengeResponseDto: GameChallengeResponseDto,
   ): boolean {
-    const { status, gameRoomId } = gameChallengeResponseDto;
-    if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
-      const game = this.challengesPending.retrieveGameForId(gameRoomId);
-      this.challengesPending.deleteGameForId(gameRoomId);
-      if (!game) return false;
-      const waitingPlayers = Object.values(game)[0];
-      this.gamesOngoing.addGameWithId(gameRoomId, waitingPlayers);
-    }
-    return false;
+    const { gameRoomId } = gameChallengeResponseDto;
+    const game = this.challengesPending.retrieveGameForId(gameRoomId);
+    this.challengesPending.deleteGameForId(gameRoomId);
+    if (!game) return false;
+    const waitingPlayers = Object.values(game)[0];
+    this.gamesOngoing.addGameWithId(gameRoomId, waitingPlayers);
+    return true;
   }
 
   isThereAChallengePending(gameRoomId: GameId): boolean {
