@@ -15,7 +15,6 @@ export abstract class IGamesOngoingRepository {
   ): Record<GameId, [UserId, UserId | null]> | null;
   abstract deleteGameForId(gameId: GameId): boolean;
   abstract isPlayerBusy(userId: UserId): boolean;
-  abstract getOpponentForPlayer(userId: UserId): UserId | null;
   abstract getGameRoomForPlayer(
     userId: UserId,
   ): Record<GameId, [UserId, UserId | null]> | null;

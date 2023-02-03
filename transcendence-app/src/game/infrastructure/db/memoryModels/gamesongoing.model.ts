@@ -13,7 +13,7 @@ export class GamesOngoing
     super();
   }
 
-  addGame(userId: UserId): Record<GameId, [UserId, null]> {
+  override addGame(userId: UserId): Record<GameId, [UserId, null]> {
     const gameId: GameId = uuidv4();
     this.gameSet.set(gameId, [userId, null]);
     this.usersBusy.add(userId);

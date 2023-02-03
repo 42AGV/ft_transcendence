@@ -31,18 +31,6 @@ export abstract class GameSet<T> {
     return this.usersBusy.has(userId);
   }
 
-  getOpponentForPlayer(userId: UserId): UserId | T | null {
-    for (const [_, [userA, userB]] of this.gameSet) {
-      void _;
-      if (userA === userId) {
-        return userB;
-      } else if (userB === userId) {
-        return userA;
-      }
-    }
-    return null;
-  }
-
   getGameRoomForPlayer(userId: UserId): Record<GameId, [UserId, T]> | null {
     for (const [key, [userA, userB]] of this.gameSet) {
       if (userA === userId || userB === userId) {

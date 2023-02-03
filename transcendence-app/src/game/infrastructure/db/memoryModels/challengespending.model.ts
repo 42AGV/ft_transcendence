@@ -13,7 +13,7 @@ export class ChallengesPending
     super();
   }
 
-  addGame(userOneId: UserId): Record<GameId, [UserId, null]> {
+  override addGame(userOneId: UserId): Record<GameId, [UserId, null]> {
     const gameId: GameId = uuidv4();
     this.gameSet.set(gameId, [userOneId, null]);
     this.usersBusy.add(userOneId);
