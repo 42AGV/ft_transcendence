@@ -130,4 +130,8 @@ export class GameQueueService {
     }
     return false;
   }
+
+  isThereAChallengePending(gameRoomId: GameId): boolean {
+    return this.challengesPending.retrieveGameForId(gameRoomId) !== null;
+  }
 }

@@ -88,7 +88,16 @@ export class GameQueueGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() gameChallengeResponseDto: GameChallengeResponseDto,
   ): boolean {
+    const acceptingPlayer = client.request.user.id;
     const { status, gameRoomId } = gameChallengeResponseDto;
+    if (!this.gameQueueService.isThereAChallengePending(gameRoomId)) {
+      client
+        .to(acceptingPlayer)
+        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+          status: GameChallengeStatus.CHALLENGE_DECLINED,
+        } as GameStatusUpdateDto);
+      return false;
+    }
     if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
       client.join(gameRoomId);
       client
@@ -97,7 +106,6 @@ export class GameQueueGateway {
           status,
           gameRoomId,
         } as GameStatusUpdateDto);
-      const acceptingPlayer = client.request.user.id;
       return this.gameQueueService.updateChallengeStatus(
         gameChallengeResponseDto,
         acceptingPlayer,
