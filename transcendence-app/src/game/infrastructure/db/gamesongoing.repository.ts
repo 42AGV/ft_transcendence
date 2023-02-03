@@ -2,7 +2,6 @@ import { GameId, UserId } from './memoryModels';
 
 export abstract class IGamesOngoingRepository {
   abstract addGame(
-    gameId: GameId,
     userOneId: UserId,
     userTwoId: UserId,
   ): Record<GameId, [UserId, UserId]>;

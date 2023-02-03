@@ -18,6 +18,8 @@ import {
   GameChallengeStatus,
   GameStatusUpdateDto,
   GameChallengeResponseDto,
+  gameQueueClientToServerWsEvents,
+  gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 import { useLocation } from 'react-router-dom';
 import { PLAY_GAME_QUEUE, PLAY_GAME_URL } from '../urls';
@@ -117,10 +119,13 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             buttons: [
               {
                 onClick: () => {
-                  socket.emit('gameChallengeResponse', {
-                    gameRoomId,
-                    status: GameChallengeStatus.CHALLENGE_ACCEPTED,
-                  } as GameChallengeResponseDto);
+                  socket.emit(
+                    gameQueueClientToServerWsEvents.gameChallengeResponse,
+                    {
+                      gameRoomId,
+                      status: GameChallengeStatus.CHALLENGE_ACCEPTED,
+                    } as GameChallengeResponseDto,
+                  );
                   notify(`Now you'll play a game against ${username}`);
                   // Navigating the user from here, or changing its status to
                   // playing, is not needed. Such responsibility falls on the
@@ -131,10 +136,13 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
               },
               {
                 onClick: () => {
-                  socket.emit('gameChallengeResponse', {
-                    gameRoomId,
-                    status: GameChallengeStatus.CHALLENGE_DECLINED,
-                  } as GameChallengeResponseDto);
+                  socket.emit(
+                    gameQueueClientToServerWsEvents.gameChallengeResponse,
+                    {
+                      gameRoomId,
+                      status: GameChallengeStatus.CHALLENGE_DECLINED,
+                    } as GameChallengeResponseDto,
+                  );
                   setGameCtx({
                     ...gameCtx,
                     isWaitingToPlay: false,
@@ -157,13 +165,19 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     };
 
     if (authUser) {
-      socket.on('gameStatusUpdate', gameStatusUpdateListener);
-      socket.on('gameChallenge', challengeListener);
+      socket.on(
+        gameQueueServerToClientWsEvents.gameStatusUpdate,
+        gameStatusUpdateListener,
+      );
+      socket.on(
+        gameQueueServerToClientWsEvents.gameChallenge,
+        challengeListener,
+      );
     }
 
     return () => {
-      socket.off('gameStatusUpdate');
-      socket.off('gameChallenge');
+      socket.off(gameQueueServerToClientWsEvents.gameStatusUpdate);
+      socket.off(gameQueueServerToClientWsEvents.gameChallenge);
     };
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 

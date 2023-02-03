@@ -13,6 +13,7 @@ import './GameQueuePage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
+import { gameQueueClientToServerWsEvents } from 'pong-engine';
 
 export default function GameQueuePage() {
   const { setGameCtx, isPlaying } = useGamePairing();
@@ -34,7 +35,7 @@ export default function GameQueuePage() {
         variant={ButtonVariant.WARNING}
         iconVariant={IconVariant.LOGOUT}
         onClick={() => {
-          socket.emit('gameQuitWaiting');
+          socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
           setGameCtx &&
             setGameCtx({ isPlaying, isWaitingToPlay: false, gameRoomId: null });
           goBack();

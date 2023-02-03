@@ -8,6 +8,7 @@ import { ENTRIES_LIMIT } from '../../shared/constants';
 import { Query } from '../../shared/types';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
+import { gameQueueClientToServerWsEvents } from 'pong-engine';
 
 export default function PlayPage() {
   const { setGameCtx } = useGamePairing();
@@ -47,7 +48,7 @@ export default function PlayPage() {
       variant: ButtonVariant.SUBMIT,
       iconVariant: IconVariant.ADD,
       onClick: () => {
-        socket.emit('gameQueueJoin');
+        socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
         setGameCtx &&
           setGameCtx({
             isPlaying: false,

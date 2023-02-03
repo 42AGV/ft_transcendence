@@ -10,7 +10,6 @@ export abstract class GameSet<T> {
   }
 
   abstract addGame(
-    gameId: GameId,
     userOneId: UserId | T,
     userTwoId?: UserId | T,
   ): Record<GameId, [UserId, T]>;

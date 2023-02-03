@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Server } from 'socket.io';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { GameId, UserId } from './infrastructure/db/memoryModels';
+import { Socket, Server } from 'socket.io';
+import { UserId } from './infrastructure/db/memoryModels';
 import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
 import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
+import {
+  GameChallengeDto,
+  gameQueueServerToClientWsEvents
+} from 'pong-engine';
 
 interface GameReadyData {
   accepted: boolean;
@@ -23,45 +26,82 @@ export class GameReady {
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
-  gameQueue: UserId | null = null;
+  private gameQueue: [UserId, Socket] | null = null;
   constructor(
-    private eventEmitter: EventEmitter2,
     private gamesOngoing: IGamesOngoingRepository,
     private challengesPending: IChallengesPendingRepository,
   ) {}
 
-  async gameQueueJoin(userId: string): Promise<string | null> {
+  private isUserBusy(userId: string): boolean {
+    return (
+      this.gamesOngoing.isPlayerBusy(userId) ||
+      this.challengesPending.isPlayerBusy(userId) ||
+      ((this.gameQueue && this.gameQueue[0] === userId) ?? false)
+    );
+  }
+
+  async gameQueueJoin(
+    client: Socket,
+    userId: string,
+  ): Promise<[string, Socket] | null> {
     if (!this.socket) {
       return null;
     }
+    if (this.isUserBusy(userId)) {
+      // Noop, we don't want to kick the player from anywhere
+      // early noop in case the server does know that the user is busy
+      return null;
+    }
     if (!this.gameQueue) {
-      this.gameQueue = userId;
-      return userId;
+      this.gameQueue = [userId, client];
+      return null;
     } else {
       // TODO: from two different tabs, or just reloading, we can get here, which is not cool
-      const gameRoomId = this.waitingGameRoom;
-      this.userToGameRoom.set(userId, gameRoomId);
-      this.waitingGameRoom = null;
-      this.eventEmitter.emit(
-        'game.ready',
-        new GameReady({
-          accepted: true,
-          gameRoomId,
-        }),
-      );
-      this.socket.emit('gameReady', {
-        accepted: true,
-        gameRoomId,
-      });
-      return gameRoomId;
+      const [gameRoomId, _] = this.gamesOngoing.addGame(
+        this.gameQueue[0],
+        userId,
+      ).key;
+      const waitingClient = this.gameQueue[1];
+      this.gameQueue = null;
+      return [gameRoomId, waitingClient];
     }
   }
 
-  getRoomForUserId(userId: string): GameId | undefined {
-    return this.userToGameRoom.get(userId);
+  gameQuitWaiting(userId: string): boolean {
+    if (!this.isUserBusy(userId)) {
+      return false;
+    }
+    if (this.gameQueue && this.gameQueue[0] === userId) {
+      this.gameQueue = null;
+      return true;
+    }
+    if (this.challengesPending.isPlayerBusy(userId)) {
+      const [gameRoomId, _] =
+        this.challengesPending.getGameRoomForPlayer(userId)!.keys;
+      return this.challengesPending.deleteGameForId(gameRoomId);
+    } else {
+      // the user must be playing, so noop
+      return false;
+    }
   }
 
-  deleteRoom(gameRoomId: string) {
-    this.userToGameRoom.delete(gameRoomId);
+  gameUserChallenge(
+    client: Socket,
+    fromUsername: string,
+    fromId: UserId,
+    to: UserId,
+  ): boolean {
+    if (!this.socket || this.isUserBusy(fromId) || this.isUserBusy(to)) {
+      return false;
+    }
+    const [gameRoomId, _] = this.challengesPending.addGame(fromId).keys;
+    this.socket.to(to).emit(gameQueueServerToClientWsEvents.gameChallenge, {
+      gameRoomId,
+      from: {
+        username: fromUsername,
+        id: fromId,
+      },
+    } as GameChallengeDto);
+    return true;
   }
 }

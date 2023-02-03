@@ -2,6 +2,7 @@ import { GameId, UserId } from '.';
 import { GameSet } from './gameset.abstract.model';
 import { IGamesOngoingRepository } from '../gamesongoing.repository';
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class GamesOngoing
@@ -13,10 +14,10 @@ export class GamesOngoing
   }
 
   addGame(
-    gameId: GameId,
     userOneId: UserId,
     userTwoId: UserId,
   ): Record<GameId, [UserId, UserId]> {
+    const gameId: GameId = uuidv4();
     let ret: Record<GameId, [UserId, UserId]>;
     if (userOneId > userTwoId) {
       ret = { [gameId]: [userTwoId, userOneId] };
