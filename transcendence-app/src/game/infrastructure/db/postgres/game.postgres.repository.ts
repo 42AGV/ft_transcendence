@@ -13,7 +13,7 @@ export class GamePostgresRepository
   implements IGameRepository
 {
   constructor(protected pool: PostgresPool) {
-    super(pool, table.USERS, Game);
+    super(pool, table.GAME, Game);
   }
 
   addGame(game: Game): Promise<Game | null> {

@@ -12,7 +12,7 @@ export class GameService {
   constructor(private gameRepository: IGameRepository) {}
 
   addGame(game: CreateGameDto): Promise<Game | null> {
-    return this.gameRepository.add({
+    return this.gameRepository.addGame({
       id: uuidv4(),
       createdAt: new Date(Date.now()),
       ...game,

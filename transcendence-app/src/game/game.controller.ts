@@ -19,6 +19,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiParam,
   ApiServiceUnavailableResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -28,14 +29,14 @@ import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { CreateGameDto } from './dto/create-game.dto';
 
-@Controller('game')
+@Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
 @ApiTags('game')
 @ApiForbiddenResponse({ description: 'Forbidden' })
 export class GameController {
   constructor(private gameService: GameService) {}
 
-  @Post()
+  @Post('game')
   @ApiCreatedResponse({ description: 'Add a game', type: Game })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
@@ -48,8 +49,9 @@ export class GameController {
     return savedGame;
   }
 
-  @Delete()
+  @Delete('game')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiParam({ name: 'gameId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
@@ -57,7 +59,23 @@ export class GameController {
     return this.gameService.deleteGame(gameId);
   }
 
-  @Get()
+  @Get('game')
+  @ApiOkResponse({
+    description: `Get a game`,
+    type: [Game],
+  })
+  @ApiParam({ name: 'gameId', type: String })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getGame(gameId: string): Promise<Game> {
+    const game = await this.gameService.retrieveGameWithId(gameId);
+    if (!game) {
+      throw new ServiceUnavailableException();
+    }
+    return game;
+  }
+
+  @Get('games')
   @ApiOkResponse({
     description: `Lists all games (max ${MAX_ENTRIES_PER_PAGE})`,
     type: [Game],
