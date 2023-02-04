@@ -45,7 +45,7 @@ export default function GameQueuePage() {
           socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
           setGameCtx &&
             setGameCtx({ isPlaying, isWaitingToPlay: false, gameRoomId: null });
-          navigate(PLAY_URL);
+          navigate(PLAY_URL, { replace: true });
         }}
       >
         {'Quit'}

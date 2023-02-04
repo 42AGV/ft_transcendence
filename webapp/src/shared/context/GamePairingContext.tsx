@@ -69,7 +69,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             isPlaying: true,
             isWaitingToPlay: false,
           });
-          navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
+          navigate(`${PLAY_GAME_URL}/${gameRoomId}`, { replace: true });
           break;
         }
         // The handling of these two is similar and should be handled
@@ -86,7 +86,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             isPlaying: false,
             isWaitingToPlay: false,
           });
-          navigate(PLAY_URL);
+          navigate(PLAY_URL, { replace: true });
         }
       }
     };
