@@ -97,8 +97,8 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     }: GameChallengeDto) => {
       if (authUser && gameCtx) {
         if (
-          gameCtx.isPlaying &&
-          gameCtx.isWaitingToPlay &&
+          !gameCtx.isPlaying &&
+          !gameCtx.isWaitingToPlay &&
           id !== authUser.id
         ) {
           setGameCtx({
