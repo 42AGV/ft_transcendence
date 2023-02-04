@@ -28,6 +28,7 @@ export class GamesOngoing
     if (waitingGame) {
       const waitingPlayer = waitingGame[0];
       this.gameSet.set(gameRoomId, [waitingPlayer, userId]);
+      this.usersBusy.add(userId);
       return { [gameRoomId]: [waitingPlayer, userId] };
     }
     return null;
@@ -38,6 +39,8 @@ export class GamesOngoing
       return false;
     }
     this.gameSet.set(gameRoomId, users);
+    this.usersBusy.add(users[0]);
+    this.usersBusy.add(users[1]);
     return true;
   }
 
