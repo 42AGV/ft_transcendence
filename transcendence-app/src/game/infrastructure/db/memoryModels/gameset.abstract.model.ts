@@ -37,4 +37,9 @@ export abstract class GameSet<T> {
     }
     return null;
   }
+
+  clearEverything() {
+    this.gameSet.clear();
+    this.usersBusy.clear();
+  }
 }

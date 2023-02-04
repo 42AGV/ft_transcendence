@@ -13,4 +13,5 @@ export abstract class IChallengesPendingRepository {
   abstract getGameRoomForPlayer(
     userId: UserId,
   ): Record<GameId, [UserId, UserId]> | null;
+  abstract clearEverything(): void;
 }

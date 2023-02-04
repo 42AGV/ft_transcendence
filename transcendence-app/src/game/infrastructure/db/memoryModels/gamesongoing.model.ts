@@ -40,4 +40,12 @@ export class GamesOngoing
     this.gameSet.set(gameRoomId, users);
     return true;
   }
+
+  isPlayerPlaying(userId: UserId): boolean {
+    const game = this.getGameRoomForPlayer(userId);
+    if (!game) {
+      return false;
+    }
+    return Object.values(game)[0][1] !== null;
+  }
 }

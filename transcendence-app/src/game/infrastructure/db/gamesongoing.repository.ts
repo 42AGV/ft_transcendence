@@ -8,4 +8,10 @@ export abstract class IGamesOngoingRepository {
   ): Record<GameId, [UserId, UserId]> | null;
   abstract addGameWithId(gameId: string, users: [string, string]): boolean;
   abstract isPlayerBusy(userId: UserId): boolean;
+  abstract isPlayerPlaying(userId: UserId): boolean;
+  abstract getGameRoomForPlayer(
+    userId: UserId,
+  ): Record<GameId, [UserId, UserId | null]> | null;
+  abstract deleteGameForId(gameId: GameId): boolean;
+  abstract clearEverything(): void;
 }

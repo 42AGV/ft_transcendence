@@ -8,8 +8,8 @@ import {
   GameChallengeResponseDto,
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
+import { GamePairingStatusDto } from './dto/game.pairing.status.dto';
 
-// TODO: add WsExceptions
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
@@ -30,6 +30,12 @@ export class GameQueueService {
   }
 
   private isUserBusy(userId: string): boolean {
+    /* // DEBUG!!
+    console.log(this.gamesOngoing.isPlayerBusy(userId));
+    console.log(this.challengesPending.isPlayerBusy(userId));
+    console.log(this.gameQueue);
+    console.log(this.getWaitingUserId() === userId);
+    // DEBUG!! */
     return (
       this.gamesOngoing.isPlayerBusy(userId) ||
       this.challengesPending.isPlayerBusy(userId) ||
@@ -65,12 +71,21 @@ export class GameQueueService {
   }
 
   gameQuitWaiting(userId: string): GameId | null {
+    /* // DEBUG!!
+    this.gamesOngoing.clearEverything();
+    this.gameQueue = null;
+    this.challengesPending.clearEverything();
+    // DEBUG END */
     if (!this.isUserBusy(userId)) {
       return null;
     }
     if (this.gameQueue && this.getWaitingUserId() === userId) {
       const gameId = this.getWaitingGameId();
       this.gameQueue = null;
+      const game = this.gamesOngoing.getGameRoomForPlayer(userId);
+      if (!game) return null;
+      const gameRoomId = Object.keys(game)[0];
+      this.gamesOngoing.deleteGameForId(gameRoomId);
       return gameId;
     }
     if (this.challengesPending.isPlayerBusy(userId)) {
@@ -122,5 +137,21 @@ export class GameQueueService {
 
   removeChallengeRoom(gameRoomId: GameId): boolean {
     return this.challengesPending.deleteGameForId(gameRoomId);
+  }
+
+  getPairingStatus(userId: UserId): GamePairingStatusDto {
+    const isPlaying = this.gamesOngoing.isPlayerPlaying(userId);
+    const gameRoom = this.gamesOngoing.getGameRoomForPlayer(userId);
+    let gameRoomId: string | null = null;
+    if (gameRoom && isPlaying) {
+      gameRoomId = Object.keys(gameRoom)[0];
+    }
+    return new GamePairingStatusDto({
+      isPlaying,
+      isWaitingToPlay:
+        this.getWaitingUserId() === userId ||
+        this.challengesPending.isPlayerBusy(userId),
+      gameRoomId,
+    });
   }
 }

@@ -10,6 +10,7 @@ import {
 } from './infrastructure/db/memoryModels';
 import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
 import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
+import { GameController } from './game.controller';
 
 @Global()
 @Module({
@@ -27,7 +28,7 @@ import { IChallengesPendingRepository } from './infrastructure/db/challengespend
       useClass: GamesOngoing,
     },
   ],
-  // controllers: [ChatController],
+  controllers: [GameController],
   // exports: [ChatService, ChatroomMemberService],
 })
 export class GameModule {}

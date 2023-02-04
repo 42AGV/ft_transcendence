@@ -2,10 +2,10 @@ import {
   createContext,
   ReactNode,
   useEffect,
-  useMemo,
   useState,
   Dispatch,
   SetStateAction,
+  useCallback,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
@@ -23,12 +23,15 @@ import {
 } from 'pong-engine';
 import { PLAY_GAME_URL, PLAY_URL } from '../urls';
 import { WsException } from '../types';
+import { gameApi } from '../services/ApiService';
+import { useData } from '../hooks/UseData';
+import { GamePairingStatusDto } from '../generated';
 
 export interface GamePairingContextType {
   isWaitingToPlay: boolean;
   isPlaying: boolean;
   gameRoomId: string | null;
-  setGameCtx?: Dispatch<SetStateAction<GamePairingContextType>>;
+  setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
 }
 
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
@@ -37,11 +40,15 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   const { authUser } = useAuth();
   const { goBack, navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
-  const [gameCtx, setGameCtx] = useState<GamePairingContextType>({
-    isWaitingToPlay: false,
-    isPlaying: false,
-    gameRoomId: null, // TODO: initialize from fetched data so client state is synced with server state
-  });
+  const getPairingStatus = useCallback(() => {
+    return gameApi.gameControllerGetPairingStatus();
+  }, []);
+  const { data, isLoading: isDataLoading } =
+    useData<GamePairingStatusDto>(getPairingStatus);
+  const [gameCtx, setGameCtx] = useState<GamePairingContextType | null>(null);
+  useEffect(() => {
+    setGameCtx(data);
+  }, [data, isDataLoading]);
 
   useEffect(() => {
     const gameStatusUpdateListener = ({
@@ -88,10 +95,10 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       gameRoomId,
       from: { username, id },
     }: GameChallengeDto) => {
-      if (authUser) {
+      if (authUser && gameCtx) {
         if (
-          !gameCtx.isPlaying &&
-          !gameCtx.isWaitingToPlay &&
+          gameCtx.isPlaying &&
+          gameCtx.isWaitingToPlay &&
           id !== authUser.id
         ) {
           setGameCtx({
@@ -171,15 +178,13 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 
-  const contextValue = useMemo(
-    () => ({
-      isWaitingToPlay: gameCtx.isWaitingToPlay,
-      isPlaying: gameCtx.isPlaying,
-      gameRoomId: gameCtx.gameRoomId,
-      setGameCtx,
-    }),
-    [gameCtx, setGameCtx],
-  );
+  const contextValue = {
+    isWaitingToPlay: gameCtx?.isWaitingToPlay ?? false,
+    isPlaying: gameCtx?.isPlaying ?? false,
+    gameRoomId: gameCtx?.gameRoomId ?? null,
+    setGameCtx,
+  };
+  console.log(gameCtx);
 
   return (
     <GamePairingContext.Provider value={contextValue}>
