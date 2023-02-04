@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { GameMode } from 'src/shared/enums/game-mode.enum';
+import { GameMode } from '../../../src/shared/enums/game-mode.enum';
 
 export class CreateGameDto {
   @IsString()
