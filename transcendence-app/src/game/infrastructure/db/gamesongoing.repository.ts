@@ -13,5 +13,4 @@ export abstract class IGamesOngoingRepository {
     userId: UserId,
   ): Record<GameId, [UserId, UserId | null]> | null;
   abstract deleteGameForId(gameId: GameId): boolean;
-  abstract clearEverything(): void;
 }

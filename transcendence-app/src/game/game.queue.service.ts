@@ -30,12 +30,6 @@ export class GameQueueService {
   }
 
   private isUserBusy(userId: string): boolean {
-    /* // DEBUG!!
-    console.log(this.gamesOngoing.isPlayerBusy(userId));
-    console.log(this.challengesPending.isPlayerBusy(userId));
-    console.log(this.gameQueue);
-    console.log(this.getWaitingUserId() === userId);
-    // DEBUG!! */
     return (
       this.gamesOngoing.isPlayerBusy(userId) ||
       this.challengesPending.isPlayerBusy(userId) ||
@@ -71,11 +65,6 @@ export class GameQueueService {
   }
 
   gameQuitWaiting(userId: string): GameId | null {
-    /* // DEBUG!!
-    this.gamesOngoing.clearEverything();
-    this.gameQueue = null;
-    this.challengesPending.clearEverything();
-    // DEBUG END */
     if (!this.isUserBusy(userId)) {
       return null;
     }
