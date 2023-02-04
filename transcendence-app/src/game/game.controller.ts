@@ -26,8 +26,9 @@ import {
 import { Game } from './infrastructure/db/game.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { CreateGameDto } from './dto/create-game.dto';
 
-@Controller()
+@Controller('game')
 @UseGuards(TwoFactorAuthenticatedGuard)
 @ApiTags('game')
 @ApiForbiddenResponse({ description: 'Forbidden' })
@@ -38,7 +39,7 @@ export class GameController {
   @ApiCreatedResponse({ description: 'Add a game', type: Game })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addGame(@Body() game: Game): Promise<Game> {
+  async addGame(@Body() game: CreateGameDto): Promise<Game> {
     const savedGame = await this.gameService.addGame(game);
 
     if (!savedGame) {

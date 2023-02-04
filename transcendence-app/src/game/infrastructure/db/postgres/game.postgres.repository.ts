@@ -34,11 +34,11 @@ export class GamePostgresRepository
     paginationDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Game[] | null> {
     const { limit, offset, sort, search } = paginationDto;
-    const gamesData = await makeQuery<User>(this.pool, {
+    const gamesData = await makeQuery<Game>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
-      WHERE ${gameKeys.PLAYERONEID} ILIKE $1
-      OR ${gameKeys.PLAYERTWOID} ILIKE $1
+      WHERE ${gameKeys.PLAYERONEUSERNAME} ILIKE $1
+      OR ${gameKeys.PLAYERTWOUSERNAME} ILIKE $1
       ORDER BY ${sort}
       LIMIT $2
       OFFSET $3;`,

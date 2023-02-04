@@ -1,22 +1,29 @@
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsString, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, ValidateIf } from 'class-validator';
+import { GameMode } from 'src/shared/enums/game-mode.enum';
 
-export class CreateUserDto {
+export class CreateGameDto {
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: TransformFnParams) => value?.trim())
-  username!: string;
-
-  @IsEmail()
-  email!: string;
+  playerOneUsername!: string;
 
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }: TransformFnParams) => value?.trim())
-  fullName!: string;
+  playerTwoUsername!: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  gameDuration!: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  playerOneScore!: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  playerTwoScore!: number;
 
   @IsString()
   @IsNotEmpty()
-  @ValidateIf((object, value) => value !== null)
-  password!: string | null;
+  gameMode!: GameMode;
 }

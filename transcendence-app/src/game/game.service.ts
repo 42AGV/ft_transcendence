@@ -4,13 +4,19 @@ import { Game } from './infrastructure/db/game.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../../src/shared/constants';
 import { PaginationWithSearchQueryDto } from '../../src/shared/dtos/pagination-with-search.query.dto';
 import { BooleanString } from '../../src/shared/enums/boolean-string.enum';
+import { CreateGameDto } from './dto/create-game.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class GameService {
   constructor(private gameRepository: IGameRepository) {}
 
-  addGame(game: Game): Promise<Game | null> {
-    return this.gameRepository.add(game);
+  addGame(game: CreateGameDto): Promise<Game | null> {
+    return this.gameRepository.add({
+      id: uuidv4(),
+      createdAt: new Date(Date.now()),
+      ...game,
+    });
   }
 
   async deleteGame(gameId: string) {
