@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { GameMode } from 'src/shared/enums/game-mode.enum';
 
 export class CreateGameDto {
