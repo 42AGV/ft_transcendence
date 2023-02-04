@@ -184,7 +184,6 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     gameRoomId: gameCtx?.gameRoomId ?? null,
     setGameCtx,
   };
-  console.log(gameCtx);
 
   return (
     <GamePairingContext.Provider value={contextValue}>
