@@ -1,8 +1,24 @@
 import * as React from 'react';
 import { useGameStateContext } from '../context';
+import { Socket } from 'socket.io-client';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
+import {
+  GameCommand,
+  paddleMoveRight,
+  paddleMoveLeft,
+  paddleStop,
+  paddleDrag,
+  paddleOpponentMoveRight,
+  paddleOpponentMoveLeft,
+  paddleOpponentStop,
+} from 'pong-engine';
 
-const useGameControls = () => {
-  const { dispatch } = useGameStateContext();
+const useGameControls = (
+  sendGameCommandToServer?: (
+    command: GameCommand,
+  ) => Socket<DefaultEventsMap, DefaultEventsMap>,
+) => {
+  const { gameStateRef } = useGameStateContext();
   const dragRef = React.useRef<number>(0);
 
   const movePaddle = React.useCallback(
@@ -10,12 +26,22 @@ const useGameControls = () => {
       const key = e.key;
 
       if (key === 'ArrowRight') {
-        dispatch({ type: 'paddleMoveRight', payload: {} });
+        gameStateRef.current = paddleMoveRight(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleMoveRight');
       } else if (key === 'ArrowLeft') {
-        dispatch({ type: 'paddleMoveLeft', payload: {} });
+        gameStateRef.current = paddleMoveLeft(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleMoveLeft');
+      } else if (key === 'd') {
+        gameStateRef.current = paddleOpponentMoveRight(gameStateRef.current);
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleOpponentMoveRight');
+      } else if (key === 'a') {
+        gameStateRef.current = paddleOpponentMoveLeft(gameStateRef.current);
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleOpponentMoveLeft');
       }
     },
-    [dispatch],
+    [sendGameCommandToServer, gameStateRef],
   );
 
   const dragPaddle = React.useCallback(
@@ -25,10 +51,15 @@ const useGameControls = () => {
       dragRef.current = dragCurrPos;
 
       if (dragPrevPos) {
-        dispatch({ type: 'paddleDrag', payload: { dragCurrPos, dragPrevPos } });
+        gameStateRef.current = paddleDrag(
+          gameStateRef.current,
+          dragCurrPos,
+          dragPrevPos,
+        );
+        sendGameCommandToServer && sendGameCommandToServer('paddleDrag');
       }
     },
-    [dispatch],
+    [sendGameCommandToServer, gameStateRef],
   );
 
   const resetDragPaddle = React.useCallback(() => {
@@ -40,10 +71,21 @@ const useGameControls = () => {
       const key = e.key;
 
       if (key === 'ArrowRight' || key === 'ArrowLeft') {
-        dispatch({ type: 'paddleStop', payload: {} });
+        gameStateRef.current = paddleStop(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleStop');
+      }
+      if (key === 'd' || key === 'a') {
+        gameStateRef.current = paddleOpponentStop(gameStateRef.current);
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleOpponentStop');
       }
     },
-    [dispatch],
+    [sendGameCommandToServer, gameStateRef],
+  );
+
+  const contextMenuHandler = React.useCallback(
+    (e: MouseEvent) => e.preventDefault(),
+    [],
   );
 
   React.useEffect(() => {
@@ -51,15 +93,15 @@ const useGameControls = () => {
     window.addEventListener('keyup', stopPaddle, false);
     window.addEventListener('touchmove', dragPaddle, false);
     window.addEventListener('touchend', resetDragPaddle, false);
-    window.addEventListener('contextmenu', (e) => e.preventDefault());
+    window.addEventListener('contextmenu', contextMenuHandler);
     return () => {
       window.removeEventListener('keydown', movePaddle);
       window.removeEventListener('keyup', stopPaddle);
       window.removeEventListener('touchmove', dragPaddle);
       window.removeEventListener('touchend', resetDragPaddle);
-      window.removeEventListener('contextmenu', (e) => e.preventDefault());
+      window.removeEventListener('contextmenu', contextMenuHandler);
     };
-  }, [movePaddle, stopPaddle, resetDragPaddle, dragPaddle]);
+  }, [movePaddle, stopPaddle, resetDragPaddle, dragPaddle, contextMenuHandler]);
 };
 
 export default useGameControls;
