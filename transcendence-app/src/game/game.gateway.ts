@@ -4,7 +4,6 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-// import { OnEvent } from '@nestjs/event-emitter';
 import {
   ConnectedSocket,
   MessageBody,
@@ -23,8 +22,10 @@ import {
   paddleStop,
   runGameFrame,
   newGame,
+  GameStatus,
 } from 'pong-engine';
-// import { GameReady } from './game.queue.service';
+import { OnEvent } from '@nestjs/event-emitter';
+import { GamePairing } from './infrastructure/db/game-pairing.entity';
 
 type UserId = string;
 const FPS = 60;
@@ -105,8 +106,8 @@ export class GameGateway {
     }
   }
 
-  /* @OnEvent('game.ready')
-  async handleGameReady(data: GameReady) {
+  @OnEvent('game.ready')
+  async handleGameReady(data: { status: GameStatus; game: GamePairing }) {
     console.log(data);
-  } */
+  }
 }

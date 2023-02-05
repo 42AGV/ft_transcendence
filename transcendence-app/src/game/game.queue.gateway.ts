@@ -46,21 +46,20 @@ export class GameQueueGateway {
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameQueueJoin)
   gameQueueJoin(@ConnectedSocket() client: Socket): boolean {
-    const retVal = this.gameQueueService.gameQueueJoin(client.request.user.id);
-    if (retVal) {
-      const [gameRoomId, isRoomFull] = retVal;
-      client.join(gameRoomId);
-      if (isRoomFull) {
+    const game = this.gameQueueService.gameQueueJoin(client.request.user.id);
+    if (game) {
+      client.join(game.gameRoomId);
+      if (game.userTwoId !== undefined) {
         this.server
-          .to(gameRoomId)
+          .to(game.gameRoomId)
           .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
             status: GameStatus.READY,
-            gameRoomId,
+            gameRoomId: game.gameRoomId,
           } as GameStatusUpdateDto);
         this.eventEmitter.emit('game.ready', {
           status: GameStatus.READY,
-          gameRoomId,
-        } as GameStatusUpdateDto);
+          game,
+        });
       }
       return true;
     }

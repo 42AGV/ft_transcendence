@@ -13,6 +13,7 @@ import {
 import { GamePairingStatusDto } from './dto/game.pairing.status.dto';
 import { OnEvent } from '@nestjs/event-emitter';
 import { WsException } from '@nestjs/websockets';
+import { GamePairing } from './infrastructure/db/game-pairing.entity';
 
 type QueuedUser = {
   gameRoomId: GameId;
@@ -46,7 +47,7 @@ export class GameQueueService {
     );
   }
 
-  gameQueueJoin(userId: string): [string, boolean] | null {
+  gameQueueJoin(userId: string): GamePairing | null {
     if (!this.socket) {
       return null;
     }
@@ -56,17 +57,17 @@ export class GameQueueService {
       return null;
     }
     if (!this.gameQueue) {
-      const { gameRoomId } = this.gamesOngoing.addGame(userId);
-      this.gameQueue = { gameRoomId, userId };
-      return [gameRoomId, false];
+      const game = this.gamesOngoing.addGame(userId);
+      this.gameQueue = { gameRoomId: game.gameRoomId, userId };
+      return game;
     } else {
       if (this.getWaitingUserId() === userId) {
         return null;
       }
       const gameRoomId = this.gameQueue.gameRoomId;
-      this.gamesOngoing.addUserToGame(gameRoomId, userId);
+      const game = this.gamesOngoing.addUserToGame(gameRoomId, userId);
       this.gameQueue = null;
-      return [gameRoomId, true];
+      return game;
     }
   }
 
