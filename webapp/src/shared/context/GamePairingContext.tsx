@@ -20,16 +20,18 @@ import {
   GameChallengeResponseDto,
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
-  GameQueueStatus,
 } from 'pong-engine';
 import { PLAY_GAME_URL, PLAY_URL } from '../urls';
 import { WsException } from '../types';
 import { gameApi } from '../services/ApiService';
 import { useData } from '../hooks/UseData';
-import { GamePairingStatusDto } from '../generated';
+import {
+  GamePairingStatusDto,
+  GamePairingStatusDtoGameQueueStatusEnum,
+} from '../generated';
 
 export interface GamePairingContextType {
-  gameQueueStatus: GameQueueStatus;
+  gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
   gameRoomId: string | null;
   setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
 }
@@ -66,7 +68,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         case GameStatus.READY: {
           setGameCtx({
             gameRoomId,
-            gameQueueStatus: GameQueueStatus.PLAYING,
+            gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Playing,
           });
           navigate(PLAY_GAME_URL);
           // `${PLAY_GAME_URL}/${gameRoomId}` should probably be the final
@@ -86,7 +88,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
           notify('Game finished');
           setGameCtx({
             gameRoomId: null,
-            gameQueueStatus: GameQueueStatus.NONE,
+            gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
           });
           navigate(PLAY_URL, { replace: true });
         }
@@ -101,12 +103,13 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       if (
-        gameCtx.gameQueueStatus === GameQueueStatus.NONE &&
+        gameCtx.gameQueueStatus ===
+          GamePairingStatusDtoGameQueueStatusEnum.None &&
         id !== authUser.id
       ) {
         setGameCtx({
           ...gameCtx,
-          gameQueueStatus: GameQueueStatus.WAITING,
+          gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Waiting,
         });
         CustomConfirmAlert({
           title: 'You have a new challenge!',
@@ -140,7 +143,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
                 );
                 setGameCtx({
                   ...gameCtx,
-                  gameQueueStatus: GameQueueStatus.NONE,
+                  gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
                 });
                 // this sequence of code is not triggering any navigation,
                 // but contrary to what could be intuitively assumed (at least
@@ -185,7 +188,8 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 
   const contextValue = {
-    gameQueueStatus: gameCtx?.gameQueueStatus ?? GameQueueStatus.NONE,
+    gameQueueStatus:
+      gameCtx?.gameQueueStatus ?? GamePairingStatusDtoGameQueueStatusEnum.None,
     gameRoomId: gameCtx?.gameRoomId ?? null,
     setGameCtx,
   };

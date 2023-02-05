@@ -12,12 +12,6 @@ export type GameUserChallengeDto = {
   };
 };
 
-export enum GameQueueStatus {
-  NONE = 'none',
-  PLAYING = 'playing',
-  WAITING = 'waiting',
-}
-
 export enum GameChallengeStatus {
   CHALLENGE_DECLINED = 'challengeDeclined',
   CHALLENGE_ACCEPTED = 'challengeAccepted',
