@@ -16,6 +16,7 @@ export abstract class GameSet {
       return new GamePairing({
         gameRoomId,
         userOneId: game[0],
+        userTwoId: game[1],
       });
     }
     return null;
