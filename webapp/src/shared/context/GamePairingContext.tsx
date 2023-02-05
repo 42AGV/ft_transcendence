@@ -20,6 +20,7 @@ import {
   GameChallengeResponseDto,
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
+  GameQueueStatus,
 } from 'pong-engine';
 import { PLAY_GAME_URL, PLAY_URL } from '../urls';
 import { WsException } from '../types';
@@ -28,8 +29,7 @@ import { useData } from '../hooks/UseData';
 import { GamePairingStatusDto } from '../generated';
 
 export interface GamePairingContextType {
-  isWaitingToPlay: boolean;
-  isPlaying: boolean;
+  gameQueueStatus: GameQueueStatus;
   gameRoomId: string | null;
   setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
 }
@@ -66,8 +66,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         case GameStatus.READY: {
           setGameCtx({
             gameRoomId,
-            isPlaying: true,
-            isWaitingToPlay: false,
+            gameQueueStatus: GameQueueStatus.PLAYING,
           });
           navigate(PLAY_GAME_URL);
           // `${PLAY_GAME_URL}/${gameRoomId}` should probably be the final
@@ -87,8 +86,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
           notify('Game finished');
           setGameCtx({
             gameRoomId: null,
-            isPlaying: false,
-            isWaitingToPlay: false,
+            gameQueueStatus: GameQueueStatus.NONE,
           });
           navigate(PLAY_URL, { replace: true });
         }
@@ -103,13 +101,12 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       if (
-        !gameCtx.isPlaying &&
-        !gameCtx.isWaitingToPlay &&
+        gameCtx.gameQueueStatus == GameQueueStatus.NONE &&
         id !== authUser.id
       ) {
         setGameCtx({
           ...gameCtx,
-          isWaitingToPlay: true,
+          gameQueueStatus: GameQueueStatus.WAITING,
         });
         CustomConfirmAlert({
           title: 'You have a new challenge!',
@@ -143,7 +140,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
                 );
                 setGameCtx({
                   ...gameCtx,
-                  isWaitingToPlay: false,
+                  gameQueueStatus: GameQueueStatus.NONE,
                 });
                 // this sequence of code is not triggering any navigation,
                 // but contrary to what could be intuitively assumed (at least
@@ -188,8 +185,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 
   const contextValue = {
-    isWaitingToPlay: gameCtx?.isWaitingToPlay ?? false,
-    isPlaying: gameCtx?.isPlaying ?? false,
+    gameQueueStatus: gameCtx?.gameQueueStatus ?? GameQueueStatus.NONE,
     gameRoomId: gameCtx?.gameRoomId ?? null,
     setGameCtx,
   };

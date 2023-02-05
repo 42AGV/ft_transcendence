@@ -1,21 +1,16 @@
+import { GameQueueStatus } from 'pong-engine';
+
 export interface GamePairingStatusData {
-  isPlaying: boolean;
   gameRoomId: string | null;
-  isWaitingToPlay: boolean;
+  gameQueueStatus: GameQueueStatus;
 }
 
 export class GamePairingStatusDto {
-  isPlaying: boolean;
   gameRoomId: string | null;
-  isWaitingToPlay: boolean;
+  gameQueueStatus: GameQueueStatus;
 
-  constructor({
-    isPlaying,
-    gameRoomId,
-    isWaitingToPlay,
-  }: GamePairingStatusData) {
-    this.isPlaying = isPlaying;
+  constructor({ gameRoomId, gameQueueStatus }: GamePairingStatusData) {
     this.gameRoomId = gameRoomId;
-    this.isWaitingToPlay = isWaitingToPlay;
+    this.gameQueueStatus = gameQueueStatus;
   }
 }

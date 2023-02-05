@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { GameId, UserId } from './infrastructure/db/memoryModels';
 import { IGamesOngoingRepository } from './infrastructure/db/games-ongoing.repository';
@@ -7,6 +7,7 @@ import {
   GameChallengeDto,
   GameChallengeResponseDto,
   gameQueueServerToClientWsEvents,
+  GameQueueStatus,
   GameStatus,
   GameStatusUpdateDto,
 } from 'pong-engine';
@@ -24,6 +25,7 @@ type QueuedUser = {
 export class GameQueueService {
   public socket: Server | null = null;
   private gameQueue: QueuedUser | null = null;
+
   constructor(
     private gamesOngoing: IGamesOngoingRepository,
     private challengesPending: IChallengesPendingRepository,
@@ -142,16 +144,26 @@ export class GameQueueService {
   getPairingStatus(userId: UserId): GamePairingStatusDto {
     const isPlaying = this.gamesOngoing.isPlayerPlaying(userId);
     const gameRoom = this.gamesOngoing.getGameRoomForPlayer(userId);
+    const isWaitingToPlay =
+      this.getWaitingUserId() === userId ||
+      this.challengesPending.isPlayerBusy(userId);
+    if (isWaitingToPlay && isPlaying) {
+      // TODO: remove this exception when we can prove that this will not happen
+      throw new InternalServerErrorException(
+        'A user is simultaneously playing and waiting to play. This should not happen',
+      );
+    }
     let gameRoomId: string | null = null;
     if (gameRoom && isPlaying) {
       gameRoomId = gameRoom.gameRoomId;
     }
     return new GamePairingStatusDto({
-      isPlaying,
-      isWaitingToPlay:
-        this.getWaitingUserId() === userId ||
-        this.challengesPending.isPlayerBusy(userId),
       gameRoomId,
+      gameQueueStatus: isPlaying
+        ? GameQueueStatus.PLAYING
+        : isWaitingToPlay
+        ? GameQueueStatus.WAITING
+        : GameQueueStatus.NONE,
     });
   }
 
