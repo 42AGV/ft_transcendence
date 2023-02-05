@@ -1,17 +1,23 @@
 import { GameId, UserId } from './types';
+import { GamePairing } from '../game-pairing.entity';
 
-export abstract class GameSet<T> {
-  protected readonly gameSet: Map<GameId, [UserId, T]>;
-  protected readonly usersBusy: Set<UserId | T>;
+export abstract class GameSet {
+  protected readonly gameSet: Map<GameId, [UserId, UserId | undefined]>;
+  protected readonly usersBusy: Set<UserId>;
 
   protected constructor() {
-    this.gameSet = new Map<GameId, [UserId, T]>();
-    this.usersBusy = new Set<UserId | T>();
+    this.gameSet = new Map<GameId, [UserId, UserId | undefined]>();
+    this.usersBusy = new Set<UserId>();
   }
 
-  retrieveGameForId(gameId: GameId): Record<GameId, [UserId, T]> | null {
-    const game = this.gameSet.get(gameId);
-    if (game) return { [gameId]: game };
+  retrieveGameForId(gameRoomId: GameId): GamePairing | null {
+    const game = this.gameSet.get(gameRoomId);
+    if (game) {
+      return new GamePairing({
+        gameRoomId,
+        userOneId: game[0],
+      });
+    }
     return null;
   }
 
@@ -19,7 +25,7 @@ export abstract class GameSet<T> {
     const entry = this.gameSet.get(gameId);
     if (entry) {
       this.usersBusy.delete(entry[0]);
-      this.usersBusy.delete(entry[1]);
+      entry[1] && this.usersBusy.delete(entry[1]);
       return this.gameSet.delete(gameId);
     }
     return false;
@@ -29,10 +35,14 @@ export abstract class GameSet<T> {
     return this.usersBusy.has(userId);
   }
 
-  getGameRoomForPlayer(userId: UserId): Record<GameId, [UserId, T]> | null {
-    for (const [key, [userA, userB]] of this.gameSet) {
-      if (userA === userId || userB === userId) {
-        return { [key]: [userA, userB] };
+  getGameRoomForPlayer(userId: UserId): GamePairing | null {
+    for (const [gameRoomId, [userOneId, userTwoId]] of this.gameSet) {
+      if (userOneId === userId || userTwoId === userId) {
+        return new GamePairing({
+          gameRoomId,
+          userOneId,
+          userTwoId,
+        });
       }
     }
     return null;

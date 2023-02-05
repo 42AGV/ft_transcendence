@@ -52,7 +52,7 @@ export class GameQueueService {
       return null;
     }
     if (!this.gameQueue) {
-      const gameRoomId = Object.keys(this.gamesOngoing.addGame(userId))[0];
+      const { gameRoomId } = this.gamesOngoing.addGame(userId);
       this.gameQueue = { gameRoomId, userId };
       return [gameRoomId, false];
     } else {
@@ -75,14 +75,14 @@ export class GameQueueService {
       this.gameQueue = null;
       const game = this.gamesOngoing.getGameRoomForPlayer(userId);
       if (!game) return null;
-      const gameRoomId = Object.keys(game)[0];
+      const { gameRoomId } = game;
       this.gamesOngoing.deleteGameForId(gameRoomId);
       return gameId;
     }
     if (this.challengesPending.isPlayerBusy(userId)) {
       const game = this.challengesPending.getGameRoomForPlayer(userId);
       if (!game) return null;
-      const gameRoomId = Object.keys(game)[0];
+      const { gameRoomId } = game;
       this.challengesPending.deleteGameForId(gameRoomId);
       return gameRoomId;
     }
@@ -97,9 +97,7 @@ export class GameQueueService {
     if (!this.socket || this.isUserBusy(fromId) || this.isUserBusy(to)) {
       return null;
     }
-    const gameRoomId = Object.keys(
-      this.challengesPending.addGame(fromId, to),
-    )[0];
+    const gameRoomId = this.challengesPending.addGame(fromId, to).gameRoomId;
     this.socket.to(to).emit(gameQueueServerToClientWsEvents.gameChallenge, {
       gameRoomId,
       from: {
@@ -116,9 +114,11 @@ export class GameQueueService {
     const { gameRoomId } = gameChallengeResponseDto;
     const game = this.challengesPending.retrieveGameForId(gameRoomId);
     this.challengesPending.deleteGameForId(gameRoomId);
-    if (!game) return false;
-    const waitingPlayers = Object.values(game)[0];
-    this.gamesOngoing.addGameWithId(gameRoomId, waitingPlayers);
+    if (!game || !game.userTwoId) return false;
+    this.gamesOngoing.addGameWithId(gameRoomId, [
+      game.userOneId,
+      game.userTwoId,
+    ]);
     return true;
   }
 
@@ -135,7 +135,7 @@ export class GameQueueService {
     const gameRoom = this.gamesOngoing.getGameRoomForPlayer(userId);
     let gameRoomId: string | null = null;
     if (gameRoom && isPlaying) {
-      gameRoomId = Object.keys(gameRoom)[0];
+      gameRoomId = gameRoom.gameRoomId;
     }
     return new GamePairingStatusDto({
       isPlaying,

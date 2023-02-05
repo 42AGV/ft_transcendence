@@ -3,33 +3,35 @@ import { GameSet } from './gameset-abstract.model';
 import { IGamesOngoingRepository } from '../games-ongoing.repository';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { GamePairing } from '../game-pairing.entity';
 
 @Injectable()
-export class GamesOngoing
-  extends GameSet<UserId | null>
-  implements IGamesOngoingRepository
-{
+export class GamesOngoing extends GameSet implements IGamesOngoingRepository {
   constructor() {
     super();
   }
 
-  addGame(userId: UserId): Record<GameId, [UserId, null]> {
+  addGame(userId: UserId): GamePairing {
     const gameId: GameId = uuidv4();
-    this.gameSet.set(gameId, [userId, null]);
+    this.gameSet.set(gameId, [userId, undefined]);
     this.usersBusy.add(userId);
-    return { [gameId]: [userId, null] };
+    return new GamePairing({
+      gameRoomId: gameId,
+      userOneId: userId,
+    });
   }
 
-  addUserToGame(
-    gameRoomId: GameId,
-    userId: UserId,
-  ): Record<GameId, [UserId, UserId]> | null {
+  addUserToGame(gameRoomId: GameId, userId: UserId): GamePairing | null {
     const waitingGame = this.gameSet.get(gameRoomId);
     if (waitingGame) {
       const waitingPlayer = waitingGame[0];
       this.gameSet.set(gameRoomId, [waitingPlayer, userId]);
       this.usersBusy.add(userId);
-      return { [gameRoomId]: [waitingPlayer, userId] };
+      return new GamePairing({
+        gameRoomId,
+        userOneId: waitingPlayer,
+        userTwoId: userId,
+      });
     }
     return null;
   }
@@ -49,6 +51,6 @@ export class GamesOngoing
     if (!game) {
       return false;
     }
-    return Object.values(game)[0][1] !== null;
+    return game.userTwoId !== undefined;
   }
 }
