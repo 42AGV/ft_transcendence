@@ -95,64 +95,65 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       gameRoomId,
       from: { username, id },
     }: GameChallengeDto) => {
-      if (authUser && gameCtx) {
-        if (
-          !gameCtx.isPlaying &&
-          !gameCtx.isWaitingToPlay &&
-          id !== authUser.id
-        ) {
-          setGameCtx({
-            ...gameCtx,
-            isWaitingToPlay: true,
-          });
-          CustomConfirmAlert({
-            title: 'You have a new challenge!',
-            message: `${username} challenged you to play a game`,
-            buttons: [
-              {
-                onClick: () => {
-                  socket.emit(
-                    gameQueueClientToServerWsEvents.gameChallengeResponse,
-                    {
-                      gameRoomId,
-                      status: GameChallengeStatus.CHALLENGE_ACCEPTED,
-                    } as GameChallengeResponseDto,
-                  );
-                  notify(`Now you'll play a game against ${username}`);
-                  // Navigating the user from here, or changing its status to
-                  // playing, is not needed. Such responsibility falls on the
-                  // handling of gameStatus {ready} event
-                },
-                variant: ButtonVariant.SUBMIT,
-                children: 'Accept',
+      if (!(authUser && gameCtx)) {
+        return;
+      }
+      if (
+        !gameCtx.isPlaying &&
+        !gameCtx.isWaitingToPlay &&
+        id !== authUser.id
+      ) {
+        setGameCtx({
+          ...gameCtx,
+          isWaitingToPlay: true,
+        });
+        CustomConfirmAlert({
+          title: 'You have a new challenge!',
+          message: `${username} challenged you to play a game`,
+          buttons: [
+            {
+              onClick: () => {
+                socket.emit(
+                  gameQueueClientToServerWsEvents.gameChallengeResponse,
+                  {
+                    gameRoomId,
+                    status: GameChallengeStatus.CHALLENGE_ACCEPTED,
+                  } as GameChallengeResponseDto,
+                );
+                notify(`Now you'll play a game against ${username}`);
+                // Navigating the user from here, or changing its status to
+                // playing, is not needed. Such responsibility falls on the
+                // handling of gameStatus {ready} event
               },
-              {
-                onClick: () => {
-                  socket.emit(
-                    gameQueueClientToServerWsEvents.gameChallengeResponse,
-                    {
-                      gameRoomId,
-                      status: GameChallengeStatus.CHALLENGE_DECLINED,
-                    } as GameChallengeResponseDto,
-                  );
-                  setGameCtx({
-                    ...gameCtx,
-                    isWaitingToPlay: false,
-                  });
-                  // noop navigation
-                },
-                variant: ButtonVariant.WARNING,
-                children: 'Decline',
+              variant: ButtonVariant.SUBMIT,
+              children: 'Accept',
+            },
+            {
+              onClick: () => {
+                socket.emit(
+                  gameQueueClientToServerWsEvents.gameChallengeResponse,
+                  {
+                    gameRoomId,
+                    status: GameChallengeStatus.CHALLENGE_DECLINED,
+                  } as GameChallengeResponseDto,
+                );
+                setGameCtx({
+                  ...gameCtx,
+                  isWaitingToPlay: false,
+                });
+                // noop navigation
               },
-            ],
-          });
-        } else {
-          socket.emit(gameQueueClientToServerWsEvents.gameChallengeResponse, {
-            gameRoomId,
-            status: GameChallengeStatus.CHALLENGE_DECLINED,
-          } as GameChallengeResponseDto);
-          // noop navigation
-        }
+              variant: ButtonVariant.WARNING,
+              children: 'Decline',
+            },
+          ],
+        });
+      } else {
+        socket.emit(gameQueueClientToServerWsEvents.gameChallengeResponse, {
+          gameRoomId,
+          status: GameChallengeStatus.CHALLENGE_DECLINED,
+        } as GameChallengeResponseDto);
+        // noop navigation
       }
     };
 

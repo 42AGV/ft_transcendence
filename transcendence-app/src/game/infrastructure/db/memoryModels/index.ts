@@ -1,3 +1,3 @@
-export * from './gamesongoing.model';
-export * from './challengespending.model';
+export * from './games-ongoing.model';
+export * from './challenges-pending.model';
 export * from './types';

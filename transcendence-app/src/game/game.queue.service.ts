@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { GameId, UserId } from './infrastructure/db/memoryModels';
-import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
-import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
+import { IGamesOngoingRepository } from './infrastructure/db/games-ongoing.repository';
+import { IChallengesPendingRepository } from './infrastructure/db/challenges-pending.repository';
 import {
   GameChallengeDto,
   GameChallengeResponseDto,
@@ -10,10 +10,15 @@ import {
 } from 'pong-engine';
 import { GamePairingStatusDto } from './dto/game.pairing.status.dto';
 
+type QueuedUser = {
+  gameRoomId: GameId;
+  userId: UserId;
+};
+
 @Injectable()
 export class GameQueueService {
   public socket: Server | null = null;
-  private gameQueue: Record<GameId, [UserId, null]> | null = null;
+  private gameQueue: QueuedUser | null = null;
   constructor(
     private gamesOngoing: IGamesOngoingRepository,
     private challengesPending: IChallengesPendingRepository,
@@ -21,12 +26,12 @@ export class GameQueueService {
 
   private getWaitingUserId(): string | null {
     if (!this.gameQueue) return null;
-    return Object.values(this.gameQueue)[0][0];
+    return this.gameQueue.userId;
   }
 
   private getWaitingGameId(): string | null {
     if (!this.gameQueue) return null;
-    return Object.keys(this.gameQueue)[0];
+    return this.gameQueue.gameRoomId;
   }
 
   private isUserBusy(userId: string): boolean {
@@ -47,17 +52,14 @@ export class GameQueueService {
       return null;
     }
     if (!this.gameQueue) {
+      const gameRoomId = Object.keys(this.gamesOngoing.addGame(userId))[0];
+      this.gameQueue = { gameRoomId, userId };
+      return [gameRoomId, false];
+    } else {
       if (this.getWaitingUserId() === userId) {
         return null;
       }
-      this.gameQueue = this.gamesOngoing.addGame(userId);
-      const gameRoomId = this.getWaitingGameId();
-      if (!gameRoomId) return null;
-      return [gameRoomId, false];
-    } else {
-      // TODO: from two different tabs, or just reloading, we can get here, which is not cool
-      const gameRoomId = this.getWaitingGameId();
-      if (!gameRoomId) return null;
+      const gameRoomId = this.gameQueue.gameRoomId;
       this.gamesOngoing.addUserToGame(gameRoomId, userId);
       this.gameQueue = null;
       return [gameRoomId, true];

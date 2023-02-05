@@ -8,8 +8,8 @@ import {
   ChallengesPending,
   GamesOngoing,
 } from './infrastructure/db/memoryModels';
-import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
-import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
+import { IGamesOngoingRepository } from './infrastructure/db/games-ongoing.repository';
+import { IChallengesPendingRepository } from './infrastructure/db/challenges-pending.repository';
 import { GameController } from './game.controller';
 import { SocketModule } from '../socket/socket.module';
 

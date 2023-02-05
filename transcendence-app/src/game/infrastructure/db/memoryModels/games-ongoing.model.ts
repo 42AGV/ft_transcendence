@@ -1,6 +1,6 @@
 import { GameId, UserId } from '.';
-import { GameSet } from './gameset.abstract.model';
-import { IGamesOngoingRepository } from '../gamesongoing.repository';
+import { GameSet } from './gameset-abstract.model';
+import { IGamesOngoingRepository } from '../games-ongoing.repository';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
