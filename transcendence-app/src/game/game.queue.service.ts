@@ -7,8 +7,13 @@ import {
   GameChallengeDto,
   GameChallengeResponseDto,
   gameQueueServerToClientWsEvents,
+  GameStatus,
+  GameStatusUpdateDto,
 } from 'pong-engine';
 import { GamePairingStatusDto } from './dto/game.pairing.status.dto';
+import { OnEvent } from '@nestjs/event-emitter';
+import { User } from 'src/user/infrastructure/db/user.entity';
+import { WsException } from '@nestjs/websockets';
 
 type QueuedUser = {
   gameRoomId: GameId;
@@ -70,14 +75,17 @@ export class GameQueueService {
     if (!this.isUserBusy(userId)) {
       return null;
     }
-    if (this.gameQueue && this.getWaitingUserId() === userId) {
-      const gameId = this.getWaitingGameId();
-      this.gameQueue = null;
+    if (this.gameQueue && this.gameQueue.userId === userId) {
       const game = this.gamesOngoing.getGameRoomForPlayer(userId);
-      if (!game) return null;
-      const { gameRoomId } = game;
-      this.gamesOngoing.deleteGameForId(gameRoomId);
-      return gameId;
+      if (!game || game.gameRoomId !== this.gameQueue.gameRoomId) {
+        throw new WsException(
+          "User is in the queue, but the game they've joined is not the " +
+            'game that is waiting',
+        );
+      }
+      this.gamesOngoing.deleteGameForId(game.gameRoomId);
+      this.gameQueue = null;
+      return game.gameRoomId;
     }
     if (this.challengesPending.isPlayerBusy(userId)) {
       const game = this.challengesPending.getGameRoomForPlayer(userId);
@@ -86,6 +94,7 @@ export class GameQueueService {
       this.challengesPending.deleteGameForId(gameRoomId);
       return gameRoomId;
     }
+    // otherwise the user is playing, and noop
     return null;
   }
 
@@ -144,5 +153,23 @@ export class GameQueueService {
         this.challengesPending.isPlayerBusy(userId),
       gameRoomId,
     });
+  }
+
+  @OnEvent('userDisconnect')
+  async handleUserDisconnect(user: User) {
+    if (!this.socket) return;
+    this.gameQuitWaiting(user.id);
+    const game = this.gamesOngoing.getGameRoomForPlayer(user.id);
+    if (game) {
+      // TODO: handle this better
+      const { gameRoomId } = game;
+      this.gamesOngoing.deleteGameForId(gameRoomId);
+      this.socket
+        .to(gameRoomId)
+        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+          status: GameStatus.FINISHED,
+        } as GameStatusUpdateDto);
+      this.socket.socketsLeave(gameRoomId);
+    }
   }
 }

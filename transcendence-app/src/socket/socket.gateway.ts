@@ -20,6 +20,7 @@ import { SocketService } from './socket.service';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -32,6 +33,7 @@ export class SocketGateway
   constructor(
     private socketService: SocketService,
     private authorizationService: AuthorizationService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   afterInit(server: Server) {
@@ -68,6 +70,7 @@ export class SocketGateway
       if (isDisconnectedAll) {
         this.socketService.deleteFromOnlineUsers(user.id);
         this.server.emit('userDisconnect', user.id);
+        this.eventEmitter.emit('userDisconnect', user);
       }
     }
   }
