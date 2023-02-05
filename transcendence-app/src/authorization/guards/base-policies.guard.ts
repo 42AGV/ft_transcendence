@@ -9,6 +9,8 @@ import {
 import { AuthorizationService } from '../authorization.service';
 import { CHECK_POLICIES_KEY } from '../decorators/policies.decorator';
 import { SET_SUBJECTS_KEY } from '../decorators/set-subjects.decorator';
+import { Request } from 'express';
+import { CONFIG_PARAM_KEY } from '../decorators/configure-param.decorator';
 
 interface IPolicyHandler {
   handle(ability: AnyMongoAbility, subject?: Subject): boolean;
@@ -29,8 +31,9 @@ export abstract class PoliciesGuard implements CanActivate {
     protected readonly authorizationService: AuthorizationService,
   ) {}
 
-  abstract getAbilityFromContext(
-    ctx: ExecutionContext,
+  abstract getAbilityFromRequest(
+    req: Request,
+    param?: string,
   ): Promise<AnyMongoAbility>;
 
   public async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -39,7 +42,14 @@ export abstract class PoliciesGuard implements CanActivate {
         CHECK_POLICIES_KEY,
         ctx.getHandler(),
       ) || [];
-    const ability = await this.getAbilityFromContext(ctx);
+    const request: Request =
+      ctx.getType() === 'http'
+        ? ctx.switchToHttp().getRequest()
+        : ctx.switchToWs().getClient().request;
+    const param =
+      this.reflector.get<string>(CONFIG_PARAM_KEY, ctx.getHandler()) ||
+      'chatroomId';
+    const ability = await this.getAbilityFromRequest(request, param);
     const subjects: SubjectCtors[] =
       this.reflector.get<SubjectCtors[]>(SET_SUBJECTS_KEY, ctx.getHandler()) ||
       [];

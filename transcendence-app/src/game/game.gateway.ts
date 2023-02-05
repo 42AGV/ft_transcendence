@@ -22,7 +22,10 @@ import {
   paddleStop,
   runGameFrame,
   newGame,
+  GameStatus,
 } from 'pong-engine';
+import { OnEvent } from '@nestjs/event-emitter';
+import { GamePairing } from './infrastructure/db/game-pairing.entity';
 
 type UserId = string;
 const FPS = 60;
@@ -101,5 +104,10 @@ export class GameGateway {
         this.games.set(userId, paddleStop(gameState));
       }
     }
+  }
+
+  @OnEvent('game.ready')
+  async handleGameReady(data: { status: GameStatus; game: GamePairing }) {
+    console.log(data);
   }
 }

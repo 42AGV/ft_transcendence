@@ -17,6 +17,7 @@ import { DbModule } from '../../src/shared/db/db.module';
 import { AuthorizationModule } from '../../src/authorization/authorization.module';
 import { AuthorizationService } from '../../src/authorization/authorization.service';
 import { UserWithAuthorization } from '../../src/authorization/infrastructure/db/user-with-authorization.entity';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('[Feature] Auth - /auth', () => {
   let app: INestApplication;
@@ -43,6 +44,7 @@ describe('[Feature] Auth - /auth', () => {
           cache: true,
           validate,
         }),
+        EventEmitterModule.forRoot(),
         DbModule,
         AuthModule,
         UserModule,

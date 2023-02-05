@@ -1,13 +1,9 @@
-import {
-  ExecutionContext,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
 import { PoliciesGuard } from './base-policies.guard';
-import { CONFIG_PARAM_KEY } from '../decorators/configure-param.decorator';
+import { Request } from 'express';
 
 @Injectable()
 export class CrMemberPoliciesGuard extends PoliciesGuard {
@@ -19,12 +15,9 @@ export class CrMemberPoliciesGuard extends PoliciesGuard {
     super(reflector, caslAbilityFactory, authorizationService);
   }
 
-  override async getAbilityFromContext(ctx: ExecutionContext) {
-    const param =
-      this.reflector.get<string>(CONFIG_PARAM_KEY, ctx.getHandler()) ||
-      'chatroomId';
-    const chatId = ctx.switchToHttp().getRequest().params[param];
-    const authId = ctx.switchToHttp().getRequest().user.id;
+  override async getAbilityFromRequest(req: Request, param: string) {
+    const chatId = req.params[param];
+    const authId = req.user.id;
     const authCrm =
       await this.authorizationService.getUserAuthContextForChatroom(
         authId,
