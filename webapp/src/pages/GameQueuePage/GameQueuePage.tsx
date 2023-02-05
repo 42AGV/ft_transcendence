@@ -15,14 +15,18 @@ import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'pong-engine';
 import { PLAY_URL } from '../../shared/urls';
+import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
 
 export default function GameQueuePage() {
-  const { setGameCtx, isPlaying } = useGamePairing();
+  const { setGameCtx } = useGamePairing();
   const { goBack, navigate } = useNavigation();
   const quitAndGoBack = () => {
     socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
     setGameCtx &&
-      setGameCtx({ isPlaying, isWaitingToPlay: false, gameRoomId: null });
+      setGameCtx({
+        gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+        gameRoomId: null,
+      });
     goBack();
   };
   return (
@@ -44,7 +48,10 @@ export default function GameQueuePage() {
         onClick={() => {
           socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
           setGameCtx &&
-            setGameCtx({ isPlaying, isWaitingToPlay: false, gameRoomId: null });
+            setGameCtx({
+              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+              gameRoomId: null,
+            });
           navigate(PLAY_URL, { replace: true });
         }}
       >

@@ -25,6 +25,7 @@ import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useFriend } from '../../shared/hooks/UseFriend';
 import {
+  GamePairingStatusDtoGameQueueStatusEnum,
   UserToRoleDtoRoleEnum,
   UserWithAuthorizationResponseDto,
 } from '../../shared/generated';
@@ -201,8 +202,8 @@ export default function UserPage() {
                     );
                     setGameCtx &&
                       setGameCtx({
-                        isPlaying: false,
-                        isWaitingToPlay: true,
+                        gameQueueStatus:
+                          GamePairingStatusDtoGameQueueStatusEnum.Waiting,
                         gameRoomId: null,
                       });
                     navigate(PLAY_GAME_QUEUE);

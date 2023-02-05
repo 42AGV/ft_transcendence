@@ -9,6 +9,7 @@ import { Query } from '../../shared/types';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'pong-engine';
+import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
 
 export default function PlayPage() {
   const { setGameCtx } = useGamePairing();
@@ -51,8 +52,7 @@ export default function PlayPage() {
         socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
         setGameCtx &&
           setGameCtx({
-            isPlaying: false,
-            isWaitingToPlay: true,
+            gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Waiting,
             gameRoomId: null,
           }); // TODO: these setGameCtx should be broadcasted to all tabs
         navigate(PLAY_GAME_QUEUE);
