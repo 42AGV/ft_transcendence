@@ -57,7 +57,6 @@ import {
   USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_NAME,
   USER_IS_TWO_FACTOR_AUTHENTICATED_COOKIE_VALUE,
 } from '../shared/constants';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -67,7 +66,6 @@ export class AuthController {
     private readonly socketService: SocketService,
     private readonly authorizationService: AuthorizationService,
     private readonly userService: UserService,
-    private eventEmitter: EventEmitter2,
   ) {}
 
   @Get('login')
@@ -93,7 +91,6 @@ export class AuthController {
     @GetUser() user: User,
   ) {
     const sessionId = req.session.id;
-    this.eventEmitter.emit('userDisconnect', user);
     req.logout((err: Error) => {
       if (err) {
         throw new NotFoundException(err.message);
