@@ -1,4 +1,8 @@
-import { GameQueueStatus } from 'pong-engine';
+export enum GameQueueStatus {
+  NONE = 'none',
+  PLAYING = 'playing',
+  WAITING = 'waiting',
+}
 
 export interface GamePairingStatusData {
   gameRoomId: string | null;

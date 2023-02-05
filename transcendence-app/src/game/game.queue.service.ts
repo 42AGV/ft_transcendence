@@ -11,7 +11,7 @@ import {
   GameStatus,
   GameStatusUpdateDto,
 } from 'pong-engine';
-import { GamePairingStatusDto } from './dto/game.pairing.status.dto';
+import { GamePairingStatusDto } from './dto/game-pairing-status.dto';
 import { OnEvent } from '@nestjs/event-emitter';
 import { WsException } from '@nestjs/websockets';
 import { GamePairing } from './infrastructure/db/game-pairing.entity';

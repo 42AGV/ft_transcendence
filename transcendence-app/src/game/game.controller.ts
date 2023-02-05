@@ -12,7 +12,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { GameQueueService } from './game.queue.service';
-import { GamePairingStatusDto } from './dto/game.pairing.status.dto';
+import { GamePairingStatusDto } from './dto/game-pairing-status.dto';
 import { User as GetUser } from '../user/decorators/user.decorator';
 import { User } from '../user/infrastructure/db/user.entity';
 
