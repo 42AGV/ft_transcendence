@@ -91,6 +91,7 @@ export class AuthController {
     @GetUser() user: User,
   ) {
     const sessionId = req.session.id;
+
     req.logout((err: Error) => {
       if (err) {
         throw new NotFoundException(err.message);

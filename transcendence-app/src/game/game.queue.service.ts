@@ -12,7 +12,6 @@ import {
 } from 'pong-engine';
 import { GamePairingStatusDto } from './dto/game.pairing.status.dto';
 import { OnEvent } from '@nestjs/event-emitter';
-import { User } from 'src/user/infrastructure/db/user.entity';
 import { WsException } from '@nestjs/websockets';
 
 type QueuedUser = {
@@ -155,8 +154,8 @@ export class GameQueueService {
     });
   }
 
-  @OnEvent('userDisconnect')
-  async handleUserDisconnect(user: User) {
+  @OnEvent('socket.userDisconnect')
+  async handleUserDisconnect(user: { id: string }) {
     if (!this.socket) return;
     this.gameQuitWaiting(user.id);
     const game = this.gamesOngoing.getGameRoomForPlayer(user.id);

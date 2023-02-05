@@ -70,7 +70,7 @@ export class SocketGateway
       if (isDisconnectedAll) {
         this.socketService.deleteFromOnlineUsers(user.id);
         this.server.emit('userDisconnect', user.id);
-        this.eventEmitter.emit('userDisconnect', user);
+        this.eventEmitter.emit('socket.userDisconnect', { id: user.id });
       }
     }
   }
