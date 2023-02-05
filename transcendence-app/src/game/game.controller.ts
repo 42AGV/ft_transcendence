@@ -29,8 +29,8 @@ export class GameController {
     type: GamePairingStatusDto,
   })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async getPairingStatus(@GetUser() user: User): Promise<GamePairingStatusDto> {
-    const status = await this.gameQueueService.getPairingStatus(user.id);
+  getPairingStatus(@GetUser() user: User): GamePairingStatusDto {
+    const status = this.gameQueueService.getPairingStatus(user.id);
     if (!status) {
       throw new ServiceUnavailableException();
     }

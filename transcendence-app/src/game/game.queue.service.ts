@@ -42,7 +42,7 @@ export class GameQueueService {
     );
   }
 
-  async gameQueueJoin(userId: string): Promise<[string, boolean] | null> {
+  gameQueueJoin(userId: string): [string, boolean] | null {
     if (!this.socket) {
       return null;
     }

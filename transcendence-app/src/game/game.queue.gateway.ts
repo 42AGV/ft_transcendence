@@ -45,10 +45,8 @@ export class GameQueueGateway {
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameQueueJoin)
-  async gameQueueJoin(@ConnectedSocket() client: Socket): Promise<boolean> {
-    const retVal = await this.gameQueueService.gameQueueJoin(
-      client.request.user.id,
-    );
+  gameQueueJoin(@ConnectedSocket() client: Socket): boolean {
+    const retVal = this.gameQueueService.gameQueueJoin(client.request.user.id);
     if (retVal) {
       const [gameRoomId, isRoomFull] = retVal;
       client.join(gameRoomId);
