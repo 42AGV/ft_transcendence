@@ -141,7 +141,9 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
                   ...gameCtx,
                   isWaitingToPlay: false,
                 });
-                // noop navigation
+                // this sequence of code is not triggering any navigation,
+                // but contrary to what could be intuitively assumed (at least
+                // by my intuition) this is the expected and intended behaviour.
               },
               variant: ButtonVariant.WARNING,
               children: 'Decline',
@@ -153,7 +155,9 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
           gameRoomId,
           status: GameChallengeStatus.CHALLENGE_DECLINED,
         } as GameChallengeResponseDto);
-        // noop navigation
+        // this sequence of code is not triggering any navigation,
+        // but contrary to what could be intuitively assumed (at least
+        // by my intuition) this is the expected and intended behaviour.
       }
     };
 
