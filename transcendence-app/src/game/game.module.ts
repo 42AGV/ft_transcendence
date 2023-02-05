@@ -11,10 +11,11 @@ import {
 import { IGamesOngoingRepository } from './infrastructure/db/gamesongoing.repository';
 import { IChallengesPendingRepository } from './infrastructure/db/challengespending.repository';
 import { GameController } from './game.controller';
+import { SocketModule } from '../socket/socket.module';
 
 @Global()
 @Module({
-  imports: [DbModule, AuthorizationModule],
+  imports: [DbModule, AuthorizationModule, SocketModule],
   providers: [
     GameGateway,
     GameQueueGateway,

@@ -26,6 +26,7 @@ import {
   GameUserChallengeDto,
 } from 'pong-engine';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { SocketService } from '../socket/socket.service';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -36,6 +37,7 @@ export class GameQueueGateway {
   constructor(
     private gameQueueService: GameQueueService,
     private eventEmitter: EventEmitter2,
+    private socketService: SocketService,
   ) {}
 
   afterInit(server: Server) {
@@ -86,6 +88,14 @@ export class GameQueueGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() gameUserChallengeDto: GameUserChallengeDto,
   ): boolean {
+    if (!this.socketService.isUserOnline(gameUserChallengeDto.to.id)) {
+      this.server
+        .to(client.request.user.id)
+        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+          status: GameChallengeStatus.CHALLENGE_DECLINED,
+        } as GameStatusUpdateDto);
+      throw new WsException('User is not online and cannot be challenged');
+    }
     const gameRoomId = this.gameQueueService.gameUserChallenge(
       client.request.user.username,
       client.request.user.id,

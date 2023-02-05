@@ -21,8 +21,6 @@ import { AuthorizationService } from '../authorization/authorization.service';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 
-type UserId = string;
-
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
 @UseInterceptors(ClassSerializerInterceptor)
@@ -30,7 +28,7 @@ export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server!: Server;
-  onlineUserIds = new Set<UserId>();
+
   constructor(
     private socketService: SocketService,
     private authorizationService: AuthorizationService,
@@ -45,7 +43,7 @@ export class SocketGateway
     if (!user) {
       client.disconnect();
     } else {
-      this.onlineUserIds.add(user.id);
+      this.socketService.addToOnlineUsers(user.id);
       const sessionId = client.request.session.id;
       // Join the session ID room to keep track of all the clients linked to this session ID
       client.join(sessionId);
@@ -68,7 +66,7 @@ export class SocketGateway
         await this.server.in(user.id).fetchSockets();
       const isDisconnectedAll = matchingSockets.length === 0;
       if (isDisconnectedAll) {
-        this.onlineUserIds.delete(user.id);
+        this.socketService.deleteFromOnlineUsers(user.id);
         this.server.emit('userDisconnect', user.id);
       }
     }
@@ -76,7 +74,7 @@ export class SocketGateway
 
   @SubscribeMessage('getOnlineUsers')
   handleGetConnectedUsers(@ConnectedSocket() client: Socket) {
-    client.emit('onlineUsers', [...this.onlineUserIds]);
+    client.emit('onlineUsers', [...this.socketService.getOnlineUsers()]);
   }
 
   @SubscribeMessage('getFriends')
