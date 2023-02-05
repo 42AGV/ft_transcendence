@@ -130,15 +130,24 @@ export class GameQueueGateway {
       );
     }
     if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
-      this.gameQueueService.updateChallengeStatus(gameChallengeResponseDto);
-      client.join(gameRoomId);
-      this.server
-        .to(gameRoomId)
-        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-          status,
-          gameRoomId,
-        } as GameStatusUpdateDto);
-      return true;
+      if (
+        this.gameQueueService.updateChallengeStatus(
+          gameChallengeResponseDto,
+          acceptingPlayer,
+        )
+      ) {
+        client.join(gameRoomId);
+        this.server
+          .to(gameRoomId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status,
+            gameRoomId,
+          } as GameStatusUpdateDto);
+        return true;
+      }
+      throw new WsException(
+        'There is no such challenge pending. Challenged player Id is unexpected',
+      );
     }
     this.gameQueueService.removeChallengeRoom(gameRoomId);
     this.server

@@ -123,11 +123,13 @@ export class GameQueueService {
 
   updateChallengeStatus(
     gameChallengeResponseDto: GameChallengeResponseDto,
+    acceptingPlayer: UserId,
   ): boolean {
     const { gameRoomId } = gameChallengeResponseDto;
     const game = this.challengesPending.retrieveGameForId(gameRoomId);
     this.challengesPending.deleteGameForId(gameRoomId);
-    if (!game || !game.userTwoId) return false;
+    if (!game || !game.userTwoId || game.userTwoId !== acceptingPlayer)
+      return false;
     this.gamesOngoing.addGameWithId(gameRoomId, [
       game.userOneId,
       game.userTwoId,
