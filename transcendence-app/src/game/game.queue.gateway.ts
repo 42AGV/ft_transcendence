@@ -146,12 +146,7 @@ export class GameQueueGateway {
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
         status: GameChallengeStatus.CHALLENGE_DECLINED,
       } as GameStatusUpdateDto);
-    this.server
-      .in(gameRoomId)
-      .fetchSockets()
-      .then((matchingSockets) =>
-        matchingSockets.map((socket) => socket.leave(gameRoomId)),
-      );
+    this.server.socketsLeave(gameRoomId);
     return false;
   }
 }
