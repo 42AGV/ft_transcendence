@@ -12,3 +12,4 @@ export { LoadingExample } from './LoadingExample';
 export { ChatBubbleExample } from './ChatBubbleExample';
 export { ToggleSwitchExample } from './ToggleSwitchExample';
 export { SnackBarExample } from './SnackBarExample';
+export { ScoreExample } from './ScoreExample';

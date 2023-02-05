@@ -20,6 +20,7 @@ import {
   ChatBubbleExample,
   ToggleSwitchExample,
   SnackBarExample,
+  ScoreExample,
 } from './ComponentsExamples';
 import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
 import { CustomConfirmAlertExample } from './ComponentsExamples/CustomConfirmAlert';
@@ -52,6 +53,7 @@ export default function ComponentsBookPage() {
       <SnackBarExample />
       <CustomConfirmAlertExample />
       <GameSpinnerExample />
+      <ScoreExample />
     </div>
   );
 }
