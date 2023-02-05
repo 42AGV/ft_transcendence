@@ -101,7 +101,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       if (
-        gameCtx.gameQueueStatus == GameQueueStatus.NONE &&
+        gameCtx.gameQueueStatus === GameQueueStatus.NONE &&
         id !== authUser.id
       ) {
         setGameCtx({
