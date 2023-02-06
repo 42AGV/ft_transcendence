@@ -233,6 +233,7 @@ export class GameQueueService {
           } as GameStatusUpdateDto);
       }
       this.socket.socketsLeave(game.gameRoomId);
+      this.gamesOngoing.deleteGameForId(game.gameRoomId);
     }
   }
 }
