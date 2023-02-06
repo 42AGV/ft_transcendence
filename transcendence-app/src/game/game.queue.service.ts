@@ -118,6 +118,13 @@ export class GameQueueService {
         id: fromId,
       },
     } as GameChallengeDto);
+    this.socket.to(fromId).emit(
+      gameQueueServerToClientWsEvents.gameContextUpdate,
+      new GamePairingStatusDto({
+        gameRoomId,
+        gameQueueStatus: GameQueueStatus.WAITING,
+      }),
+    );
     return gameRoomId;
   }
 
