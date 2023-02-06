@@ -218,14 +218,21 @@ export class GameQueueService {
     }
     const game = this.gamesOngoing.getGameRoomForPlayer(user.id);
     if (game) {
-      const { gameRoomId } = game;
-      this.gamesOngoing.deleteGameForId(gameRoomId);
-      this.socket
-        .to(gameRoomId)
-        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-          status: GameStatus.FINISHED,
-        } as GameStatusUpdateDto);
-      this.socket.socketsLeave(gameRoomId);
+      if (user.id !== game.userOneId) {
+        this.socket
+          .to(game.userOneId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameStatus.FINISHED,
+          } as GameStatusUpdateDto);
+      }
+      if (game.userTwoId && user.id !== game.userTwoId) {
+        this.socket
+          .to(game.userTwoId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameStatus.FINISHED,
+          } as GameStatusUpdateDto);
+      }
+      this.socket.socketsLeave(game.gameRoomId);
     }
   }
 }
