@@ -195,6 +195,7 @@ export class GameQueueService {
   async handleUserDisconnect(user: { id: string }) {
     if (!this.socket) return;
     const maybeWaitingGame = this.gameQuitWaiting(user.id);
+    // TODO: do something useful here. For now it's just not leaking resources
     if (maybeWaitingGame) {
       this.socket
         .to(maybeWaitingGame.userOneId)
@@ -212,7 +213,6 @@ export class GameQueueService {
     }
     const game = this.gamesOngoing.getGameRoomForPlayer(user.id);
     if (game) {
-      // TODO: handle this better
       const { gameRoomId } = game;
       this.gamesOngoing.deleteGameForId(gameRoomId);
       this.socket
