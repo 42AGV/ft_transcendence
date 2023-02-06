@@ -21,6 +21,7 @@ import socket from '../../socket';
 import { GameInfo, WsException } from '../../types';
 import { useAuth } from '../../hooks/UseAuth';
 import { useNotificationContext } from '../../context/NotificationContext';
+import { gameMachine } from './state-machine/machine';
 // import { Sender } from 'xstate';
 
 const GAME_COMMAND = 'gameCommand';
@@ -239,7 +240,11 @@ const Game = ({ gameId }: GameProps) => {
         Hit the brick!
       </Header>
       <div className="game">
-        <Play />
+        <StateMachineContext.Provider
+          machine={() => gameMachine.withContext({ gameId })}
+        >
+          <Play />
+        </StateMachineContext.Provider>
       </div>
     </>
   );

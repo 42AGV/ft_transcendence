@@ -1,5 +1,6 @@
 import {
   ClassSerializerInterceptor,
+  Logger,
   ParseUUIDPipe,
   UseFilters,
   UseGuards,
@@ -36,7 +37,7 @@ type UserId = string;
 type ClientId = string;
 const FPS = 30;
 const DELTA_TIME = 1 / FPS;
-const MAX_PAUSED_TIME_MS = 3 * 60 * 1000; // 3 minutes;
+const MAX_PAUSED_TIME_MS = 1 * 60 * 1000; // 1 minute;
 
 type PlayState = 'playing' | 'paused';
 
@@ -56,8 +57,11 @@ type GameInfo = {
 @UseInterceptors(ClassSerializerInterceptor)
 @UseFilters(BadRequestTransformationFilter)
 export class GameGateway {
+  private readonly logger = new Logger(GameGateway.name);
   @WebSocketServer() server!: Server;
+  // TODO: Refactor, move these varibles to game service
   games = new Map<GameId, GameInfo>();
+  userToGame = new Map<UserId, GameId>();
   playerClients = new Map<UserId, Set<ClientId>>();
   intervalId: NodeJS.Timer | undefined = undefined;
 
@@ -65,14 +69,18 @@ export class GameGateway {
     this.games.forEach((gameInfo: GameInfo, gameId: GameId) => {
       if (
         gameInfo.pausedAt &&
-        gameInfo.pausedAt + MAX_PAUSED_TIME_MS >= Date.now()
+        Date.now() >= gameInfo.pausedAt + MAX_PAUSED_TIME_MS
       ) {
         // Game is paused for longer than MAX_PAUSED_TIME_MS
         // end the game and cleanup
         this.server.to(gameId).emit('endGame', gameInfo);
+        this.logger.log(`game ${gameId} ended at ${Date.now()}`);
+        console.dir(gameInfo);
         this.server.socketsLeave(gameId);
         this.playerClients.delete(gameInfo.playerOneId);
         this.playerClients.delete(gameInfo.playerTwoId);
+        this.userToGame.delete(gameInfo.playerOneId);
+        this.userToGame.delete(gameInfo.playerTwoId);
         this.games.delete(gameId);
         if (this.games.size === 0) {
           clearInterval(this.intervalId);
@@ -88,7 +96,7 @@ export class GameGateway {
         this.games.set(gameId, newGameInfo);
         this.server.to(gameId).emit('updateGame', newGameInfo);
       } else {
-        // Game is paused, send the old game info
+        // Game is paused, send the current game info
         this.server.to(gameId).emit('updateGame', gameInfo);
       }
     });
@@ -120,10 +128,10 @@ export class GameGateway {
         const playerOneLeftAt = isPlayerOne ? null : game.playerOneLeftAt;
         const playerTwoLeftAt = isPlayerTwo ? null : game.playerTwoLeftAt;
         const pausedAt =
-          playerOneLeftAt !== null && playerTwoLeftAt !== null
+          playerOneLeftAt === null && playerTwoLeftAt === null
             ? null
             : game.pausedAt;
-        const playState = pausedAt ? 'paused' : 'playing';
+        const playState = pausedAt === null ? 'playing' : 'paused';
         this.games.set(gameRoomId, {
           ...game,
           playState,
@@ -133,6 +141,8 @@ export class GameGateway {
         });
       }
     }
+    this.logger.log(`user ${userId} joined game ${gameRoomId}`);
+    console.dir(this.games.get(gameRoomId));
   }
 
   @SubscribeMessage('leaveGame')
@@ -154,13 +164,60 @@ export class GameGateway {
       if (playerClients) {
         playerClients.delete(client.id);
         if (playerClients.size === 0) {
+          const playerOneLeftAt = isPlayerOne
+            ? Date.now()
+            : game.playerOneLeftAt;
+          const playerTwoLeftAt = isPlayerTwo
+            ? Date.now()
+            : game.playerTwoLeftAt;
+          const pausedAt = game.pausedAt ? game.pausedAt : Date.now();
           this.games.set(gameRoomId, {
             ...game,
-            pausedAt: game.pausedAt ?? Date.now(),
-            playerOneLeftAt: isPlayerOne ? Date.now() : game.playerOneLeftAt,
-            playerTwoLeftAt: isPlayerTwo ? Date.now() : game.playerTwoLeftAt,
+            playState: 'paused',
+            pausedAt,
+            playerOneLeftAt,
+            playerTwoLeftAt,
           });
         }
+      }
+    }
+    this.logger.log(`user ${userId} left game ${gameRoomId}`);
+    console.dir(this.games.get(gameRoomId));
+  }
+
+  @OnEvent('socket.clientDisconnect')
+  async handleUserDisconnect({
+    userId,
+    clientId,
+  }: {
+    userId: string;
+    clientId: string;
+  }) {
+    const gameId = this.userToGame.get(userId);
+    if (!gameId) {
+      return;
+    }
+    // TODO: Extract this to a function and reuse here and in handleLeaveGame
+    const game = this.games.get(gameId);
+    if (!game) {
+      return;
+    }
+    const playerClients = this.playerClients.get(userId);
+    if (playerClients) {
+      playerClients.delete(clientId);
+      if (playerClients.size === 0) {
+        const isPlayerOne = userId === game.playerOneId;
+        const isPlayerTwo = userId === game.playerTwoId;
+        const playerOneLeftAt = isPlayerOne ? Date.now() : game.playerOneLeftAt;
+        const playerTwoLeftAt = isPlayerTwo ? Date.now() : game.playerTwoLeftAt;
+        const pausedAt = game.pausedAt ? game.pausedAt : Date.now();
+        this.games.set(gameId, {
+          ...game,
+          playState: 'paused',
+          pausedAt,
+          playerOneLeftAt,
+          playerTwoLeftAt,
+        });
       }
     }
   }
@@ -222,7 +279,20 @@ export class GameGateway {
 
   @OnEvent('game.ready')
   async handleGameReady(data: { status: GameStatus; game: GamePairing }) {
+    this.logger.log(`game ready ${data.game.gameRoomId}`);
+    console.dir(data.game);
     if (!data.game.userTwoId) {
+      return;
+    }
+    const playerOneOngoingGameId = this.userToGame.get(data.game.userOneId);
+    const playerTwoOngoingGameId = this.userToGame.get(data.game.userTwoId);
+    if (playerOneOngoingGameId || playerTwoOngoingGameId) {
+      // TODO: Remove this log when we can prove that this will not happen
+      this.logger.log(
+        `Atleast one of the players is already in a game
+        playerOneId: ${data.game.userOneId} - gameId: ${playerOneOngoingGameId}
+        playerTwoId: ${data.game.userTwoId} - gameId: ${playerTwoOngoingGameId}`,
+      );
       return;
     }
     const gameState = newGame();
@@ -236,6 +306,8 @@ export class GameGateway {
       playerOneLeftAt: Date.now(),
       playerTwoLeftAt: Date.now(),
     });
+    this.userToGame.set(data.game.userOneId, data.game.gameRoomId);
+    this.userToGame.set(data.game.userTwoId, data.game.gameRoomId);
     if (!this.intervalId) {
       // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
       this.intervalId = setInterval(() => {
