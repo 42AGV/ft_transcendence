@@ -197,12 +197,17 @@ export class GameQueueService {
     const maybeWaitingGame = this.gameQuitWaiting(user.id);
     // TODO: do something useful here. For now it's just not leaking resources
     if (maybeWaitingGame) {
-      this.socket
-        .to(maybeWaitingGame.userOneId)
-        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-          status: GameChallengeStatus.CHALLENGE_DECLINED,
-        } as GameStatusUpdateDto);
-      if (maybeWaitingGame.userTwoId) {
+      if (user.id !== maybeWaitingGame.userOneId) {
+        this.socket
+          .to(maybeWaitingGame.userOneId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+      }
+      if (
+        maybeWaitingGame.userTwoId &&
+        user.id !== maybeWaitingGame.userTwoId
+      ) {
         this.socket
           .to(maybeWaitingGame.userTwoId)
           .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
