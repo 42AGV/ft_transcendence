@@ -183,6 +183,10 @@ export class GameQueueGateway {
             status,
             gameRoomId,
           } as GameStatusUpdateDto);
+        this.eventEmitter.emit('game.ready', {
+          status: GameStatus.READY,
+          game,
+        });
         return true;
       }
       throw new WsException(
