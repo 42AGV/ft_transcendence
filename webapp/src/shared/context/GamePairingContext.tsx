@@ -39,12 +39,13 @@ export interface GamePairingContextType {
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
 
 export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
-  const { authUser } = useAuth();
+  const { authUser, isLoggedIn } = useAuth();
   const { goBack, navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
   const getPairingStatus = useCallback(() => {
     return gameApi.gameControllerGetPairingStatus();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
   const { data, isLoading: isDataLoading } =
     useData<GamePairingStatusDto>(getPairingStatus);
   const [gameCtx, setGameCtx] = useState<GamePairingContextType | null>(null);
