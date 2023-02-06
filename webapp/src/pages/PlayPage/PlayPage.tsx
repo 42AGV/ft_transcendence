@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconVariant, ButtonVariant } from '../../shared/components';
+import { ButtonVariant, IconVariant } from '../../shared/components';
 import { useNavigate } from 'react-router-dom';
 import { MainTabTemplate } from '../../shared/components/index';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
@@ -10,9 +10,10 @@ import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'pong-engine';
 import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
+import { useCallback, useMemo } from 'react';
 
 export default function PlayPage() {
-  const { setGameCtx } = useGamePairing();
+  const { gameQueueStatus, setGameCtx } = useGamePairing();
   const navigate = useNavigate();
 
   // To be replaced with real games request
@@ -38,6 +39,56 @@ export default function PlayPage() {
     [],
   );
 
+  const getButtonAction = useCallback(() => {
+    switch (gameQueueStatus) {
+      case GamePairingStatusDtoGameQueueStatusEnum.None: {
+        return () => {
+          socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
+          setGameCtx &&
+            setGameCtx({
+              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Waiting,
+              gameRoomId: null,
+            });
+          navigate(PLAY_GAME_QUEUE);
+        };
+      }
+      case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
+        return () => {
+          socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
+          setGameCtx &&
+            setGameCtx({
+              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+              gameRoomId: null,
+            });
+        };
+      }
+      case GamePairingStatusDtoGameQueueStatusEnum.Waiting: {
+        return () => {
+          socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
+          setGameCtx &&
+            setGameCtx({
+              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+              gameRoomId: null,
+            });
+        };
+      }
+    }
+  }, [gameQueueStatus, navigate, setGameCtx]);
+
+  const buttonLabel = useMemo(() => {
+    switch (gameQueueStatus) {
+      case GamePairingStatusDtoGameQueueStatusEnum.None: {
+        return 'Join game queue';
+      }
+      case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
+        return 'Quit playing';
+      }
+      case GamePairingStatusDtoGameQueueStatusEnum.Waiting: {
+        return 'Quit waiting';
+      }
+    }
+  }, [gameQueueStatus]);
+
   const buttons = [
     {
       variant: ButtonVariant.SUBMIT,
@@ -46,18 +97,16 @@ export default function PlayPage() {
       children: 'Training',
     },
     {
-      variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.ADD,
-      onClick: () => {
-        socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
-        setGameCtx &&
-          setGameCtx({
-            gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Waiting,
-            gameRoomId: null,
-          }); // TODO: these setGameCtx should be broadcasted to all tabs
-        navigate(PLAY_GAME_QUEUE);
-      },
-      children: 'Join game queue',
+      variant:
+        gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None
+          ? ButtonVariant.SUBMIT
+          : ButtonVariant.WARNING,
+      iconVariant:
+        gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None
+          ? IconVariant.ADD
+          : IconVariant.LOGOUT,
+      onClick: getButtonAction(),
+      children: buttonLabel,
     },
   ];
 

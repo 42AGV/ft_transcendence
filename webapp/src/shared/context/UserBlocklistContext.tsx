@@ -20,11 +20,12 @@ export const UserBlocklistProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { authUser } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [blocks, setBlocks] = useState(new Set<BlockedId>());
   const getBlockedUsers = useCallback(
     () => usersApi.userControllerGetBlocks(),
-    [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isLoggedIn],
   );
   const { data: blockedUsers, isLoading } = useData(getBlockedUsers);
 
@@ -46,7 +47,7 @@ export const UserBlocklistProvider = ({
       );
     };
 
-    if (authUser) {
+    if (isLoggedIn) {
       socket.on('block', blockListener);
       socket.on('unblock', unblockListener);
     }
@@ -55,7 +56,7 @@ export const UserBlocklistProvider = ({
       socket.off('block');
       socket.off('unblock');
     };
-  });
+  }, [isLoggedIn]);
 
   const userBlocks = useCallback(
     (userId: string) => {
