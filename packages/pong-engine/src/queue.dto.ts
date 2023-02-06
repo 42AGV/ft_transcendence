@@ -6,6 +6,12 @@ export type GameChallengeDto = {
   };
 };
 
+export type GameUserChallengeDto = {
+  to: {
+    id: string;
+  };
+};
+
 export enum GameChallengeStatus {
   CHALLENGE_DECLINED = 'challengeDeclined',
   CHALLENGE_ACCEPTED = 'challengeAccepted',
@@ -17,8 +23,8 @@ export enum GameStatus {
 }
 
 export type GameChallengeResponseDto = {
-  gameRoomId: string;
   status: GameChallengeStatus;
+  gameRoomId: string;
 };
 
 type GameAcceptedDto = {
@@ -40,6 +46,18 @@ type GameFinishedDto = {
   status: GameStatus.FINISHED;
   gameRoomId?: never;
 };
+
+export enum gameQueueServerToClientWsEvents {
+  gameStatusUpdate = 'gameStatusUpdate',
+  gameChallenge = 'gameChallenge',
+}
+
+export enum gameQueueClientToServerWsEvents {
+  gameQueueJoin = 'gameQueueJoin',
+  gameQuitWaiting = 'gameQuitWaiting',
+  gameChallengeResponse = 'gameChallengeResponse',
+  gameUserChallenge = 'gameUserChallenge',
+}
 
 export type GameStatusUpdateDto =
   | GameAcceptedDto

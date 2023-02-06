@@ -30,6 +30,7 @@ import {
   EditChatroomAvatarPage,
   EnableTwoFactorAuthPage,
   ValidateTwoFactorAuthPage,
+  GameQueuePage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -54,6 +55,7 @@ import {
   ADMIN_URL,
   TWO_FACTOR_AUTH_ENABLE_URL,
   TWO_FACTOR_AUTH_VALIDATE_URL,
+  PLAY_GAME_QUEUE,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -139,6 +141,14 @@ function AppRoutes() {
           </RequireAuth>
         }
       />
+      <Route
+        path={PLAY_GAME_QUEUE}
+        element={
+          <RequireAuth>
+            <GameQueuePage />
+          </RequireAuth>
+        }
+      ></Route>
       <Route
         path={`${CHATS_URL}/discover`}
         element={

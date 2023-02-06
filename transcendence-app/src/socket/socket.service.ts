@@ -10,9 +10,12 @@ import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { WsException } from '@nestjs/websockets';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 
+type UserId = string;
+
 @Injectable()
 export class SocketService {
   public socket: Server | null = null;
+  onlineUserIds = new Set<UserId>();
 
   constructor(
     private friendsRepository: IFriendRepository,
@@ -157,5 +160,21 @@ export class SocketService {
       }
       throw new WsException("Couldn't delete role for user");
     }
+  }
+
+  addToOnlineUsers(userId: UserId) {
+    this.onlineUserIds.add(userId);
+  }
+
+  deleteFromOnlineUsers(userId: UserId) {
+    this.onlineUserIds.delete(userId);
+  }
+
+  isUserOnline(userId: UserId) {
+    return this.onlineUserIds.has(userId);
+  }
+
+  getOnlineUsers() {
+    return this.onlineUserIds;
   }
 }
