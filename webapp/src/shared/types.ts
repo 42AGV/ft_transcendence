@@ -31,8 +31,11 @@ export type Avatar = {
   avatarY: number;
 };
 
+type PlayState = 'playing' | 'paused';
+
 export type GameInfo = {
-  state: GameState;
+  gameState: GameState;
+  playState: PlayState;
   playerOneId: string;
   playerTwoId: string;
 };

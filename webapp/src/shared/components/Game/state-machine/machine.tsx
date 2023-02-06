@@ -16,7 +16,7 @@ export const gameMachine = createMachine<GameContext, GameEvent>({
   states: {
     start: {
       on: {
-        READY: 'wait',
+        READY: 'play',
       },
     },
     wait: {
