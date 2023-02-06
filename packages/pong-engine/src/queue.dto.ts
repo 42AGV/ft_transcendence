@@ -50,6 +50,7 @@ type GameFinishedDto = {
 export enum gameQueueServerToClientWsEvents {
   gameStatusUpdate = 'gameStatusUpdate',
   gameChallenge = 'gameChallenge',
+  gameContextUpdate = 'gameContextUpdate',
 }
 
 export enum gameQueueClientToServerWsEvents {

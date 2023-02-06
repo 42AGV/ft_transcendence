@@ -27,6 +27,10 @@ import {
 } from 'pong-engine';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SocketService } from '../socket/socket.service';
+import {
+  GamePairingStatusDto,
+  GameQueueStatus,
+} from './dto/game-pairing-status.dto';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -60,6 +64,14 @@ export class GameQueueGateway {
           status: GameStatus.READY,
           game,
         });
+      } else {
+        this.server.to(client.request.user.id).emit(
+          gameQueueServerToClientWsEvents.gameContextUpdate,
+          new GamePairingStatusDto({
+            gameRoomId: game.gameRoomId,
+            gameQueueStatus: GameQueueStatus.WAITING,
+          }),
+        );
       }
       return true;
     }

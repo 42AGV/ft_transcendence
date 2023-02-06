@@ -95,6 +95,10 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
+    const gameCtxUpdateListener = (data: GamePairingStatusDto) => {
+      setGameCtx(data);
+    };
+
     const challengeListener = ({
       gameRoomId,
       from: { username, id },
@@ -171,6 +175,10 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
 
     if (authUser) {
       socket.on(
+        gameQueueServerToClientWsEvents.gameContextUpdate,
+        gameCtxUpdateListener,
+      );
+      socket.on(
         gameQueueServerToClientWsEvents.gameStatusUpdate,
         gameStatusUpdateListener,
       );
@@ -181,6 +189,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return () => {
+      socket.off(gameQueueServerToClientWsEvents.gameContextUpdate);
       socket.off(gameQueueServerToClientWsEvents.gameStatusUpdate);
       socket.off(gameQueueServerToClientWsEvents.gameChallenge);
       socket.off('exception');
