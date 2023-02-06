@@ -58,6 +58,7 @@ export enum gameQueueClientToServerWsEvents {
   gameQuitWaiting = 'gameQuitWaiting',
   gameChallengeResponse = 'gameChallengeResponse',
   gameUserChallenge = 'gameUserChallenge',
+  gameQuitPlaying = 'gameQuitPlaying',
 }
 
 export type GameStatusUpdateDto =

@@ -11,5 +11,5 @@ export abstract class IGamesOngoingRepository {
   abstract isPlayerBusy(userId: UserId): boolean;
   abstract isPlayerPlaying(userId: UserId): boolean;
   abstract getGameRoomForPlayer(userId: UserId): GamePairing | null;
-  abstract deleteGameForId(gameId: GameId): boolean;
+  abstract deleteGameForId(gameId: GameId): GamePairing | null;
 }

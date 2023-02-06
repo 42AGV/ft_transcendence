@@ -33,21 +33,11 @@ export class GameQueueService {
     private challengesPending: IChallengesPendingRepository,
   ) {}
 
-  private getWaitingUserId(): string | null {
-    if (!this.gameQueue) return null;
-    return this.gameQueue.userId;
-  }
-
-  private getWaitingGameId(): string | null {
-    if (!this.gameQueue) return null;
-    return this.gameQueue.gameRoomId;
-  }
-
   private isUserBusy(userId: string): boolean {
     return (
       this.gamesOngoing.isPlayerBusy(userId) ||
       this.challengesPending.isPlayerBusy(userId) ||
-      this.getWaitingUserId() === userId
+      this.gameQueue?.userId === userId
     );
   }
 
@@ -65,7 +55,7 @@ export class GameQueueService {
       this.gameQueue = { gameRoomId: game.gameRoomId, userId };
       return game;
     } else {
-      if (this.getWaitingUserId() === userId) {
+      if (this.gameQueue.userId === userId) {
         return null;
       }
       const gameRoomId = this.gameQueue.gameRoomId;
@@ -75,31 +65,53 @@ export class GameQueueService {
     }
   }
 
-  gameQuitWaiting(userId: string): GameId | null {
+  gameQuitWaiting(userId: string): GamePairing | null {
     if (!this.isUserBusy(userId)) {
       return null;
     }
     if (this.gameQueue && this.gameQueue.userId === userId) {
       const game = this.gamesOngoing.getGameRoomForPlayer(userId);
-      if (!game || game.gameRoomId !== this.gameQueue.gameRoomId) {
+      if (
+        !game ||
+        game.gameRoomId !== this.gameQueue.gameRoomId ||
+        game.userTwoId !== undefined
+      ) {
         throw new WsException(
           "User is in the queue, but the game they've joined is not the " +
-            'game that is waiting',
+            'game that is waiting, or there is a second player in a waiting game',
         );
       }
       this.gamesOngoing.deleteGameForId(game.gameRoomId);
       this.gameQueue = null;
-      return game.gameRoomId;
+      return game;
     }
     if (this.challengesPending.isPlayerBusy(userId)) {
       const game = this.challengesPending.getGameRoomForPlayer(userId);
-      if (!game) return null;
-      const { gameRoomId } = game;
-      this.challengesPending.deleteGameForId(gameRoomId);
-      return gameRoomId;
+      if (!game) {
+        throw new WsException(
+          'User is waiting for a challenge, but there is no instance of such challenge',
+        );
+      }
+      this.challengesPending.deleteGameForId(game.gameRoomId);
+      return game;
     }
     // otherwise the user is playing, and noop
     return null;
+  }
+
+  gameQuitPlaying(userId: string): GamePairing | null {
+    if (!this.gamesOngoing.isPlayerPlaying(userId)) {
+      // the user is waiting: noop
+      return null;
+    }
+    const game = this.gamesOngoing.getGameRoomForPlayer(userId);
+    if (!game || game.userTwoId === undefined) {
+      throw new WsException(
+        "User is playing but gameRoom they're leaving is not in correct state",
+      );
+    }
+    this.gamesOngoing.deleteGameForId(game.gameRoomId);
+    return game;
   }
 
   gameUserChallenge(
@@ -121,7 +133,7 @@ export class GameQueueService {
     this.socket.to(fromId).emit(
       gameQueueServerToClientWsEvents.gameContextUpdate,
       new GamePairingStatusDto({
-        gameRoomId,
+        gameRoomId: null,
         gameQueueStatus: GameQueueStatus.WAITING,
       }),
     );
@@ -130,25 +142,25 @@ export class GameQueueService {
 
   updateChallengeStatus(
     gameChallengeResponseDto: GameChallengeResponseDto,
-    acceptingPlayer: UserId,
-  ): boolean {
+    challengedPlayerId: UserId,
+  ): GamePairing | null {
     const { gameRoomId } = gameChallengeResponseDto;
     const game = this.challengesPending.retrieveGameForId(gameRoomId);
     this.challengesPending.deleteGameForId(gameRoomId);
-    if (!game || !game.userTwoId || game.userTwoId !== acceptingPlayer)
-      return false;
+    if (!game || !game.userTwoId || game.userTwoId !== challengedPlayerId)
+      return null;
     this.gamesOngoing.addGameWithId(gameRoomId, [
       game.userOneId,
       game.userTwoId,
     ]);
-    return true;
+    return game;
   }
 
   isThereAChallengePending(gameRoomId: GameId): boolean {
     return this.challengesPending.retrieveGameForId(gameRoomId) !== null;
   }
 
-  removeChallengeRoom(gameRoomId: GameId): boolean {
+  removeChallengeRoom(gameRoomId: GameId): GamePairing | null {
     return this.challengesPending.deleteGameForId(gameRoomId);
   }
 
@@ -156,7 +168,7 @@ export class GameQueueService {
     const isPlaying = this.gamesOngoing.isPlayerPlaying(userId);
     const gameRoom = this.gamesOngoing.getGameRoomForPlayer(userId);
     const isWaitingToPlay =
-      this.getWaitingUserId() === userId ||
+      this.gameQueue?.userId === userId ||
       this.challengesPending.isPlayerBusy(userId);
     if (isWaitingToPlay && isPlaying) {
       // TODO: remove this exception when we can prove that this will not happen

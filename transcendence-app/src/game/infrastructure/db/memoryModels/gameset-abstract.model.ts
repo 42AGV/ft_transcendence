@@ -22,14 +22,20 @@ export abstract class GameSet {
     return null;
   }
 
-  deleteGameForId(gameId: GameId): boolean {
-    const entry = this.gameSet.get(gameId);
+  deleteGameForId(gameRoomId: GameId): GamePairing | null {
+    const entry = this.gameSet.get(gameRoomId);
     if (entry) {
-      this.usersBusy.delete(entry[0]);
-      entry[1] && this.usersBusy.delete(entry[1]);
-      return this.gameSet.delete(gameId);
+      const [userOneId, userTwoId] = entry;
+      this.usersBusy.delete(userOneId);
+      userTwoId && this.usersBusy.delete(userTwoId);
+      this.gameSet.delete(gameRoomId);
+      return new GamePairing({
+        gameRoomId,
+        userOneId,
+        userTwoId,
+      });
     }
-    return false;
+    return null;
   }
 
   isPlayerBusy(userId: UserId): boolean {

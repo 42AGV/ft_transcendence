@@ -18,15 +18,17 @@ import { PLAY_URL } from '../../shared/urls';
 import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
 
 export default function GameQueuePage() {
-  const { setGameCtx } = useGamePairing();
+  const { gameQueueStatus, setGameCtx } = useGamePairing();
   const { goBack, navigate } = useNavigation();
   const quitAndGoBack = () => {
-    socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
-    setGameCtx &&
-      setGameCtx({
-        gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
-        gameRoomId: null,
-      });
+    if (gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.Waiting) {
+      socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
+      setGameCtx &&
+        setGameCtx({
+          gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+          gameRoomId: null,
+        });
+    }
     goBack();
   };
   return (
@@ -46,12 +48,16 @@ export default function GameQueuePage() {
         variant={ButtonVariant.WARNING}
         iconVariant={IconVariant.LOGOUT}
         onClick={() => {
-          socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
-          setGameCtx &&
-            setGameCtx({
-              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
-              gameRoomId: null,
-            });
+          if (
+            gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.Waiting
+          ) {
+            socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
+            setGameCtx &&
+              setGameCtx({
+                gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+                gameRoomId: null,
+              });
+          }
           navigate(PLAY_URL, { replace: true });
         }}
       >
