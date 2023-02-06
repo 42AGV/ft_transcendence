@@ -71,11 +71,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             gameRoomId,
             gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Playing,
           });
-          navigate(PLAY_GAME_URL);
-          // `${PLAY_GAME_URL}/${gameRoomId}` should probably be the final
-          // navigation, but PLAY_GAME_URL is where our game prototype waits,
-          // for now
-          // navigate(`${PLAY_GAME_URL}/${gameRoomId}`, { replace: true });
+          navigate(`${PLAY_GAME_URL}/${gameRoomId}`, { replace: true });
           break;
         }
         // The handling of these two is similar and should be handled

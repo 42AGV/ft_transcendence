@@ -7,16 +7,10 @@ import {
 } from 'pong-engine';
 import { useGameStateContext } from '../context/gameStateContext';
 import useGameAnimation from './useGameAnimation';
-import { GameInfo } from '../../../types';
-import { useAuth } from '../../../hooks/UseAuth';
 
-type Callback = (game: GameInfo) => void;
-
-const useGameEngine = (updateWithServer?: (cb: Callback) => void) => {
+const useGameEngine = () => {
   const { gameStateRef } = useGameStateContext();
   const { deltaTimeRef } = useGameAnimation();
-  const { authUser } = useAuth();
-  const isPlayerOneRef = React.useRef(false);
 
   const runGameFrame = React.useCallback((): GameState => {
     const state = gameStateRef.current;
@@ -28,28 +22,17 @@ const useGameEngine = (updateWithServer?: (cb: Callback) => void) => {
   }, [gameStateRef, deltaTimeRef]);
 
   const runGameMultiplayerFrame = React.useCallback((): GameState => {
-    if (updateWithServer) {
-      updateWithServer((info: GameInfo) => {
-        gameStateRef.current = info.state;
-        isPlayerOneRef.current = info.playerOneId === authUser?.id;
-      });
-    } else {
-      const state = gameStateRef.current;
-      const newState = runEngineGameMultiplayerFrame(
-        deltaTimeRef.current,
-        state,
-      );
+    const state = gameStateRef.current;
+    const newState = runEngineGameMultiplayerFrame(deltaTimeRef.current, state);
 
-      gameStateRef.current = newState;
-    }
+    gameStateRef.current = newState;
 
     return gameStateRef.current;
-  }, [gameStateRef, updateWithServer, deltaTimeRef, isPlayerOneRef, authUser]);
+  }, [gameStateRef, deltaTimeRef]);
 
   return {
     runGameFrame,
     runGameMultiplayerFrame,
-    isPlayerOneRef,
   };
 };
 

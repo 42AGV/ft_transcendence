@@ -8,9 +8,6 @@ import {
   paddleMoveLeft,
   paddleStop,
   paddleDrag,
-  paddleOpponentMoveRight,
-  paddleOpponentMoveLeft,
-  paddleOpponentStop,
 } from 'pong-engine';
 
 const useGameControls = (
@@ -31,14 +28,6 @@ const useGameControls = (
       } else if (key === 'ArrowLeft') {
         gameStateRef.current = paddleMoveLeft(gameStateRef.current);
         sendGameCommandToServer && sendGameCommandToServer('paddleMoveLeft');
-      } else if (key === 'd') {
-        gameStateRef.current = paddleOpponentMoveRight(gameStateRef.current);
-        sendGameCommandToServer &&
-          sendGameCommandToServer('paddleOpponentMoveRight');
-      } else if (key === 'a') {
-        gameStateRef.current = paddleOpponentMoveLeft(gameStateRef.current);
-        sendGameCommandToServer &&
-          sendGameCommandToServer('paddleOpponentMoveLeft');
       }
     },
     [sendGameCommandToServer, gameStateRef],
@@ -73,11 +62,6 @@ const useGameControls = (
       if (key === 'ArrowRight' || key === 'ArrowLeft') {
         gameStateRef.current = paddleStop(gameStateRef.current);
         sendGameCommandToServer && sendGameCommandToServer('paddleStop');
-      }
-      if (key === 'd' || key === 'a') {
-        gameStateRef.current = paddleOpponentStop(gameStateRef.current);
-        sendGameCommandToServer &&
-          sendGameCommandToServer('paddleOpponentStop');
       }
     },
     [sendGameCommandToServer, gameStateRef],
