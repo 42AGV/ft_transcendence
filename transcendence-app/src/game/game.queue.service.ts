@@ -6,6 +6,7 @@ import { IChallengesPendingRepository } from './infrastructure/db/challenges-pen
 import {
   GameChallengeDto,
   GameChallengeResponseDto,
+  GameChallengeStatus,
   gameQueueServerToClientWsEvents,
   GameStatus,
   GameStatusUpdateDto,
@@ -193,7 +194,22 @@ export class GameQueueService {
   @OnEvent('socket.userDisconnect')
   async handleUserDisconnect(user: { id: string }) {
     if (!this.socket) return;
-    this.gameQuitWaiting(user.id);
+    const maybeWaitingGame = this.gameQuitWaiting(user.id);
+    if (maybeWaitingGame) {
+      this.socket
+        .to(maybeWaitingGame.userOneId)
+        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+          status: GameChallengeStatus.CHALLENGE_DECLINED,
+        } as GameStatusUpdateDto);
+      if (maybeWaitingGame.userTwoId) {
+        this.socket
+          .to(maybeWaitingGame.userTwoId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+      }
+      this.socket.socketsLeave(maybeWaitingGame.gameRoomId);
+    }
     const game = this.gamesOngoing.getGameRoomForPlayer(user.id);
     if (game) {
       // TODO: handle this better
