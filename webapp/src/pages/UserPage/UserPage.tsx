@@ -44,7 +44,7 @@ export default function UserPage() {
   const { username } = useParams();
   const { navigate } = useNavigation();
   const { pathname } = useLocation();
-  const { setGameCtx } = useGamePairing();
+  const { gameQueueStatus, setGameCtx } = useGamePairing();
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
@@ -191,27 +191,30 @@ export default function UserPage() {
                 isToggled={isToggled}
                 onToggle={onToggle}
               />
-              <Button
-                {...{
-                  variant: ButtonVariant.SUBMIT,
-                  iconVariant: IconVariant.PLAY,
-                  onClick: () => {
-                    socket.emit(
-                      gameQueueClientToServerWsEvents.gameUserChallenge,
-                      { to: { id: user.id } } as GameUserChallengeDto,
-                    );
-                    setGameCtx &&
-                      setGameCtx({
-                        gameQueueStatus:
-                          GamePairingStatusDtoGameQueueStatusEnum.Waiting,
-                        gameRoomId: null,
-                      });
-                    navigate(PLAY_GAME_QUEUE);
-                  },
-                }}
-              >
-                challenge player
-              </Button>
+              {gameQueueStatus ===
+                GamePairingStatusDtoGameQueueStatusEnum.None && (
+                <Button
+                  {...{
+                    variant: ButtonVariant.SUBMIT,
+                    iconVariant: IconVariant.PLAY,
+                    onClick: () => {
+                      socket.emit(
+                        gameQueueClientToServerWsEvents.gameUserChallenge,
+                        { to: { id: user.id } } as GameUserChallengeDto,
+                      );
+                      setGameCtx &&
+                        setGameCtx({
+                          gameQueueStatus:
+                            GamePairingStatusDtoGameQueueStatusEnum.Waiting,
+                          gameRoomId: null,
+                        });
+                      navigate(PLAY_GAME_QUEUE);
+                    },
+                  }}
+                >
+                  challenge player
+                </Button>
+              )}
             </>
           )}
           {userWithAuth && (
