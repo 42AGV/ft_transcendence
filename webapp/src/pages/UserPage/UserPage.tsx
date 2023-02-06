@@ -8,8 +8,14 @@ import {
   ToggleSwitch,
   ButtonVariant,
   AvatarPageTemplate,
+  Button,
 } from '../../shared/components';
-import { ADMIN_URL, AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
+import {
+  ADMIN_URL,
+  AVATAR_EP_URL,
+  CHAT_URL,
+  PLAY_GAME_QUEUE,
+} from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -19,6 +25,7 @@ import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useFriend } from '../../shared/hooks/UseFriend';
 import {
+  GamePairingStatusDtoGameQueueStatusEnum,
   UserToRoleDtoRoleEnum,
   UserWithAuthorizationResponseDto,
 } from '../../shared/generated';
@@ -26,12 +33,18 @@ import { useNotificationContext } from '../../shared/context/NotificationContext
 import socket from '../../shared/socket';
 import { WsException } from '../../shared/types';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
+import {
+  gameQueueClientToServerWsEvents,
+  GameUserChallengeDto,
+} from 'pong-engine';
+import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 
 export default function UserPage() {
   const { warn } = useNotificationContext();
   const { username } = useParams();
   const { navigate } = useNavigation();
   const { pathname } = useLocation();
+  const { setGameCtx } = useGamePairing();
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
@@ -172,11 +185,34 @@ export default function UserPage() {
             />
           )}
           {!overridePermissions && user && user.isFriend !== null && (
-            <ToggleSwitch
-              label={isToggled ? 'Unfollow' : 'Follow'}
-              isToggled={isToggled}
-              onToggle={onToggle}
-            />
+            <>
+              <ToggleSwitch
+                label={isToggled ? 'Unfollow' : 'Follow'}
+                isToggled={isToggled}
+                onToggle={onToggle}
+              />
+              <Button
+                {...{
+                  variant: ButtonVariant.SUBMIT,
+                  iconVariant: IconVariant.PLAY,
+                  onClick: () => {
+                    socket.emit(
+                      gameQueueClientToServerWsEvents.gameUserChallenge,
+                      { to: { id: user.id } } as GameUserChallengeDto,
+                    );
+                    setGameCtx &&
+                      setGameCtx({
+                        gameQueueStatus:
+                          GamePairingStatusDtoGameQueueStatusEnum.Waiting,
+                        gameRoomId: null,
+                      });
+                    navigate(PLAY_GAME_QUEUE);
+                  },
+                }}
+              >
+                challenge player
+              </Button>
+            </>
           )}
           {userWithAuth && (
             <>

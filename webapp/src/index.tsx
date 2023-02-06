@@ -29,6 +29,7 @@ import {
   EditChatroomAvatarPage,
   EnableTwoFactorAuthPage,
   ValidateTwoFactorAuthPage,
+  GameQueuePage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -53,6 +54,7 @@ import {
   ADMIN_URL,
   TWO_FACTOR_AUTH_ENABLE_URL,
   TWO_FACTOR_AUTH_VALIDATE_URL,
+  PLAY_GAME_QUEUE,
 } from './shared/urls';
 import { AuthProvider } from './shared/context/auth-context';
 import RequireAuth from './shared/components/RequireAuth/RequireAuth';
@@ -62,6 +64,7 @@ import { UserStatusProvider } from './shared/context/UserStatusContext';
 import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
 import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
+import { GamePairingProvider } from './shared/context/GamePairingContext';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -71,11 +74,13 @@ function AppContext({ children }: { children: JSX.Element }) {
   return (
     <NotificationContextProvider>
       <AuthProvider>
-        <UserStatusProvider>
-          <UserFriendProvider>
-            <UserBlocklistProvider>{children}</UserBlocklistProvider>
-          </UserFriendProvider>
-        </UserStatusProvider>
+        <GamePairingProvider>
+          <UserStatusProvider>
+            <UserFriendProvider>
+              <UserBlocklistProvider>{children}</UserBlocklistProvider>
+            </UserFriendProvider>
+          </UserStatusProvider>
+        </GamePairingProvider>
       </AuthProvider>
     </NotificationContextProvider>
   );
@@ -136,6 +141,14 @@ function AppRoutes() {
           </RequireAuth>
         }
       />
+      <Route
+        path={PLAY_GAME_QUEUE}
+        element={
+          <RequireAuth>
+            <GameQueuePage />
+          </RequireAuth>
+        }
+      ></Route>
       <Route
         path={`${CHATS_URL}/discover`}
         element={
