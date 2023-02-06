@@ -169,13 +169,13 @@ export class GameQueueGateway {
       );
     }
     this.gameQueueService.removeChallengeRoom(gameRoomId);
-    // TODO revisit if we need this.socket.to(acceptingPlayer).emit(
-    //       gameQueueServerToClientWsEvents.gameContextUpdate,
-    //       new GamePairingStatusDto({
-    //         gameRoomId,
-    //         gameQueueStatus: GameQueueStatus.WAITING,
-    //       }),
-    //     ); here
+    this.server.to(acceptingPlayer).emit(
+      gameQueueServerToClientWsEvents.gameContextUpdate,
+      new GamePairingStatusDto({
+        gameRoomId: null,
+        gameQueueStatus: GameQueueStatus.NONE,
+      }),
+    );
     this.server
       .to(gameRoomId)
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
