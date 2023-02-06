@@ -27,6 +27,10 @@ import {
 } from 'pong-engine';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SocketService } from '../socket/socket.service';
+import {
+  GamePairingStatusDto,
+  GameQueueStatus,
+} from './dto/game-pairing-status.dto';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -51,7 +55,7 @@ export class GameQueueGateway {
       client.join(game.gameRoomId);
       if (game.userTwoId !== undefined) {
         this.server
-          .to(game.gameRoomId)
+          .to([game.userOneId, game.userTwoId])
           .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
             status: GameStatus.READY,
             gameRoomId: game.gameRoomId,
@@ -60,6 +64,14 @@ export class GameQueueGateway {
           status: GameStatus.READY,
           game,
         });
+      } else {
+        this.server.to(client.request.user.id).emit(
+          gameQueueServerToClientWsEvents.gameContextUpdate,
+          new GamePairingStatusDto({
+            gameRoomId: null,
+            gameQueueStatus: GameQueueStatus.WAITING,
+          }),
+        );
       }
       return true;
     }
@@ -70,14 +82,42 @@ export class GameQueueGateway {
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameQuitWaiting)
   gameQuitWaiting(@ConnectedSocket() client: Socket): boolean {
-    const gameRoomId = this.gameQueueService.gameQuitWaiting(
-      client.request.user.id,
-    );
-    if (gameRoomId) {
-      client.leave(gameRoomId);
+    const game = this.gameQueueService.gameQuitWaiting(client.request.user.id);
+    if (game) {
+      this.server.to(client.request.user.id).emit(
+        gameQueueServerToClientWsEvents.gameContextUpdate,
+        new GamePairingStatusDto({
+          gameRoomId: null,
+          gameQueueStatus: GameQueueStatus.NONE,
+        }),
+      );
+      if (game.userTwoId) {
+        this.server
+          .to(game.userTwoId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+      }
+      this.server.socketsLeave(game.gameRoomId);
       return true;
     }
     throw new WsException('User was not waiting, so cannot quit');
+  }
+
+  @SubscribeMessage(gameQueueClientToServerWsEvents.gameQuitPlaying)
+  gameQuitPlaying(@ConnectedSocket() client: Socket): boolean {
+    const game = this.gameQueueService.gameQuitPlaying(client.request.user.id);
+    if (game && game.userTwoId) {
+      const { gameRoomId } = game;
+      this.server
+        .to([game.userOneId, game.userTwoId])
+        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+          status: GameStatus.FINISHED,
+        } as GameStatusUpdateDto);
+      this.server.socketsLeave(gameRoomId);
+      return true;
+    }
+    throw new WsException('User was not playing, so cannot quit');
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameUserChallenge)
@@ -117,32 +157,57 @@ export class GameQueueGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() gameChallengeResponseDto: GameChallengeResponseDto,
   ): boolean {
-    const acceptingPlayer = client.request.user.id;
+    const challengedPlayerId = client.request.user.id;
     const { status, gameRoomId } = gameChallengeResponseDto;
     if (!this.gameQueueService.isThereAChallengePending(gameRoomId)) {
       this.server
-        .to(acceptingPlayer)
+        .to(challengedPlayerId)
         .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
           status: GameChallengeStatus.CHALLENGE_DECLINED,
         } as GameStatusUpdateDto);
       throw new WsException(
-        'There is no such challenge pending. Challenger may have cancelled',
+        'There is no such challenge pending. Challenger has cancelled',
       );
     }
     if (status === GameChallengeStatus.CHALLENGE_ACCEPTED) {
-      this.gameQueueService.updateChallengeStatus(gameChallengeResponseDto);
-      client.join(gameRoomId);
-      this.server
-        .to(gameRoomId)
-        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-          status,
-          gameRoomId,
-        } as GameStatusUpdateDto);
-      return true;
+      const game = this.gameQueueService.updateChallengeStatus(
+        gameChallengeResponseDto,
+        challengedPlayerId,
+      );
+      if (game && game.userTwoId) {
+        const { gameRoomId, userOneId, userTwoId } = game;
+        client.join(gameRoomId);
+        this.server
+          .to([userOneId, userTwoId])
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status,
+            gameRoomId,
+          } as GameStatusUpdateDto);
+        this.eventEmitter.emit('game.ready', {
+          status: GameStatus.READY,
+          game,
+        });
+        return true;
+      }
+      throw new WsException(
+        'There is no such challenge pending. Challenged player Id is unexpected',
+      );
     }
-    this.gameQueueService.removeChallengeRoom(gameRoomId);
+    const game = this.gameQueueService.removeChallengeRoom(gameRoomId);
+    if (!game) {
+      throw new WsException(
+        'There is no such challenge pending. Challenged player Id is unexpected',
+      );
+    }
+    this.server.to(challengedPlayerId).emit(
+      gameQueueServerToClientWsEvents.gameContextUpdate,
+      new GamePairingStatusDto({
+        gameRoomId: null,
+        gameQueueStatus: GameQueueStatus.NONE,
+      }),
+    );
     this.server
-      .to(gameRoomId)
+      .to(game.userOneId)
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
         status: GameChallengeStatus.CHALLENGE_DECLINED,
       } as GameStatusUpdateDto);
