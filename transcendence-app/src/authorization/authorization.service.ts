@@ -145,6 +145,7 @@ export class AuthorizationService {
     const { gOwner, gAdmin, gBanned } =
       await this.getUserWithAuthorizationFromUsername(destUsername);
     const ret = new UserWithAuthorizationResponseDto({
+      isLocal: destUser.password !== null,
       gOwner,
       gAdmin,
       gBanned,

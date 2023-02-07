@@ -38,7 +38,6 @@ export class User {
   @ApiHideProperty()
   @Exclude()
   password: string | null;
-  isLocal: boolean;
   avatarId: string;
   avatarX: number = 0;
   avatarY: number = 0;
@@ -54,7 +53,6 @@ export class User {
     this.email = userData.email;
     this.fullName = userData.fullName;
     this.password = userData.password;
-    this.isLocal = this.password !== null;
     this.avatarId = userData.avatarId;
     this.avatarX = userData.avatarX;
     this.avatarY = userData.avatarY;

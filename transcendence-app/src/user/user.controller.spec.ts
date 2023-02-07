@@ -76,7 +76,6 @@ describe('UserController', () => {
           avatarId: uuidv4(),
           avatarX: 0,
           avatarY: 0,
-          isLocal: true,
           ...testUserDto,
           username,
           blockRelation: {
