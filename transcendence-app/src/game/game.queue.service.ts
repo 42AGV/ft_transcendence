@@ -6,16 +6,12 @@ import { IChallengesPendingRepository } from './infrastructure/db/challenges-pen
 import {
   GameChallengeDto,
   GameChallengeResponseDto,
-  GameChallengeStatus,
   gameQueueServerToClientWsEvents,
-  GameStatus,
-  GameStatusUpdateDto,
 } from 'pong-engine';
 import {
   GamePairingStatusDto,
   GameQueueStatus,
 } from './dto/game-pairing-status.dto';
-import { OnEvent } from '@nestjs/event-emitter';
 import { WsException } from '@nestjs/websockets';
 import { GamePairing } from './infrastructure/db/game-pairing.entity';
 
@@ -191,49 +187,11 @@ export class GameQueueService {
     });
   }
 
-  @OnEvent('socket.userDisconnect')
-  async handleUserDisconnect(user: { id: string }) {
-    if (!this.socket) return;
-    const maybeWaitingGame = this.gameQuitWaiting(user.id);
-    // TODO: do something useful here. For now it's just not leaking resources
-    if (maybeWaitingGame) {
-      if (user.id !== maybeWaitingGame.userOneId) {
-        this.socket
-          .to(maybeWaitingGame.userOneId)
-          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-            status: GameChallengeStatus.CHALLENGE_DECLINED,
-          } as GameStatusUpdateDto);
-      }
-      if (
-        maybeWaitingGame.userTwoId &&
-        user.id !== maybeWaitingGame.userTwoId
-      ) {
-        this.socket
-          .to(maybeWaitingGame.userTwoId)
-          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-            status: GameChallengeStatus.CHALLENGE_DECLINED,
-          } as GameStatusUpdateDto);
-      }
-      this.socket.socketsLeave(maybeWaitingGame.gameRoomId);
-    }
-    const game = this.gamesOngoing.getGameRoomForPlayer(user.id);
-    if (game) {
-      if (user.id !== game.userOneId) {
-        this.socket
-          .to(game.userOneId)
-          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-            status: GameStatus.FINISHED,
-          } as GameStatusUpdateDto);
-      }
-      if (game.userTwoId && user.id !== game.userTwoId) {
-        this.socket
-          .to(game.userTwoId)
-          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-            status: GameStatus.FINISHED,
-          } as GameStatusUpdateDto);
-      }
-      this.socket.socketsLeave(game.gameRoomId);
-      this.gamesOngoing.deleteGameForId(game.gameRoomId);
-    }
+  getPlayingRoomForId(userId: UserId): GamePairing | null {
+    return this.gamesOngoing.getGameRoomForPlayer(userId);
+  }
+
+  deletePlayingRoomForId(gameRoomId: GameId) {
+    return this.gamesOngoing.deleteGameForId(gameRoomId);
   }
 }

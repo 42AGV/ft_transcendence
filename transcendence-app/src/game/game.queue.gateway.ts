@@ -25,7 +25,7 @@ import {
   GameStatusUpdateDto,
   GameUserChallengeDto,
 } from 'pong-engine';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { SocketService } from '../socket/socket.service';
 import {
   GamePairingStatusDto,
@@ -213,5 +213,50 @@ export class GameQueueGateway {
       } as GameStatusUpdateDto);
     this.server.socketsLeave(gameRoomId);
     return false;
+  }
+
+  @OnEvent('socket.userDisconnect')
+  async handleUserDisconnect(user: { id: string }) {
+    // TODO: do something useful here. For now it's just not leaking resources
+    const maybeWaitingGame = this.gameQueueService.gameQuitWaiting(user.id);
+    if (maybeWaitingGame) {
+      if (user.id !== maybeWaitingGame.userOneId) {
+        this.server
+          .to(maybeWaitingGame.userOneId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+      }
+      if (
+        maybeWaitingGame.userTwoId &&
+        user.id !== maybeWaitingGame.userTwoId
+      ) {
+        this.server
+          .to(maybeWaitingGame.userTwoId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+      }
+      this.server.socketsLeave(maybeWaitingGame.gameRoomId);
+    }
+    const game = this.gameQueueService.getPlayingRoomForId(user.id);
+    if (game) {
+      if (user.id !== game.userOneId) {
+        this.server
+          .to(game.userOneId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameStatus.FINISHED,
+          } as GameStatusUpdateDto);
+      }
+      if (game.userTwoId && user.id !== game.userTwoId) {
+        this.server
+          .to(game.userTwoId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameStatus.FINISHED,
+          } as GameStatusUpdateDto);
+      }
+      this.server.socketsLeave(game.gameRoomId);
+      this.gameQueueService.deletePlayingRoomForId(game.gameRoomId);
+    }
   }
 }
