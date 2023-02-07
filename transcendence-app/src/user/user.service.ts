@@ -86,6 +86,7 @@ export class UserService {
         avatarY: 0,
         twoFactorAuthenticationSecret: null,
         isTwoFactorAuthenticationEnabled: false,
+        isLocal: userDto.password !== null,
         ...userDto,
       },
     );
