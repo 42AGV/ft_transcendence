@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { useGameStateContext } from '../context/gameStateContext';
-import { Socket } from 'socket.io-client';
-import { DefaultEventsMap } from '@socket.io/component-emitter';
 import {
   GameCommand,
   paddleMoveRight,
@@ -11,9 +9,7 @@ import {
 } from 'pong-engine';
 
 const useGameControls = (
-  sendGameCommandToServer?: (
-    command: GameCommand,
-  ) => Socket<DefaultEventsMap, DefaultEventsMap>,
+  sendGameCommandToServer?: (command: GameCommand) => void,
 ) => {
   const { gameStateRef } = useGameStateContext();
   const dragRef = React.useRef<number>(0);

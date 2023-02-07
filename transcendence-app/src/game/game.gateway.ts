@@ -12,6 +12,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
@@ -37,7 +38,8 @@ type UserId = string;
 type ClientId = string;
 const FPS = 30;
 const DELTA_TIME = 1 / FPS;
-const MAX_PAUSED_TIME_MS = 1 * 60 * 1000; // 1 minute;
+// const MAX_PAUSED_TIME_MS = 1 * 60 * 1000; // 1 minute
+const MAX_PAUSED_TIME_MS = 15 * 1000; // 15 seconds
 
 type PlayState = 'playing' | 'paused';
 
@@ -73,7 +75,7 @@ export class GameGateway {
       ) {
         // Game is paused for longer than MAX_PAUSED_TIME_MS
         // end the game and cleanup
-        this.server.to(gameId).emit('endGame', gameInfo);
+        this.server.to(gameId).emit('gameEnded', gameInfo);
         this.logger.log(`game ${gameId} ended at ${Date.now()}`);
         console.dir(gameInfo);
         this.server.socketsLeave(gameId);
@@ -109,9 +111,11 @@ export class GameGateway {
   ) {
     const game = this.games.get(gameRoomId);
     if (!game) {
-      return;
+      this.server.to(client.id).emit('gameNotFound');
+      throw new WsException('Game not found');
     }
     client.join(gameRoomId);
+    this.server.to(client.id).emit('gameJoined');
 
     const userId = client.request.user.id;
     const isPlayerOne = userId === game.playerOneId;
