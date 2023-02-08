@@ -52,7 +52,6 @@ export class GameQueueGateway {
   gameQueueJoin(@ConnectedSocket() client: Socket): boolean {
     const game = this.gameQueueService.gameQueueJoin(client.request.user.id);
     if (game) {
-      client.join(game.gameRoomId);
       if (game.userTwoId !== undefined) {
         this.server
           .to([game.userOneId, game.userTwoId])
@@ -60,10 +59,7 @@ export class GameQueueGateway {
             status: GameStatus.READY,
             gameRoomId: game.gameRoomId,
           } as GameStatusUpdateDto);
-        this.eventEmitter.emit('game.ready', {
-          status: GameStatus.READY,
-          game,
-        });
+        this.eventEmitter.emit('game.ready', game);
       } else {
         this.server.to(client.request.user.id).emit(
           gameQueueServerToClientWsEvents.gameContextUpdate,
@@ -98,26 +94,9 @@ export class GameQueueGateway {
             status: GameChallengeStatus.CHALLENGE_DECLINED,
           } as GameStatusUpdateDto);
       }
-      this.server.socketsLeave(game.gameRoomId);
       return true;
     }
     throw new WsException('User was not waiting, so cannot quit');
-  }
-
-  @SubscribeMessage(gameQueueClientToServerWsEvents.gameQuitPlaying)
-  gameQuitPlaying(@ConnectedSocket() client: Socket): boolean {
-    const game = this.gameQueueService.gameQuitPlaying(client.request.user.id);
-    if (game && game.userTwoId) {
-      const { gameRoomId } = game;
-      this.server
-        .to([game.userOneId, game.userTwoId])
-        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-          status: GameStatus.FINISHED,
-        } as GameStatusUpdateDto);
-      this.server.socketsLeave(gameRoomId);
-      return true;
-    }
-    throw new WsException('User was not playing, so cannot quit');
   }
 
   @SubscribeMessage(gameQueueClientToServerWsEvents.gameUserChallenge)
@@ -139,7 +118,6 @@ export class GameQueueGateway {
       gameUserChallengeDto.to.id,
     );
     if (gameRoomId) {
-      client.join(gameRoomId);
       return true;
     }
     this.server
@@ -176,17 +154,13 @@ export class GameQueueGateway {
       );
       if (game && game.userTwoId) {
         const { gameRoomId, userOneId, userTwoId } = game;
-        client.join(gameRoomId);
         this.server
           .to([userOneId, userTwoId])
           .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
             status,
             gameRoomId,
           } as GameStatusUpdateDto);
-        this.eventEmitter.emit('game.ready', {
-          status: GameStatus.READY,
-          game,
-        });
+        this.eventEmitter.emit('game.ready', game);
         return true;
       }
       throw new WsException(
@@ -211,7 +185,6 @@ export class GameQueueGateway {
       .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
         status: GameChallengeStatus.CHALLENGE_DECLINED,
       } as GameStatusUpdateDto);
-    this.server.socketsLeave(gameRoomId);
     return false;
   }
 }

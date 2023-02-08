@@ -44,7 +44,7 @@ export default function UserPage() {
   const { username } = useParams();
   const { navigate } = useNavigation();
   const { pathname } = useLocation();
-  const { gameQueueStatus, setGameCtx } = useGamePairing();
+  const { gameQueueStatus } = useGamePairing();
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
@@ -202,12 +202,6 @@ export default function UserPage() {
                         gameQueueClientToServerWsEvents.gameUserChallenge,
                         { to: { id: user.id } } as GameUserChallengeDto,
                       );
-                      setGameCtx &&
-                        setGameCtx({
-                          gameQueueStatus:
-                            GamePairingStatusDtoGameQueueStatusEnum.Waiting,
-                          gameRoomId: null,
-                        });
                       navigate(PLAY_GAME_QUEUE);
                     },
                   }}

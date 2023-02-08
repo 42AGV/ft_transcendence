@@ -4,14 +4,11 @@ import { GameGateway } from './game.gateway';
 import { AuthorizationModule } from '../authorization/authorization.module';
 import { GameQueueGateway } from './game.queue.gateway';
 import { GameQueueService } from './game.queue.service';
-import {
-  ChallengesPending,
-  GamesOngoing,
-} from './infrastructure/db/memoryModels';
-import { IGamesOngoingRepository } from './infrastructure/db/games-ongoing.repository';
+import { ChallengesPending } from './infrastructure/db/memoryModels';
 import { IChallengesPendingRepository } from './infrastructure/db/challenges-pending.repository';
 import { GameController } from './game.controller';
 import { SocketModule } from '../socket/socket.module';
+import { GameService } from './game.service';
 
 @Global()
 @Module({
@@ -24,10 +21,7 @@ import { SocketModule } from '../socket/socket.module';
       provide: IChallengesPendingRepository,
       useClass: ChallengesPending,
     },
-    {
-      provide: IGamesOngoingRepository,
-      useClass: GamesOngoing,
-    },
+    GameService,
   ],
   controllers: [GameController],
   // exports: [ChatService, ChatroomMemberService],

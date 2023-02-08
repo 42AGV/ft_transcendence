@@ -28,7 +28,7 @@ const JOIN_GAME = 'joinGame';
 const LEAVE_GAME = 'leaveGame';
 const GAME_JOINED = 'gameJoined';
 const GAME_NOT_FOUND = 'gameNotFound';
-const GAME_ENDED = 'gameEnded';
+const GAME_FINISHED = 'gameFinished';
 
 type GameProps = {
   gameId: string;
@@ -110,7 +110,7 @@ const Play = ({ gameId }: GameProps) => {
     socket.on(GAME_JOINED, handleGameJoined);
     socket.on(UPDATE_GAME, handleUpdateGame);
     socket.on(GAME_NOT_FOUND, handleGameNotFound);
-    socket.on(GAME_ENDED, handleGameEnded);
+    socket.on(GAME_FINISHED, handleGameEnded);
     socket.on('exception', (wsError: WsException) => {
       warn(wsError.message);
     });
@@ -119,7 +119,7 @@ const Play = ({ gameId }: GameProps) => {
       socket.off(GAME_JOINED);
       socket.off(UPDATE_GAME);
       socket.off(GAME_NOT_FOUND);
-      socket.off(GAME_ENDED);
+      socket.off(GAME_FINISHED);
       socket.off('exception');
     };
   }, [authUser, renderMultiplayerFrame, navigate, notify, warn]);

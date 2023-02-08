@@ -3,9 +3,8 @@ import {
   ReactNode,
   useEffect,
   useState,
-  Dispatch,
-  SetStateAction,
   useCallback,
+  useMemo,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
@@ -33,7 +32,6 @@ import {
 export interface GamePairingContextType {
   gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
   gameRoomId: string | null;
-  setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
 }
 
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
@@ -80,7 +78,13 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         // @ts-ignore
         case GameChallengeStatus.CHALLENGE_DECLINED: {
           warn(`Challenge declined`);
-        } // FALLS THROUGH to GameStatus.FINISHED
+          setGameCtx({
+            gameRoomId: null,
+            gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+          });
+          navigate(PLAY_URL, { replace: true });
+          break;
+        }
         case GameStatus.FINISHED: {
           notify('Game finished');
           setGameCtx({
@@ -193,12 +197,15 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 
-  const contextValue = {
-    gameQueueStatus:
-      gameCtx?.gameQueueStatus ?? GamePairingStatusDtoGameQueueStatusEnum.None,
-    gameRoomId: gameCtx?.gameRoomId ?? null,
-    setGameCtx,
-  };
+  const contextValue = useMemo(
+    () => ({
+      gameQueueStatus:
+        gameCtx?.gameQueueStatus ??
+        GamePairingStatusDtoGameQueueStatusEnum.None,
+      gameRoomId: gameCtx?.gameRoomId ?? null,
+    }),
+    [gameCtx],
+  );
 
   return (
     <GamePairingContext.Provider value={contextValue}>

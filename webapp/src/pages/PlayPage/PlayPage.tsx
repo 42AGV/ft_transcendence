@@ -13,7 +13,7 @@ import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated'
 import { useCallback, useMemo } from 'react';
 
 export default function PlayPage() {
-  const { gameQueueStatus, setGameCtx } = useGamePairing();
+  const { gameQueueStatus } = useGamePairing();
   const navigate = useNavigate();
 
   // To be replaced with real games request
@@ -44,36 +44,21 @@ export default function PlayPage() {
       case GamePairingStatusDtoGameQueueStatusEnum.None: {
         return () => {
           socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
-          setGameCtx &&
-            setGameCtx({
-              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Waiting,
-              gameRoomId: null,
-            });
           navigate(PLAY_GAME_QUEUE);
         };
       }
       case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
         return () => {
           socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
-          setGameCtx &&
-            setGameCtx({
-              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
-              gameRoomId: null,
-            });
         };
       }
       case GamePairingStatusDtoGameQueueStatusEnum.Waiting: {
         return () => {
           socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
-          setGameCtx &&
-            setGameCtx({
-              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
-              gameRoomId: null,
-            });
         };
       }
     }
-  }, [gameQueueStatus, navigate, setGameCtx]);
+  }, [gameQueueStatus, navigate]);
 
   const buttonLabel = useMemo(() => {
     switch (gameQueueStatus) {
