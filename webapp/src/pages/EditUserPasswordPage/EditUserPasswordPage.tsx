@@ -12,6 +12,7 @@ import { usersApi } from '../../shared/services/ApiService';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 export default function EditUserPasswordPage() {
   const { authUser, isLoading } = useAuth();
@@ -69,6 +70,9 @@ export default function EditUserPasswordPage() {
     updatePassword().catch((e) => console.error(e));
   };
 
+  if (authUser && !authUser.isLocal) {
+    return <NotFoundPage />;
+  }
   return (
     <div className="edit-user-password-page">
       <AvatarPageTemplate
