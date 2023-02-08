@@ -74,15 +74,15 @@ const Play = ({ gameId }: GameProps) => {
   }, [gameId, gameJoined]);
 
   React.useEffect(() => {
-    function handleGameJoined() {
+    function handleGameJoined(info: GameInfo) {
+      isPlayerOneRef.current = authUser?.id === info.playerOneId;
+      isPlayerRef.current =
+        authUser?.id === info.playerOneId || authUser?.id === info.playerTwoId;
       setGameJoined(true);
     }
 
     function handleUpdateGame(info: GameInfo) {
       gameStateRef.current = info.gameState;
-      isPlayerOneRef.current = authUser?.id === info.playerOneId;
-      isPlayerRef.current =
-        authUser?.id === info.playerOneId || authUser?.id === info.playerTwoId;
       if (gameStateRef.current) {
         const gameState = gameStateRef.current;
         const canvasContext = canvasRef.current?.getContext('2d');

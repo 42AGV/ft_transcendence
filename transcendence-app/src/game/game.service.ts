@@ -105,7 +105,7 @@ export class GameService {
       throw new WsException('Game not found');
     }
     client.join(gameRoomId);
-    this.server.to(client.id).emit('gameJoined');
+    this.server.to(client.id).emit('gameJoined', game);
 
     const userId = client.request.user.id;
     const isPlayerOne = userId === game.playerOneId;
