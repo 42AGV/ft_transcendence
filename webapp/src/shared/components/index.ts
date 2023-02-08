@@ -58,3 +58,5 @@ export { default as CustomConfirmAlert } from './CustomConfirmAlert/CustomConfir
 export { default as GameSpinner } from './GameSpinner/GameSpinner';
 
 export { default as Timer } from './Timer/Timer';
+
+export { default as LandingAnimationPageTemplate } from './templates/LandingAnimationPageTemplate/LandingAnimationPageTemplate';

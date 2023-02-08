@@ -1,15 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Navigate, useNavigate } from 'react-router-dom';
 import {
   Button,
   ButtonVariant,
   Input,
   InputVariant,
-  Text,
-  TextColor,
-  TextVariant,
-  TextWeight,
+  LandingAnimationPageTemplate,
 } from '../../shared/components';
 import { RegisterUserDto, ResponseError } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
@@ -17,7 +13,6 @@ import { authApi } from '../../shared/services/ApiService';
 import {
   DEFAULT_LOGIN_REDIRECT_URL,
   LOGIN_OPTIONS_URL,
-  HOST_URL,
 } from '../../shared/urls';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 
@@ -104,74 +99,58 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="register">
-      <Link className="register-title" to={HOST_URL}>
-        <Text
-          variant={TextVariant.TITLE}
-          color={TextColor.GAME}
-          weight={TextWeight.BOLD}
-        >
-          PONG
-        </Text>
-      </Link>
-      <div className="landing-animation">
-        <div className="landing-animation-ping"></div>
-        <div className="landing-animation-pong"></div>
-        <div className="landing-animation-ball"></div>
-      </div>
-      <div className="register-container">
+    <LandingAnimationPageTemplate>
+      <div className="register-page">
         <form
           id="register-form"
           className="register-form"
           onSubmit={handleOnSubmit}
         >
-          <div className="inputs-container">
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Username"
-              placeholder="username"
-              value={formValues.username}
-              name="username"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Email"
-              placeholder="email"
-              value={formValues.email}
-              name="email"
-              type="email"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Full Name"
-              placeholder="full name"
-              value={formValues.fullName}
-              name="fullName"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              label="Password"
-              placeholder="password"
-              value={formValues.password}
-              name="password"
-              type="password"
-              onChange={handleInputChange}
-            />
-            <Input
-              variant={InputVariant.LIGHT}
-              placeholder="repeat password"
-              value={formValues.confirmationPassword}
-              name="confirmationPassword"
-              type="password"
-              onChange={handleInputChange}
-            />
-            <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
-          </div>
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Username"
+            placeholder="username"
+            value={formValues.username}
+            name="username"
+            onChange={handleInputChange}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Email"
+            placeholder="email"
+            value={formValues.email}
+            name="email"
+            type="email"
+            onChange={handleInputChange}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Full Name"
+            placeholder="full name"
+            value={formValues.fullName}
+            name="fullName"
+            onChange={handleInputChange}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            label="Password"
+            placeholder="password"
+            value={formValues.password}
+            name="password"
+            type="password"
+            onChange={handleInputChange}
+          />
+          <Input
+            variant={InputVariant.LIGHT}
+            placeholder="repeat password"
+            value={formValues.confirmationPassword}
+            name="confirmationPassword"
+            type="password"
+            onChange={handleInputChange}
+          />
+          <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
         </form>
       </div>
-    </div>
+    </LandingAnimationPageTemplate>
   );
 }
