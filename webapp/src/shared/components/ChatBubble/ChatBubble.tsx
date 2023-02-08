@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { USER_URL } from '../../urls';
 import { AvatarProps, SmallAvatar } from '../Avatar/Avatar';
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './ChatBubble.css';
@@ -27,7 +29,11 @@ export default function ChatBubble({
   return (
     <div className={`chat-bubble chat-bubble-${variant}`}>
       <div className="chat-bubble-avatar">
-        {avatar && !isConsecutive && <SmallAvatar {...avatar} />}
+        {avatar && !isConsecutive && (
+          <Link to={`${USER_URL}/${name}`}>
+            <SmallAvatar {...avatar} />
+          </Link>
+        )}
       </div>
       <div
         className={`chat-bubble-text-container chat-bubble-text-container-${variant}`}
