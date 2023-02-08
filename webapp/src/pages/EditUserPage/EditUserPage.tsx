@@ -88,11 +88,15 @@ export default function EditUserPage() {
         form: 'edit-user-form',
       }}
       //TODO: users from oauth42 have null password, disable?
-      button={{
-        children: 'edit password',
-        variant: ButtonVariant.ALTERNATIVE,
-        onClick: () => navigate(EDIT_USER_PASSWORD_URL),
-      }}
+      button={
+        authUser && authUser.isLocal
+          ? {
+              children: 'edit password',
+              variant: ButtonVariant.ALTERNATIVE,
+              onClick: () => navigate(EDIT_USER_PASSWORD_URL),
+            }
+          : undefined
+      }
     >
       <form
         id="edit-user-form"
