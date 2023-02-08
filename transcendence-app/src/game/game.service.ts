@@ -41,10 +41,10 @@ const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
 export class GameService {
   public server: Server | null = null;
   private readonly logger = new Logger(GameService.name);
-  games = new Map<GameId, GameInfo>();
-  userToGame = new Map<UserId, GameId>();
-  playerClients = new Map<UserId, Set<ClientId>>();
-  intervalId: NodeJS.Timer | undefined = undefined;
+  private readonly games = new Map<GameId, GameInfo>();
+  private readonly userToGame = new Map<UserId, GameId>();
+  private readonly playerClients = new Map<UserId, Set<ClientId>>();
+  private intervalId: NodeJS.Timer | undefined = undefined;
 
   // constructor() {}
 
