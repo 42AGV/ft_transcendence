@@ -31,9 +31,9 @@ export default function ValidateTwoFactorAuthPage() {
         await authApi.authControllerValidateTwoFactorAuthentication({
           twoFactorAuthenticationCodeDto: { code },
         });
-      const { gOwner, gAdmin, gBanned } =
+      const { isLocal, gOwner, gAdmin, gBanned } =
         await authApi.authControllerRetrieveAuthUserWithRoles();
-      setAuthUser({ ...authUser, gOwner, gAdmin, gBanned });
+      setAuthUser({ ...authUser, isLocal, gOwner, gAdmin, gBanned });
       navigate(DEFAULT_LOGIN_REDIRECT_URL, { replace: true });
     } catch (error: unknown) {
       handleRequestError(error, 'Could not validate 2FA', warn);
