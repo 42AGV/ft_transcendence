@@ -100,12 +100,12 @@ export default function RegisterPage() {
 
   return (
     <LandingAnimationPageTemplate>
-      <form
-        id="register-form"
-        className="register-form"
-        onSubmit={handleOnSubmit}
-      >
-        <div className="inputs-container">
+      <div className="register-page">
+        <form
+          id="register-form"
+          className="register-form"
+          onSubmit={handleOnSubmit}
+        >
           <Input
             variant={InputVariant.LIGHT}
             label="Username"
@@ -149,8 +149,8 @@ export default function RegisterPage() {
             onChange={handleInputChange}
           />
           <Button variant={ButtonVariant.SUBMIT}>Create new account</Button>
-        </div>
-      </form>
+        </form>
+      </div>
     </LandingAnimationPageTemplate>
   );
 }

@@ -3,21 +3,21 @@
 }
 
 .register-form {
-  grid-area: main;
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.5rem var(--column-gap);
 }
 
-.register-form .inputs-container > .input {
+.register-form > .input {
   margin-bottom: 0.875rem;
   width: 100%;
   min-width: 15rem;
   max-width: 20rem;
 }
 
-.register-form .inputs-container > .input > label {
+.register-form > .input > label {
   display: inline-block;
   text-align: left;
   width: 100%;
