@@ -5,6 +5,8 @@ import { IChallengesPendingRepository } from './infrastructure/db/challenges-pen
 import {
   GameChallengeDto,
   GameChallengeResponseDto,
+  GameChallengeStatus,
+  GameStatusUpdateDto,
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 import {
@@ -159,6 +161,21 @@ export class GameQueueService {
   @OnEvent('socket.userDisconnect')
   async handleUserDisconnect(user: { id: string }) {
     if (!this.socket) return;
-    this.gameQuitWaiting(user.id);
+    const maybeWaitingGame = this.gameQuitWaiting(user.id);
+    if (maybeWaitingGame) {
+      if (user.id !== maybeWaitingGame.userOneId) {
+        this.socket
+          .to(maybeWaitingGame.userOneId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+      }
+      if (maybeWaitingGame.userTwoId && user.id !== maybeWaitingGame.userTwoId)
+        this.socket
+          .to(maybeWaitingGame.userTwoId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+    }
   }
 }
