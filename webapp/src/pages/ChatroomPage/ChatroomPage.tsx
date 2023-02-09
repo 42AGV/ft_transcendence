@@ -2,7 +2,6 @@ import { useCallback, useEffect } from 'react';
 import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { CHATS_URL, CHATROOM_URL, ADMIN_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
-import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
@@ -16,6 +15,7 @@ import { ChatMessagingTemplate } from '../../shared/components';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { ChatMessage } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
 import { LoadingPage } from '../index';
+import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 
 export default function ChatroomPage() {
   const { chatroomId } = useParams();
@@ -45,6 +45,7 @@ function Chatroom({
   authUser,
   overridePermissions = false,
 }: ChatroomProps) {
+  const { setLogger } = useGamePairing();
   const { warn } = useNotificationContext();
 
   const getChatroom = useCallback(
@@ -103,16 +104,15 @@ function Chatroom({
   }, [chatroomId]);
 
   useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      if (enableNotifications) {
-        warn(wsError.message);
-      }
-    });
-
+    if (!enableNotifications && setLogger) {
+      setLogger(() => {});
+    }
     return () => {
-      socket.off('exception');
+      if (setLogger) {
+        setLogger((arg: any) => warn(arg.toString()));
+      }
     };
-  }, [warn, enableNotifications]);
+  }, [setLogger, warn, enableNotifications]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
     return <LoadingPage />;

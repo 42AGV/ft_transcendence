@@ -8,9 +8,6 @@ import { ChatMessageWithUser, User } from '../../shared/generated';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { useData } from '../../shared/hooks/UseData';
 import { ChatMessage as ChatMessageTemplate } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
-import socket from '../../shared/socket';
-import { WsException } from '../../shared/types';
-import { useNotificationContext } from '../../shared/context/NotificationContext';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { LoadingPage } from '..';
 import { USER_URL } from '../../shared/urls';
@@ -54,8 +51,6 @@ function ChatWithUser({ username }: ChatWithUserProps) {
 }
 
 function Chat({ user }: ChatProps) {
-  const { warn } = useNotificationContext();
-
   const messageMapper = React.useCallback(
     (msg: ChatMessageWithUser): ChatMessageTemplate => ({
       id: msg.id,
@@ -81,16 +76,6 @@ function Chat({ user }: ChatProps) {
     },
     [user, messageMapper],
   );
-
-  React.useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
-    });
-
-    return () => {
-      socket.off('exception');
-    };
-  }, [warn]);
 
   return (
     <ChatMessagingTemplate

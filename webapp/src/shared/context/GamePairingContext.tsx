@@ -30,10 +30,13 @@ import {
   GamePairingStatusDtoGameQueueStatusEnum,
 } from '../generated';
 
+type loggerType = (arg: any) => void;
+
 export interface GamePairingContextType {
   gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
   gameRoomId: string | null;
   setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
+  setLogger?: Dispatch<SetStateAction<loggerType>>;
 }
 
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
@@ -42,6 +45,9 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   const { authUser, isLoggedIn } = useAuth();
   const { goBack, navigate } = useNavigation();
   const { warn, notify } = useNotificationContext();
+  const [logger, setLogger] = useState<loggerType>((arg: any) => {
+    warn(arg.toString());
+  });
   const getPairingStatus = useCallback(() => {
     return gameApi.gameControllerGetPairingStatus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,7 +177,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     };
 
     socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
+      logger(wsError.message);
     });
 
     if (authUser) {
@@ -195,13 +201,14 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       socket.off(gameQueueServerToClientWsEvents.gameChallenge);
       socket.off('exception');
     };
-  }, [authUser, gameCtx, navigate, goBack, warn, notify]);
+  }, [authUser, gameCtx, navigate, goBack, warn, notify, logger]);
 
   const contextValue = {
     gameQueueStatus:
       gameCtx?.gameQueueStatus ?? GamePairingStatusDtoGameQueueStatusEnum.None,
     gameRoomId: gameCtx?.gameRoomId ?? null,
     setGameCtx,
+    setLogger,
   };
 
   return (

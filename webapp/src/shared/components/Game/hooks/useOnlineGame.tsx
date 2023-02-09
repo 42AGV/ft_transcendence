@@ -1,8 +1,6 @@
 import * as React from 'react';
 import socket from '../../../socket';
 import { GameCommand, GameState } from 'pong-engine';
-import { WsException } from '../../../types';
-import { useNotificationContext } from '../../../context/NotificationContext';
 
 // Tipar mensajes ws -> investigar si se puede hacer con OpenApi
 const GAME_COMMAND = 'gameCommand';
@@ -11,8 +9,6 @@ const JOIN_GAME = 'joinGame';
 const LEAVE_GAME = 'leaveGame';
 
 const useOnlineGame = () => {
-  const { warn } = useNotificationContext();
-
   const sendGameCommand = React.useCallback(
     (command: GameCommand) =>
       socket.emit(GAME_COMMAND, {
@@ -58,16 +54,6 @@ const useOnlineGame = () => {
     },
     [],
   );
-
-  React.useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
-    });
-
-    return () => {
-      socket.off('exception');
-    };
-  }, [warn]);
 
   return {
     sendGameCommand,
