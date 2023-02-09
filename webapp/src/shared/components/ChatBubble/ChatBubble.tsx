@@ -41,7 +41,7 @@ export default function ChatBubble({
         <div className={'chat-bubble-text-author'}>
           {name && isFirst && (
             <Text
-              variant={TextVariant.CAPTION}
+              variant={TextVariant.PARAGRAPH}
               color={TextColor.LIGHT}
               weight={TextWeight.MEDIUM}
               children={name}
@@ -50,7 +50,7 @@ export default function ChatBubble({
         </div>
         <div className={`chat-bubble-text chat-bubble-text-${variant}`}>
           <Text
-            variant={TextVariant.CAPTION}
+            variant={TextVariant.PARAGRAPH}
             color={TextColor.LIGHT}
             weight={TextWeight.REGULAR}
             children={text}
