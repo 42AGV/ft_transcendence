@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
-  GameState,
+  GameInfoClient,
+  GameInfoServer,
   GameStatus,
   GameStatusUpdateDto,
   newGame,
@@ -21,17 +22,6 @@ import { GamePairing } from './infrastructure/db/game-pairing.entity';
 type GameId = string;
 type UserId = string;
 type ClientId = string;
-type PlayState = 'playing' | 'paused';
-type GameInfo = {
-  gameState: GameState;
-  playState: PlayState;
-  createdAt: number;
-  playerOneId: string;
-  playerTwoId: string;
-  pausedAt: number | null;
-  playerOneLeftAt: number | null;
-  playerTwoLeftAt: number | null;
-};
 
 const FPS = 30;
 const DELTA_TIME = 1 / FPS;
@@ -41,12 +31,12 @@ const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
 export class GameService {
   public server: Server | null = null;
   private readonly logger = new Logger(GameService.name);
-  private readonly games = new Map<GameId, GameInfo>();
+  private readonly games = new Map<GameId, GameInfoServer>();
   private readonly userToGame = new Map<UserId, GameId>();
   private readonly playerToClients = new Map<UserId, Set<ClientId>>();
   private intervalId: NodeJS.Timer | undefined = undefined;
 
-  private finishGame(gameInfo: GameInfo, gameId: string) {
+  private finishGame(gameInfo: GameInfoServer, gameId: string) {
     if (!this.server) {
       return;
     }
@@ -69,7 +59,7 @@ export class GameService {
   }
 
   private runServerGameFrame() {
-    this.games.forEach((gameInfo: GameInfo, gameId: GameId) => {
+    this.games.forEach((gameInfo: GameInfoServer, gameId: GameId) => {
       if (this.server) {
         if (
           gameInfo.pausedAt &&
@@ -82,12 +72,26 @@ export class GameService {
             DELTA_TIME,
             gameInfo.gameState,
           );
-          const newGameInfo: GameInfo = { ...gameInfo, gameState };
+          const newGameInfo: GameInfoServer = { ...gameInfo, gameState };
           this.games.set(gameId, newGameInfo);
-          this.server.to(gameId).emit('updateGame', newGameInfo);
+          const { playState, playerOneId, playerTwoId } = gameInfo;
+          const newGameInfoClient: GameInfoClient = {
+            gameState,
+            playState,
+            playerOneId,
+            playerTwoId,
+          };
+          this.server.to(gameId).emit('updateGame', newGameInfoClient);
         } else {
           // Game is paused, send the current game info
-          this.server.to(gameId).emit('updateGame', gameInfo);
+          const { gameState, playState, playerOneId, playerTwoId } = gameInfo;
+          const gameInfoClient = {
+            gameState,
+            playState,
+            playerOneId,
+            playerTwoId,
+          };
+          this.server.to(gameId).emit('updateGame', gameInfoClient);
         }
       }
     });
@@ -144,7 +148,7 @@ export class GameService {
     game,
     gameId,
   }: {
-    game: GameInfo;
+    game: GameInfoServer;
     gameId: string;
     userId: string;
     clientId: string;
@@ -259,11 +263,11 @@ export class GameService {
     return this.userToGame.get(userId) ?? null;
   }
 
-  getGameInfoFromGameId(gameId: string): GameInfo | null {
+  getGameInfoFromGameId(gameId: string): GameInfoServer | null {
     return this.games.get(gameId) ?? null;
   }
 
-  getGameInfoFromUserId(userId: string): GameInfo | null {
+  getGameInfoFromUserId(userId: string): GameInfoServer | null {
     const gameId = this.getGameId(userId);
     if (!gameId) {
       return null;

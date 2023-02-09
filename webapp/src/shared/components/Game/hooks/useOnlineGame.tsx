@@ -1,10 +1,9 @@
 import React from 'react';
 import { useNotificationContext } from '../../../context/NotificationContext';
-import { GameCommand, GameState } from 'pong-engine';
+import { GameCommand, GameInfoClient, GameState } from 'pong-engine';
 import { useAuth } from '../../../hooks/UseAuth';
 import { useNavigate } from 'react-router-dom';
 import socket from '../../../socket';
-import { GameInfo } from '../../../types';
 import { PLAY_URL } from '../../../urls';
 
 const GAME_COMMAND = 'gameCommand';
@@ -44,7 +43,7 @@ export function useOnlineGame(gameId: string) {
   }, [gameId, gameJoined]);
 
   React.useEffect(() => {
-    function handleGameJoined(info: GameInfo) {
+    function handleGameJoined(info: GameInfoClient) {
       setIsPlayer(
         authUser?.id === info.playerOneId || authUser?.id === info.playerTwoId,
       );
@@ -52,7 +51,7 @@ export function useOnlineGame(gameId: string) {
       setGameJoined(true);
     }
 
-    function handleUpdateGame(info: GameInfo) {
+    function handleUpdateGame(info: GameInfoClient) {
       setOnlineGameState(info.gameState);
     }
 
