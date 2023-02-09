@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  CANVAS_WIDTH,
-  CANVAS_HEIGHT,
-  GameState,
-  GameCommand,
-} from 'pong-engine';
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
 import { useGameControls, useGameAnimation } from './hooks';
 import { GameStateContextProvider } from './context/gameStateContext';
 import Text, { TextVariant } from '../Text/Text';
@@ -14,115 +9,26 @@ import { IconVariant } from '../Icon/Icon';
 import { useNavigation } from '../../hooks/UseNavigation';
 
 import './Game.css';
-import socket from '../../socket';
-import { GameInfo, WsException } from '../../types';
-import { useAuth } from '../../hooks/UseAuth';
-import { useNotificationContext } from '../../context/NotificationContext';
-import { useNavigate } from 'react-router-dom';
-import { PLAY_URL } from '../../urls';
 import Button, { ButtonVariant } from '../Button/Button';
-
-const GAME_COMMAND = 'gameCommand';
-const UPDATE_GAME = 'updateGame';
-const JOIN_GAME = 'joinGame';
-const LEAVE_GAME = 'leaveGame';
-const GAME_JOINED = 'gameJoined';
-const GAME_NOT_FOUND = 'gameNotFound';
-const GAME_FINISHED = 'gameFinished';
+import { useOnlineGame } from './hooks/useOnlineGame';
 
 type GameProps = {
   gameId: string;
 };
 
 const Play = ({ gameId }: GameProps) => {
-  const { notify, warn } = useNotificationContext();
   const { renderMultiplayerFrame } = useGameAnimation();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const [score, setScore] = React.useState<number>(0);
-  const [opponentScore, setOpponentScore] = React.useState<number>(0);
-  const isPlayerOneRef = React.useRef(true);
-  const isPlayerRef = React.useRef(false);
-  const gameStateRef = React.useRef<GameState | null>(null);
-  const { authUser } = useAuth();
-  const navigate = useNavigate();
-  const [gameJoined, setGameJoined] = React.useState(false);
-  const sendGameCommand = React.useCallback(
-    (command: GameCommand) => {
-      if (isPlayerRef.current && gameJoined) {
-        socket.emit(GAME_COMMAND, {
-          command,
-          gameRoomId: gameId,
-        });
-      }
-    },
-    [gameId, gameJoined],
-  );
+  const {
+    isPlayerOne,
+    gameJoined,
+    onlineGameState,
+    joinGame,
+    sendGameCommand,
+  } = useOnlineGame(gameId);
   useGameControls(sendGameCommand);
-
-  const joinGame = () => {
-    if (!gameJoined) {
-      socket.emit(JOIN_GAME, { gameRoomId: gameId });
-    }
-  };
-
-  React.useEffect(() => {
-    return () => {
-      if (gameJoined) {
-        socket.emit(LEAVE_GAME, { gameRoomId: gameId });
-      }
-    };
-  }, [gameId, gameJoined]);
-
-  React.useEffect(() => {
-    function handleGameJoined(info: GameInfo) {
-      isPlayerOneRef.current = authUser?.id === info.playerOneId;
-      isPlayerRef.current =
-        authUser?.id === info.playerOneId || authUser?.id === info.playerTwoId;
-      setGameJoined(true);
-    }
-
-    function handleUpdateGame(info: GameInfo) {
-      gameStateRef.current = info.gameState;
-      if (gameStateRef.current) {
-        const gameState = gameStateRef.current;
-        const canvasContext = canvasRef.current?.getContext('2d');
-
-        setScore(gameState.score);
-        setOpponentScore(gameState.scoreOpponent);
-        canvasContext &&
-          renderMultiplayerFrame(
-            canvasContext,
-            gameState,
-            isPlayerOneRef.current,
-          );
-      }
-    }
-
-    function handleGameNotFound() {
-      navigate(PLAY_URL, { replace: true });
-    }
-
-    function handleGameEnded() {
-      notify('Game ended');
-      navigate(PLAY_URL, { replace: true });
-    }
-
-    socket.on(GAME_JOINED, handleGameJoined);
-    socket.on(UPDATE_GAME, handleUpdateGame);
-    socket.on(GAME_NOT_FOUND, handleGameNotFound);
-    socket.on(GAME_FINISHED, handleGameEnded);
-    socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
-    });
-
-    return () => {
-      socket.off(GAME_JOINED);
-      socket.off(UPDATE_GAME);
-      socket.off(GAME_NOT_FOUND);
-      socket.off(GAME_FINISHED);
-      socket.off('exception');
-    };
-  }, [authUser, renderMultiplayerFrame, navigate, notify, warn]);
+  const score = onlineGameState?.score ?? 0;
+  const opponentScore = onlineGameState?.scoreOpponent ?? 0;
 
   if (!gameJoined) {
     return (
@@ -134,14 +40,21 @@ const Play = ({ gameId }: GameProps) => {
     );
   }
 
-  if (!gameStateRef.current) {
+  if (!onlineGameState) {
     return <Wait />;
+  }
+
+  if (canvasRef.current) {
+    const canvasCtx = canvasRef.current.getContext('2d');
+    if (canvasCtx) {
+      renderMultiplayerFrame(canvasCtx, onlineGameState, isPlayerOne);
+    }
   }
 
   return (
     <div className="game-multiplayer">
       <h1 className="game-multiplayer-score heading-bold">
-        {isPlayerOneRef.current ? opponentScore : score}
+        {isPlayerOne ? opponentScore : score}
       </h1>
       <canvas
         className="game-multiplayer-arena"
@@ -150,7 +63,7 @@ const Play = ({ gameId }: GameProps) => {
         height={CANVAS_HEIGHT}
       />
       <h1 className="game-multiplayer-score heading-bold">
-        {isPlayerOneRef.current ? score : opponentScore}
+        {isPlayerOne ? score : opponentScore}
       </h1>
     </div>
   );
