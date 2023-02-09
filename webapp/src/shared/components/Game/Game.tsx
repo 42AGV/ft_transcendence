@@ -90,7 +90,7 @@ export default function Game({ gameId }: GameProps) {
           goBack();
         }}
       >
-        Hit the brick!
+        Good luck!
       </Header>
       <div className="game">
         <Play gameId={gameId} />
