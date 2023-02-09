@@ -30,8 +30,8 @@ export class GameQueueService {
   private gameQueue: QueuedUser | null = null;
 
   constructor(
-    private gameService: GameService,
-    private challengesPending: IChallengesPendingRepository,
+    private readonly gameService: GameService,
+    private readonly challengesPending: IChallengesPendingRepository,
   ) {}
 
   private isUserBusy(userId: string): boolean {

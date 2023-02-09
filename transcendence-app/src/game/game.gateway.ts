@@ -25,7 +25,7 @@ import { GameService } from './game.service';
 export class GameGateway {
   @WebSocketServer() server!: Server;
 
-  constructor(private gameService: GameService) {}
+  constructor(private readonly gameService: GameService) {}
 
   afterInit(server: Server) {
     this.gameService.server = server;

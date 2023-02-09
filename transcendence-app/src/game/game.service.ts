@@ -46,8 +46,6 @@ export class GameService {
   private readonly playerToClients = new Map<UserId, Set<ClientId>>();
   private intervalId: NodeJS.Timer | undefined = undefined;
 
-  // constructor() {}
-
   private finishGame(gameInfo: GameInfo, gameId: string) {
     if (!this.server) {
       return;

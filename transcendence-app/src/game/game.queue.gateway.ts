@@ -39,9 +39,9 @@ import {
 export class GameQueueGateway {
   @WebSocketServer() server!: Server;
   constructor(
-    private gameQueueService: GameQueueService,
-    private eventEmitter: EventEmitter2,
-    private socketService: SocketService,
+    private readonly gameQueueService: GameQueueService,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly socketService: SocketService,
   ) {}
 
   afterInit(server: Server) {
