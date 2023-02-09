@@ -43,7 +43,7 @@ export class GameService {
   private readonly logger = new Logger(GameService.name);
   private readonly games = new Map<GameId, GameInfo>();
   private readonly userToGame = new Map<UserId, GameId>();
-  private readonly playerClients = new Map<UserId, Set<ClientId>>();
+  private readonly playerToClients = new Map<UserId, Set<ClientId>>();
   private intervalId: NodeJS.Timer | undefined = undefined;
 
   // constructor() {}
@@ -59,8 +59,8 @@ export class GameService {
         status: GameStatus.FINISHED,
       } as GameStatusUpdateDto);
     this.server.socketsLeave(gameId);
-    this.playerClients.delete(gameInfo.playerOneId);
-    this.playerClients.delete(gameInfo.playerTwoId);
+    this.playerToClients.delete(gameInfo.playerOneId);
+    this.playerToClients.delete(gameInfo.playerTwoId);
     this.userToGame.delete(gameInfo.playerOneId);
     this.userToGame.delete(gameInfo.playerTwoId);
     this.games.delete(gameId);
@@ -114,11 +114,11 @@ export class GameService {
     if (!(isPlayerOne || isPlayerTwo)) {
       return;
     }
-    const playerClients = this.playerClients.get(userId);
-    if (!playerClients) {
-      this.playerClients.set(userId, new Set<ClientId>([client.id]));
-    } else {
+    const playerClients = this.playerToClients.get(userId);
+    if (playerClients) {
       playerClients.add(client.id);
+    } else {
+      this.playerToClients.set(userId, new Set<ClientId>([client.id]));
     }
 
     if (!game.pausedAt) {
@@ -151,7 +151,7 @@ export class GameService {
     userId: string;
     clientId: string;
   }) {
-    const playerClients = this.playerClients.get(userId);
+    const playerClients = this.playerToClients.get(userId);
     if (!playerClients) {
       return;
     }
