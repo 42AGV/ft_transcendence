@@ -16,6 +16,7 @@ import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'pong-engine';
 import { PLAY_URL } from '../../shared/urls';
 import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
+import { useEffect } from 'react';
 
 export default function GameQueuePage() {
   const { gameQueueStatus } = useGamePairing();
@@ -27,9 +28,11 @@ export default function GameQueuePage() {
     goBack();
   };
 
-  if (gameQueueStatus !== GamePairingStatusDtoGameQueueStatusEnum.Waiting) {
-    goBack();
-  }
+  useEffect(() => {
+    if (gameQueueStatus !== GamePairingStatusDtoGameQueueStatusEnum.Waiting) {
+      goBack();
+    }
+  }, [gameQueueStatus, goBack]);
 
   return (
     <div className="game-queue-page">
