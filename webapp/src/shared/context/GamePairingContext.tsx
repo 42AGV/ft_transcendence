@@ -72,10 +72,6 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
           navigate(`${PLAY_GAME_URL}/${gameRoomId}`, { replace: true });
           break;
         }
-        // The handling of these two is similar and should be handled
-        // in the same place. Hence, the fallthrough
-        /* FALLTHROUGH */
-        // @ts-ignore
         case GameChallengeStatus.CHALLENGE_DECLINED: {
           warn(`Challenge declined`);
           setGameCtx({
