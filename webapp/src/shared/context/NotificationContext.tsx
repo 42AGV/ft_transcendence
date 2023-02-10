@@ -5,8 +5,8 @@ import { SnackBar, SnackbarType, SnackbarPosition } from '../components';
 const NOTIFICATION_SPAN_MS = 4000;
 
 type Context = {
-  notify: (message: string) => void;
-  warn: (message: string) => void;
+  notify: (message: any) => void;
+  warn: (message: any) => void;
   hide: () => void;
 };
 
