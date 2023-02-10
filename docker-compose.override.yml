@@ -13,6 +13,7 @@ services:
     volumes:
       - ./webapp/src:/service/webapp/src:ro
       - ./packages/pong-engine:/service/packages/pong-engine:ro
+      - ./packages/transcendence-shared:/service/packages/transcendence-shared:ro
     environment:
       - REACT_APP_NAME=webapp-dev
       - PORT=80
@@ -31,6 +32,7 @@ services:
       - ./transcendence-app/seeds:/service/transcendence-app/seeds:ro
       - ./transcendence-app/migrations:/service/transcendence-app/migrations:ro
       - ./packages/pong-engine:/service/packages/pong-engine:ro
+      - ./packages/transcendence-shared:/service/packages/transcendence-shared:ro
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
