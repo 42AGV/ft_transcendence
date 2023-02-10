@@ -5,8 +5,6 @@ import {
   useState,
   useCallback,
   useMemo,
-  Dispatch,
-  SetStateAction,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
@@ -22,7 +20,7 @@ import {
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
 } from 'pong-engine';
-import { PLAY_GAME_URL, PLAY_URL } from '../urls';
+import { PLAY_GAME_URL } from '../urls';
 import { WsException } from '../types';
 import { gameApi } from '../services/ApiService';
 import { useData } from '../hooks/UseData';
@@ -34,7 +32,6 @@ import {
 export interface GamePairingContextType {
   gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
   gameRoomId: string | null;
-  setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
 }
 
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
@@ -72,7 +69,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             gameRoomId,
             gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Playing,
           });
-          navigate(`${PLAY_GAME_URL}/${gameRoomId}`, { replace: true });
+          navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
           break;
         }
         case GameChallengeStatus.CHALLENGE_DECLINED: {
@@ -81,7 +78,6 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             gameRoomId: null,
             gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
           });
-          navigate(PLAY_URL, { replace: true });
           break;
         }
         case GameStatus.FINISHED: {
@@ -90,7 +86,6 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             gameRoomId: null,
             gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
           });
-          navigate(PLAY_URL, { replace: true });
         }
       }
     };
@@ -202,7 +197,6 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         gameCtx?.gameQueueStatus ??
         GamePairingStatusDtoGameQueueStatusEnum.None,
       gameRoomId: gameCtx?.gameRoomId ?? null,
-      setGameCtx,
     }),
     [gameCtx],
   );

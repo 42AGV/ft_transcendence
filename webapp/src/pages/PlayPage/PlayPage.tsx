@@ -3,7 +3,7 @@ import { ButtonVariant, IconVariant } from '../../shared/components';
 import { useNavigate } from 'react-router-dom';
 import { MainTabTemplate } from '../../shared/components/index';
 import { SearchContextProvider } from '../../shared/context/SearchContext';
-import { PLAY_GAME_QUEUE, PLAY_GAME_TRAIN_URL } from '../../shared/urls';
+import { PLAY_GAME_TRAIN_URL } from '../../shared/urls';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { Query } from '../../shared/types';
 import socket from '../../shared/socket';
@@ -13,7 +13,7 @@ import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated'
 import { useCallback, useMemo } from 'react';
 
 export default function PlayPage() {
-  const { gameQueueStatus, setGameCtx } = useGamePairing();
+  const { gameQueueStatus } = useGamePairing();
   const navigate = useNavigate();
 
   // To be replaced with real games request
@@ -44,12 +44,6 @@ export default function PlayPage() {
       case GamePairingStatusDtoGameQueueStatusEnum.None: {
         return () => {
           socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
-          setGameCtx &&
-            setGameCtx({
-              gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Waiting,
-              gameRoomId: null,
-            });
-          navigate(PLAY_GAME_QUEUE);
         };
       }
       case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
@@ -63,7 +57,7 @@ export default function PlayPage() {
         };
       }
     }
-  }, [gameQueueStatus, navigate, setGameCtx]);
+  }, [gameQueueStatus]);
 
   const buttonLabel = useMemo(() => {
     switch (gameQueueStatus) {

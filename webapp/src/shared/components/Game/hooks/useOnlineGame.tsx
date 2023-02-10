@@ -59,15 +59,15 @@ export function useOnlineGame(gameId: string) {
       navigate(PLAY_URL, { replace: true });
     }
 
-    function handleGameEnded() {
-      notify('Game ended');
+    function handleGameFinished() {
+      notify('Game finished');
       navigate(PLAY_URL, { replace: true });
     }
 
     socket.on(GAME_JOINED, handleGameJoined);
     socket.on(UPDATE_GAME, handleUpdateGame);
     socket.on(GAME_NOT_FOUND, handleGameNotFound);
-    socket.on(GAME_FINISHED, handleGameEnded);
+    socket.on(GAME_FINISHED, handleGameFinished);
 
     return () => {
       socket.emit(LEAVE_GAME, { gameRoomId: gameId });
