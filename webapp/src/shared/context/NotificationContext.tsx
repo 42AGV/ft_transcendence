@@ -5,8 +5,8 @@ import { SnackBar, SnackbarType, SnackbarPosition } from '../components';
 const NOTIFICATION_SPAN_MS = 4000;
 
 type Context = {
-  notify: (message: string) => void;
-  warn: (message: string) => void;
+  notify: (message: any) => void;
+  warn: (message: any) => void;
   hide: () => void;
 };
 
@@ -28,17 +28,33 @@ export const NotificationContextProvider = ({
   const [notification, setNotification] = React.useState<Notification>();
   const [visible, setVisible] = React.useState<boolean>(false);
 
-  const notify = React.useCallback((message: string) => {
-    if (message.length) {
-      setNotification({ message, type: 'info', position: 'top' });
-      setVisible(true);
+  const notify = React.useCallback((arg: any) => {
+    if (arg) {
+      let message: string;
+      if (typeof arg === 'object') {
+        message = JSON.stringify(arg);
+      } else {
+        message = String(arg);
+      }
+      if (message.length) {
+        setNotification({ message, type: 'info', position: 'top' });
+        setVisible(true);
+      }
     }
   }, []);
 
-  const warn = React.useCallback((message: string) => {
-    if (message.length) {
-      setNotification({ message, type: 'warning', position: 'bottom' });
-      setVisible(true);
+  const warn = React.useCallback((arg: any) => {
+    if (arg) {
+      let message: string;
+      if (typeof arg === 'object') {
+        message = JSON.stringify(arg);
+      } else {
+        message = String(arg);
+      }
+      if (message.length) {
+        setNotification({ message, type: 'warning', position: 'bottom' });
+        setVisible(true);
+      }
     }
   }, []);
 
