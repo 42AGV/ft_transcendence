@@ -10,12 +10,10 @@ import {
   UserWithAuthorizationResponseDto,
 } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { ChatMessagingTemplate } from '../../shared/components';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { ChatMessage } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
 import { LoadingPage } from '../index';
-import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 
 export default function ChatroomPage() {
   const { chatroomId } = useParams();
@@ -45,9 +43,6 @@ function Chatroom({
   authUser,
   overridePermissions = false,
 }: ChatroomProps) {
-  const { setLogger } = useGamePairing();
-  const { warn } = useNotificationContext();
-
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
     [chatroomId],
@@ -91,10 +86,6 @@ function Chatroom({
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
 
-  const enableNotifications =
-    (chatroom !== null && chatroomMember !== null && !chatroomMember.banned) ||
-    (overridePermissions && (authUser.gAdmin || authUser.gOwner));
-
   useEffect(() => {
     socket.emit('joinChatroom', { chatroomId });
 
@@ -102,17 +93,6 @@ function Chatroom({
       socket.emit('leaveChatroom', { chatroomId });
     };
   }, [chatroomId]);
-
-  useEffect(() => {
-    if (!enableNotifications && setLogger) {
-      setLogger(() => {});
-    }
-    return () => {
-      if (setLogger) {
-        setLogger((arg: any) => warn(arg.toString()));
-      }
-    };
-  }, [setLogger, warn, enableNotifications]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
     return <LoadingPage />;
