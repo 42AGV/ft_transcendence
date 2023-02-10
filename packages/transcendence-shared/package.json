@@ -8,7 +8,7 @@
     "style": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx}\" --fix",
-    "build": "rm -rf ./lib && tsc"
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
