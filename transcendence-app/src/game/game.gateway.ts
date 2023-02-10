@@ -22,8 +22,8 @@ import {
   paddleStop,
   runGameFrame,
   newGame,
-  GameStatus,
 } from 'pong-engine';
+import { GameStatus } from 'transcendence-shared';
 import { OnEvent } from '@nestjs/event-emitter';
 import { GamePairing } from './infrastructure/db/game-pairing.entity';
 
