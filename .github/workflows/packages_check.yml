@@ -18,8 +18,12 @@ jobs:
           cache-dependency-path: |
             ./package-lock.json
       - name: Install dependencies
-        run: npm install -w packages/pong-engine
+        run: |
+          npm install -w packages/pong-engine
+          npm install -w packages/transcendence-shared
       - name: Build packages
         run: npm run build-packages
       - name: Lint
-        run: npm run lint -w packages/pong-engine
+        run: |
+          npm run lint -w packages/pong-engine
+          npm install -w packages/transcendence-shared
