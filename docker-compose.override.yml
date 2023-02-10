@@ -12,8 +12,7 @@ services:
       target: development
     volumes:
       - ./webapp/src:/service/webapp/src:ro
-      - ./packages/pong-engine:/service/packages/pong-engine:ro
-      - ./packages/transcendence-shared:/service/packages/transcendence-shared:ro
+      - ./packages:/service/packages:ro
     environment:
       - REACT_APP_NAME=webapp-dev
       - PORT=80
