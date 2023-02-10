@@ -26,4 +26,4 @@ jobs:
       - name: Lint
         run: |
           npm run lint -w packages/pong-engine
-          npm install -w packages/transcendence-shared
+          npm run lint -w packages/transcendence-shared
