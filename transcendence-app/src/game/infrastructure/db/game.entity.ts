@@ -1,4 +1,4 @@
-import { GameMode } from 'src/shared/enums/game-mode.enum';
+import { GameMode } from 'src/game/enums/game-mode.enum';
 
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 export enum gameKeys {
@@ -6,7 +6,7 @@ export enum gameKeys {
   PLAYERONEUSERNAME = '"playerOneUsername"',
   PLAYERTWOUSERNAME = '"playerTwoUsername"',
   CREATED_AT = '"createdAt"',
-  GAMEDURATION = '"gameDuration"',
+  GAMEDURATIONINSECONDS = '"gameDurationInSeconds"',
   PLAYERONESCORE = '"playerOneScore"',
   PLAYERTWOSCORE = '"playerTwoScore"',
   GAMEMODE = '"gameMode"',
@@ -17,7 +17,7 @@ export interface GameData {
   playerOneUsername: string;
   playerTwoUsername: string;
   createdAt: Date;
-  gameDuration: number;
+  gameDurationInSeconds: number;
   playerOneScore: number;
   playerTwoScore: number;
   gameMode: GameMode;
@@ -28,7 +28,7 @@ export class Game {
   playerOneUsername: string;
   playerTwoUsername: string;
   createdAt: Date;
-  gameDuration: number;
+  gameDurationInSeconds: number;
   playerOneScore: number;
   playerTwoScore: number;
   gameMode: GameMode;
@@ -38,7 +38,7 @@ export class Game {
     this.playerOneUsername = gameData.playerOneUsername;
     this.playerTwoUsername = gameData.playerTwoUsername;
     this.createdAt = gameData.createdAt;
-    this.gameDuration = gameData.gameDuration;
+    this.gameDurationInSeconds = gameData.gameDurationInSeconds;
     this.playerOneScore = gameData.playerOneScore;
     this.playerTwoScore = gameData.playerTwoScore;
     this.gameMode = gameData.gameMode;

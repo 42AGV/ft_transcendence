@@ -43,4 +43,21 @@ export class GameService {
       search,
     });
   }
+
+  retrieveUserGames(
+    username: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ): Promise<Game[] | null> {
+    return this.gameRepository.getPaginatedUserGames(username, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
+  }
 }

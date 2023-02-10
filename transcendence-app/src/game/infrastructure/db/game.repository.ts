@@ -8,4 +8,8 @@ export abstract class IGameRepository {
   abstract getPaginatedGames(
     queryDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Game[] | null>;
+  abstract getPaginatedUserGames(
+    username: string,
+    paginationDto: Required<PaginationWithSearchQueryDto>,
+  ): Promise<Game[] | null>;
 }

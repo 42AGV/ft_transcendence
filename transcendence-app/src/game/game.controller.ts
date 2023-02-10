@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
   ServiceUnavailableException,
@@ -86,6 +87,27 @@ export class GameController {
     @Query() gamesPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<Game[]> {
     const games = await this.gameService.retrieveGames(gamesPaginationQueryDto);
+    if (!games) {
+      throw new ServiceUnavailableException();
+    }
+    return games;
+  }
+
+  @Get('games/:userName')
+  @ApiOkResponse({
+    description: `List all games of a user)`,
+    type: [Game],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getUserGames(
+    @Param('userName') userName: string,
+    @Query() gamesPaginationQueryDto: PaginationWithSearchQueryDto,
+  ): Promise<Game[]> {
+    const games = await this.gameService.retrieveUserGames(
+      userName,
+      gamesPaginationQueryDto,
+    );
     if (!games) {
       throw new ServiceUnavailableException();
     }
