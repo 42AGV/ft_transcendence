@@ -5,6 +5,8 @@ import {
   useState,
   useCallback,
   useMemo,
+  Dispatch,
+  SetStateAction,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
@@ -32,6 +34,7 @@ import {
 export interface GamePairingContextType {
   gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
   gameRoomId: string | null;
+  setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
 }
 
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
@@ -199,6 +202,7 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         gameCtx?.gameQueueStatus ??
         GamePairingStatusDtoGameQueueStatusEnum.None,
       gameRoomId: gameCtx?.gameRoomId ?? null,
+      setGameCtx,
     }),
     [gameCtx],
   );
