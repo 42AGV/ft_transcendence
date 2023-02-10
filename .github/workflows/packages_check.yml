@@ -19,11 +19,9 @@ jobs:
             ./package-lock.json
       - name: Install dependencies
         run: |
-          npm install -w packages/pong-engine
-          npm install -w packages/transcendence-shared
+          for workspace in $(ls packages); do npm install -w packages/${workspace}; done
       - name: Build packages
         run: npm run build-packages
       - name: Lint
         run: |
-          npm run lint -w packages/pong-engine
-          npm run lint -w packages/transcendence-shared
+          for workspace in $(ls packages); do npm run lint -w packages/${workspace}; done
