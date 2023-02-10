@@ -18,9 +18,9 @@ import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 import { SocketService } from './socket.service';
 import { AuthorizationService } from '../authorization/authorization.service';
-import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserToRoleDto } from 'transcendence-shared';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)

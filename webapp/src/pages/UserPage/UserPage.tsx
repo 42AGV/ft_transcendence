@@ -26,9 +26,9 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 import { useFriend } from '../../shared/hooks/UseFriend';
 import {
   GamePairingStatusDtoGameQueueStatusEnum,
-  UserToRoleDtoRoleEnum,
   UserWithAuthorizationResponseDto,
 } from '../../shared/generated';
+import { Role } from 'transcendence-shared';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import socket from '../../shared/socket';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
@@ -97,10 +97,10 @@ export default function UserPage() {
       const getRole = (label: keyof UserWithAuthorizationResponseDto) => {
         switch (label) {
           case 'gAdmin': {
-            return UserToRoleDtoRoleEnum.Moderator;
+            return Role.moderator;
           }
           case 'gBanned': {
-            return UserToRoleDtoRoleEnum.Banned;
+            return Role.banned;
           }
           default: {
             warn('Trying to change unexpected authorization field');
