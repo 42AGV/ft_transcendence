@@ -9,7 +9,7 @@ import {
   gameQueueServerToClientWsEvents,
   GameStatus,
   GameStatusUpdateDto,
-} from 'pong-engine';
+} from 'transcendence-shared';
 import {
   GamePairingStatusDto,
   GameQueueStatus,
