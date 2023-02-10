@@ -8,7 +8,7 @@ import { ENTRIES_LIMIT } from '../../shared/constants';
 import { Query } from '../../shared/types';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
-import { gameQueueClientToServerWsEvents } from 'pong-engine';
+import { gameQueueClientToServerWsEvents } from 'transcendence-shared';
 import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
 import { useCallback, useMemo } from 'react';
 

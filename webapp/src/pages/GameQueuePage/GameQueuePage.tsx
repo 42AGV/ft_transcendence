@@ -13,7 +13,7 @@ import './GameQueuePage.css';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
-import { gameQueueClientToServerWsEvents } from 'pong-engine';
+import { gameQueueClientToServerWsEvents } from 'transcendence-shared';
 import { PLAY_URL } from '../../shared/urls';
 import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
 

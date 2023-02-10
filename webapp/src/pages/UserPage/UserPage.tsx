@@ -35,7 +35,7 @@ import { handleRequestError } from '../../shared/utils/HandleRequestError';
 import {
   gameQueueClientToServerWsEvents,
   GameUserChallengeDto,
-} from 'pong-engine';
+} from 'transcendence-shared';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 
 export default function UserPage() {
