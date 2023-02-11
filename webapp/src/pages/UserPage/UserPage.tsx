@@ -23,15 +23,15 @@ import {
   GamePairingStatusDtoGameQueueStatusEnum,
   UserWithAuthorizationResponseDto,
 } from '../../shared/generated';
-import { Role } from 'transcendence-shared';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import socket from '../../shared/socket';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
+import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import {
+  Role,
   gameQueueClientToServerWsEvents,
   GameUserChallengeDto,
 } from 'transcendence-shared';
-import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 
 export default function UserPage() {
   const { warn } = useNotificationContext();
