@@ -21,7 +21,7 @@ export default function Score({
 }: ScoreProps) {
   return (
     <div className="score-container">
-      <div className="player-one-avatar-name">
+      <div className="player-one">
         <MediumAvatar {...playerOneAvatar} />
         <Text
           variant={TextVariant.PARAGRAPH}
@@ -32,13 +32,13 @@ export default function Score({
       </div>
       <div className="score">
         <Text
-          variant={TextVariant.SUBTITLE}
+          variant={TextVariant.TITLE}
           color={TextColor.LIGHT}
-          weight={TextWeight.MEDIUM}
+          weight={TextWeight.BOLD}
           children={`${playerOneScore} - ${playerTwoScore}`}
         />
       </div>
-      <div className="player-two-avatar">
+      <div className="player-two">
         <MediumAvatar {...playerTwoAvatar} />
         <Text
           variant={TextVariant.PARAGRAPH}

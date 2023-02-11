@@ -7,7 +7,7 @@ const randomAvatar = WILDCARD_AVATAR_URL;
 const avProps = { url: randomAvatar };
 
 export const ScoreExample = () => (
-  <BookSection title="Chat Bubble component">
+  <BookSection title="Score component">
     <Score
       playerOneAvatar={avProps}
       playerTwoAvatar={avProps}
