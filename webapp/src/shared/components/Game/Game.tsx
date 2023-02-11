@@ -1,17 +1,7 @@
 import * as React from 'react';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
-import {
-  useGameControls,
-  useGameAnimation,
-  useGameEngine,
-  useOnlineGame,
-} from './hooks';
-import { GameStateContextProvider } from './context';
-import {
-  StateMachineContextProvider,
-  useStateMachineContext,
-} from './state-machine/context';
-import Button, { ButtonVariant } from '../Button/Button';
+import { useGameControls, useGameAnimation } from './hooks';
+import { GameStateContextProvider } from './context/gameStateContext';
 import Text, { TextVariant } from '../Text/Text';
 import GameSpinner from '../GameSpinner/GameSpinner';
 import Header from '../Header/Header';
@@ -19,60 +9,62 @@ import { IconVariant } from '../Icon/Icon';
 import { useNavigation } from '../../hooks/UseNavigation';
 
 import './Game.css';
+import Button, { ButtonVariant } from '../Button/Button';
+import { useOnlineGame } from './hooks/useOnlineGame';
 
-const Play = () => {
-  const { renderFrame } = useGameAnimation();
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const requestFrameRef = React.useRef<number | null>(null);
-  const [score, setScore] = React.useState<number>(0);
-  const { sendGameCommand, updateGame } = useOnlineGame();
-  // Refactor para decorar o hacer HOC con estos componentes
-  // De esta forma usar versión online de los controles y versión online del gameEngine
-  // usamos hook online dentro de la versión decorada
-  useGameControls(sendGameCommand);
-  const { runGameFrame } = useGameEngine(updateGame);
-
-  const gameLoop = React.useCallback(() => {
-    const canvasContext = canvasRef.current?.getContext('2d');
-    const gameState = runGameFrame();
-
-    setScore(gameState.score);
-    canvasContext && renderFrame(canvasContext, gameState);
-    window.requestAnimationFrame(() => gameLoop());
-  }, [runGameFrame, renderFrame]);
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-
-    if (canvas) {
-      canvas.width = CANVAS_WIDTH;
-      canvas.height = CANVAS_HEIGHT;
-      requestFrameRef.current = window.requestAnimationFrame(() => gameLoop());
-
-      return () => {
-        if (requestFrameRef.current) {
-          cancelAnimationFrame(requestFrameRef.current);
-        }
-      };
-    }
-  }, [gameLoop]);
-
-  return (
-    <>
-      <h1 className="game-score heading-bold">{score}</h1>
-      <canvas className="game-arena" ref={canvasRef} />
-    </>
-  );
+type GameProps = {
+  gameId: string;
 };
 
-const Start = () => {
-  const { send } = useStateMachineContext();
+const Play = ({ gameId }: GameProps) => {
+  const { renderMultiplayerFrame } = useGameAnimation();
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const {
+    isPlayerOne,
+    gameJoined,
+    onlineGameState,
+    joinGame,
+    sendGameCommand,
+  } = useOnlineGame(gameId);
+  useGameControls(sendGameCommand);
+  const score = onlineGameState?.score ?? 0;
+  const opponentScore = onlineGameState?.scoreOpponent ?? 0;
+
+  if (!gameJoined) {
+    return (
+      <div className="game-start">
+        <Button variant={ButtonVariant.SUBMIT} onClick={joinGame}>
+          Ready?
+        </Button>
+      </div>
+    );
+  }
+
+  if (!onlineGameState) {
+    return <Wait />;
+  }
+
+  if (canvasRef.current) {
+    const canvasCtx = canvasRef.current.getContext('2d');
+    if (canvasCtx) {
+      renderMultiplayerFrame(canvasCtx, onlineGameState, isPlayerOne);
+    }
+  }
 
   return (
-    <div className="game-start">
-      <Button variant={ButtonVariant.SUBMIT} onClick={() => send('READY')}>
-        Ready?
-      </Button>
+    <div className="game-multiplayer">
+      <h1 className="game-multiplayer-score heading-bold">
+        {isPlayerOne ? opponentScore : score}
+      </h1>
+      <canvas
+        className="game-multiplayer-arena"
+        ref={canvasRef}
+        width={CANVAS_WIDTH}
+        height={CANVAS_HEIGHT}
+      />
+      <h1 className="game-multiplayer-score heading-bold">
+        {isPlayerOne ? score : opponentScore}
+      </h1>
     </div>
   );
 };
@@ -88,59 +80,21 @@ const Wait = () => {
   );
 };
 
-const Game = () => {
-  const { state } = useStateMachineContext();
-
-  const drawMachineState = (): JSX.Element => {
-    switch (state.value) {
-      case 'start':
-        return <Start />;
-      case 'wait':
-        return <Wait />;
-      case 'play':
-        return <Play />;
-      // case 'end':
-      //   return <End />;
-      default:
-        return <Start />;
-    }
-  };
-
-  return <div className="game">{drawMachineState()}</div>;
-};
-
-export default function GameWithContext() {
-  const { initHandshake, handleInitHandshake, leaveGame } = useOnlineGame();
+export default function Game({ gameId }: GameProps) {
   const { goBack } = useNavigation();
-
-  const handshake = React.useCallback((): Promise<string> => {
-    initHandshake();
-
-    return new Promise((resolve) => {
-      const handler = (handshake: { res: string }) => {
-        resolve(handshake.res);
-      };
-      handleInitHandshake(handler);
-    });
-  }, [initHandshake, handleInitHandshake]);
-
   return (
-    <>
-      {/* TODO , this is a temporal fix, replace with a menu */}
+    <GameStateContextProvider>
       <Header
         icon={IconVariant.ARROW_BACK}
         onClick={() => {
-          leaveGame();
           goBack();
         }}
       >
-        Hit the brick!
+        Good luck!
       </Header>
-      <GameStateContextProvider>
-        <StateMachineContextProvider services={{ handshake }}>
-          <Game />
-        </StateMachineContextProvider>
-      </GameStateContextProvider>
-    </>
+      <div className="game">
+        <Play gameId={gameId} />
+      </div>
+    </GameStateContextProvider>
   );
 }

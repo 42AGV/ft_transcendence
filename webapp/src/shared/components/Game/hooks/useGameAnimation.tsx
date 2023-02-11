@@ -9,6 +9,8 @@ import {
   GameBall,
   GamePaddle,
   GameState,
+  PADDLE_WIDTH,
+  PADDLE_HEIGHT,
 } from 'pong-engine';
 
 const useGameAnimation = () => {
@@ -87,15 +89,40 @@ const useGameAnimation = () => {
   );
 
   const renderMultiplayerFrame = React.useCallback(
-    (canvasContext: CanvasRenderingContext2D, state: GameState) => {
+    (
+      canvasContext: CanvasRenderingContext2D,
+      state: GameState,
+      isPlayerOne: boolean,
+    ) => {
       const ball = state.ball;
       const paddle = state.paddle;
       const paddleOpponent = state.paddleOpponent;
 
       canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      drawBall(canvasContext, ball);
-      drawPaddle(canvasContext, paddle);
-      drawPaddle(canvasContext, paddleOpponent);
+      if (isPlayerOne) {
+        drawBall(canvasContext, ball);
+        drawPaddle(canvasContext, paddle);
+        drawPaddle(canvasContext, paddleOpponent);
+      } else {
+        const ballRotated = {
+          ...ball,
+          x: CANVAS_WIDTH - ball.x,
+          y: CANVAS_HEIGHT - ball.y,
+        };
+        const paddleRotated = {
+          ...paddle,
+          x: CANVAS_WIDTH - paddle.x - PADDLE_WIDTH,
+          y: CANVAS_HEIGHT - paddle.y - PADDLE_HEIGHT,
+        };
+        const paddleOpponentRotated = {
+          ...paddleOpponent,
+          x: CANVAS_WIDTH - paddleOpponent.x - PADDLE_WIDTH,
+          y: CANVAS_HEIGHT - paddleOpponent.y - PADDLE_HEIGHT,
+        };
+        drawBall(canvasContext, ballRotated);
+        drawPaddle(canvasContext, paddleRotated);
+        drawPaddle(canvasContext, paddleOpponentRotated);
+      }
     },
     [drawBall, drawPaddle],
   );

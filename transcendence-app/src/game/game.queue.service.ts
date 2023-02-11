@@ -1,14 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { GameId, UserId } from './infrastructure/db/memoryModels';
-import { IGamesOngoingRepository } from './infrastructure/db/games-ongoing.repository';
 import { IChallengesPendingRepository } from './infrastructure/db/challenges-pending.repository';
 import {
   GameChallengeDto,
   GameChallengeResponseDto,
-  gameQueueServerToClientWsEvents,
-  GameStatus,
+  GameChallengeStatus,
   GameStatusUpdateDto,
+  gameQueueServerToClientWsEvents,
 } from 'pong-engine';
 import {
   GamePairingStatusDto,
@@ -17,6 +16,8 @@ import {
 import { OnEvent } from '@nestjs/event-emitter';
 import { WsException } from '@nestjs/websockets';
 import { GamePairing } from './infrastructure/db/game-pairing.entity';
+import { GameService } from './game.service';
+import { v4 as uuid } from 'uuid';
 
 type QueuedUser = {
   gameRoomId: GameId;
@@ -29,13 +30,13 @@ export class GameQueueService {
   private gameQueue: QueuedUser | null = null;
 
   constructor(
-    private gamesOngoing: IGamesOngoingRepository,
-    private challengesPending: IChallengesPendingRepository,
+    private readonly gameService: GameService,
+    private readonly challengesPending: IChallengesPendingRepository,
   ) {}
 
   private isUserBusy(userId: string): boolean {
     return (
-      this.gamesOngoing.isPlayerBusy(userId) ||
+      this.gameService.isPlaying(userId) ||
       this.challengesPending.isPlayerBusy(userId) ||
       this.gameQueue?.userId === userId
     );
@@ -51,17 +52,18 @@ export class GameQueueService {
       return null;
     }
     if (!this.gameQueue) {
-      const game = this.gamesOngoing.addGame(userId);
-      this.gameQueue = { gameRoomId: game.gameRoomId, userId };
-      return game;
+      const gameRoomId = uuid();
+      this.gameQueue = { gameRoomId, userId };
+      return { gameRoomId, userOneId: userId };
     } else {
       if (this.gameQueue.userId === userId) {
         return null;
       }
       const gameRoomId = this.gameQueue.gameRoomId;
-      const game = this.gamesOngoing.addUserToGame(gameRoomId, userId);
+      const userOneId = this.gameQueue.userId;
+      const userTwoId = userId;
       this.gameQueue = null;
-      return game;
+      return { gameRoomId, userOneId, userTwoId };
     }
   }
 
@@ -70,20 +72,9 @@ export class GameQueueService {
       return null;
     }
     if (this.gameQueue && this.gameQueue.userId === userId) {
-      const game = this.gamesOngoing.getGameRoomForPlayer(userId);
-      if (
-        !game ||
-        game.gameRoomId !== this.gameQueue.gameRoomId ||
-        game.userTwoId !== undefined
-      ) {
-        throw new WsException(
-          "User is in the queue, but the game they've joined is not the " +
-            'game that is waiting, or there is a second player in a waiting game',
-        );
-      }
-      this.gamesOngoing.deleteGameForId(game.gameRoomId);
+      const gameRoomId = this.gameQueue.gameRoomId;
       this.gameQueue = null;
-      return game;
+      return { gameRoomId, userOneId: userId };
     }
     if (this.challengesPending.isPlayerBusy(userId)) {
       const game = this.challengesPending.getGameRoomForPlayer(userId);
@@ -97,21 +88,6 @@ export class GameQueueService {
     }
     // otherwise the user is playing, and noop
     return null;
-  }
-
-  gameQuitPlaying(userId: string): GamePairing | null {
-    if (!this.gamesOngoing.isPlayerPlaying(userId)) {
-      // the user is waiting: noop
-      return null;
-    }
-    const game = this.gamesOngoing.getGameRoomForPlayer(userId);
-    if (!game || game.userTwoId === undefined) {
-      throw new WsException(
-        "User is playing but gameRoom they're leaving is not in correct state",
-      );
-    }
-    this.gamesOngoing.deleteGameForId(game.gameRoomId);
-    return game;
   }
 
   gameUserChallenge(
@@ -149,10 +125,6 @@ export class GameQueueService {
     this.challengesPending.deleteGameForId(gameRoomId);
     if (!game || !game.userTwoId || game.userTwoId !== challengedPlayerId)
       return null;
-    this.gamesOngoing.addGameWithId(gameRoomId, [
-      game.userOneId,
-      game.userTwoId,
-    ]);
     return game;
   }
 
@@ -165,8 +137,8 @@ export class GameQueueService {
   }
 
   getPairingStatus(userId: UserId): GamePairingStatusDto {
-    const isPlaying = this.gamesOngoing.isPlayerPlaying(userId);
-    const gameRoom = this.gamesOngoing.getGameRoomForPlayer(userId);
+    const gameRoomId = this.gameService.getGameId(userId);
+    const isPlaying = gameRoomId !== null;
     const isWaitingToPlay =
       this.gameQueue?.userId === userId ||
       this.challengesPending.isPlayerBusy(userId);
@@ -175,10 +147,6 @@ export class GameQueueService {
       throw new InternalServerErrorException(
         'A user is simultaneously playing and waiting to play. This should not happen',
       );
-    }
-    let gameRoomId: string | null = null;
-    if (gameRoom && isPlaying) {
-      gameRoomId = gameRoom.gameRoomId;
     }
     return new GamePairingStatusDto({
       gameRoomId,
@@ -193,18 +161,21 @@ export class GameQueueService {
   @OnEvent('socket.userDisconnect')
   async handleUserDisconnect(user: { id: string }) {
     if (!this.socket) return;
-    this.gameQuitWaiting(user.id);
-    const game = this.gamesOngoing.getGameRoomForPlayer(user.id);
-    if (game) {
-      // TODO: handle this better
-      const { gameRoomId } = game;
-      this.gamesOngoing.deleteGameForId(gameRoomId);
-      this.socket
-        .to(gameRoomId)
-        .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
-          status: GameStatus.FINISHED,
-        } as GameStatusUpdateDto);
-      this.socket.socketsLeave(gameRoomId);
+    const maybeWaitingGame = this.gameQuitWaiting(user.id);
+    if (maybeWaitingGame) {
+      if (user.id !== maybeWaitingGame.userOneId) {
+        this.socket
+          .to(maybeWaitingGame.userOneId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
+      }
+      if (maybeWaitingGame.userTwoId && user.id !== maybeWaitingGame.userTwoId)
+        this.socket
+          .to(maybeWaitingGame.userTwoId)
+          .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
+            status: GameChallengeStatus.CHALLENGE_DECLINED,
+          } as GameStatusUpdateDto);
     }
   }
 }

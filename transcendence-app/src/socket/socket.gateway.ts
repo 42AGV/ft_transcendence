@@ -64,6 +64,10 @@ export class SocketGateway
   async handleDisconnect(client: Socket) {
     const user = client.request.user;
     if (user) {
+      this.eventEmitter.emit('socket.clientDisconnect', {
+        userId: user.id,
+        clientId: client.id,
+      });
       const matchingSockets: RemoteSocket<DefaultEventsMap, any>[] =
         await this.server.in(user.id).fetchSockets();
       const isDisconnectedAll = matchingSockets.length === 0;
