@@ -5,8 +5,8 @@ export async function up(knex: Knex): Promise<void> {
     CREATE TABLE
         IF NOT EXISTS Game (
             "id" UUID DEFAULT gen_random_uuid () PRIMARY KEY,
-            "playerOneUsername" VARCHAR(20) NOT NULL REFERENCES Users (username) ON DELETE CASCADE ON UPDATE CASCADE,
-            "playerTwoUsername" VARCHAR(20) NOT NULL REFERENCES Users (username) ON DELETE CASCADE ON UPDATE CASCADE,
+            "playerOneUsername" VARCHAR(20) NOT NULL REFERENCES Users (username) ON UPDATE CASCADE,
+            "playerTwoUsername" VARCHAR(20) NOT NULL REFERENCES Users (username) ON UPDATE CASCADE,
             "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW (),
             "gameDurationInSeconds" SMALLINT NOT NULL DEFAULT 0,
             "playerOneScore" SMALLINT NOT NULL DEFAULT 0,

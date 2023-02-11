@@ -37,12 +37,12 @@ export class GamePostgresRepository
     const gamesData = await makeQuery<Game>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
-      WHERE ${gameKeys.PLAYERONEUSERNAME} LIKE $1
-      OR ${gameKeys.PLAYERTWOUSERNAME} LIKE $1
+      WHERE ${gameKeys.PLAYERONEUSERNAME} ILIKE $1
+      OR ${gameKeys.PLAYERTWOUSERNAME} ILIKE $1
       ORDER BY ${sort}
       LIMIT $2
       OFFSET $3;`,
-      values: [`${search}`, limit, offset],
+      values: [`%${search}%`, limit, offset],
     });
     return gamesData ? gamesData.map((game) => new this.ctor(game)) : null;
   }
@@ -55,12 +55,14 @@ export class GamePostgresRepository
     const gamesData = await makeQuery<Game>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
-      WHERE ${gameKeys.PLAYERONEUSERNAME} LIKE $4
-      AND ${gameKeys.PLAYERTWOUSERNAME} LIKE $1
+      WHERE (${gameKeys.PLAYERONEUSERNAME} LIKE $4
+      OR ${gameKeys.PLAYERTWOUSERNAME} LIKE $4)
+      AND (${gameKeys.PLAYERONEUSERNAME} ILIKE $1
+      OR ${gameKeys.PLAYERTWOUSERNAME} ILIKE $1)
       ORDER BY ${sort}
       LIMIT $2
       OFFSET $3;`,
-      values: [`${search}`, limit, offset, username],
+      values: [`%${search}%`, limit, offset, username],
     });
     return gamesData ? gamesData.map((game) => new this.ctor(game)) : null;
   }
