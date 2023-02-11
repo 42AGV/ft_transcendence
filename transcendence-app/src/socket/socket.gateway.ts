@@ -20,8 +20,7 @@ import { SocketService } from './socket.service';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
-
-type UserId = string;
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -30,10 +29,11 @@ export class SocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer() server!: Server;
-  onlineUserIds = new Set<UserId>();
+
   constructor(
     private socketService: SocketService,
     private authorizationService: AuthorizationService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   afterInit(server: Server) {
@@ -45,7 +45,7 @@ export class SocketGateway
     if (!user) {
       client.disconnect();
     } else {
-      this.onlineUserIds.add(user.id);
+      this.socketService.addToOnlineUsers(user.id);
       const sessionId = client.request.session.id;
       // Join the session ID room to keep track of all the clients linked to this session ID
       client.join(sessionId);
@@ -64,19 +64,24 @@ export class SocketGateway
   async handleDisconnect(client: Socket) {
     const user = client.request.user;
     if (user) {
+      this.eventEmitter.emit('socket.clientDisconnect', {
+        userId: user.id,
+        clientId: client.id,
+      });
       const matchingSockets: RemoteSocket<DefaultEventsMap, any>[] =
         await this.server.in(user.id).fetchSockets();
       const isDisconnectedAll = matchingSockets.length === 0;
       if (isDisconnectedAll) {
-        this.onlineUserIds.delete(user.id);
+        this.socketService.deleteFromOnlineUsers(user.id);
         this.server.emit('userDisconnect', user.id);
+        this.eventEmitter.emit('socket.userDisconnect', { id: user.id });
       }
     }
   }
 
   @SubscribeMessage('getOnlineUsers')
   handleGetConnectedUsers(@ConnectedSocket() client: Socket) {
-    client.emit('onlineUsers', [...this.onlineUserIds]);
+    client.emit('onlineUsers', [...this.socketService.getOnlineUsers()]);
   }
 
   @SubscribeMessage('getFriends')

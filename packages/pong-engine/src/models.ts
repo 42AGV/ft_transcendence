@@ -9,9 +9,17 @@ export type GamePaddleMoveCommand =
   | 'paddleMoveLeft'
   | 'paddleStop';
 
+export type GamePaddleOpponentMoveCommand =
+  | 'paddleOpponentMoveRight'
+  | 'paddleOpponentMoveLeft'
+  | 'paddleOpponentStop';
+
 export type GamePaddleDragCommand = 'paddleDrag';
 
-export type GameCommand = GamePaddleMoveCommand | GamePaddleDragCommand;
+export type GameCommand =
+  | GamePaddleMoveCommand
+  | GamePaddleOpponentMoveCommand
+  | GamePaddleDragCommand;
 
 export type GamePaddle = GameElement & {
   slide: number;
@@ -33,5 +41,23 @@ export type Coord = {
 export type GameState = {
   ball: GameBall;
   paddle: GamePaddle;
+  paddleOpponent: GamePaddle;
   score: number;
+  scoreOpponent: number;
+};
+
+export type PlayState = 'playing' | 'paused';
+
+export type GameInfoClient = {
+  gameState: GameState;
+  playState: PlayState;
+  playerOneId: string;
+  playerTwoId: string;
+};
+
+export type GameInfoServer = GameInfoClient & {
+  createdAt: number;
+  pausedAt: number | null;
+  playerOneLeftAt: number | null;
+  playerTwoLeftAt: number | null;
 };

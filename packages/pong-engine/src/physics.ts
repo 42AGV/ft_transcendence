@@ -3,9 +3,12 @@ import {
   CANVAS_WIDTH,
   MAX_PADDLE_BOUNCE_ANGLE,
   MIN_PADDLE_BOUNCE_ANGLE,
+  MAX_PADDLE_OPPONENT_BOUNCE_ANGLE,
+  MIN_PADDLE_OPPONENT_BOUNCE_ANGLE,
   PADDLE_WIDTH,
   PADDLE_SLIDE_SPEED,
   BALL_RADIUS,
+  PADDLE_HEIGHT,
 } from './constants';
 import { GameBall, GamePaddle, Coord } from './models';
 
@@ -31,16 +34,11 @@ const bounceHor = (ball: GameBall, deltaTime: number): GameBall => ({
   y: ball.y - ball.vy * deltaTime,
 });
 
-const bounceArkanoid = (
+const getArkanoidBounce = (
   ball: GameBall,
-  paddle: GamePaddle,
+  bounceAngle: number,
   deltaTime: number,
 ): GameBall => {
-  const paddleBallDistance = ball.x - paddle.x;
-  const bounceAngle =
-    MAX_PADDLE_BOUNCE_ANGLE -
-    (paddleBallDistance / PADDLE_WIDTH) *
-      (MAX_PADDLE_BOUNCE_ANGLE - MIN_PADDLE_BOUNCE_ANGLE);
   const newVx = BALL_SPEED * Math.cos(bounceAngle);
   const newVy = BALL_SPEED * -1 * Math.sin(bounceAngle);
 
@@ -51,6 +49,32 @@ const bounceArkanoid = (
     x: ball.x + newVx * deltaTime,
     y: ball.y + newVy * deltaTime,
   };
+};
+
+const bounceArkanoid = (
+  ball: GameBall,
+  paddle: GamePaddle,
+  deltaTime: number,
+): GameBall => {
+  const paddleBallDistance = ball.x - paddle.x;
+  const bounceAngle =
+    MAX_PADDLE_BOUNCE_ANGLE -
+    (paddleBallDistance / PADDLE_WIDTH) *
+      (MAX_PADDLE_BOUNCE_ANGLE - MIN_PADDLE_BOUNCE_ANGLE);
+  return getArkanoidBounce(ball, bounceAngle, deltaTime);
+};
+
+const bounceArkanoidOpponent = (
+  ball: GameBall,
+  paddle: GamePaddle,
+  deltaTime: number,
+): GameBall => {
+  const paddleBallDistance = ball.x - paddle.x;
+  const bounceAngle =
+    MAX_PADDLE_OPPONENT_BOUNCE_ANGLE -
+    (paddleBallDistance / PADDLE_WIDTH) *
+      (MAX_PADDLE_OPPONENT_BOUNCE_ANGLE - MIN_PADDLE_OPPONENT_BOUNCE_ANGLE);
+  return getArkanoidBounce(ball, bounceAngle, deltaTime);
 };
 
 const move = (ball: GameBall, deltaTime: number): GameBall => ({
@@ -70,6 +94,12 @@ const vertWallCollision = (ball: GameBall) =>
 
 const horWallCollision = (ball: GameBall) => ball.y <= BALL_RADIUS;
 
+const paddleOpponentCollision = (ball: GameBall, paddle: GamePaddle) =>
+  ball.y > paddle.y - BALL_RADIUS + PADDLE_HEIGHT &&
+  ball.y < paddle.y + BALL_RADIUS + PADDLE_HEIGHT &&
+  ball.x > paddle.x - BALL_RADIUS &&
+  ball.x < paddle.x + paddle.width + BALL_RADIUS;
+
 const paddleCollision = (ball: GameBall, paddle: GamePaddle) =>
   ball.y > paddle.y - BALL_RADIUS &&
   ball.y < paddle.y + BALL_RADIUS &&
@@ -84,6 +114,23 @@ export const calcInitialBallSpeed = (): Coord => {
     x: BALL_SPEED * Math.cos(angle),
     y: BALL_SPEED * Math.sin(angle),
   };
+};
+
+export const getBallPosMultiplayer = (
+  ball: GameBall,
+  paddle: GamePaddle,
+  paddleOpponent: GamePaddle,
+  deltaTime: number,
+): GameBall => {
+  if (vertWallCollision(ball)) {
+    return bounceVert(ball, deltaTime);
+  } else if (paddleCollision(ball, paddle)) {
+    return bounceArkanoid(ball, paddle, deltaTime);
+  } else if (paddleOpponentCollision(ball, paddleOpponent)) {
+    return bounceArkanoidOpponent(ball, paddleOpponent, deltaTime);
+  } else {
+    return move(ball, deltaTime);
+  }
 };
 
 export const getBallPos = (

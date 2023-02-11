@@ -7,6 +7,7 @@ import { validate } from '../../src/config/env.validation';
 import { UserController } from '../../src/user/user.controller';
 import { TwoFactorAuthenticatedGuard } from '../../src/shared/guards/two-factor-authenticated.guard';
 import { AuthorizationModule } from '../../src/authorization/authorization.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('[Feature] User - /users', () => {
   let app: INestApplication;
@@ -23,6 +24,7 @@ describe('[Feature] User - /users', () => {
           cache: true,
           validate,
         }),
+        EventEmitterModule.forRoot(),
       ],
       controllers: [UserController],
     })

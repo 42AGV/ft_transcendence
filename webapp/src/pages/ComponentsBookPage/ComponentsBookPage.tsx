@@ -25,6 +25,7 @@ import {
 import { EditableAvatarExample } from './ComponentsExamples/EditableAvatarExample';
 import { CustomConfirmAlertExample } from './ComponentsExamples/CustomConfirmAlert';
 import { GameSpinnerExample } from './ComponentsExamples/GameSpinnerExample';
+import { TimerExample } from './ComponentsExamples/TimerExample';
 
 export default function ComponentsBookPage() {
   return (
@@ -54,6 +55,7 @@ export default function ComponentsBookPage() {
       <CustomConfirmAlertExample />
       <GameSpinnerExample />
       <ScoreExample />
+      <TimerExample />
     </div>
   );
 }

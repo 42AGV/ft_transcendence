@@ -11,11 +11,12 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  // WsException,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
+import { GameInputDto } from './dto/game-input.dto';
+import { GameService } from './game.service';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -24,11 +25,38 @@ import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authent
 export class GameGateway {
   @WebSocketServer() server!: Server;
 
-  @SubscribeMessage('gameMessage')
-  async handleChatMessage(
-    @MessageBody('gameId', ParseUUIDPipe) gameId: string,
+  constructor(private readonly gameService: GameService) {}
+
+  afterInit(server: Server) {
+    this.gameService.server = server;
+  }
+
+  @SubscribeMessage('joinGame')
+  handleGameJoin(
     @ConnectedSocket() client: Socket,
+    @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
   ) {
-    console.log(client, gameId);
+    this.gameService.handleGameJoin(client, gameRoomId);
+  }
+
+  @SubscribeMessage('leaveGame')
+  handleGameLeave(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('gameRoomId', ParseUUIDPipe) gameRoomId: string,
+  ) {
+    this.gameService.handleGameLeave(client, gameRoomId);
+  }
+
+  @SubscribeMessage('gameCommand')
+  handleGameCommand(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() gameInputDto: GameInputDto,
+  ) {
+    this.gameService.handleGameCommand(client, gameInputDto);
+  }
+
+  @SubscribeMessage('gameQuitPlaying')
+  gameQuitPlaying(@ConnectedSocket() client: Socket) {
+    this.gameService.gameQuitPlaying(client.request.user.id);
   }
 }

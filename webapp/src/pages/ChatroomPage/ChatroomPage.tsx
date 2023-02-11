@@ -2,7 +2,6 @@ import { useCallback, useEffect } from 'react';
 import { Navigate, useLocation, useParams } from 'react-router-dom';
 import { CHATS_URL, CHATROOM_URL, ADMIN_URL } from '../../shared/urls';
 import socket from '../../shared/socket';
-import { WsException } from '../../shared/types';
 import { useData } from '../../shared/hooks/UseData';
 import { chatApi } from '../../shared/services/ApiService';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
@@ -11,7 +10,6 @@ import {
   UserWithAuthorizationResponseDto,
 } from '../../shared/generated';
 import { useAuth } from '../../shared/hooks/UseAuth';
-import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { ChatMessagingTemplate } from '../../shared/components';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { ChatMessage } from '../../shared/components/templates/ChatMessagingTemplate/components/ChatMessages/ChatMessages';
@@ -45,8 +43,6 @@ function Chatroom({
   authUser,
   overridePermissions = false,
 }: ChatroomProps) {
-  const { warn } = useNotificationContext();
-
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId }),
     [chatroomId],
@@ -90,10 +86,6 @@ function Chatroom({
   const { data: chatroomMember, isLoading: isChatroomMemberLoading } =
     useData(getChatroomMember);
 
-  const enableNotifications =
-    (chatroom !== null && chatroomMember !== null && !chatroomMember.banned) ||
-    (overridePermissions && (authUser.gAdmin || authUser.gOwner));
-
   useEffect(() => {
     socket.emit('joinChatroom', { chatroomId });
 
@@ -101,18 +93,6 @@ function Chatroom({
       socket.emit('leaveChatroom', { chatroomId });
     };
   }, [chatroomId]);
-
-  useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      if (enableNotifications) {
-        warn(wsError.message);
-      }
-    });
-
-    return () => {
-      socket.off('exception');
-    };
-  }, [warn, enableNotifications]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
     return <LoadingPage />;

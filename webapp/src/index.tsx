@@ -7,7 +7,7 @@ import {
   LandingPage,
   PlayPage,
   GameTrainPage,
-  GamePage,
+  GameMultiplayerPage,
   UsersPage,
   UserPage,
   ComponentsBookPage,
@@ -62,6 +62,7 @@ import { UserStatusProvider } from './shared/context/UserStatusContext';
 import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
 import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
+import { GamePairingProvider } from './shared/context/GamePairingContext';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -71,11 +72,13 @@ function AppContext({ children }: { children: JSX.Element }) {
   return (
     <NotificationContextProvider>
       <AuthProvider>
-        <UserStatusProvider>
-          <UserFriendProvider>
-            <UserBlocklistProvider>{children}</UserBlocklistProvider>
-          </UserFriendProvider>
-        </UserStatusProvider>
+        <GamePairingProvider>
+          <UserStatusProvider>
+            <UserFriendProvider>
+              <UserBlocklistProvider>{children}</UserBlocklistProvider>
+            </UserFriendProvider>
+          </UserStatusProvider>
+        </GamePairingProvider>
       </AuthProvider>
     </NotificationContextProvider>
   );
@@ -115,7 +118,16 @@ function AppRoutes() {
         path={PLAY_GAME_URL}
         element={
           <RequireAuth>
-            <GamePage />
+            {/* Temporary until we implement the page which list the currently playing games */}
+            <GameTrainPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${PLAY_GAME_URL}/:gameId`}
+        element={
+          <RequireAuth>
+            <GameMultiplayerPage />
           </RequireAuth>
         }
       />
