@@ -6,6 +6,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { SocketModule } from './socket/socket.module';
 import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GameModule } from './game/game.module';
     SocketModule,
     ChatModule,
     GameModule,
+    EventEmitterModule.forRoot(),
   ],
   providers: [
     {

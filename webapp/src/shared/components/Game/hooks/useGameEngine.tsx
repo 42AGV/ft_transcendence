@@ -5,49 +5,35 @@ import {
   runGameFrame as runEngineGameFrame,
   runGameMultiplayerFrame as runEngineGameMultiplayerFrame,
 } from 'pong-engine';
-import { useGameStateContext } from '../context';
+import { useGameStateContext } from '../context/gameStateContext';
 import useGameAnimation from './useGameAnimation';
 
-type Callback = (game: GameState) => void;
-
-const useGameEngine = (updateWithServer?: (cb: Callback) => void) => {
+const useGameEngine = () => {
   const { gameStateRef } = useGameStateContext();
   const { deltaTimeRef } = useGameAnimation();
 
   const runGameFrame = React.useCallback((): GameState => {
-    if (updateWithServer) {
-      updateWithServer((state: GameState) => {
-        gameStateRef.current = state;
-      });
-    } else {
-      const state = gameStateRef.current;
-      const newState = runEngineGameFrame(deltaTimeRef.current, state);
+    const state = gameStateRef.current;
+    const newState = runEngineGameFrame(deltaTimeRef.current, state);
 
-      gameStateRef.current = newState;
-    }
+    gameStateRef.current = newState;
 
     return gameStateRef.current;
-  }, [gameStateRef, updateWithServer, deltaTimeRef]);
+  }, [gameStateRef, deltaTimeRef]);
 
   const runGameMultiplayerFrame = React.useCallback((): GameState => {
-    if (updateWithServer) {
-      updateWithServer((state: GameState) => {
-        gameStateRef.current = state;
-      });
-    } else {
-      const state = gameStateRef.current;
-      const newState = runEngineGameMultiplayerFrame(
-        deltaTimeRef.current,
-        state,
-      );
+    const state = gameStateRef.current;
+    const newState = runEngineGameMultiplayerFrame(deltaTimeRef.current, state);
 
-      gameStateRef.current = newState;
-    }
+    gameStateRef.current = newState;
 
     return gameStateRef.current;
-  }, [gameStateRef, updateWithServer, deltaTimeRef]);
+  }, [gameStateRef, deltaTimeRef]);
 
-  return { runGameFrame, runGameMultiplayerFrame };
+  return {
+    runGameFrame,
+    runGameMultiplayerFrame,
+  };
 };
 
 export default useGameEngine;

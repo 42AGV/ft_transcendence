@@ -1,0 +1,67 @@
+.landing-animation-page {
+  margin: 0;
+  min-height: 100vh;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  overflow: hidden;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  gap: 2rem var(--column-gap);
+  grid-template-columns: repeat(var(--column-number), 1fr);
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'title title ... ...'
+    'main main main main'
+    'end end end end';
+}
+
+.landing-animation-page-title > * {
+  margin: 0 0 4rem;
+}
+
+.landing-animation-page-title {
+  grid-area: title;
+}
+
+.animation-template-container {
+  grid-area: main;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem var(--column-gap);
+  text-align: center;
+}
+
+.landing-animation-page .landing-animation {
+  display: none;
+}
+
+/* Styles for viewports wider than 768 pixels. */
+@media (min-width: 768px) {
+  .landing-animation-page {
+    min-height: 100vh;
+    gap: 2rem var(--column-gap);
+    padding: 4rem var(--padding-sides) 8rem var(--padding-sides);
+    grid-template-columns: repeat(var(--column-number), 1fr);
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas:
+      'title title title ... ... ... ... ... ... ... ... ...'
+      'main main main main main ... ... animation animation animation animation animation'
+      'end end end end end ... ... ... ... ... ... ...';
+  }
+  .animation-template-container {
+    grid-area: main;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem var(--column-gap);
+  }
+
+  .landing-animation-page .landing-animation {
+    display: inline;
+  }
+
+  .animation-template-container {
+    align-items: flex-start;
+  }
+}

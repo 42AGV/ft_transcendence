@@ -35,6 +35,8 @@ import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { AuthorizationService } from '../authorization/authorization.service';
 import { User } from '../user/infrastructure/db/user.entity';
 import { Action } from '../shared/enums/action.enum';
+import { GameQueueService } from './game.queue.service';
+import { GamePairingStatusDto } from './dto/game-pairing-status.dto';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -45,7 +47,22 @@ export class GameController {
     private gameService: GameService,
     private readonly authorizationService: AuthorizationService,
     private readonly caslAbilityFactory: CaslAbilityFactory,
+    private gameQueueService: GameQueueService,
   ) {}
+
+  @Get('pairing-status')
+  @ApiOkResponse({
+    description: `Returns the game pairing status of the authenticated user`,
+    type: GamePairingStatusDto,
+  })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  getPairingStatus(@GetUser() user: User): GamePairingStatusDto {
+    const status = this.gameQueueService.getPairingStatus(user.id);
+    if (!status) {
+      throw new ServiceUnavailableException();
+    }
+    return status;
+  }
 
   @Post('game')
   @ApiCreatedResponse({ description: 'Add a game', type: Game })

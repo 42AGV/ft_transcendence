@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from 'pong-engine';
 import { useGameControls, useGameAnimation, useGameEngine } from './hooks';
-import { GameStateContextProvider } from './context';
+import { GameStateContextProvider } from './context/gameStateContext';
 
 import './Game.css';
 

@@ -1,82 +1,97 @@
-import * as React from 'react';
-import socket from '../../../socket';
-import { GameCommand, GameState } from 'pong-engine';
-import { WsException } from '../../../types';
+import React from 'react';
 import { useNotificationContext } from '../../../context/NotificationContext';
+import { GameCommand, GameInfoClient, GameState } from 'pong-engine';
+import { useAuth } from '../../../hooks/UseAuth';
+import { useNavigate } from 'react-router-dom';
+import socket from '../../../socket';
+import { PLAY_URL } from '../../../urls';
 
-// Tipar mensajes ws -> investigar si se puede hacer con OpenApi
 const GAME_COMMAND = 'gameCommand';
 const UPDATE_GAME = 'updateGame';
 const JOIN_GAME = 'joinGame';
 const LEAVE_GAME = 'leaveGame';
+const GAME_JOINED = 'gameJoined';
+const GAME_NOT_FOUND = 'gameNotFound';
+const GAME_FINISHED = 'gameFinished';
 
-const useOnlineGame = () => {
-  const { warn } = useNotificationContext();
+export function useOnlineGame(gameId: string) {
+  const { notify, warn } = useNotificationContext();
+  const { authUser } = useAuth();
+  const navigate = useNavigate();
+  const [isPlayer, setIsPlayer] = React.useState(false);
+  const [isPlayerOne, setIsPlayerOne] = React.useState(true);
+  const [onlineGameState, setOnlineGameState] =
+    React.useState<GameState | null>(null);
+  const [gameJoined, setGameJoined] = React.useState(false);
 
   const sendGameCommand = React.useCallback(
-    (command: GameCommand) =>
-      socket.emit(GAME_COMMAND, {
-        command,
-      }),
-    [],
-  );
-
-  const updateGame = React.useCallback((cb: (state: GameState) => void) => {
-    socket.on(UPDATE_GAME, cb);
-
-    return () => {
-      socket.off(UPDATE_GAME);
-    };
-  }, []);
-
-  const initHandshake = React.useCallback(() => {
-    socket.emit(JOIN_GAME);
-  }, []);
-
-  const handleInitHandshake = React.useCallback(
-    (cb: (handshake: { res: string }) => void) => {
-      socket.on(JOIN_GAME, cb);
-
-      return () => {
-        socket.off(JOIN_GAME);
-      };
+    (command: GameCommand) => {
+      if (isPlayer && gameJoined) {
+        socket.emit(GAME_COMMAND, {
+          command,
+          gameRoomId: gameId,
+        });
+      }
     },
-    [],
+    [gameId, isPlayer, gameJoined],
   );
 
-  const leaveGame = React.useCallback(() => {
-    socket.emit(LEAVE_GAME);
-  }, []);
-
-  const handleLeaveHandshake = React.useCallback(
-    (cb: (handshake: { res: string }) => void) => {
-      socket.on(LEAVE_GAME, cb);
-
-      return () => {
-        socket.off(LEAVE_GAME);
-      };
-    },
-    [],
-  );
+  const joinGame = React.useCallback(() => {
+    if (!gameJoined) {
+      socket.emit(JOIN_GAME, { gameRoomId: gameId });
+    }
+  }, [gameId, gameJoined]);
 
   React.useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
-    });
+    function handleGameJoined(info: GameInfoClient) {
+      setIsPlayer(
+        authUser?.id === info.playerOneId || authUser?.id === info.playerTwoId,
+      );
+      setIsPlayerOne(authUser?.id === info.playerOneId);
+      setGameJoined(true);
+    }
+
+    function handleUpdateGame(info: GameInfoClient) {
+      setOnlineGameState(info.gameState);
+    }
+
+    function handleGameNotFound() {
+      navigate(PLAY_URL, { replace: true });
+    }
+
+    function handleGameFinished() {
+      notify('Game finished');
+      navigate(PLAY_URL, { replace: true });
+    }
+
+    socket.on(GAME_JOINED, handleGameJoined);
+    socket.on(UPDATE_GAME, handleUpdateGame);
+    socket.on(GAME_NOT_FOUND, handleGameNotFound);
+    socket.on(GAME_FINISHED, handleGameFinished);
 
     return () => {
-      socket.off('exception');
+      socket.emit(LEAVE_GAME, { gameRoomId: gameId });
+      socket.off(GAME_JOINED);
+      socket.off(UPDATE_GAME);
+      socket.off(GAME_NOT_FOUND);
+      socket.off(GAME_FINISHED);
     };
-  }, [warn]);
+  }, [
+    gameId,
+    authUser,
+    navigate,
+    notify,
+    warn,
+    setIsPlayer,
+    setIsPlayerOne,
+    setOnlineGameState,
+  ]);
 
   return {
+    isPlayerOne,
+    gameJoined,
+    onlineGameState,
+    joinGame,
     sendGameCommand,
-    updateGame,
-    initHandshake,
-    handleInitHandshake,
-    leaveGame,
-    handleLeaveHandshake,
   };
-};
-
-export default useOnlineGame;
+}
