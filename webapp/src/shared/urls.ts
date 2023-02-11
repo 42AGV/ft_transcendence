@@ -12,7 +12,6 @@ export const EDIT_USER_PASSWORD_URL = `${USER_ME_URL}/edit/password`;
 export const EDIT_USER_AVATAR_URL = `${USER_ME_URL}/edit/avatar`;
 export const PLAY_URL = '/play';
 export const PLAY_GAME_URL = '/play/game';
-export const PLAY_GAME_QUEUE = '/play/queue';
 export const PLAY_GAME_TRAIN_URL = '/play/game-train';
 export const CHAT_URL = '/chat';
 export const CHATS_URL = '/chats';

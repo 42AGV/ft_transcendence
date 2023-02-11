@@ -147,12 +147,14 @@ export const reducer = (
     case 'paddleOpponentMoveRight':
       return {
         ...state,
-        paddleOpponent: movePaddleRight(paddleOpponent),
+        // We use the inverse perspective for the opponent
+        paddleOpponent: movePaddleLeft(paddleOpponent),
       };
     case 'paddleOpponentMoveLeft':
       return {
         ...state,
-        paddleOpponent: movePaddleLeft(paddleOpponent),
+        // We use the inverse perspective for the opponent
+        paddleOpponent: movePaddleRight(paddleOpponent),
       };
     case 'paddleOpponentStop':
       return {

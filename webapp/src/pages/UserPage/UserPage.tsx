@@ -10,12 +10,7 @@ import {
   AvatarPageTemplate,
   Button,
 } from '../../shared/components';
-import {
-  ADMIN_URL,
-  AVATAR_EP_URL,
-  CHAT_URL,
-  PLAY_GAME_QUEUE,
-} from '../../shared/urls';
+import { ADMIN_URL, AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -43,7 +38,7 @@ export default function UserPage() {
   const { username } = useParams();
   const { navigate } = useNavigation();
   const { pathname } = useLocation();
-  const { gameQueueStatus, setGameCtx } = useGamePairing();
+  const { gameQueueStatus } = useGamePairing();
   const getUserByUserName = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
@@ -192,13 +187,6 @@ export default function UserPage() {
                         gameQueueClientToServerWsEvents.gameUserChallenge,
                         { to: { id: user.id } } as GameUserChallengeDto,
                       );
-                      setGameCtx &&
-                        setGameCtx({
-                          gameQueueStatus:
-                            GamePairingStatusDtoGameQueueStatusEnum.Waiting,
-                          gameRoomId: null,
-                        });
-                      navigate(PLAY_GAME_QUEUE);
                     },
                   }}
                 >

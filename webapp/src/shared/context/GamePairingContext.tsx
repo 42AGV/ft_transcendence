@@ -3,9 +3,8 @@ import {
   ReactNode,
   useEffect,
   useState,
-  Dispatch,
-  SetStateAction,
   useCallback,
+  useMemo,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
@@ -21,7 +20,7 @@ import {
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
 } from 'transcendence-shared';
-import { PLAY_GAME_URL, PLAY_URL } from '../urls';
+import { PLAY_GAME_URL } from '../urls';
 import { WsException } from '../types';
 import { gameApi } from '../services/ApiService';
 import { useData } from '../hooks/UseData';
@@ -33,7 +32,6 @@ import {
 export interface GamePairingContextType {
   gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
   gameRoomId: string | null;
-  setGameCtx?: Dispatch<SetStateAction<GamePairingContextType | null>>;
 }
 
 export const GamePairingContext = createContext<GamePairingContextType>(null!);
@@ -71,27 +69,23 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
             gameRoomId,
             gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.Playing,
           });
-          navigate(PLAY_GAME_URL);
-          // `${PLAY_GAME_URL}/${gameRoomId}` should probably be the final
-          // navigation, but PLAY_GAME_URL is where our game prototype waits,
-          // for now
-          // navigate(`${PLAY_GAME_URL}/${gameRoomId}`, { replace: true });
+          navigate(`${PLAY_GAME_URL}/${gameRoomId}`);
           break;
         }
-        // The handling of these two is similar and should be handled
-        // in the same place. Hence, the fallthrough
-        /* FALLTHROUGH */
-        // @ts-ignore
         case GameChallengeStatus.CHALLENGE_DECLINED: {
           warn(`Challenge declined`);
-        } // FALLS THROUGH to GameStatus.FINISHED
+          setGameCtx({
+            gameRoomId: null,
+            gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
+          });
+          break;
+        }
         case GameStatus.FINISHED: {
           notify('Game finished');
           setGameCtx({
             gameRoomId: null,
             gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum.None,
           });
-          navigate(PLAY_URL, { replace: true });
         }
       }
     };
@@ -197,12 +191,15 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
 
-  const contextValue = {
-    gameQueueStatus:
-      gameCtx?.gameQueueStatus ?? GamePairingStatusDtoGameQueueStatusEnum.None,
-    gameRoomId: gameCtx?.gameRoomId ?? null,
-    setGameCtx,
-  };
+  const contextValue = useMemo(
+    () => ({
+      gameQueueStatus:
+        gameCtx?.gameQueueStatus ??
+        GamePairingStatusDtoGameQueueStatusEnum.None,
+      gameRoomId: gameCtx?.gameRoomId ?? null,
+    }),
+    [gameCtx],
+  );
 
   return (
     <GamePairingContext.Provider value={contextValue}>

@@ -45,3 +45,19 @@ export type GameState = {
   score: number;
   scoreOpponent: number;
 };
+
+export type PlayState = 'playing' | 'paused';
+
+export type GameInfoClient = {
+  gameState: GameState;
+  playState: PlayState;
+  playerOneId: string;
+  playerTwoId: string;
+};
+
+export type GameInfoServer = GameInfoClient & {
+  createdAt: number;
+  pausedAt: number | null;
+  playerOneLeftAt: number | null;
+  playerTwoLeftAt: number | null;
+};
