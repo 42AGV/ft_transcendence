@@ -26,7 +26,6 @@ import {
 } from '../../shared/generated';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import socket from '../../shared/socket';
-import { WsException } from '../../shared/types';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
 import {
   gameQueueClientToServerWsEvents,
@@ -118,15 +117,6 @@ export default function UserPage() {
         }
       }
     };
-  useEffect(() => {
-    socket.on('exception', (wsError: WsException) => {
-      warn(wsError.message);
-    });
-
-    return () => {
-      socket.off('exception');
-    };
-  }, [warn]);
 
   return (
     <div className="user-page">
