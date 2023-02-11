@@ -43,7 +43,6 @@ export class GameService {
   private readonly userToGame = new Map<UserId, GameId>();
   private readonly playerToClients = new Map<UserId, Set<ClientId>>();
   private intervalId: NodeJS.Timer | undefined = undefined;
-  
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
     if (!this.server) {
@@ -351,10 +350,6 @@ export class GameService {
     }
     this.playerClientLeaveGame({ userId, clientId, game, gameId });
   }
-}
-
-
-
 
   addGame(game: CreateGameDto): Promise<Game | null> {
     return this.gameRepository.addGame({
