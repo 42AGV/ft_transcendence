@@ -166,18 +166,9 @@ export class GameService {
             playState,
             playerOneId,
             playerTwoId,
+            timestamp: Date.now(),
           };
           this.server.to(gameId).emit('updateGame', newGameInfoClient);
-        } else {
-          // Game is paused, send the current game info
-          const { gameState, playState, playerOneId, playerTwoId } = gameInfo;
-          const gameInfoClient = {
-            gameState,
-            playState,
-            playerOneId,
-            playerTwoId,
-          };
-          this.server.to(gameId).emit('updateGame', gameInfoClient);
         }
       }
     });
@@ -290,6 +281,9 @@ export class GameService {
   }
 
   handleGameLeave(client: Socket, gameRoomId: string) {
+    if (!this.server) {
+      return;
+    }
     const game = this.games.get(gameRoomId);
     if (!game) {
       return;
@@ -302,6 +296,7 @@ export class GameService {
     if (!(isPlayerOne || isPlayerTwo)) {
       return;
     }
+    this.server.to(gameRoomId).emit('pauseGame');
     this.playerClientLeaveGame({
       userId,
       clientId: client.id,
@@ -465,14 +460,14 @@ export class GameService {
       createdAt: now,
       playerOneId: gamePairing.userOneId,
       playerTwoId: gamePairing.userTwoId,
-      pausedAt: now,
-      playerOneLeftAt: now,
-      playerTwoLeftAt: now,
+      pausedAt: Date.now(),
+      playerOneLeftAt: Date.now(),
+      playerTwoLeftAt: Date.now(),
+      timestamp: Date.now(),
     });
     this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
     this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
     if (!this.intervalId) {
-      // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
       this.intervalId = setInterval(() => {
         this.runServerGameFrame();
       }, DELTA_TIME * 1000);

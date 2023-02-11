@@ -53,6 +53,7 @@ export type GameInfoClient = {
   playState: PlayState;
   playerOneId: string;
   playerTwoId: string;
+  timestamp: EpochTimeStamp;
 };
 
 export type GameInfoServer = GameInfoClient & {

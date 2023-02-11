@@ -2,8 +2,14 @@ import * as React from 'react';
 
 import { GameState, newGame } from 'pong-engine';
 
+type GameStateFrame = {
+  state: GameState;
+  timestamp: EpochTimeStamp;
+};
+
 type GameStateContextType = {
   gameStateRef: React.MutableRefObject<GameState>;
+  serverFrameBufferRef: React.MutableRefObject<GameStateFrame[]>;
 };
 
 type GameStateContextProps = {
@@ -18,9 +24,10 @@ export const GameStateContextProvider = ({
   children,
 }: GameStateContextProps) => {
   const gameStateRef = React.useRef<GameState>(newGame());
+  const serverFrameBufferRef = React.useRef<GameStateFrame[]>([]);
 
   return (
-    <GameStateContext.Provider value={{ gameStateRef }}>
+    <GameStateContext.Provider value={{ gameStateRef, serverFrameBufferRef }}>
       {children}
     </GameStateContext.Provider>
   );

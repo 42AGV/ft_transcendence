@@ -4,12 +4,13 @@ import {
   DragPayload,
   GameCommand,
   GameInfoClient,
-  GameState,
+  GameInfoServer,
 } from 'pong-engine';
 import { useAuth } from '../../../hooks/UseAuth';
 import { useNavigate } from 'react-router-dom';
 import socket from '../../../socket';
 import { PLAY_URL } from '../../../urls';
+import { useGameStateContext } from '../context/gameStateContext';
 
 const GAME_COMMAND = 'gameCommand';
 const UPDATE_GAME = 'updateGame';
@@ -30,9 +31,9 @@ export function useOnlineGame(gameId: string) {
   const navigate = useNavigate();
   const [isPlayer, setIsPlayer] = React.useState(false);
   const [isPlayerOne, setIsPlayerOne] = React.useState(true);
-  const [onlineGameState, setOnlineGameState] =
-    React.useState<GameState | null>(null);
+  const [isGamePaused, setIsGamePaused] = React.useState(true);
   const [gameJoined, setGameJoined] = React.useState(false);
+  const { serverFrameBufferRef } = useGameStateContext();
 
   const sendGameCommand = React.useCallback(
     (command: GameCommand, payload?: DragPayload) => {
@@ -64,16 +65,11 @@ export function useOnlineGame(gameId: string) {
       setGameJoined(true);
     }
 
-    function handleUpdateGame(info: GameInfoClient) {
-      setOnlineGameState(info.gameState);
-    }
-
     function handleGameNotFound() {
       navigate(PLAY_URL, { replace: true });
     }
 
     function handleGameFinished(info: GameInfoClient) {
-      setOnlineGameState(info.gameState);
       notify('Game finished');
       timeoutId = setTimeout(() => {
         navigate(PLAY_URL, { replace: true });
@@ -81,29 +77,40 @@ export function useOnlineGame(gameId: string) {
     }
 
     function handleGameStartPaused() {
+      setIsGamePaused(true);
       notify('Waiting for players to join');
     }
 
     function handleGameStartResumed() {
+      setIsGamePaused(false);
       notify('Game starting soon');
     }
 
     function handleGamePaused() {
+      setIsGamePaused(true);
       notify('Game paused');
     }
 
     function handleGameResumed() {
+      setIsGamePaused(false);
       notify('Game resuming soon');
     }
 
+    function updateGameWithServer(info: GameInfoServer) {
+      serverFrameBufferRef.current.push({
+        state: info.gameState,
+        timestamp: info.timestamp,
+      });
+    }
+
     socket.on(GAME_JOINED, handleGameJoined);
-    socket.on(UPDATE_GAME, handleUpdateGame);
     socket.on(GAME_NOT_FOUND, handleGameNotFound);
     socket.on(GAME_FINISHED, handleGameFinished);
     socket.on(GAME_START_PAUSED, handleGameStartPaused);
     socket.on(GAME_START_RESUMED, handleGameStartResumed);
     socket.on(GAME_PAUSED, handleGamePaused);
     socket.on(GAME_RESUMED, handleGameResumed);
+    socket.on(UPDATE_GAME, updateGameWithServer);
 
     return () => {
       socket.emit(LEAVE_GAME, { gameRoomId: gameId });
@@ -125,13 +132,13 @@ export function useOnlineGame(gameId: string) {
     warn,
     setIsPlayer,
     setIsPlayerOne,
-    setOnlineGameState,
+    serverFrameBufferRef,
   ]);
 
   return {
     isPlayerOne,
+    isGamePaused,
     gameJoined,
-    onlineGameState,
     joinGame,
     sendGameCommand,
   };

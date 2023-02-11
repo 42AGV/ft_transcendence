@@ -155,13 +155,12 @@ export const getPaddlePos = (
   paddle: GamePaddle,
   deltaTime: number,
 ): GamePaddle => {
-  if (
-    (paddle.x > 0 && paddle.slide < 0) ||
-    (paddle.x < CANVAS_WIDTH - PADDLE_WIDTH && paddle.slide > 0)
-  ) {
+  const newPaddleX = paddle.x + paddle.slide * deltaTime;
+
+  if (newPaddleX > 0 && newPaddleX < CANVAS_WIDTH - PADDLE_WIDTH) {
     return {
       ...paddle,
-      x: paddle.x + paddle.slide * deltaTime,
+      x: newPaddleX,
     };
   }
   return paddle;
