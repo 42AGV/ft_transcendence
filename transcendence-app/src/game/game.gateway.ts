@@ -16,17 +16,6 @@ import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
 import { GameInputDto } from './dto/game-input.dto';
-import {
-  GameState,
-  paddleMoveRight,
-  paddleMoveLeft,
-  paddleStop,
-  runGameFrame,
-  newGame,
-} from 'pong-engine';
-import { GameStatus } from 'transcendence-shared';
-import { OnEvent } from '@nestjs/event-emitter';
-import { GamePairing } from './infrastructure/db/game-pairing.entity';
 import { GameService } from './game.service';
 
 @WebSocketGateway({ path: '/api/v1/socket.io' })
