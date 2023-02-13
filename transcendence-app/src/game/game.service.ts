@@ -25,6 +25,7 @@ type ClientId = string;
 const FPS = 30;
 const DELTA_TIME = 1 / FPS;
 const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
+const MAX_SCORE = 10;
 
 @Injectable()
 export class GameService {
@@ -57,13 +58,24 @@ export class GameService {
     }
   }
 
+  private isPausedForTooLong(gameInfo: GameInfoServer) {
+    return (
+      gameInfo.pausedAt !== null &&
+      Date.now() >= gameInfo.pausedAt + MAX_PAUSED_TIME_MS
+    );
+  }
+
+  private hasPlayerWon(gameInfo: GameInfoServer) {
+    return (
+      gameInfo.gameState.score >= MAX_SCORE ||
+      gameInfo.gameState.scoreOpponent >= MAX_SCORE
+    );
+  }
+
   private runServerGameFrame() {
     this.games.forEach((gameInfo: GameInfoServer, gameId: GameId) => {
       if (this.server) {
-        if (
-          gameInfo.pausedAt &&
-          Date.now() >= gameInfo.pausedAt + MAX_PAUSED_TIME_MS
-        ) {
+        if (this.isPausedForTooLong(gameInfo) || this.hasPlayerWon(gameInfo)) {
           this.finishGame(gameInfo, gameId);
         } else if (gameInfo.playState === 'playing') {
           // Game is playing, update the game info
