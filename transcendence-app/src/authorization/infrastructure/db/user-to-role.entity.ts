@@ -1,4 +1,4 @@
-import { Role } from '../../../shared/enums/role.enum';
+import { Role } from 'transcendence-shared';
 
 export enum UserToRoleKeys {
   ID = '"id"',

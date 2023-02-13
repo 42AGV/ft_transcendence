@@ -1,5 +1,7 @@
 .register-page {
-  display: contents;
+  width: 100%;
+  min-width: 15rem;
+  max-width: 20rem;
 }
 
 .register-form {
@@ -12,15 +14,10 @@
 
 .register-form > .input {
   margin-bottom: 0.875rem;
-  width: 100%;
-  min-width: 15rem;
-  max-width: 20rem;
 }
 
 .register-form > .input > label {
   display: inline-block;
   text-align: left;
   width: 100%;
-  min-width: 15rem;
-  max-width: 20rem;
 }

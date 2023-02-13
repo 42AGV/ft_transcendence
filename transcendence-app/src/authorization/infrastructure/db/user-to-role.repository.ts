@@ -1,5 +1,5 @@
 import { UserToRole } from './user-to-role.entity';
-import { Role } from '../../../shared/enums/role.enum';
+import { Role } from 'transcendence-shared';
 import { UserWithAuthorization } from './user-with-authorization.entity';
 
 export abstract class IUserToRoleRepository {

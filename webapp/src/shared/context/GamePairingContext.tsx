@@ -19,7 +19,7 @@ import {
   GameChallengeResponseDto,
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
-} from 'pong-engine';
+} from 'transcendence-shared';
 import { PLAY_GAME_URL } from '../urls';
 import { WsException } from '../types';
 import { gameApi } from '../services/ApiService';

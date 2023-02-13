@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { IFriendRepository } from '../user/infrastructure/db/friend.repository';
-import { UserToRoleDto } from '../authorization/dto/user-to-role.dto';
 import { Action } from '../shared/enums/action.enum';
 import { User } from '../user/infrastructure/db/user.entity';
 import { UserWithAuthorization } from '../authorization/infrastructure/db/user-with-authorization.entity';
@@ -9,6 +8,7 @@ import { AuthorizationService } from '../authorization/authorization.service';
 import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
 import { WsException } from '@nestjs/websockets';
 import { UserToRole } from '../authorization/infrastructure/db/user-to-role.entity';
+import { UserToRoleDto } from 'transcendence-shared';
 
 type UserId = string;
 

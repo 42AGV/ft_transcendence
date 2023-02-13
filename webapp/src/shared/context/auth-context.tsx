@@ -7,11 +7,8 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  UserWithAuthorizationResponseDto,
-  UserToRoleDto,
-  UserToRoleDtoRoleEnum,
-} from '../generated';
+import { UserWithAuthorizationResponseDto } from '../generated';
+import { UserToRoleDto, Role } from 'transcendence-shared';
 import { useData } from '../hooks/UseData';
 import { authApi } from '../services/ApiService';
 import socket from '../socket';
@@ -92,15 +89,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (isAdd: boolean) => async (userToRole: UserToRoleDto) => {
         if (authUser && userToRole.id === authUser.id) {
           switch (userToRole.role) {
-            case UserToRoleDtoRoleEnum.Moderator: {
+            case Role.moderator: {
               setAuthUser({ ...authUser, gAdmin: isAdd });
               break;
             }
-            case UserToRoleDtoRoleEnum.Owner: {
+            case Role.owner: {
               warn('Someone tried to make you an owner');
               break;
             }
-            case UserToRoleDtoRoleEnum.Banned: {
+            case Role.banned: {
               if (!authUser.gOwner) {
                 if (isAdd) {
                   logout();

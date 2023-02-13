@@ -12,10 +12,12 @@ import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-me
 import { ChatroomMember } from '../chat/chatroom/chatroom-member/infrastructure/db/chatroom-member.entity';
 import { UpdateChatroomMemberDto } from '../chat/chatroom/chatroom-member/dto/update-chatroom-member.dto';
 import { Chatroom } from '../chat/chatroom/infrastructure/db/chatroom.entity';
-import { Role } from '../shared/enums/role.enum';
+import { Role } from 'transcendence-shared';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { UserWithAuthorizationResponseDto } from './dto/user-with-authorization.response.dto';
 import { ChatroomMessageWithUser } from '../chat/chatroom/chatroom-message/infrastructure/db/chatroom-message-with-user.entity';
+import { CreateGameDto } from '../game/dto/create-game.dto';
+import { Game } from 'src/game/infrastructure/db/game.entity';
 
 export type SubjectCtors =
   | typeof ChatroomMember
@@ -24,7 +26,9 @@ export type SubjectCtors =
   | typeof UserToRole
   | typeof UserWithAuthorizationResponseDto
   | typeof ChatroomMessageWithUser
-  | typeof UserWithAuthorization;
+  | typeof UserWithAuthorization
+  | typeof CreateGameDto
+  | typeof Game;
 
 export type Subject =
   | InferSubjects<SubjectCtors>
