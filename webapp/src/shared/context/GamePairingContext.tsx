@@ -238,16 +238,15 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     <GamePairingContext.Provider value={contextValue}>
       {children}
       {gameCtx &&
-      gameCtx.gameQueueStatus ===
+        (gameCtx.gameQueueStatus ===
         GamePairingStatusDtoGameQueueStatusEnum.Waiting ? (
-        buttonQuitWaiting
-      ) : gameCtx &&
-        gameCtx.gameQueueStatus ===
+          buttonQuitWaiting
+        ) : gameCtx.gameQueueStatus ===
           GamePairingStatusDtoGameQueueStatusEnum.Playing ? (
-        buttonQuitPlaying
-      ) : (
-        <></>
-      )}
+          buttonQuitPlaying
+        ) : (
+          <></>
+        ))}
     </GamePairingContext.Provider>
   );
 };
