@@ -17,10 +17,13 @@ import { WsException } from '@nestjs/websockets';
 import { OnEvent } from '@nestjs/event-emitter';
 import { GameInputDto } from './dto/game-input.dto';
 import { GamePairing } from './infrastructure/db/game-pairing.entity';
+import { User } from '../user/infrastructure/db/user.entity';
+import { IUserRepository } from '../user/infrastructure/db/user.repository';
 
 type GameId = string;
 type UserId = string;
 type ClientId = string;
+type PlayerId = string;
 
 const FPS = 30;
 const DELTA_TIME = 1 / FPS;
@@ -33,7 +36,10 @@ export class GameService {
   private readonly games = new Map<GameId, GameInfoServer>();
   private readonly userToGame = new Map<UserId, GameId>();
   private readonly playerToClients = new Map<UserId, Set<ClientId>>();
+  private readonly playerToUser = new Map<PlayerId, User>();
   private intervalId: NodeJS.Timer | undefined = undefined;
+
+  constructor(private readonly userRepository: IUserRepository) {}
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
     if (!this.server) {
@@ -45,11 +51,14 @@ export class GameService {
       .emit('gameStatusUpdate', {
         status: GameStatus.FINISHED,
       } as GameStatusUpdateDto);
+    this.server.emit('removeGame', gameId);
     this.server.socketsLeave(gameId);
     this.playerToClients.delete(gameInfo.playerOneId);
     this.playerToClients.delete(gameInfo.playerTwoId);
     this.userToGame.delete(gameInfo.playerOneId);
     this.userToGame.delete(gameInfo.playerTwoId);
+    this.playerToUser.delete(gameInfo.playerOneId);
+    this.playerToUser.delete(gameInfo.playerTwoId);
     this.games.delete(gameId);
     if (this.games.size === 0) {
       clearInterval(this.intervalId);
@@ -278,6 +287,14 @@ export class GameService {
     return !!this.getGameId(userId);
   }
 
+  getOngoingGames() {
+    return [...this.games.entries()].map(([gameId, gameInfo]) => ({
+      gameId,
+      playerOne: this.playerToUser.get(gameInfo.playerOneId),
+      playerTwo: this.playerToUser.get(gameInfo.playerTwoId),
+    }));
+  }
+
   @OnEvent('game.ready')
   private async handleGameReady(gamePairing: Required<GamePairing>) {
     if (!gamePairing.userTwoId) {
@@ -294,16 +311,24 @@ export class GameService {
       );
       return;
     }
+    const playerOne = await this.userRepository.getById(gamePairing.userOneId);
+    const playerTwo = await this.userRepository.getById(gamePairing.userTwoId);
+    if (!playerOne || !playerTwo) {
+      return;
+    }
+    this.playerToUser.set(playerOne.id, playerOne);
+    this.playerToUser.set(playerTwo.id, playerTwo);
     const gameState = newGame();
+    const now = Date.now();
     this.games.set(gamePairing.gameRoomId, {
       gameState: gameState,
       playState: 'paused',
-      createdAt: Date.now(),
+      createdAt: now,
       playerOneId: gamePairing.userOneId,
       playerTwoId: gamePairing.userTwoId,
-      pausedAt: Date.now(),
-      playerOneLeftAt: Date.now(),
-      playerTwoLeftAt: Date.now(),
+      pausedAt: now,
+      playerOneLeftAt: now,
+      playerTwoLeftAt: now,
     });
     this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
     this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
@@ -320,6 +345,11 @@ export class GameService {
           status: GameStatus.READY,
           gameRoomId: gamePairing.gameRoomId,
         } as GameStatusUpdateDto);
+      this.server.emit('addGame', {
+        gameId: gamePairing.gameRoomId,
+        playerOne,
+        playerTwo,
+      });
     }
   }
 
