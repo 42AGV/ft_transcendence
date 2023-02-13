@@ -8,17 +8,22 @@ import {
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
-import { ButtonVariant, CustomConfirmAlert } from '../components';
+import {
+  Button,
+  ButtonSize,
+  ButtonVariant,
+  CustomConfirmAlert,
+} from '../components';
 import { useNavigation } from '../hooks/UseNavigation';
 import { useNotificationContext } from './NotificationContext';
 import {
-  GameStatus,
   GameChallengeDto,
-  GameChallengeStatus,
-  GameStatusUpdateDto,
   GameChallengeResponseDto,
+  GameChallengeStatus,
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
+  GameStatus,
+  GameStatusUpdateDto,
 } from 'transcendence-shared';
 import { PLAY_GAME_URL } from '../urls';
 import { WsException } from '../types';
@@ -201,9 +206,48 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     [gameCtx],
   );
 
+  const buttonQuitWaiting: ReactNode = (
+    <div className="button-bubble">
+      <Button
+        buttonSize={ButtonSize.CHIP}
+        variant={ButtonVariant.WARNING}
+        onClick={() => {
+          socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
+          notify('Left the game queue');
+        }}
+      >
+        {'Quit game queue'}
+      </Button>
+    </div>
+  );
+  const buttonQuitPlaying: ReactNode = (
+    <div className="button-bubble">
+      <Button
+        buttonSize={ButtonSize.CHIP}
+        variant={ButtonVariant.WARNING}
+        onClick={() => {
+          socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
+        }}
+      >
+        {'Quit playing'}
+      </Button>
+    </div>
+  );
+
   return (
     <GamePairingContext.Provider value={contextValue}>
       {children}
+      {gameCtx &&
+      gameCtx.gameQueueStatus ===
+        GamePairingStatusDtoGameQueueStatusEnum.Waiting ? (
+        buttonQuitWaiting
+      ) : gameCtx &&
+        gameCtx.gameQueueStatus ===
+          GamePairingStatusDtoGameQueueStatusEnum.Playing ? (
+        buttonQuitPlaying
+      ) : (
+        <></>
+      )}
     </GamePairingContext.Provider>
   );
 };
