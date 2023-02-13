@@ -11,7 +11,7 @@ RUN apk add --no-cache dumb-init \
   && chown -R node:node ${TRANSCENDENCE_APP_DATA}
 WORKDIR  /service
 COPY ["package.json", "package-lock.json", "./"]
-COPY ["packages/pong-engine", "packages/pong-engine"]
+COPY ["packages", "packages"]
 COPY ["transcendence-app", "transcendence-app"]
 RUN npm clean-install && npm run build-packages
 RUN npm run build -w transcendence-app

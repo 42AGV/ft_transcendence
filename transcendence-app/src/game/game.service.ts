@@ -3,8 +3,6 @@ import { Server, Socket } from 'socket.io';
 import {
   GameInfoClient,
   GameInfoServer,
-  GameStatus,
-  GameStatusUpdateDto,
   newGame,
   paddleMoveLeft,
   paddleMoveRight,
@@ -14,6 +12,7 @@ import {
   paddleStop,
   runGameMultiplayerFrame,
 } from 'pong-engine';
+import { GameStatus, GameStatusUpdateDto } from 'transcendence-shared';
 import { WsException } from '@nestjs/websockets';
 import { OnEvent } from '@nestjs/event-emitter';
 import { GameInputDto } from './dto/game-input.dto';
