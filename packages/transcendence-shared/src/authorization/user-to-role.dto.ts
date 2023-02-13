@@ -1,4 +1,11 @@
-import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { Transform, TransformFnParams } from 'class-transformer';
 import { Role } from '../shared/enums/role.enum';
 
 export class UserToRoleDto {

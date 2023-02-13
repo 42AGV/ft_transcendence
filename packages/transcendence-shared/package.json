@@ -30,6 +30,7 @@
     "eslint-plugin-prettier": "^4.2.1"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2"
   }
 }
