@@ -2,11 +2,11 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
   Query,
   ServiceUnavailableException,
@@ -31,12 +31,12 @@ import { Game } from './infrastructure/db/game.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { CreateGameDto } from './dto/create-game.dto';
-import { CaslAbilityFactory } from '../authorization/casl-ability.factory';
-import { AuthorizationService } from '../authorization/authorization.service';
 import { User } from '../user/infrastructure/db/user.entity';
 import { Action } from '../shared/enums/action.enum';
 import { GameQueueService } from './game.queue.service';
 import { GamePairingStatusDto } from './dto/game-pairing-status.dto';
+import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
+import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -45,8 +45,6 @@ import { GamePairingStatusDto } from './dto/game-pairing-status.dto';
 export class GameController {
   constructor(
     private gameService: GameService,
-    private readonly authorizationService: AuthorizationService,
-    private readonly caslAbilityFactory: CaslAbilityFactory,
     private gameQueueService: GameQueueService,
   ) {}
 
@@ -68,18 +66,10 @@ export class GameController {
   @ApiCreatedResponse({ description: 'Add a game', type: Game })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
-  async addGame(
-    @GetUser() user: User,
-    @Body() game: CreateGameDto,
-  ): Promise<Game> {
-    const userWithAuthorization =
-      await this.authorizationService.getUserWithAuthorizationFromId(user.id);
-    const ability = this.caslAbilityFactory.defineAbilitiesFor(
-      userWithAuthorization,
-    );
-    if (ability.cannot(Action.Create, 'all')) {
-      throw new ForbiddenException();
-    }
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Create, CreateGameDto))
+  async addGame(@Body() game: CreateGameDto): Promise<Game> {
     const savedGame = await this.gameService.addGame(game);
 
     if (!savedGame) {
@@ -88,25 +78,22 @@ export class GameController {
     return savedGame;
   }
 
-  @Delete('game')
+  @Delete('game/:gameId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiParam({ name: 'gameId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiNotFoundResponse({ description: 'Not Found' })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
-  async removeGame(@GetUser() user: User, gameId: string): Promise<void> {
-    const userWithAuthorization =
-      await this.authorizationService.getUserWithAuthorizationFromId(user.id);
-    const ability = this.caslAbilityFactory.defineAbilitiesFor(
-      userWithAuthorization,
-    );
-    if (ability.cannot(Action.Delete, 'all')) {
-      throw new ForbiddenException();
-    }
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @UseGuards(GlobalPoliciesGuard)
+  @CheckPolicies((ability) => ability.can(Action.Delete, Game))
+  async removeGame(
+    @Param('gameId', ParseUUIDPipe) gameId: string,
+  ): Promise<void> {
     return this.gameService.deleteGame(gameId);
   }
 
-  @Get('game')
+  @Get('game/:gameId')
   @ApiOkResponse({
     description: `Get a game`,
     type: [Game],
@@ -114,7 +101,7 @@ export class GameController {
   @ApiParam({ name: 'gameId', type: String })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
-  async getGame(gameId: string): Promise<Game> {
+  async getGame(@Param('gameId', ParseUUIDPipe) gameId: string): Promise<Game> {
     const game = await this.gameService.retrieveGameWithId(gameId);
     if (!game) {
       throw new ServiceUnavailableException();
