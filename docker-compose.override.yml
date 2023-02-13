@@ -29,7 +29,6 @@ services:
       - ./transcendence-app/test:/service/transcendence-app/test:ro
       - ./transcendence-app/seeds:/service/transcendence-app/seeds:ro
       - ./transcendence-app/migrations:/service/transcendence-app/migrations:ro
-      - ./packages:/service/packages:ro
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
