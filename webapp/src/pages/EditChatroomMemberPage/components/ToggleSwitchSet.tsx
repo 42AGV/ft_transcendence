@@ -99,8 +99,8 @@ export default function ToggleSwitchSet({
         });
         notify(
           newValue
-            ? `Added ${key} role to ${canEditParams.destUser}`
-            : `Removed ${key} role from ${canEditParams.destUser}`,
+            ? `Added ${key} role to ${canEditParams.destUser.username}`
+            : `Removed ${key} role from ${canEditParams.destUser.username}`,
         );
       } catch (error: unknown) {
         handleRequestError(error, 'Could not update the chat member', warn);

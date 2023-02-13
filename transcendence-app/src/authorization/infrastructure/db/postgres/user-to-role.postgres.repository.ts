@@ -10,7 +10,7 @@ import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.
 import { table } from '../../../../shared/db/models';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
 import { userKeys } from '../../../../user/infrastructure/db/user.entity';
-import { Role } from '../../../../shared/enums/role.enum';
+import { Role } from 'transcendence-shared';
 import {
   UserWithAuthorization,
   UserWithAuthorizationData,

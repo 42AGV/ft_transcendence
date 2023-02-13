@@ -5,7 +5,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { Role } from '../shared/enums/role.enum';
+import { Role } from 'transcendence-shared';
 import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';

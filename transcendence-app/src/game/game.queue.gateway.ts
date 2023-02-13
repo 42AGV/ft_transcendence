@@ -24,7 +24,7 @@ import {
   GameStatus,
   GameStatusUpdateDto,
   GameUserChallengeDto,
-} from 'pong-engine';
+} from 'transcendence-shared';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SocketService } from '../socket/socket.service';
 import {
