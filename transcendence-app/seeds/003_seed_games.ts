@@ -17,6 +17,7 @@ const createRandomGame = (userName1: string, userName2: string) => {
     };
 };
 const seedGames = async (knex: Knex) => {
+  await knex('game').del();
   // Create games seed entries
   const users = await knex
     .select('*')

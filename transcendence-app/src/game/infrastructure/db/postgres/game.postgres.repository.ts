@@ -6,6 +6,7 @@ import { IGameRepository } from '../game.repository';
 import { PostgresPool } from '../../../../shared/db/postgres/postgresConnection.provider';
 import { makeQuery } from '../../../../shared/db/postgres/utils';
 import { PaginationWithSearchQueryDto } from '../../../../../src/shared/dtos/pagination-with-search.query.dto';
+import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 
 @Injectable()
 export class GamePostgresRepository
@@ -34,12 +35,14 @@ export class GamePostgresRepository
     paginationDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Game[] | null> {
     const { limit, offset, sort, search } = paginationDto;
+    const orderBy =
+      sort === BooleanString.True ? gameKeys.CREATED_AT : gameKeys.ID;
     const gamesData = await makeQuery<Game>(this.pool, {
       text: `SELECT *
       FROM ${this.table}
       WHERE ${gameKeys.PLAYERONEUSERNAME} ILIKE $1
       OR ${gameKeys.PLAYERTWOUSERNAME} ILIKE $1
-      ORDER BY ${sort}
+      ORDER BY ${orderBy}, ${gameKeys.ID}
       LIMIT $2
       OFFSET $3;`,
       values: [`%${search}%`, limit, offset],

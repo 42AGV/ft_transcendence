@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 import { GameMode } from '../enums/game-mode.enum';
 
 export class CreateGameDto {
@@ -11,18 +11,17 @@ export class CreateGameDto {
   playerTwoUsername!: string;
 
   @IsInt()
-  @IsNotEmpty()
+  @Min(1)
   gameDurationInSeconds!: number;
 
   @IsInt()
-  @IsNotEmpty()
+  @Min(0)
   playerOneScore!: number;
 
   @IsInt()
-  @IsNotEmpty()
+  @Min(0)
   playerTwoScore!: number;
 
   @IsEnum(GameMode)
-  @IsNotEmpty()
   gameMode!: GameMode;
 }
