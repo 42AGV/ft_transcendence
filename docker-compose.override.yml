@@ -12,7 +12,6 @@ services:
       target: development
     volumes:
       - ./webapp/src:/service/webapp/src:ro
-      - ./packages:/service/packages:ro
     environment:
       - REACT_APP_NAME=webapp-dev
       - PORT=80

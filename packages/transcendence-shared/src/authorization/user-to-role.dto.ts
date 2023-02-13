@@ -9,5 +9,8 @@ export class UserToRoleDto {
   role!: Role;
 
   @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   username?: string;
 }
