@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
   GameInfoClient,
@@ -17,6 +17,13 @@ import { WsException } from '@nestjs/websockets';
 import { OnEvent } from '@nestjs/event-emitter';
 import { GameInputDto } from './dto/game-input.dto';
 import { GamePairing } from './infrastructure/db/game-pairing.entity';
+import { IGameRepository } from './infrastructure/db/game.repository';
+import { Game } from './infrastructure/db/game.entity';
+import { MAX_ENTRIES_PER_PAGE } from '../../src/shared/constants';
+import { PaginationWithSearchQueryDto } from '../../src/shared/dtos/pagination-with-search.query.dto';
+import { BooleanString } from '../../src/shared/enums/boolean-string.enum';
+import { CreateGameDto } from './dto/create-game.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 type GameId = string;
 type UserId = string;
@@ -29,6 +36,7 @@ const MAX_SCORE = 10;
 
 @Injectable()
 export class GameService {
+  constructor(private gameRepository: IGameRepository) {}
   public server: Server | null = null;
   private readonly logger = new Logger(GameService.name);
   private readonly games = new Map<GameId, GameInfoServer>();
@@ -352,5 +360,55 @@ export class GameService {
       return;
     }
     this.playerClientLeaveGame({ userId, clientId, game, gameId });
+  }
+
+  addGame(game: CreateGameDto): Promise<Game | null> {
+    return this.gameRepository.addGame({
+      id: uuidv4(),
+      createdAt: new Date(Date.now()),
+      ...game,
+    });
+  }
+
+  async deleteGame(gameId: string) {
+    const deletedGame = await this.gameRepository.deleteById(gameId);
+    if (!deletedGame) {
+      throw new NotFoundException();
+    }
+  }
+
+  retrieveGameWithId(id: string): Promise<Game | null> {
+    return this.gameRepository.getById(id);
+  }
+
+  retrieveGames({
+    limit = MAX_ENTRIES_PER_PAGE,
+    offset = 0,
+    sort = BooleanString.False,
+    search = '',
+  }: PaginationWithSearchQueryDto): Promise<Game[] | null> {
+    return this.gameRepository.getPaginatedGames({
+      limit,
+      offset,
+      sort,
+      search,
+    });
+  }
+
+  retrieveUserGames(
+    username: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ): Promise<Game[] | null> {
+    return this.gameRepository.getPaginatedUserGames(username, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
   }
 }

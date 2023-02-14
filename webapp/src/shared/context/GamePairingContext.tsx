@@ -1,10 +1,10 @@
 import {
   createContext,
   ReactNode,
-  useEffect,
-  useState,
   useCallback,
+  useEffect,
   useMemo,
+  useState,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
@@ -12,13 +12,13 @@ import { ButtonVariant, CustomConfirmAlert } from '../components';
 import { useNavigation } from '../hooks/UseNavigation';
 import { useNotificationContext } from './NotificationContext';
 import {
-  GameStatus,
   GameChallengeDto,
-  GameChallengeStatus,
-  GameStatusUpdateDto,
   GameChallengeResponseDto,
+  GameChallengeStatus,
   gameQueueClientToServerWsEvents,
   gameQueueServerToClientWsEvents,
+  GameStatus,
+  GameStatusUpdateDto,
 } from 'transcendence-shared';
 import { PLAY_GAME_URL } from '../urls';
 import { WsException } from '../types';
@@ -28,6 +28,9 @@ import {
   GamePairingStatusDto,
   GamePairingStatusDtoGameQueueStatusEnum,
 } from '../generated';
+import CollapsibleButton, {
+  CollapsibleButtonState,
+} from '../components/Button/CollapsibleButton';
 
 export interface GamePairingContextType {
   gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
@@ -201,9 +204,46 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     [gameCtx],
   );
 
+  const buttonQuitWaiting: ReactNode = (
+    <CollapsibleButton
+      state={CollapsibleButtonState.UNCOLLAPSED}
+      props={{
+        variant: ButtonVariant.WARNING,
+        onClick: () => {
+          socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
+        },
+      }}
+    >
+      {'Quit waiting'}
+    </CollapsibleButton>
+  );
+  const buttonQuitPlaying: ReactNode = (
+    <CollapsibleButton
+      state={CollapsibleButtonState.UNCOLLAPSED}
+      props={{
+        variant: ButtonVariant.WARNING,
+        onClick: () => {
+          socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
+        },
+      }}
+    >
+      {'Quit playing'}
+    </CollapsibleButton>
+  );
+
   return (
     <GamePairingContext.Provider value={contextValue}>
       {children}
+      {gameCtx &&
+        (gameCtx.gameQueueStatus ===
+        GamePairingStatusDtoGameQueueStatusEnum.Waiting ? (
+          buttonQuitWaiting
+        ) : gameCtx.gameQueueStatus ===
+          GamePairingStatusDtoGameQueueStatusEnum.Playing ? (
+          buttonQuitPlaying
+        ) : (
+          <></>
+        ))}
     </GamePairingContext.Provider>
   );
 };

@@ -9,6 +9,7 @@ export * from './Input/Input';
 
 export { default as Button } from './Button/Button';
 export { default as ReactiveButton } from './Button/ReactiveButton';
+export { default as CollapsibleButton } from './Button/CollapsibleButton';
 export * from './Button/Button';
 
 export { default as Status } from './Status/Status';
@@ -55,6 +56,7 @@ export { default as CustomConfirmAlert } from './CustomConfirmAlert/CustomConfir
 
 export { default as GameSpinner } from './GameSpinner/GameSpinner';
 
+export { default as Score } from './Score/Score';
 export { default as Timer } from './Timer/Timer';
 
 export { default as LandingAnimationPageTemplate } from './templates/LandingAnimationPageTemplate/LandingAnimationPageTemplate';
