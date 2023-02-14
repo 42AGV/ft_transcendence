@@ -21,11 +21,12 @@ import { User } from '../user/infrastructure/db/user.entity';
 import { IUserRepository } from '../user/infrastructure/db/user.repository';
 import { IGameRepository } from './infrastructure/db/game.repository';
 import { Game } from './infrastructure/db/game.entity';
-import { MAX_ENTRIES_PER_PAGE } from '../../src/shared/constants';
-import { PaginationWithSearchQueryDto } from '../../src/shared/dtos/pagination-with-search.query.dto';
-import { BooleanString } from '../../src/shared/enums/boolean-string.enum';
+import { MAX_ENTRIES_PER_PAGE } from '../shared/constants';
+import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
+import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { CreateGameDto } from './dto/create-game.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { GameMode } from './enums/game-mode.enum';
 
 type GameId = string;
 type UserId = string;
@@ -52,6 +53,39 @@ export class GameService {
     private readonly userRepository: IUserRepository,
   ) {}
 
+  private async addGameWhenFinished(
+    gameInfo: GameInfoServer,
+    gameId: string,
+  ): Promise<void> {
+    const MAX_SMALLINT_POSTGRES = 32767;
+    const duration = Math.floor((Date.now() - gameInfo.createdAt) / 1000);
+    if (duration > MAX_SMALLINT_POSTGRES) {
+      throw new Error(
+        'Your game has been going for too long, we cannot save it',
+      );
+    }
+    const userOne = await this.userRepository.getById(gameInfo.playerOneId);
+    const userTwo = await this.userRepository.getById(gameInfo.playerTwoId);
+    if (!(userTwo && userOne)) {
+      throw new Error('Some of the playing users could not be found');
+    }
+    const game = await this.gameRepository.addGame(
+      new Game({
+        id: gameId,
+        playerOneUsername: userOne.username,
+        playerTwoUsername: userTwo.username,
+        createdAt: new Date(gameInfo.createdAt),
+        gameDurationInSeconds: duration,
+        playerOneScore: gameInfo.gameState.score,
+        playerTwoScore: gameInfo.gameState.scoreOpponent,
+        gameMode: GameMode.classic,
+      }),
+    );
+    if (!game) {
+      throw new Error('Game entry could not be added');
+    }
+  }
+
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
     if (!this.server) {
       return;
@@ -63,6 +97,9 @@ export class GameService {
         status: GameStatus.FINISHED,
       } as GameStatusUpdateDto);
     this.server.emit('removeGame', gameId);
+    this.addGameWhenFinished(gameInfo, gameId).catch((error: Error) => {
+      this.logger.error(error.message);
+    });
     this.server.socketsLeave(gameId);
     this.playerToClients.delete(gameInfo.playerOneId);
     this.playerToClients.delete(gameInfo.playerTwoId);
