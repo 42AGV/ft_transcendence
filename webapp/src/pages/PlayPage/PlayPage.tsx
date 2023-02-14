@@ -10,7 +10,6 @@ import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'transcendence-shared';
 import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
-import { useCallback, useMemo } from 'react';
 
 export default function PlayPage() {
   const { gameQueueStatus } = useGamePairing();
@@ -39,60 +38,25 @@ export default function PlayPage() {
     [],
   );
 
-  const getButtonAction = useCallback(() => {
-    switch (gameQueueStatus) {
-      case GamePairingStatusDtoGameQueueStatusEnum.None: {
-        return () => {
-          socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
-        };
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
-        return () => {
-          socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
-        };
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Waiting: {
-        return () => {
-          socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
-        };
-      }
-    }
-  }, [gameQueueStatus]);
-
-  const buttonLabel = useMemo(() => {
-    switch (gameQueueStatus) {
-      case GamePairingStatusDtoGameQueueStatusEnum.None: {
-        return 'Join game queue';
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
-        return 'Quit playing';
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Waiting: {
-        return 'Quit waiting';
-      }
-    }
-  }, [gameQueueStatus]);
-
-  const buttons = [
+  let buttons = [
     {
       variant: ButtonVariant.SUBMIT,
       iconVariant: IconVariant.PLAY,
       onClick: () => navigate(PLAY_GAME_TRAIN_URL),
       children: 'Training',
     },
-    {
-      variant:
-        gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None
-          ? ButtonVariant.SUBMIT
-          : ButtonVariant.WARNING,
-      iconVariant:
-        gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None
-          ? IconVariant.ADD
-          : IconVariant.LOGOUT,
-      onClick: getButtonAction(),
-      children: buttonLabel,
-    },
   ];
+
+  if (gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None) {
+    buttons.push({
+      variant: ButtonVariant.SUBMIT,
+      iconVariant: IconVariant.ADD,
+      onClick: () => {
+        socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
+      },
+      children: 'Join game queue',
+    });
+  }
 
   return (
     <SearchContextProvider fetchFn={mockFetchFn} maxEntries={ENTRIES_LIMIT}>

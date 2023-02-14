@@ -9,6 +9,7 @@ export * from './Input/Input';
 
 export { default as Button } from './Button/Button';
 export { default as ReactiveButton } from './Button/ReactiveButton';
+export { default as CollapsibleButton } from './Button/CollapsibleButton';
 export * from './Button/Button';
 
 export { default as Status } from './Status/Status';

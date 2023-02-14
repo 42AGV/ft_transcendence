@@ -88,8 +88,12 @@ export class GameQueueGateway {
         }),
       );
       if (game.userTwoId) {
+        const other =
+          game.userTwoId === client.request.user.id
+            ? game.userOneId
+            : game.userTwoId;
         this.server
-          .to(game.userTwoId)
+          .to(other)
           .emit(gameQueueServerToClientWsEvents.gameStatusUpdate, {
             status: GameChallengeStatus.CHALLENGE_DECLINED,
           } as GameStatusUpdateDto);
