@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
   GameInfoClient,
@@ -19,6 +19,13 @@ import { GameInputDto } from './dto/game-input.dto';
 import { GamePairing } from './infrastructure/db/game-pairing.entity';
 import { User } from '../user/infrastructure/db/user.entity';
 import { IUserRepository } from '../user/infrastructure/db/user.repository';
+import { IGameRepository } from './infrastructure/db/game.repository';
+import { Game } from './infrastructure/db/game.entity';
+import { MAX_ENTRIES_PER_PAGE } from '../../src/shared/constants';
+import { PaginationWithSearchQueryDto } from '../../src/shared/dtos/pagination-with-search.query.dto';
+import { BooleanString } from '../../src/shared/enums/boolean-string.enum';
+import { CreateGameDto } from './dto/create-game.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 type GameId = string;
 type UserId = string;
@@ -28,6 +35,7 @@ type PlayerId = string;
 const FPS = 30;
 const DELTA_TIME = 1 / FPS;
 const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
+const MAX_SCORE = 10;
 
 @Injectable()
 export class GameService {
@@ -39,7 +47,10 @@ export class GameService {
   private readonly playerToUser = new Map<PlayerId, User>();
   private intervalId: NodeJS.Timer | undefined = undefined;
 
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(
+    private readonly gameRepository: IGameRepository,
+    private readonly userRepository: IUserRepository,
+  ) {}
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
     if (!this.server) {
@@ -66,13 +77,24 @@ export class GameService {
     }
   }
 
+  private isPausedForTooLong(gameInfo: GameInfoServer) {
+    return (
+      gameInfo.pausedAt !== null &&
+      Date.now() >= gameInfo.pausedAt + MAX_PAUSED_TIME_MS
+    );
+  }
+
+  private hasPlayerWon(gameInfo: GameInfoServer) {
+    return (
+      gameInfo.gameState.score >= MAX_SCORE ||
+      gameInfo.gameState.scoreOpponent >= MAX_SCORE
+    );
+  }
+
   private runServerGameFrame() {
     this.games.forEach((gameInfo: GameInfoServer, gameId: GameId) => {
       if (this.server) {
-        if (
-          gameInfo.pausedAt &&
-          Date.now() >= gameInfo.pausedAt + MAX_PAUSED_TIME_MS
-        ) {
+        if (this.isPausedForTooLong(gameInfo) || this.hasPlayerWon(gameInfo)) {
           this.finishGame(gameInfo, gameId);
         } else if (gameInfo.playState === 'playing') {
           // Game is playing, update the game info
@@ -370,5 +392,55 @@ export class GameService {
       return;
     }
     this.playerClientLeaveGame({ userId, clientId, game, gameId });
+  }
+
+  addGame(game: CreateGameDto): Promise<Game | null> {
+    return this.gameRepository.addGame({
+      id: uuidv4(),
+      createdAt: new Date(Date.now()),
+      ...game,
+    });
+  }
+
+  async deleteGame(gameId: string) {
+    const deletedGame = await this.gameRepository.deleteById(gameId);
+    if (!deletedGame) {
+      throw new NotFoundException();
+    }
+  }
+
+  retrieveGameWithId(id: string): Promise<Game | null> {
+    return this.gameRepository.getById(id);
+  }
+
+  retrieveGames({
+    limit = MAX_ENTRIES_PER_PAGE,
+    offset = 0,
+    sort = BooleanString.False,
+    search = '',
+  }: PaginationWithSearchQueryDto): Promise<Game[] | null> {
+    return this.gameRepository.getPaginatedGames({
+      limit,
+      offset,
+      sort,
+      search,
+    });
+  }
+
+  retrieveUserGames(
+    username: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ): Promise<Game[] | null> {
+    return this.gameRepository.getPaginatedUserGames(username, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
   }
 }

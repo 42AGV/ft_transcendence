@@ -13,7 +13,6 @@ import {
   GamePairingStatusDtoGameQueueStatusEnum,
   User,
 } from '../../shared/generated';
-import { useCallback, useMemo } from 'react';
 
 type GameWithPlayers = {
   gameId: string;
@@ -56,58 +55,12 @@ export default function PlayPage() {
     [],
   );
 
-  const getButtonAction = useCallback(() => {
-    switch (gameQueueStatus) {
-      case GamePairingStatusDtoGameQueueStatusEnum.None: {
-        return () => {
-          socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
-        };
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
-        return () => {
-          socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
-        };
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Waiting: {
-        return () => {
-          socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
-        };
-      }
-    }
-  }, [gameQueueStatus]);
-
-  const buttonLabel = useMemo(() => {
-    switch (gameQueueStatus) {
-      case GamePairingStatusDtoGameQueueStatusEnum.None: {
-        return 'Join game queue';
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Playing: {
-        return 'Quit playing';
-      }
-      case GamePairingStatusDtoGameQueueStatusEnum.Waiting: {
-        return 'Quit waiting';
-      }
-    }
-  }, [gameQueueStatus]);
-
-  const buttons = [
+  let buttons = [
     {
       variant: ButtonVariant.SUBMIT,
       iconVariant: IconVariant.PLAY,
       onClick: () => navigate(PLAY_GAME_TRAIN_URL),
       children: 'Training',
-    },
-    {
-      variant:
-        gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None
-          ? ButtonVariant.SUBMIT
-          : ButtonVariant.WARNING,
-      iconVariant:
-        gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None
-          ? IconVariant.ADD
-          : IconVariant.LOGOUT,
-      onClick: getButtonAction(),
-      children: buttonLabel,
     },
   ];
 
@@ -137,6 +90,17 @@ export default function PlayPage() {
       socket.off('removeGame');
     };
   }, []);
+
+  if (gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None) {
+    buttons.push({
+      variant: ButtonVariant.SUBMIT,
+      iconVariant: IconVariant.ADD,
+      onClick: () => {
+        socket.emit(gameQueueClientToServerWsEvents.gameQueueJoin);
+      },
+      children: 'Join game queue',
+    });
+  }
 
   return (
     <SearchContextProvider fetchFn={gameFetchFn} maxEntries={ENTRIES_LIMIT}>

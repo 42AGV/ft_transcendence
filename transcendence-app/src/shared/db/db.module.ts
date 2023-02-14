@@ -20,6 +20,8 @@ import { IFriendRepository } from '../../user/infrastructure/db/friend.repositor
 import { FriendPostgresRepository } from '../../user/infrastructure/db/postgres/friend.postgres.repository';
 import { IUserToRoleRepository } from '../../authorization/infrastructure/db/user-to-role.repository';
 import { UserToRolePostgresRepository } from '../../authorization/infrastructure/db/postgres/user-to-role.postgres.repository';
+import { IGameRepository } from '../../game/infrastructure/db/game.repository';
+import { GamePostgresRepository } from '../../game/infrastructure/db/postgres/game.postgres.repository';
 
 @Module({
   providers: [
@@ -55,6 +57,10 @@ import { UserToRolePostgresRepository } from '../../authorization/infrastructure
       provide: IUserToRoleRepository,
       useClass: UserToRolePostgresRepository,
     },
+    {
+      provide: IGameRepository,
+      useClass: GamePostgresRepository,
+    },
   ],
   exports: [
     IUserRepository,
@@ -67,6 +73,7 @@ import { UserToRolePostgresRepository } from '../../authorization/infrastructure
     IChatMessageRepository,
     IFriendRepository,
     IUserToRoleRepository,
+    IGameRepository,
   ],
 })
 export class DbModule {}
