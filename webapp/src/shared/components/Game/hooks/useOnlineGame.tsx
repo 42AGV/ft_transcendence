@@ -13,7 +13,7 @@ const LEAVE_GAME = 'leaveGame';
 const GAME_JOINED = 'gameJoined';
 const GAME_NOT_FOUND = 'gameNotFound';
 const GAME_FINISHED = 'gameFinished';
-const ENDGAME_REDIRECT_DELAY_MS = 2000;
+const GAME_FINISHED_REDIRECT_DELAY_MS = 2000;
 
 export function useOnlineGame(gameId: string) {
   const { notify, warn } = useNotificationContext();
@@ -67,7 +67,7 @@ export function useOnlineGame(gameId: string) {
       notify('Game finished');
       timeoutId = setTimeout(() => {
         navigate(PLAY_URL, { replace: true });
-      }, ENDGAME_REDIRECT_DELAY_MS);
+      }, GAME_FINISHED_REDIRECT_DELAY_MS);
     }
 
     socket.on(GAME_JOINED, handleGameJoined);
