@@ -57,6 +57,13 @@ export class GameService {
     gameInfo: GameInfoServer,
     gameId: string,
   ): Promise<void> {
+    const MAX_SMALLINT_POSTGRES = 32767;
+    const duration = Math.floor((Date.now() - gameInfo.createdAt) / 1000);
+    if (duration > MAX_SMALLINT_POSTGRES) {
+      throw new Error(
+        'Your game has been going for too long, we cannot save it',
+      );
+    }
     const userOne = await this.userRepository.getById(gameInfo.playerOneId);
     const userTwo = await this.userRepository.getById(gameInfo.playerTwoId);
     if (!(userTwo && userOne)) {
@@ -68,9 +75,7 @@ export class GameService {
         playerOneUsername: userOne.username,
         playerTwoUsername: userTwo.username,
         createdAt: new Date(gameInfo.createdAt),
-        gameDurationInSeconds: Math.floor(
-          (Date.now() - gameInfo.createdAt) / 1000,
-        ),
+        gameDurationInSeconds: duration,
         playerOneScore: gameInfo.gameState.score,
         playerTwoScore: gameInfo.gameState.scoreOpponent,
         gameMode: GameMode.classic,
@@ -91,7 +96,7 @@ export class GameService {
       .emit('gameStatusUpdate', {
         status: GameStatus.FINISHED,
       } as GameStatusUpdateDto);
-    this.addGameWhenFinished(gameInfo, gameId).catch((error) => {
+    this.addGameWhenFinished(gameInfo, gameId).catch((error: Error) => {
       throw new WsException(error.message);
     });
     this.server.socketsLeave(gameId);
