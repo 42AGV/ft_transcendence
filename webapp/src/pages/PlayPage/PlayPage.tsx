@@ -29,18 +29,22 @@ export default function PlayPage() {
     (requestParams: Query): Promise<GameWithPlayers[]> => {
       const { search, offset } = requestParams;
       return new Promise((resolve) => {
-        if (offset && offset >= ongoingGames.length) {
+        if (offset) {
           resolve([]);
         }
-        resolve(
-          ongoingGames.filter((game) => {
+
+        if (search) {
+          const games = ongoingGames.filter((game) => {
             const { playerOne, playerTwo } = game;
-            return search
-              ? playerOne.username.includes(search) ||
-                  playerTwo.username.includes(search)
-              : true;
-          }),
-        );
+            return (
+              playerOne.username.includes(search) ||
+              playerTwo.username.includes(search)
+            );
+          });
+          resolve(games);
+        }
+
+        resolve(ongoingGames);
       });
     },
     [ongoingGames],
