@@ -97,7 +97,7 @@ export class GameService {
         status: GameStatus.FINISHED,
       } as GameStatusUpdateDto);
     this.addGameWhenFinished(gameInfo, gameId).catch((error: Error) => {
-      throw new WsException(error.message);
+      this.logger.error(error.message);
     });
     this.server.socketsLeave(gameId);
     this.playerToClients.delete(gameInfo.playerOneId);
