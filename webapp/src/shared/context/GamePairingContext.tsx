@@ -1,19 +1,14 @@
 import {
   createContext,
   ReactNode,
-  useEffect,
-  useState,
   useCallback,
+  useEffect,
   useMemo,
+  useState,
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
-import {
-  Button,
-  ButtonSize,
-  ButtonVariant,
-  CustomConfirmAlert,
-} from '../components';
+import { ButtonVariant, CustomConfirmAlert } from '../components';
 import { useNavigation } from '../hooks/UseNavigation';
 import { useNotificationContext } from './NotificationContext';
 import {
@@ -33,6 +28,9 @@ import {
   GamePairingStatusDto,
   GamePairingStatusDtoGameQueueStatusEnum,
 } from '../generated';
+import CollapsibleButton, {
+  CollapsibleButtonState,
+} from '../components/Button/CollapsibleButton';
 
 export interface GamePairingContextType {
   gameQueueStatus: GamePairingStatusDtoGameQueueStatusEnum;
@@ -207,31 +205,30 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const buttonQuitWaiting: ReactNode = (
-    <div className="button-bubble">
-      <Button
-        buttonSize={ButtonSize.CHIP}
-        variant={ButtonVariant.WARNING}
-        onClick={() => {
+    <CollapsibleButton
+      state={CollapsibleButtonState.UNCOLLAPSED}
+      props={{
+        variant: ButtonVariant.WARNING,
+        onClick: () => {
           socket.emit(gameQueueClientToServerWsEvents.gameQuitWaiting);
-          notify('Left the game queue');
-        }}
-      >
-        {'Quit game queue'}
-      </Button>
-    </div>
+        },
+      }}
+    >
+      {'Quit waiting'}
+    </CollapsibleButton>
   );
   const buttonQuitPlaying: ReactNode = (
-    <div className="button-bubble">
-      <Button
-        buttonSize={ButtonSize.CHIP}
-        variant={ButtonVariant.WARNING}
-        onClick={() => {
+    <CollapsibleButton
+      state={CollapsibleButtonState.UNCOLLAPSED}
+      props={{
+        variant: ButtonVariant.WARNING,
+        onClick: () => {
           socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
-        }}
-      >
-        {'Quit playing'}
-      </Button>
-    </div>
+        },
+      }}
+    >
+      {'Quit playing'}
+    </CollapsibleButton>
   );
 
   return (
