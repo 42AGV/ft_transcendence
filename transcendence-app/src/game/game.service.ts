@@ -62,14 +62,15 @@ export class GameService {
     if (!(userTwo && userOne)) {
       throw new Error('Some of the playing users could not be found');
     }
-    const now = Date.now();
     const game = await this.gameRepository.addGame(
       new Game({
         id: gameId,
         playerOneUsername: userOne.username,
         playerTwoUsername: userTwo.username,
         createdAt: new Date(gameInfo.createdAt),
-        gameDurationInSeconds: now - gameInfo.createdAt,
+        gameDurationInSeconds: Math.floor(
+          (Date.now() - gameInfo.createdAt) / 1000,
+        ),
         playerOneScore: gameInfo.gameState.score,
         playerTwoScore: gameInfo.gameState.scoreOpponent,
         gameMode: GameMode.classic,
