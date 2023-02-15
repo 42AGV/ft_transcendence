@@ -60,6 +60,11 @@ export class GameGateway {
     this.gameService.gameQuitPlaying(client.request.user.id);
   }
 
+  @SubscribeMessage('getOngoingGames')
+  handleGetOngoingGames(@ConnectedSocket() client: Socket) {
+    client.emit('ongoingGames', [...this.gameService.getOngoingGames()]);
+  }
+
   @SubscribeMessage('getPlayingUsers')
   handleGetPlayingUsers(@ConnectedSocket() client: Socket) {
     client.emit('playingUsers', [...this.gameService.getPlayingUsers()]);

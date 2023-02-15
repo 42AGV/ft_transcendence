@@ -49,7 +49,7 @@ export class GameService {
   private intervalId: NodeJS.Timer | undefined = undefined;
 
   constructor(
-    private gameRepository: IGameRepository,
+    private readonly gameRepository: IGameRepository,
     private readonly userRepository: IUserRepository,
   ) {}
 
@@ -96,6 +96,7 @@ export class GameService {
       .emit('gameStatusUpdate', {
         status: GameStatus.FINISHED,
       } as GameStatusUpdateDto);
+    this.server.emit('removeGame', gameId);
     this.server.emit('removePlayingUsers', {
       playerOneId: gameInfo.playerOneId,
       playerTwoId: gameInfo.playerTwoId,
@@ -108,6 +109,8 @@ export class GameService {
     this.playerToClients.delete(gameInfo.playerTwoId);
     this.userToGame.delete(gameInfo.playerOneId);
     this.userToGame.delete(gameInfo.playerTwoId);
+    this.playerToUser.delete(gameInfo.playerOneId);
+    this.playerToUser.delete(gameInfo.playerTwoId);
     this.games.delete(gameId);
     if (this.games.size === 0) {
       clearInterval(this.intervalId);
@@ -347,6 +350,14 @@ export class GameService {
     return !!this.getGameId(userId);
   }
 
+  getOngoingGames() {
+    return [...this.games.entries()].map(([gameId, gameInfo]) => ({
+      gameId,
+      playerOne: this.playerToUser.get(gameInfo.playerOneId),
+      playerTwo: this.playerToUser.get(gameInfo.playerTwoId),
+    }));
+  }
+
   getPlayingUsers() {
     return this.userToGame.keys();
   }
@@ -367,16 +378,24 @@ export class GameService {
       );
       return;
     }
+    const playerOne = await this.userRepository.getById(gamePairing.userOneId);
+    const playerTwo = await this.userRepository.getById(gamePairing.userTwoId);
+    if (!playerOne || !playerTwo) {
+      return;
+    }
+    this.playerToUser.set(playerOne.id, playerOne);
+    this.playerToUser.set(playerTwo.id, playerTwo);
     const gameState = newGame();
+    const now = Date.now();
     this.games.set(gamePairing.gameRoomId, {
       gameState: gameState,
       playState: 'paused',
-      createdAt: Date.now(),
+      createdAt: now,
       playerOneId: gamePairing.userOneId,
       playerTwoId: gamePairing.userTwoId,
-      pausedAt: Date.now(),
-      playerOneLeftAt: Date.now(),
-      playerTwoLeftAt: Date.now(),
+      pausedAt: now,
+      playerOneLeftAt: now,
+      playerTwoLeftAt: now,
     });
     this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
     this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
@@ -393,6 +412,11 @@ export class GameService {
           status: GameStatus.READY,
           gameRoomId: gamePairing.gameRoomId,
         } as GameStatusUpdateDto);
+      this.server.emit('addGame', {
+        gameId: gamePairing.gameRoomId,
+        playerOne,
+        playerTwo,
+      });
       this.server.emit('addPlayingUsers', {
         playerOneId: gamePairing.userOneId,
         playerTwoId: gamePairing.userTwoId,

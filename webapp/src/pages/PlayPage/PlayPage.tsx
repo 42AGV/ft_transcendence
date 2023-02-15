@@ -1,42 +1,65 @@
+import './PlayPage.css';
 import * as React from 'react';
-import { ButtonVariant, IconVariant } from '../../shared/components';
+import {
+  ButtonProps,
+  ButtonVariant,
+  IconVariant,
+  Input,
+  InputVariant,
+  MediumAvatar,
+  NavigationBar,
+  ReactiveButton,
+  RowItem,
+  RowsList,
+} from '../../shared/components';
 import { useNavigate } from 'react-router-dom';
-import { MainTabTemplate } from '../../shared/components/index';
-import { SearchContextProvider } from '../../shared/context/SearchContext';
-import { PLAY_GAME_TRAIN_URL } from '../../shared/urls';
-import { ENTRIES_LIMIT } from '../../shared/constants';
-import { Query } from '../../shared/types';
+import {
+  AVATAR_EP_URL,
+  PLAY_GAME_TRAIN_URL,
+  PLAY_GAME_URL,
+  USER_ME_URL,
+} from '../../shared/urls';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'transcendence-shared';
-import { GamePairingStatusDtoGameQueueStatusEnum } from '../../shared/generated';
+import {
+  GamePairingStatusDtoGameQueueStatusEnum,
+  User,
+} from '../../shared/generated';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../shared/hooks/UseAuth';
+import { LandingPage } from '..';
+
+type GameWithPlayers = {
+  gameId: string;
+  playerOne: User;
+  playerTwo: User;
+};
 
 export default function PlayPage() {
   const { gameQueueStatus } = useGamePairing();
   const navigate = useNavigate();
+  const [ongoingGames, setOngoingGames] = React.useState<GameWithPlayers[]>([]);
+  const { authUser } = useAuth();
+  const [search, setSearch] = React.useState('');
 
-  // To be replaced with real games request
-  const mockFetchFn = React.useCallback(
-    (requestParams: Query): Promise<unknown[]> => {
-      return new Promise((resolve) => resolve([]));
-    },
-    [],
-  );
-  const mockedMapper = React.useCallback(
-    (data: unknown) => ({
-      iconVariant: IconVariant.ARROW_FORWARD,
-      avatarProps: {
-        url: '#',
-        XCoordinate: 0,
-        YCoordinate: 0,
-      },
-      url: '#',
-      title: '',
-      subtitle: 'level x',
-      key: '',
-    }),
-    [],
-  );
+  function gameMapper(): RowItem[] {
+    return ongoingGames.reduce<RowItem[]>((rowItems, currentGame) => {
+      if (
+        currentGame.playerOne.username.includes(search) ||
+        currentGame.playerTwo.username.includes(search)
+      ) {
+        const rowItem = {
+          key: currentGame.gameId,
+          url: `${PLAY_GAME_URL}/${currentGame.gameId}`,
+          title: `${currentGame.playerOne.username} vs ${currentGame.playerTwo.username}`,
+          iconVariant: IconVariant.ARROW_FORWARD,
+        };
+        return [...rowItems, rowItem];
+      }
+      return rowItems;
+    }, []);
+  }
 
   let buttons = [
     {
@@ -46,6 +69,33 @@ export default function PlayPage() {
       children: 'Training',
     },
   ];
+
+  React.useEffect(() => {
+    function ongoingGamesListener(games: GameWithPlayers[]) {
+      setOngoingGames(games);
+    }
+
+    function addGameListener(game: GameWithPlayers) {
+      setOngoingGames((prevOngoingGames) => [...prevOngoingGames, game]);
+    }
+
+    function removeGameListener(gameId: string) {
+      setOngoingGames((prevOngoingGames) =>
+        prevOngoingGames.filter((ongoingGame) => gameId !== ongoingGame.gameId),
+      );
+    }
+
+    socket.on('ongoingGames', ongoingGamesListener);
+    socket.on('addGame', addGameListener);
+    socket.on('removeGame', removeGameListener);
+    socket.emit('getOngoingGames');
+
+    return () => {
+      socket.off('ongoingGames');
+      socket.off('addGame');
+      socket.off('removeGame');
+    };
+  }, []);
 
   if (gameQueueStatus === GamePairingStatusDtoGameQueueStatusEnum.None) {
     buttons.push({
@@ -58,9 +108,46 @@ export default function PlayPage() {
     });
   }
 
+  if (!authUser) {
+    return <LandingPage />;
+  }
+
   return (
-    <SearchContextProvider fetchFn={mockFetchFn} maxEntries={ENTRIES_LIMIT}>
-      <MainTabTemplate dataMapper={mockedMapper} buttons={buttons} />
-    </SearchContextProvider>
+    <div className="play-page">
+      <div className="play-page-avatar">
+        <Link to={`${USER_ME_URL}`}>
+          <MediumAvatar
+            url={`${AVATAR_EP_URL}/${authUser.avatarId}`}
+            XCoordinate={authUser.avatarX}
+            YCoordinate={authUser.avatarY}
+          />
+        </Link>
+      </div>
+      <div className="play-page-search">
+        <div className="play-page-search-form">
+          <Input
+            variant={InputVariant.DARK}
+            iconVariant={IconVariant.SEARCH}
+            placeholder="search"
+            value={search}
+            name="search"
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="play-page-games">
+        <RowsList rows={gameMapper()} />
+      </div>
+      <div className="play-page-navigation">
+        <NavigationBar />
+      </div>
+      {buttons && (
+        <div className="play-page-buttons">
+          {buttons.map((buttonProp: ButtonProps, idx) => (
+            <ReactiveButton key={idx} {...buttonProp} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
