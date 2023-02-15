@@ -168,7 +168,25 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
     };
 
     function rejoinGameListener(gameId: string) {
-      navigate(`${PLAY_GAME_URL}/${gameId}`);
+      CustomConfirmAlert({
+        message: 'You have a game in progress. Do you want to rejoin?',
+        buttons: [
+          {
+            onClick: () => {
+              navigate(`${PLAY_GAME_URL}/${gameId}`);
+            },
+            variant: ButtonVariant.SUBMIT,
+            children: 'Join',
+          },
+          {
+            onClick: () => {
+              socket.emit(gameQueueClientToServerWsEvents.gameQuitPlaying);
+            },
+            variant: ButtonVariant.WARNING,
+            children: 'Quit',
+          },
+        ],
+      });
     }
 
     socket.on('exception', (wsError: WsException) => {
