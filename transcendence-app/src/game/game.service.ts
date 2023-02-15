@@ -97,6 +97,10 @@ export class GameService {
         status: GameStatus.FINISHED,
       } as GameStatusUpdateDto);
     this.server.emit('removeGame', gameId);
+    this.server.emit('removePlayingUsers', {
+      playerOneId: gameInfo.playerOneId,
+      playerTwoId: gameInfo.playerTwoId,
+    });
     this.addGameWhenFinished(gameInfo, gameId).catch((error: Error) => {
       this.logger.error(error.message);
     });
@@ -354,6 +358,10 @@ export class GameService {
     }));
   }
 
+  getPlayingUsers() {
+    return this.userToGame.keys();
+  }
+
   @OnEvent('game.ready')
   private async handleGameReady(gamePairing: Required<GamePairing>) {
     if (!gamePairing.userTwoId) {
@@ -408,6 +416,10 @@ export class GameService {
         gameId: gamePairing.gameRoomId,
         playerOne,
         playerTwo,
+      });
+      this.server.emit('addPlayingUsers', {
+        playerOneId: gamePairing.userOneId,
+        playerTwoId: gamePairing.userTwoId,
       });
     }
   }
