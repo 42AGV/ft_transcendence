@@ -1,5 +1,5 @@
 import { RowItem } from '../../shared/components';
-import { AVATAR_EP_URL, USERS_URL } from '../../shared/urls';
+import { AVATAR_EP_URL, USER_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import React, { useCallback } from 'react';
 import { gameApi, usersApi } from '../../shared/services/ApiService';
@@ -22,12 +22,39 @@ export default function UserStatsPage() {
   const { data: user, isLoading: isUserLoading } = useData<User>(getUser);
 
   const mapGameToRow = (game: Game): RowItem => {
+    const self: { username?: string; score: number } = {
+      username: username,
+      score:
+        username === game.playerOneUsername
+          ? game.playerOneScore
+          : game.playerTwoScore,
+    };
+    const other: { username?: string; score: number } = {
+      username:
+        username === game.playerOneUsername
+          ? game.playerTwoUsername
+          : game.playerOneUsername,
+      score:
+        username === game.playerOneUsername
+          ? game.playerTwoScore
+          : game.playerOneScore,
+    };
+    const getStringResult = () => {
+      return self.score < other.score
+        ? 'losing'
+        : self.score === other.score
+        ? 'tying'
+        : 'winning';
+    };
     return {
       title:
-        `${game.playerOneScore} ${game.playerOneUsername} VS ` +
-        `${game.playerTwoUsername} ${game.playerTwoScore}`,
+        `'${self.username}' scored ${self.score} points VS ` +
+        `'${other.username}' that scored ${
+          other.score
+        } points, ${getStringResult()} the game`,
       subtitle: `a ${game.gameMode} game ran for ${game.gameDurationInSeconds} seconds`,
       key: game.id,
+      altText: `Game started on ${game.createdAt}`,
     };
   };
 
@@ -55,7 +82,7 @@ export default function UserStatsPage() {
       }}
       avatarLabel={username!}
       avatarCaption="level x"
-      avatarLinkTo={`${USERS_URL}/${username!}`}
+      avatarLinkTo={`${USER_URL}/${username!}`}
     />
   );
 }
