@@ -57,6 +57,9 @@ export class SocketGateway
       const isConnectedOnce = matchingSockets.length === 1;
       if (isConnectedOnce) {
         this.server.emit('userConnect', user.id);
+        this.eventEmitter.emit('socket.userConnect', {
+          userId: user.id,
+        });
       }
     }
   }
