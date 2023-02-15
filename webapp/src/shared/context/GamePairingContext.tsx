@@ -167,6 +167,10 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
+    function rejoinGameListener(gameId: string) {
+      navigate(`${PLAY_GAME_URL}/${gameId}`);
+    }
+
     socket.on('exception', (wsError: WsException) => {
       warn(wsError.message);
     });
@@ -184,12 +188,14 @@ export const GamePairingProvider = ({ children }: { children: ReactNode }) => {
         gameQueueServerToClientWsEvents.gameChallenge,
         challengeListener,
       );
+      socket.on('rejoinGame', rejoinGameListener);
     }
 
     return () => {
       socket.off(gameQueueServerToClientWsEvents.gameContextUpdate);
       socket.off(gameQueueServerToClientWsEvents.gameStatusUpdate);
       socket.off(gameQueueServerToClientWsEvents.gameChallenge);
+      socket.off('rejoinGame');
       socket.off('exception');
     };
   }, [authUser, gameCtx, navigate, goBack, warn, notify]);
