@@ -1,15 +1,8 @@
 import {
   ButtonSize,
   ButtonVariant,
-  Header,
   IconVariant,
-  MediumAvatar,
   RowItem,
-  RowsListTemplate,
-  TextColor,
-  TextVariant,
-  TextWeight,
-  Text,
   ButtonProps,
 } from '../../shared/components';
 import {
@@ -18,25 +11,22 @@ import {
   CHATROOM_URL,
   ADMIN_URL,
 } from '../../shared/urls';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 import React, { useCallback } from 'react';
-import './ChatroomDetailsPage.css';
 import { chatApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
 import { Chatroom } from '../../shared/generated/models/Chatroom';
 import { useAuth } from '../../shared/hooks/UseAuth';
 import { ChatroomMemberWithUser } from '../../shared/generated/models/ChatroomMemberWithUser';
 import { ENTRIES_LIMIT } from '../../shared/constants';
-import { SearchContextProvider } from '../../shared/context/SearchContext';
 import { ChatControllerGetChatroomMembersRequest } from '../../shared/generated/apis/ChatApi';
 import { useNotificationContext } from '../../shared/context/NotificationContext';
 import { Query } from '../../shared/types';
 import { useUserStatus } from '../../shared/hooks/UseUserStatus';
 import { useGetChatroomMember } from '../../shared/hooks/UseGetChatroomMember';
-import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
-import { LoadingPage } from '..';
+import RowsPageTemplate from '../../shared/components/templates/RowsPageTemplate/RowsPageTemplate';
 
 export default function ChatroomDetailsPage() {
   const { authUser, isLoading } = useAuth();
@@ -44,7 +34,7 @@ export default function ChatroomDetailsPage() {
   const { chatroomId } = useParams();
   const { pathname } = useLocation();
   const overridePermissions = pathname.slice(0, ADMIN_URL.length) === ADMIN_URL;
-  const { goBack, navigate } = useNavigation();
+  const { navigate } = useNavigation();
   const getChatroom = useCallback(
     () => chatApi.chatControllerGetChatroomById({ id: chatroomId! }),
     [chatroomId],
@@ -136,59 +126,26 @@ export default function ChatroomDetailsPage() {
       onClick: leaveChatroom,
     };
   }
-  if (isLoading || isCrmLoading || crIsLoading) {
-    return <LoadingPage />;
-  }
-  if ((!crm && !overridePermissions) || !chatroom) {
-    return <NotFoundPage />;
-  }
   return (
-    <div className="chatroom-details-page">
-      <Header
-        icon={IconVariant.ARROW_BACK}
-        onClick={goBack}
-        statusVariant="button"
-        buttonProps={button}
-      >
-        chat details
-      </Header>
-      <div className="chatroom-briefing">
-        <Link
-          to={`${
-            overridePermissions ? ADMIN_URL : ''
-          }${CHATROOM_URL}/${chatroomId}`}
-        >
-          <MediumAvatar
-            url={`${AVATAR_EP_URL}/${chatroom.avatarId}`}
-            XCoordinate={chatroom.avatarX}
-            YCoordinate={chatroom.avatarY}
-          />
-        </Link>
-        <div className="chatroom-text-info">
-          <Text
-            variant={TextVariant.SUBHEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.MEDIUM}
-          >
-            {chatroom.name.length > 15
-              ? `${chatroom.name.substring(0, 15)}...`
-              : chatroom.name}
-          </Text>
-          <Text
-            variant={TextVariant.PARAGRAPH}
-            color={TextColor.LIGHT}
-            weight={TextWeight.MEDIUM}
-          >
-            {chatroom.isPublic ? 'public chatroom' : 'private chatroom'}
-          </Text>
-        </div>
-      </div>
-      <SearchContextProvider
-        fetchFn={getChatroomMembers}
-        maxEntries={ENTRIES_LIMIT}
-      >
-        <RowsListTemplate dataMapper={mapChatMemberToRow} />
-      </SearchContextProvider>
-    </div>
+    <RowsPageTemplate
+      title="chat details"
+      isLoading={isLoading || isCrmLoading || crIsLoading}
+      isNotFound={(!crm && !overridePermissions) || !chatroom}
+      button={button}
+      fetchFn={getChatroomMembers}
+      dataMapper={mapChatMemberToRow}
+      avatarProps={{
+        url: chatroom ? `${AVATAR_EP_URL}/${chatroom.avatarId}` : '',
+        XCoordinate: chatroom ? chatroom.avatarX : 0,
+        YCoordinate: chatroom ? chatroom.avatarY : 0,
+      }}
+      avatarLabel={(chatroom && chatroom.name) || ''}
+      avatarCaption={
+        chatroom && chatroom.isPublic ? 'public chatroom' : 'private chatroom'
+      }
+      avatarLinkTo={`${
+        overridePermissions ? ADMIN_URL : ''
+      }${CHATROOM_URL}/${chatroomId}`}
+    />
   );
 }

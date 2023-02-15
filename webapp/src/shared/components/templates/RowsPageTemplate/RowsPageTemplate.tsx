@@ -15,7 +15,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useNavigation } from '../../../hooks/UseNavigation';
 import React from 'react';
-import './ChatroomDetailsPage.css';
+import './RowsPageTemplate.css';
 import { ENTRIES_LIMIT } from '../../../constants';
 import { SearchContextProvider } from '../../../context/SearchContext';
 import { Query } from '../../../types';
