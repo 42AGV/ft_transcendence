@@ -10,7 +10,12 @@ import {
   AvatarPageTemplate,
   Button,
 } from '../../shared/components';
-import { ADMIN_URL, AVATAR_EP_URL, CHAT_URL } from '../../shared/urls';
+import {
+  ADMIN_URL,
+  AVATAR_EP_URL,
+  CHAT_URL,
+  USER_URL,
+} from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -146,6 +151,14 @@ export default function UserPage() {
             }) ||
           undefined
         }
+        secondaryButton={{
+          variant: ButtonVariant.SUBMIT,
+          iconVariant: IconVariant.PLAY,
+          children: 'game stats',
+          onClick: () => {
+            user && navigate(`${USER_URL}/${user.username}/stats`);
+          },
+        }}
       >
         <>
           <Text

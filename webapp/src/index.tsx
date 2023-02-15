@@ -63,6 +63,7 @@ import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
 import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
 import { GamePairingProvider } from './shared/context/GamePairingContext';
+import UserStatsPage from './pages/UserStatsPage/UserStatsPage';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -168,6 +169,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <UserPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${USER_URL}/:username/stats`}
+        element={
+          <RequireAuth>
+            <UserStatsPage />
           </RequireAuth>
         }
       />
