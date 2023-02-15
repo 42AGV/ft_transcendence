@@ -26,11 +26,15 @@ export function useOnlineGame(gameId: string) {
   const [gameJoined, setGameJoined] = React.useState(false);
 
   const sendGameCommand = React.useCallback(
-    (command: GameCommand) => {
+    (
+      command: GameCommand,
+      payload?: { dragCurrPos: number; dragPrevPos: number },
+    ) => {
       if (isPlayer && gameJoined) {
         socket.emit(GAME_COMMAND, {
           command,
           gameRoomId: gameId,
+          payload,
         });
       }
     },

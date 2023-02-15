@@ -138,12 +138,13 @@ export const reducer = (
         ...state,
         paddle: stopPaddle(paddle),
       };
-    case 'paddleDrag':
+    case 'paddleDrag': {
       const { dragCurrPos, dragPrevPos } = payload;
       return {
         ...state,
         paddle: dragPaddle(paddle, dragPrevPos, dragCurrPos),
       };
+    }
     case 'paddleOpponentMoveRight':
       return {
         ...state,
@@ -161,6 +162,13 @@ export const reducer = (
         ...state,
         paddleOpponent: stopPaddle(paddleOpponent),
       };
+    case 'paddleOpponentDrag': {
+      const { dragCurrPos, dragPrevPos } = payload;
+      return {
+        ...state,
+        paddleOpponent: dragPaddle(paddleOpponent, dragCurrPos, dragPrevPos),
+      };
+    }
     default:
       return state;
   }

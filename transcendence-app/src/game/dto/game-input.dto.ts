@@ -1,5 +1,13 @@
-import { IsUUID } from 'class-validator';
+import { IsNumber, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { IsGameCommand } from '../validators';
+
+class DragPayload {
+  @IsNumber()
+  dragCurrPos!: number;
+
+  @IsNumber()
+  dragPrevPos!: number;
+}
 
 export class GameInputDto {
   @IsGameCommand()
@@ -7,4 +15,8 @@ export class GameInputDto {
 
   @IsUUID()
   gameRoomId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  payload?: DragPayload;
 }

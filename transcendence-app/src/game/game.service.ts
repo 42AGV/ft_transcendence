@@ -4,8 +4,10 @@ import {
   GameInfoClient,
   GameInfoServer,
   newGame,
+  paddleDrag,
   paddleMoveLeft,
   paddleMoveRight,
+  paddleOpponentDrag,
   paddleOpponentMoveLeft,
   paddleOpponentMoveRight,
   paddleOpponentStop,
@@ -268,7 +270,7 @@ export class GameService {
   }
 
   handleGameCommand(client: Socket, gameInputDto: GameInputDto) {
-    const { command, gameRoomId } = gameInputDto;
+    const { command, gameRoomId, payload } = gameInputDto;
     const gameInfo = this.games.get(gameRoomId);
 
     if (!gameInfo || gameInfo.playState !== 'playing') {
@@ -292,6 +294,15 @@ export class GameService {
           ...gameInfo,
           gameState: paddleMoveLeft(gameInfo.gameState),
         });
+      } else if (command === 'paddleDrag') {
+        if (!payload) {
+          return;
+        }
+        const { dragCurrPos, dragPrevPos } = payload;
+        this.games.set(gameRoomId, {
+          ...gameInfo,
+          gameState: paddleDrag(gameInfo.gameState, dragCurrPos, dragPrevPos),
+        });
       } else if (command === 'paddleStop') {
         this.games.set(gameRoomId, {
           ...gameInfo,
@@ -308,6 +319,19 @@ export class GameService {
         this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentMoveLeft(gameInfo.gameState),
+        });
+      } else if (command === 'paddleDrag') {
+        if (!payload) {
+          return;
+        }
+        const { dragCurrPos, dragPrevPos } = payload;
+        this.games.set(gameRoomId, {
+          ...gameInfo,
+          gameState: paddleOpponentDrag(
+            gameInfo.gameState,
+            dragCurrPos,
+            dragPrevPos,
+          ),
         });
       } else if (command === 'paddleStop') {
         this.games.set(gameRoomId, {
