@@ -467,6 +467,17 @@ export class GameService {
     this.playerClientLeaveGame({ userId, clientId, game, gameId });
   }
 
+  @OnEvent('socket.userConnect')
+  private handleUserConnect({ userId }: { userId: string }) {
+    const gameId = this.userToGame.get(userId);
+    if (!gameId) {
+      return;
+    }
+    if (this.server) {
+      this.server.to(userId).emit('rejoinGame', gameId);
+    }
+  }
+
   addGame(game: CreateGameDto): Promise<Game | null> {
     return this.gameRepository.addGame({
       id: uuidv4(),
