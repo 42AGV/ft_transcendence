@@ -58,7 +58,7 @@ export default function RowsPageTemplate<T>({
     return <NotFoundPage />;
   }
   return (
-    <div className="chatroom-details-page">
+    <div className="rows-page">
       <Header
         icon={IconVariant.ARROW_BACK}
         onClick={goBack}
@@ -67,11 +67,11 @@ export default function RowsPageTemplate<T>({
       >
         {title}
       </Header>
-      <div className="chatroom-briefing">
+      <div className="rows-page-summary">
         <Link to={avatarLinkTo}>
           <MediumAvatar {...avatarProps} />
         </Link>
-        <div className="chatroom-text-info">
+        <div className="rows-page-text-info">
           <Text
             variant={TextVariant.SUBHEADING}
             color={TextColor.LIGHT}
