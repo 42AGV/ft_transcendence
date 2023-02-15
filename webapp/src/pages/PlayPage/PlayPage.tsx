@@ -1,11 +1,24 @@
+import './PlayPage.css';
 import * as React from 'react';
-import { ButtonVariant, IconVariant } from '../../shared/components';
+import {
+  ButtonProps,
+  ButtonVariant,
+  IconVariant,
+  Input,
+  InputVariant,
+  MediumAvatar,
+  NavigationBar,
+  ReactiveButton,
+  RowItem,
+  RowsList,
+} from '../../shared/components';
 import { useNavigate } from 'react-router-dom';
-import { MainTabTemplate } from '../../shared/components/index';
-import { SearchContextProvider } from '../../shared/context/SearchContext';
-import { PLAY_GAME_TRAIN_URL, PLAY_GAME_URL } from '../../shared/urls';
-import { ENTRIES_LIMIT } from '../../shared/constants';
-import { Query } from '../../shared/types';
+import {
+  AVATAR_EP_URL,
+  PLAY_GAME_TRAIN_URL,
+  PLAY_GAME_URL,
+  USER_ME_URL,
+} from '../../shared/urls';
 import socket from '../../shared/socket';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import { gameQueueClientToServerWsEvents } from 'transcendence-shared';
@@ -13,6 +26,9 @@ import {
   GamePairingStatusDtoGameQueueStatusEnum,
   User,
 } from '../../shared/generated';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../shared/hooks/UseAuth';
+import { LandingPage } from '..';
 
 type GameWithPlayers = {
   gameId: string;
@@ -24,40 +40,26 @@ export default function PlayPage() {
   const { gameQueueStatus } = useGamePairing();
   const navigate = useNavigate();
   const [ongoingGames, setOngoingGames] = React.useState<GameWithPlayers[]>([]);
+  const { authUser } = useAuth();
+  const [search, setSearch] = React.useState('');
 
-  const gameFetchFn = React.useCallback(
-    (requestParams: Query): Promise<GameWithPlayers[]> => {
-      const { search, offset } = requestParams;
-      return new Promise((resolve) => {
-        if (offset) {
-          resolve([]);
-        }
-
-        if (search) {
-          const games = ongoingGames.filter((game) => {
-            const { playerOne, playerTwo } = game;
-            return (
-              playerOne.username.includes(search) ||
-              playerTwo.username.includes(search)
-            );
-          });
-          resolve(games);
-        }
-
-        resolve(ongoingGames);
-      });
-    },
-    [ongoingGames],
-  );
-  const gameMapper = React.useCallback(
-    (game: GameWithPlayers) => ({
-      iconVariant: IconVariant.ARROW_FORWARD,
-      url: `${PLAY_GAME_URL}/${game.gameId}`,
-      title: `${game.playerOne.username} vs ${game.playerTwo.username}`,
-      key: game.gameId,
-    }),
-    [],
-  );
+  function gameMapper(): RowItem[] {
+    return ongoingGames.reduce<RowItem[]>((rowItems, currentGame) => {
+      if (
+        currentGame.playerOne.username.includes(search) ||
+        currentGame.playerTwo.username.includes(search)
+      ) {
+        const rowItem = {
+          key: currentGame.gameId,
+          url: `${PLAY_GAME_URL}/${currentGame.gameId}`,
+          title: `${currentGame.playerOne.username} vs ${currentGame.playerTwo.username}`,
+          iconVariant: IconVariant.ARROW_FORWARD,
+        };
+        return [...rowItems, rowItem];
+      }
+      return rowItems;
+    }, []);
+  }
 
   let buttons = [
     {
@@ -106,9 +108,46 @@ export default function PlayPage() {
     });
   }
 
+  if (!authUser) {
+    return <LandingPage />;
+  }
+
   return (
-    <SearchContextProvider fetchFn={gameFetchFn} maxEntries={ENTRIES_LIMIT}>
-      <MainTabTemplate dataMapper={gameMapper} buttons={buttons} />
-    </SearchContextProvider>
+    <div className="play-page">
+      <div className="play-page-avatar">
+        <Link to={`${USER_ME_URL}`}>
+          <MediumAvatar
+            url={`${AVATAR_EP_URL}/${authUser.avatarId}`}
+            XCoordinate={authUser.avatarX}
+            YCoordinate={authUser.avatarY}
+          />
+        </Link>
+      </div>
+      <div className="play-page-search">
+        <div className="play-page-search-form">
+          <Input
+            variant={InputVariant.DARK}
+            iconVariant={IconVariant.SEARCH}
+            placeholder="search"
+            value={search}
+            name="search"
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="play-page-games">
+        <RowsList rows={gameMapper()} />
+      </div>
+      <div className="play-page-navigation">
+        <NavigationBar />
+      </div>
+      {buttons && (
+        <div className="play-page-buttons">
+          {buttons.map((buttonProp: ButtonProps, idx) => (
+            <ReactiveButton key={idx} {...buttonProp} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
