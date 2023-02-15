@@ -1,0 +1,113 @@
+.play-page {
+  margin: 0;
+  height: 100vh;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.5rem var(--column-gap);
+}
+
+.play-page-avatar {
+  justify-self: flex-start;
+  grid-row: 1/2;
+  grid-column: 1/-1;
+}
+
+.play-page-avatar .avatar-small__image-wrapper {
+  grid-column: 1/-1;
+  margin: 0;
+}
+
+.play-page-search {
+  grid-column: 1/-1;
+  grid-row: 2/3;
+}
+
+.play-page-search-form {
+  display: flex;
+  align-items: center;
+}
+
+.play-page-games {
+  grid-column: 1/-1;
+  grid-row: 3/4;
+  padding-bottom: var(--padding-top-bottom);
+  overflow-y: auto;
+  overflow-x: clip;
+}
+
+.play-page-navigation {
+  grid-column: 1/-1;
+  grid-row: 4/5;
+}
+
+.play-page-buttons {
+  justify-self: flex-end;
+  grid-column: 1/-1;
+  grid-row: 1/2;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+@media all and (min-width: 768px) {
+  .play-page {
+    height: 100vh;
+    column-gap: var(--column-gap);
+    row-gap: var(--row-gap);
+    display: grid;
+    grid-template-columns: repeat(var(--column-number), 1fr);
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .play-page-avatar {
+    align-self: center;
+    grid-column: 1/2;
+    grid-row: 1/2;
+    z-index: 1;
+  }
+
+  .play-page-search {
+    align-self: center;
+    margin: 0;
+    grid-column: 2/6;
+    grid-row: 1/2;
+    overflow-x: clip;
+  }
+
+  .play-page-search .input-container {
+    margin: 0;
+  }
+
+  .play-page-navigation {
+    margin-top: 0;
+    align-self: center;
+    grid-column: 8 / var(--column-end);
+    grid-row: 1/2;
+    z-index: 0;
+  }
+
+  .play-page-games {
+    grid-column: 1 / var(--column-end);
+    grid-row: 2/3;
+    overflow-y: auto;
+  }
+
+  .play-page-buttons {
+    justify-self: center;
+    grid-column: 1/-1;
+    grid-row: 3/4;
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+  }
+}
+
+@media all and (min-width: 1200px) {
+  .play-page-navigation {
+    grid-column: 9 / var(--column-end);
+  }
+}
