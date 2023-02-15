@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { useAuth } from '../hooks/UseAuth';
 import socket from '../socket';
+import { PlayerIds } from 'transcendence-shared';
 
 type UserId = string;
 
@@ -21,6 +22,7 @@ export const UserStatusContext = createContext<UserStatusContextType>(null!);
 export const UserStatusProvider = ({ children }: { children: ReactNode }) => {
   const { authUser } = useAuth();
   const [onlineUserIds, setOnlineUserIds] = useState(new Set<UserId>());
+  const [playingUserIds, setPlayingUserIds] = useState(new Set<UserId>());
 
   useEffect(() => {
     const onlineUsersListener = (userIds: UserId[]) => {
@@ -36,10 +38,42 @@ export const UserStatusProvider = ({ children }: { children: ReactNode }) => {
       );
     };
 
+    const playingUsersListener = (userIds: UserId[]) => {
+      setPlayingUserIds(new Set(userIds));
+    };
+
+    const addPlayingUsersListener = ({
+      playerOneId,
+      playerTwoId,
+    }: PlayerIds) => {
+      setPlayingUserIds(
+        (prevPlayerIds) =>
+          new Set([...prevPlayerIds, playerOneId, playerTwoId]),
+      );
+    };
+
+    const removePlayingUsersListener = ({
+      playerOneId,
+      playerTwoId,
+    }: PlayerIds) => {
+      setPlayingUserIds(
+        (prevPlayerIds) =>
+          new Set(
+            [...prevPlayerIds].filter(
+              (id) => id !== playerOneId && id !== playerTwoId,
+            ),
+          ),
+      );
+    };
+
     if (authUser) {
       socket.on('onlineUsers', onlineUsersListener);
       socket.on('userConnect', userConnectListener);
       socket.on('userDisconnect', userDisconnectListener);
+      socket.on('playingUsers', playingUsersListener);
+      socket.on('addPlayingUsers', addPlayingUsersListener);
+      socket.on('removePlayingUsers', removePlayingUsersListener);
+      socket.emit('getPlayingUsers');
       socket.emit('getOnlineUsers');
     }
 
@@ -47,6 +81,9 @@ export const UserStatusProvider = ({ children }: { children: ReactNode }) => {
       socket.off('onlineUsers');
       socket.off('userConnect');
       socket.off('userDisconnect');
+      socket.off('playingUsers');
+      socket.off('addPlayingUsers');
+      socket.off('removePlayingUsers');
     };
   }, [authUser]);
 
@@ -55,9 +92,12 @@ export const UserStatusProvider = ({ children }: { children: ReactNode }) => {
       if (!userId) {
         return 'offline';
       }
+      if (playingUserIds.has(userId)) {
+        return 'playing';
+      }
       return onlineUserIds.has(userId) ? 'online' : 'offline';
     },
-    [onlineUserIds],
+    [playingUserIds, onlineUserIds],
   );
 
   const contextValue = {
