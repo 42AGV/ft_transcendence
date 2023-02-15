@@ -43,7 +43,7 @@ export default function UserStatsPage() {
 
   return (
     <RowsPageTemplate
-      title="game stats"
+      title="games played"
       isLoading={isUserLoading}
       isNotFound={!user}
       fetchFn={getUserGames}
