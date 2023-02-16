@@ -1,7 +1,8 @@
 import { IsNumber, IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { IsGameCommand } from '../validators';
+import { DragPayload } from 'pong-engine';
 
-class DragPayload {
+class DragPayloadDto implements DragPayload {
   @IsNumber()
   dragCurrPos!: number;
 
@@ -18,5 +19,5 @@ export class GameInputDto {
 
   @IsOptional()
   @ValidateNested()
-  payload?: DragPayload;
+  payload?: DragPayloadDto;
 }
