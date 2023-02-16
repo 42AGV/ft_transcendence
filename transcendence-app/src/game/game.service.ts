@@ -211,6 +211,13 @@ export class GameService {
       playerOneLeftAt,
       playerTwoLeftAt,
     });
+    if (pausedAt) {
+      this.server.to(client.id).emit('gamePaused');
+    }
+    const hasGameResumedNow = game.pausedAt && !pausedAt;
+    if (hasGameResumedNow) {
+      client.broadcast.to(gameRoomId).emit('gameResumed');
+    }
   }
 
   private playerClientLeaveGame({
@@ -243,6 +250,12 @@ export class GameService {
         playerOneLeftAt,
         playerTwoLeftAt,
       });
+      const hasGamePausedNow = game.pausedAt === null;
+      if (hasGamePausedNow) {
+        if (this.server) {
+          this.server.to(gameId).emit('gamePaused');
+        }
+      }
     }
   }
 
