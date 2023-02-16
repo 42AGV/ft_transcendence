@@ -26,6 +26,11 @@ import {
 
 type EmptyPayload = object;
 
+export type DragPayload = {
+  dragCurrPos: number;
+  dragPrevPos: number;
+};
+
 type Act<Type extends string, Payload extends object> = {
   type: Type;
   payload: Payload;
@@ -40,7 +45,7 @@ export type Action =
   | Act<'losePointMultiplayer', EmptyPayload>
   | Act<GamePaddleMoveCommand, EmptyPayload>
   | Act<GamePaddleOpponentMoveCommand, EmptyPayload>
-  | Act<GamePaddleDragCommand, { dragCurrPos: number; dragPrevPos: number }>;
+  | Act<GamePaddleDragCommand, DragPayload>;
 
 export const initialBallState = (): GameBall => {
   const initialBallSpeed = calcInitialBallSpeed();
@@ -138,12 +143,13 @@ export const reducer = (
         ...state,
         paddle: stopPaddle(paddle),
       };
-    case 'paddleDrag':
+    case 'paddleDrag': {
       const { dragCurrPos, dragPrevPos } = payload;
       return {
         ...state,
         paddle: dragPaddle(paddle, dragPrevPos, dragCurrPos),
       };
+    }
     case 'paddleOpponentMoveRight':
       return {
         ...state,
@@ -161,6 +167,13 @@ export const reducer = (
         ...state,
         paddleOpponent: stopPaddle(paddleOpponent),
       };
+    case 'paddleOpponentDrag': {
+      const { dragCurrPos, dragPrevPos } = payload;
+      return {
+        ...state,
+        paddleOpponent: dragPaddle(paddleOpponent, dragCurrPos, dragPrevPos),
+      };
+    }
     default:
       return state;
   }
