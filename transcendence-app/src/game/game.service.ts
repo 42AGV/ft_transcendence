@@ -39,6 +39,7 @@ const FPS = 30;
 const DELTA_TIME = 1 / FPS;
 const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
 const MAX_SCORE = 10;
+const RESUME_GAME_DELAY_MS = 2000;
 
 @Injectable()
 export class GameService {
@@ -206,13 +207,35 @@ export class GameService {
         ? null
         : game.pausedAt;
     const playState = pausedAt === null ? 'playing' : 'paused';
-    this.games.set(gameRoomId, {
+    if (pausedAt) {
+      if (pausedAt === game.createdAt) {
+        this.server.to(client.id).emit('gameStartPaused');
+      } else {
+        this.server.to(client.id).emit('gamePaused');
+      }
+    }
+    const hasGameResumedNow = game.pausedAt !== null && pausedAt === null;
+    if (hasGameResumedNow) {
+      if (game.pausedAt === game.createdAt) {
+        this.server.to(gameRoomId).emit('gameStartResumed');
+      } else {
+        this.server.to(gameRoomId).emit('gameResumed');
+      }
+    }
+    const gameInfo: GameInfoServer = {
       ...game,
       playState,
       pausedAt,
       playerOneLeftAt,
       playerTwoLeftAt,
-    });
+    };
+    if (hasGameResumedNow) {
+      setTimeout(() => {
+        this.games.set(gameRoomId, gameInfo);
+      }, RESUME_GAME_DELAY_MS);
+    } else {
+      this.games.set(gameRoomId, gameInfo);
+    }
   }
 
   private playerClientLeaveGame({
@@ -245,6 +268,12 @@ export class GameService {
         playerOneLeftAt,
         playerTwoLeftAt,
       });
+      const hasGamePausedNow = game.pausedAt === null;
+      if (hasGamePausedNow) {
+        if (this.server) {
+          this.server.to(gameId).emit('gamePaused');
+        }
+      }
     }
   }
 
