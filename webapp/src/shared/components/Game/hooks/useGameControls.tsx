@@ -6,12 +6,13 @@ import {
   paddleMoveLeft,
   paddleStop,
   paddleDrag,
+  DragPayload,
 } from 'pong-engine';
 
 const useGameControls = (
   sendGameCommandToServer?: (
     command: GameCommand,
-    payload?: { dragCurrPos: number; dragPrevPos: number },
+    payload?: DragPayload,
   ) => void,
 ) => {
   const { gameStateRef } = useGameStateContext();
