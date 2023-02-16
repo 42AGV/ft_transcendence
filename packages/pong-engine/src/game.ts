@@ -59,6 +59,17 @@ export const paddleDrag = (
   });
 };
 
+export const paddleOpponentDrag = (
+  state: GameState,
+  dragCurrPos: number,
+  dragPrevPos: number,
+): GameState => {
+  return reducer(state, {
+    type: 'paddleOpponentDrag',
+    payload: { dragCurrPos, dragPrevPos },
+  });
+};
+
 export const newGame = (): GameState => ({
   ball: initialBallState(),
   paddle: initialPaddleState(),
