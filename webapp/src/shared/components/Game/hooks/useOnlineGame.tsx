@@ -14,6 +14,8 @@ const GAME_JOINED = 'gameJoined';
 const GAME_NOT_FOUND = 'gameNotFound';
 const GAME_FINISHED = 'gameFinished';
 const GAME_FINISHED_REDIRECT_DELAY_MS = 2000;
+const GAME_START_PAUSED = 'gameStartPaused';
+const GAME_START_RESUMED = 'gameStartResumed';
 const GAME_PAUSED = 'gamePaused';
 const GAME_RESUMED = 'gameResumed';
 
@@ -72,18 +74,28 @@ export function useOnlineGame(gameId: string) {
       }, GAME_FINISHED_REDIRECT_DELAY_MS);
     }
 
+    function handleGameStartPaused() {
+      notify('Waiting for player to join');
+    }
+
+    function handleGameStartResumed() {
+      notify('Game starting soon');
+    }
+
     function handleGamePaused() {
       notify('Game paused');
     }
 
     function handleGameResumed() {
-      notify('Game resumed');
+      notify('Game resuming soon');
     }
 
     socket.on(GAME_JOINED, handleGameJoined);
     socket.on(UPDATE_GAME, handleUpdateGame);
     socket.on(GAME_NOT_FOUND, handleGameNotFound);
     socket.on(GAME_FINISHED, handleGameFinished);
+    socket.on(GAME_START_PAUSED, handleGameStartPaused);
+    socket.on(GAME_START_RESUMED, handleGameStartResumed);
     socket.on(GAME_PAUSED, handleGamePaused);
     socket.on(GAME_RESUMED, handleGameResumed);
 
@@ -93,6 +105,8 @@ export function useOnlineGame(gameId: string) {
       socket.off(UPDATE_GAME);
       socket.off(GAME_NOT_FOUND);
       socket.off(GAME_FINISHED);
+      socket.off(GAME_START_PAUSED);
+      socket.off(GAME_START_RESUMED);
       socket.off(GAME_PAUSED);
       socket.off(GAME_RESUMED);
       clearTimeout(timeoutId);
