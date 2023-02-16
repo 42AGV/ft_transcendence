@@ -75,7 +75,7 @@ export function useOnlineGame(gameId: string) {
     }
 
     function handleGameStartPaused() {
-      notify('Waiting for player to join');
+      notify('Waiting for players to join');
     }
 
     function handleGameStartResumed() {
