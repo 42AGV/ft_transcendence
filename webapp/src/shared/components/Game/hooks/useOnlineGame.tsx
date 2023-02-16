@@ -1,6 +1,11 @@
 import React from 'react';
 import { useNotificationContext } from '../../../context/NotificationContext';
-import { GameCommand, GameInfoClient, GameState } from 'pong-engine';
+import {
+  DragPayload,
+  GameCommand,
+  GameInfoClient,
+  GameState,
+} from 'pong-engine';
 import { useAuth } from '../../../hooks/UseAuth';
 import { useNavigate } from 'react-router-dom';
 import socket from '../../../socket';
@@ -30,11 +35,12 @@ export function useOnlineGame(gameId: string) {
   const [gameJoined, setGameJoined] = React.useState(false);
 
   const sendGameCommand = React.useCallback(
-    (command: GameCommand) => {
+    (command: GameCommand, payload?: DragPayload) => {
       if (isPlayer && gameJoined) {
         socket.emit(GAME_COMMAND, {
           command,
           gameRoomId: gameId,
+          payload,
         });
       }
     },

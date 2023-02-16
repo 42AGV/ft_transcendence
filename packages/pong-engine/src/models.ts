@@ -14,7 +14,7 @@ export type GamePaddleOpponentMoveCommand =
   | 'paddleOpponentMoveLeft'
   | 'paddleOpponentStop';
 
-export type GamePaddleDragCommand = 'paddleDrag';
+export type GamePaddleDragCommand = 'paddleDrag' | 'paddleOpponentDrag';
 
 export type GameCommand =
   | GamePaddleMoveCommand
