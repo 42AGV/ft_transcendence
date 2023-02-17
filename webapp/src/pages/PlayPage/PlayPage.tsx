@@ -15,8 +15,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import {
   AVATAR_EP_URL,
-  PLAY_GAME_TRAIN_URL,
   PLAY_GAME_URL,
+  PLAY_RULES_URL,
   USER_ME_URL,
 } from '../../shared/urls';
 import socket from '../../shared/socket';
@@ -64,9 +64,9 @@ export default function PlayPage() {
   let buttons = [
     {
       variant: ButtonVariant.SUBMIT,
-      iconVariant: IconVariant.PLAY,
-      onClick: () => navigate(PLAY_GAME_TRAIN_URL),
-      children: 'Training',
+      iconVariant: IconVariant.INFO,
+      onClick: () => navigate(PLAY_RULES_URL),
+      children: 'Read game rules',
     },
   ];
 

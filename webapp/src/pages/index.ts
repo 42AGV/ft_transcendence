@@ -25,3 +25,4 @@ export { default as GameMultiplayerPage } from './PlayPage/GameMultiplayerPage';
 export { default as EnableTwoFactorAuthPage } from './EnableTwoFactorAuthPage/EnableTwoFactorAuthPage';
 export { default as ValidateTwoFactorAuthPage } from './ValidateTwoFactorAuthPage/ValidateTwoFactorAuthPage';
 export { default as LoadingPage } from './LoadingPage/LoadingPage';
+export { default as GameRulesPage } from './GameRulesPage/GameRulesPage';
