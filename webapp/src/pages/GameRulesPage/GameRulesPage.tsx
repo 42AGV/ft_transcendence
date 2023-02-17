@@ -71,8 +71,8 @@ export default function GameRulesPage() {
             <li>
               <Text variant={TextVariant.PARAGRAPH}>
                 The players move their paddles using the left and right arrow
-                keys on their keyboard, or by dragging the paddle with their
-                mouse or by touching and dragging the paddle on a mobile device.
+                keys on their keyboard, or by touching and dragging the paddle
+                on a mobile device.
               </Text>
             </li>
             <li>
