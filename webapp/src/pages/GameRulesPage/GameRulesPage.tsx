@@ -83,7 +83,8 @@ export default function GameRulesPage() {
             </li>
             <li>
               <Text variant={TextVariant.PARAGRAPH}>
-                The player who misses the ball loses a point.
+                Each time a player misses the ball, the other player scores a
+                point.
               </Text>
             </li>
             <li>
