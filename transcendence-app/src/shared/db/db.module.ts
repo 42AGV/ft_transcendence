@@ -22,6 +22,8 @@ import { IUserToRoleRepository } from '../../authorization/infrastructure/db/use
 import { UserToRolePostgresRepository } from '../../authorization/infrastructure/db/postgres/user-to-role.postgres.repository';
 import { IGameRepository } from '../../game/infrastructure/db/game.repository';
 import { GamePostgresRepository } from '../../game/infrastructure/db/postgres/game.postgres.repository';
+import { IUserLevelRepository } from '../../game/stats/infrastructure/db/user-level.repository';
+import { UserLevelPostgresRepository } from '../../game/stats/infrastructure/db/postgres/user-level.postgres.repository';
 
 @Module({
   providers: [
@@ -61,6 +63,10 @@ import { GamePostgresRepository } from '../../game/infrastructure/db/postgres/ga
       provide: IGameRepository,
       useClass: GamePostgresRepository,
     },
+    {
+      provide: IUserLevelRepository,
+      useClass: UserLevelPostgresRepository,
+    },
   ],
   exports: [
     IUserRepository,
@@ -74,6 +80,7 @@ import { GamePostgresRepository } from '../../game/infrastructure/db/postgres/ga
     IFriendRepository,
     IUserToRoleRepository,
     IGameRepository,
+    IUserLevelRepository,
   ],
 })
 export class DbModule {}
