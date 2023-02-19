@@ -107,12 +107,14 @@ const paddleCollision = (ball: GameBall, paddle: GamePaddle) =>
   ball.x < paddle.x + paddle.width + BALL_RADIUS;
 
 export const calcInitialBallSpeed = (): Coord => {
-  const coef = Math.ceil(3 * Math.random());
-  const angle = (Math.PI / 2) * coef + Math.PI / 4;
+  // const coef = Math.ceil(3 * Math.random());
+  // const angle = (Math.PI / 2) * coef + Math.PI / 4;
 
   return {
-    x: BALL_SPEED * Math.cos(angle),
-    y: BALL_SPEED * Math.sin(angle),
+    // x: BALL_SPEED * Math.cos(angle),
+    // y: BALL_SPEED * Math.sin(angle),
+    x: 0,
+    y: BALL_SPEED * -1,
   };
 };
 

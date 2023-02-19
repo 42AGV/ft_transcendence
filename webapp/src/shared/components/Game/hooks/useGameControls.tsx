@@ -11,17 +11,40 @@ import {
   paddleOpponentStop,
   DragPayload,
   paddleOpponentDrag,
+  runGameMultiplayerFrame,
+  PaddleSyncPayload,
 } from 'pong-engine';
+import useGameAnimation from './useGameAnimation';
 
 const useGameControls = (
   sendGameCommandToServer?: (
     command: GameCommand,
-    payload?: DragPayload,
+    payload?: PaddleSyncPayload | DragPayload,
   ) => void,
   isPlayerOne: boolean = true,
 ) => {
-  const { gameStateRef } = useGameStateContext();
+  const { gameStateRef, paddlesStateRef } = useGameStateContext();
   const dragRef = React.useRef<number>(0);
+
+  const syncArrowCommandWithServer = React.useCallback(() => {
+    if (isPlayerOne) {
+      const paddle = paddlesStateRef.current.paddle;
+      if (paddle.slide) {
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleMoveSync', {
+            newPos: paddle.x,
+          });
+      }
+    } else {
+      const paddleOpponent = paddlesStateRef.current.paddleOpponent;
+      if (paddleOpponent.slide) {
+        sendGameCommandToServer &&
+          sendGameCommandToServer('paddleMoveSync', {
+            newPos: paddleOpponent.x,
+          });
+      }
+    }
+  }, [sendGameCommandToServer, paddlesStateRef, isPlayerOne]);
 
   const movePaddle = React.useCallback(
     (e: KeyboardEvent) => {
@@ -31,15 +54,13 @@ const useGameControls = (
         gameStateRef.current = isPlayerOne
           ? paddleMoveRight(gameStateRef.current)
           : paddleOpponentMoveRight(gameStateRef.current);
-        sendGameCommandToServer && sendGameCommandToServer('paddleMoveRight');
       } else if (key === 'ArrowLeft') {
         gameStateRef.current = isPlayerOne
           ? paddleMoveLeft(gameStateRef.current)
           : paddleOpponentMoveLeft(gameStateRef.current);
-        sendGameCommandToServer && sendGameCommandToServer('paddleMoveLeft');
       }
     },
-    [sendGameCommandToServer, gameStateRef, isPlayerOne],
+    [gameStateRef, isPlayerOne],
   );
 
   const dragPaddle = React.useCallback(
@@ -71,10 +92,9 @@ const useGameControls = (
         gameStateRef.current = isPlayerOne
           ? paddleStop(gameStateRef.current)
           : paddleOpponentStop(gameStateRef.current);
-        sendGameCommandToServer && sendGameCommandToServer('paddleStop');
       }
     },
-    [sendGameCommandToServer, gameStateRef, isPlayerOne],
+    [gameStateRef, isPlayerOne],
   );
 
   const contextMenuHandler = React.useCallback(
@@ -96,6 +116,8 @@ const useGameControls = (
       window.removeEventListener('contextmenu', contextMenuHandler);
     };
   }, [movePaddle, stopPaddle, resetDragPaddle, dragPaddle, contextMenuHandler]);
+
+  return { syncArrowCommandWithServer };
 };
 
 export default useGameControls;

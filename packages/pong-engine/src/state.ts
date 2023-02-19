@@ -15,6 +15,7 @@ import {
   GamePaddleMoveCommand,
   GamePaddleDragCommand,
   GamePaddleOpponentMoveCommand,
+  GamePaddleMoveSync,
 } from './models';
 import {
   CANVAS_WIDTH,
@@ -31,6 +32,10 @@ export type DragPayload = {
   dragPrevPos: number;
 };
 
+export type PaddleSyncPayload = {
+  newPos: number;
+};
+
 type Act<Type extends string, Payload extends object> = {
   type: Type;
   payload: Payload;
@@ -45,7 +50,8 @@ export type Action =
   | Act<'losePointMultiplayer', EmptyPayload>
   | Act<GamePaddleMoveCommand, EmptyPayload>
   | Act<GamePaddleOpponentMoveCommand, EmptyPayload>
-  | Act<GamePaddleDragCommand, DragPayload>;
+  | Act<GamePaddleDragCommand, DragPayload>
+  | Act<GamePaddleMoveSync, PaddleSyncPayload>;
 
 export const initialBallState = (): GameBall => {
   const initialBallSpeed = calcInitialBallSpeed();
@@ -172,6 +178,26 @@ export const reducer = (
       return {
         ...state,
         paddleOpponent: dragPaddle(paddleOpponent, dragCurrPos, dragPrevPos),
+      };
+    }
+    case 'paddleMoveSync': {
+      const { newPos } = payload;
+      return {
+        ...state,
+        paddle: {
+          ...state.paddle,
+          x: newPos,
+        },
+      };
+    }
+    case 'paddleOpponentMoveSync': {
+      const { newPos } = payload;
+      return {
+        ...state,
+        paddleOpponent: {
+          ...state.paddleOpponent,
+          x: newPos,
+        },
       };
     }
     default:

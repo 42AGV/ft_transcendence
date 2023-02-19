@@ -34,6 +34,7 @@ export function useOnlineGame(gameId: string) {
   const [isGamePaused, setIsGamePaused] = React.useState(true);
   const [gameJoined, setGameJoined] = React.useState(false);
   const { serverFrameBufferRef } = useGameStateContext();
+  const serverMessageTimestampRef = React.useRef<number | undefined>(undefined);
 
   const sendGameCommand = React.useCallback(
     (command: GameCommand, payload?: DragPayload) => {
@@ -97,6 +98,12 @@ export function useOnlineGame(gameId: string) {
     }
 
     function updateGameWithServer(info: GameInfoServer) {
+      const now = Date.now();
+      if (serverMessageTimestampRef.current) {
+        const rtt = now - serverMessageTimestampRef.current;
+        rtt > 100 && warn('slow connection!', 'top');
+      }
+      serverMessageTimestampRef.current = now;
       serverFrameBufferRef.current.push({
         state: info.gameState,
         timestamp: info.timestamp,
