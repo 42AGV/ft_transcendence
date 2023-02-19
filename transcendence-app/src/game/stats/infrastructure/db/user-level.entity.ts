@@ -1,5 +1,3 @@
-import { GameMode } from 'src/game/enums/game-mode.enum';
-
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 export enum userLevelKeys {
   GAMEID = '"gameId"',

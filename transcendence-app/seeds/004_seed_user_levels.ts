@@ -1,12 +1,8 @@
 import { Knex } from 'knex';
-import {
-  UserLevel,
-  UserLevelData,
-} from '../src/game/stats/infrastructure/db/user-level.entity';
+import { UserLevel } from '../src/game/stats/infrastructure/db/user-level.entity';
 import { GameData } from 'src/game/infrastructure/db/game.entity';
 
 const getLastLevel = async (knex: Knex, username: string) => {
-  console.log(username);
   const userLevel = await knex
     .select('*')
     .from('userlevel')
