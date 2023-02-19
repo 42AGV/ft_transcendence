@@ -2,29 +2,29 @@ import { GameMode } from 'src/game/enums/game-mode.enum';
 
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 export enum userLevelKeys {
+  GAMEID = '"gameId"',
   USERNAME = '"username"',
   TIMESTAMP = '"timestamp"',
   LEVEL = '"level"',
-  GAMEMODE = '"gameMode"',
 }
 
 export interface UserLevelData {
+  gameId: string;
   username: string;
   timestamp: Date;
   level: number;
-  gameMode: GameMode;
 }
 
 export class UserLevel {
+  gameId: string;
   username: string;
   timestamp: Date;
   level: number;
-  gameMode: GameMode;
 
-  constructor(gameData: UserLevelData) {
-    this.username = gameData.username;
-    this.timestamp = gameData.timestamp;
-    this.level = gameData.level;
-    this.gameMode = gameData.gameMode;
+  constructor(userLevelData: UserLevelData) {
+    this.gameId = userLevelData.gameId;
+    this.username = userLevelData.username;
+    this.timestamp = userLevelData.timestamp;
+    this.level = userLevelData.level;
   }
 }
