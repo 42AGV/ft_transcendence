@@ -8,4 +8,5 @@ export abstract class IUserLevelRepository {
     username: string,
     paginationDto: Required<PaginationQueryDto>,
   ): Promise<UserLevelWithTimestampData[] | null>;
+  abstract getLastLevel(username: string): Promise<number>;
 }

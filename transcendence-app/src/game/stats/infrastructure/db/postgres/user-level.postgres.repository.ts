@@ -25,6 +25,23 @@ export class UserLevelPostgresRepository
     return this.add(userLevel);
   }
 
+  async getLastLevel(username: string): Promise<number> {
+    const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
+      text: `WITH ulwtstp AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
+                              FROM ${this.table} ul
+                                       INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                              WHERE ul.${userLevelKeys.USERNAME} LIKE $1)
+             select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
+                    ults.${userLevelKeys.USERNAME},
+                    ults.${userLevelKeys.GAMEID},
+                    ults.${userLevelKeys.LEVEL}
+             FROM ulwtstp ults
+             ORDER BY "timestamp" DESC`,
+      values: [username],
+    });
+    return levelsData && levelsData[0] ? levelsData[0].level : 1;
+  }
+
   async getPaginatedLevels(
     username: string,
     paginationDto: Required<PaginationQueryDto>,
