@@ -1,4 +1,4 @@
-import { ButtonVariant, RowItem } from '../../shared/components';
+import { ButtonVariant, IconVariant, RowItem } from '../../shared/components';
 import { AVATAR_EP_URL, USER_URL } from '../../shared/urls';
 import { useParams } from 'react-router-dom';
 import React, { useCallback } from 'react';
@@ -85,7 +85,8 @@ export default function UserMatchHistoryPage() {
       }}
       button={{
         variant: ButtonVariant.SUBMIT,
-        onClick: () => navigate(`${USER_URL}/:username/stats`),
+        onClick: () => navigate(`${USER_URL}/${username}/stats`),
+        iconVariant: IconVariant.ARROW_FORWARD,
       }}
       avatarLabel={username!}
       avatarCaption={`level ${user?.level ?? 1}`}
