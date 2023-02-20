@@ -156,7 +156,7 @@ export default function EditChatroomMemberPage() {
               overridePermissions ? ADMIN_URL : ''
             }${USER_URL}/${username}`}
             title={username}
-            subtitle="level x"
+            subtitle={`level ${destUser?.level}`}
           />
           <ToggleSwitchSet
             isLoading={isLoading}
