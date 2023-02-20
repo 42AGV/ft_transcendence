@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 import { UserLevel } from '../src/game/stats/infrastructure/db/user-level.entity';
 import { GameData } from 'src/game/infrastructure/db/game.entity';
-import { UserLevelWithTimestampData } from '../src/game/stats/infrastructure/db/user-level-with-timestamp.entity';
 
 export enum GameResult {
   LOSE = 0,
@@ -67,17 +66,29 @@ class LevelService {
 
 const getLastLevel = async (knex: Knex, username: string) => {
   const userLevel = await knex
-    .select(
-      'userlevel.gameId',
-      'userlevel.username',
-      'userlevel.level',
-      'game.createdAt',
-      'game.gameDurationInSeconds',
+    .with(
+      'ults',
+      knex
+        .select(
+          'userlevel.gameId',
+          'userlevel.username',
+          'userlevel.level',
+          'game.createdAt',
+          'game.gameDurationInSeconds',
+        )
+        .from('userlevel')
+        .innerJoin('game', 'userlevel.gameId', '=', 'game.id')
+        .where('userlevel.username', username)
+        .orderBy([{ column: 'createdAt', order: 'desc' }]),
     )
-    .from('userlevel')
-    .innerJoin('game', 'userlevel.gameId', '=', 'game.id')
-    .where('userlevel.username', username)
-    .orderBy([{ column: 'createdAt', order: 'desc' }]);
+    .select(
+      knex.raw(
+        'ults."createdAt" + interval \'1 second\' * ults."gameDurationInSeconds" as timestamp' +
+          ', ults.username, ults."gameId", ults.level',
+      ),
+    )
+    .from('ults')
+    .orderBy([{ column: 'timestamp', order: 'desc' }]);
   if (userLevel.length === 0) {
     return 1;
   }
