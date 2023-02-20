@@ -143,9 +143,9 @@ export class GameService {
             this.finishGame(gameInfo, gameId);
           }
           if (gameInfo.playerOneLeftAt) {
-            gameInfo.gameState.scoreOpponent = 10;
+            gameInfo.gameState.scoreOpponent = MAX_SCORE;
           } else if (gameInfo.playerTwoLeftAt) {
-            gameInfo.gameState.score = 10;
+            gameInfo.gameState.score = MAX_SCORE;
           }
           this.finishGame(gameInfo, gameId);
         } else if (this.hasPlayerWon(gameInfo)) {
@@ -393,9 +393,9 @@ export class GameService {
     const isPlayerOne = userId === game.playerOneId;
     const isPlayerTwo = userId === game.playerTwoId;
     if (isPlayerOne) {
-      game.gameState.scoreOpponent = 10;
+      game.gameState.scoreOpponent = MAX_SCORE;
     } else if (isPlayerTwo) {
-      game.gameState.score = 10;
+      game.gameState.score = MAX_SCORE;
     }
     this.finishGame(game, gameRoomId);
   }
