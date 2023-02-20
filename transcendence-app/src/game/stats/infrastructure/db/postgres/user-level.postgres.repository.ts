@@ -36,7 +36,8 @@ export class UserLevelPostgresRepository
                     ults.${userLevelKeys.GAMEID},
                     ults.${userLevelKeys.LEVEL}
              FROM ulwtstp ults
-             ORDER BY "timestamp" DESC`,
+             ORDER BY "timestamp" DESC
+             LIMIT 1`,
       values: [username],
     });
     return levelsData && levelsData[0] ? levelsData[0].level : 1;

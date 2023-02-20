@@ -10,6 +10,7 @@ import { GameController } from './game.controller';
 import { SocketModule } from '../socket/socket.module';
 import { GameService } from './game.service';
 import { LevelCalculatorService } from './stats/infrastructure/utils/level-calc.service';
+import { GameStatsService } from './stats/game-stats.service';
 
 @Global()
 @Module({
@@ -19,6 +20,7 @@ import { LevelCalculatorService } from './stats/infrastructure/utils/level-calc.
     GameQueueGateway,
     GameQueueService,
     LevelCalculatorService,
+    GameStatsService,
     {
       provide: IChallengesPendingRepository,
       useClass: ChallengesPending,

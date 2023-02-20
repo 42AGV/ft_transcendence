@@ -29,10 +29,7 @@ import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { CreateGameDto } from './dto/create-game.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { GameMode } from './enums/game-mode.enum';
-import { LevelCalculatorService } from './stats/infrastructure/utils/level-calc.service';
-import { GameResult } from '../../seeds/004_seed_user_levels';
-import { IUserLevelRepository } from './stats/infrastructure/db/user-level.repository';
-import { UserLevel } from './stats/infrastructure/db/user-level.entity';
+import { GameStatsService } from './stats/game-stats.service';
 
 type GameId = string;
 type UserId = string;
@@ -58,8 +55,7 @@ export class GameService {
   constructor(
     private readonly gameRepository: IGameRepository,
     private readonly userRepository: IUserRepository,
-    private readonly levelService: LevelCalculatorService,
-    private readonly userLevelRepository: IUserLevelRepository,
+    private readonly statsService: GameStatsService,
   ) {}
 
   private async addGameWhenFinished(
@@ -93,54 +89,7 @@ export class GameService {
     if (!game) {
       throw new Error('Game entry could not be added');
     }
-    let playerOneFinalLevel;
-    let playerTwoFinalLevel;
-    const userOneLevel = await this.userLevelRepository.getLastLevel(
-      game.playerOneUsername,
-    );
-    const userTwoLevel = await this.userLevelRepository.getLastLevel(
-      game.playerTwoUsername,
-    );
-    if (game.playerOneScore > game.playerTwoScore) {
-      playerOneFinalLevel = this.levelService.getNewLevel(
-        userOneLevel,
-        userTwoLevel,
-        GameResult.WIN,
-      );
-      playerTwoFinalLevel = this.levelService.getNewLevel(
-        userTwoLevel,
-        userOneLevel,
-        GameResult.LOSE,
-      );
-    } else {
-      playerOneFinalLevel = this.levelService.getNewLevel(
-        userOneLevel,
-        userTwoLevel,
-        GameResult.LOSE,
-      );
-      playerTwoFinalLevel = this.levelService.getNewLevel(
-        userTwoLevel,
-        userOneLevel,
-        GameResult.WIN,
-      );
-    }
-    const newLevelOne = await this.userLevelRepository.addLevel(
-      new UserLevel({
-        username: game.playerOneUsername,
-        gameId: game.id,
-        level: playerOneFinalLevel,
-      }),
-    );
-    const newLevelTwo = await this.userLevelRepository.addLevel(
-      new UserLevel({
-        username: game.playerTwoUsername,
-        gameId: game.id,
-        level: playerTwoFinalLevel,
-      }),
-    );
-    if (!(newLevelOne && newLevelTwo)) {
-      throw new Error('UserLevels could not be added');
-    }
+    await this.statsService.addLevelsWhenFinished(game);
   }
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
