@@ -1,4 +1,4 @@
-.loading-page {
+.stats-page {
   height: 100vh;
   background-color: var(--color-background);
   color: var(--color-light);
@@ -7,7 +7,7 @@
   grid-template-rows: 1fr;
 }
 
-.loading-page .loading {
+.stats-page .line {
   grid-column: 1/-1;
   grid-row: 1/-1;
   align-self: center;
