@@ -4,6 +4,10 @@ import { Game } from '../infrastructure/db/game.entity';
 import { GameResult } from '../../../seeds/004_seed_user_levels';
 import { UserLevel } from './infrastructure/db/user-level.entity';
 import { Injectable } from '@nestjs/common';
+import { PaginationQueryDto } from '../../shared/dtos/pagination.query.dto';
+import { UserLevelWithTimestampData } from './infrastructure/db/user-level-with-timestamp.entity';
+import { MAX_ENTRIES_PER_PAGE } from '../../shared/constants';
+import { GameMode } from '../enums/game-mode.enum';
 
 @Injectable()
 export class GameStatsService {
@@ -17,9 +21,11 @@ export class GameStatsService {
     let playerTwoFinalLevel;
     const userOneLevel = await this.userLevelRepository.getLastLevel(
       game.playerOneUsername,
+      game.gameMode,
     );
     const userTwoLevel = await this.userLevelRepository.getLastLevel(
       game.playerTwoUsername,
+      game.gameMode,
     );
     if (game.playerOneScore > game.playerTwoScore) {
       playerOneFinalLevel = this.levelService.getNewLevel(
@@ -61,5 +67,16 @@ export class GameStatsService {
     if (!(newLevelOne && newLevelTwo)) {
       throw new Error('UserLevels could not be added');
     }
+  }
+
+  async getPaginatedLevels(
+    username: string,
+    mode: GameMode = GameMode.classic,
+    { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
+  ): Promise<UserLevelWithTimestampData[] | null> {
+    return this.userLevelRepository.getPaginatedLevels(username, mode, {
+      limit,
+      offset,
+    });
   }
 }

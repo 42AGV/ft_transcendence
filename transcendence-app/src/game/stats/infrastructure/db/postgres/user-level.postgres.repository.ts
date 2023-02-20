@@ -11,6 +11,7 @@ import {
   UserLevelWithTimestamp,
   UserLevelWithTimestampData,
 } from '../user-level-with-timestamp.entity';
+import { GameMode } from '../../../../enums/game-mode.enum';
 
 @Injectable()
 export class UserLevelPostgresRepository
@@ -25,12 +26,13 @@ export class UserLevelPostgresRepository
     return this.add(userLevel);
   }
 
-  async getLastLevel(username: string): Promise<number> {
+  async getLastLevel(username: string, gameMode: GameMode): Promise<number> {
     const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
       text: `WITH ulwtstp AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
                               FROM ${this.table} ul
                                        INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
-                              WHERE ul.${userLevelKeys.USERNAME} LIKE $1)
+                              WHERE ul.${userLevelKeys.USERNAME} LIKE $1
+                              AND g.${gameKeys.GAMEMODE} = $2)
              select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
                     ults.${userLevelKeys.USERNAME},
                     ults.${userLevelKeys.GAMEID},
@@ -38,13 +40,14 @@ export class UserLevelPostgresRepository
              FROM ulwtstp ults
              ORDER BY "timestamp" DESC
              LIMIT 1`,
-      values: [username],
+      values: [username, gameMode],
     });
     return levelsData && levelsData[0] ? levelsData[0].level : 1;
   }
 
   async getPaginatedLevels(
     username: string,
+    gameMode: GameMode,
     paginationDto: Required<PaginationQueryDto>,
   ): Promise<UserLevelWithTimestampData[] | null> {
     const { limit, offset } = paginationDto;

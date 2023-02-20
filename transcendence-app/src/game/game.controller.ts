@@ -37,6 +37,9 @@ import { GameQueueService } from './game.queue.service';
 import { GamePairingStatusDto } from './dto/game-pairing-status.dto';
 import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.guard';
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
+import { UserLevelWithTimestamp } from './stats/infrastructure/db/user-level-with-timestamp.entity';
+import { GameStatsService } from './stats/game-stats.service';
+import { PaginationQueryWithGameModeDto } from './stats/dto/pagination-query-with-game-mode.dto';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -46,9 +49,10 @@ export class GameController {
   constructor(
     private gameService: GameService,
     private gameQueueService: GameQueueService,
+    private readonly statsService: GameStatsService,
   ) {}
 
-  @Get('pairing-status')
+  @Get('game-pairing-status')
   @ApiOkResponse({
     description: `Returns the game pairing status of the authenticated user`,
     type: GamePairingStatusDto,
@@ -60,6 +64,30 @@ export class GameController {
       throw new ServiceUnavailableException();
     }
     return status;
+  }
+
+  @Get('game-stats/:username')
+  @ApiOkResponse({
+    description:
+      `Returns the user level history for the given username,` +
+      ` (max ${MAX_ENTRIES_PER_PAGE})`,
+    type: UserLevelWithTimestamp,
+  })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getUserLevelHistory(
+    @Param('username') username: string,
+    @Query() queryWithGameModeDto: PaginationQueryWithGameModeDto,
+  ): Promise<UserLevelWithTimestamp[]> {
+    const { mode, ...rest } = queryWithGameModeDto;
+    const levels = await this.statsService.getPaginatedLevels(
+      username,
+      mode,
+      rest,
+    );
+    if (!levels) {
+      throw new ServiceUnavailableException();
+    }
+    return levels;
   }
 
   @Post('game')
