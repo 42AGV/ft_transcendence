@@ -71,6 +71,7 @@ describe('UserController', () => {
     mockUserService = {
       retrieveUserWithUserName: (username: string) => {
         return Promise.resolve({
+          level: 1,
           id: uuidv4(),
           createdAt: new Date(Date.now()),
           avatarId: uuidv4(),
