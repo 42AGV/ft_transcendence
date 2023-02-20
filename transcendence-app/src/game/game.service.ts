@@ -141,7 +141,16 @@ export class GameService {
   private runServerGameFrame() {
     this.games.forEach((gameInfo: GameInfoServer, gameId: GameId) => {
       if (this.server) {
-        if (this.isPausedForTooLong(gameInfo) || this.hasPlayerWon(gameInfo)) {
+        if (this.isPausedForTooLong(gameInfo)) {
+          if (gameInfo.playerOneLeftAt && gameInfo.playerTwoLeftAt) {
+            // noop, both players disconnected, keep the current score
+          } else if (gameInfo.playerOneLeftAt) {
+            gameInfo.gameState.scoreOpponent = MAX_SCORE;
+          } else if (gameInfo.playerTwoLeftAt) {
+            gameInfo.gameState.score = MAX_SCORE;
+          }
+          this.finishGame(gameInfo, gameId);
+        } else if (this.hasPlayerWon(gameInfo)) {
           this.finishGame(gameInfo, gameId);
         } else if (gameInfo.playState === 'playing') {
           // Game is playing, update the game info
@@ -382,6 +391,13 @@ export class GameService {
     const game = this.games.get(gameRoomId);
     if (!game) {
       throw new WsException('User was not playing, so cannot quit');
+    }
+    const isPlayerOne = userId === game.playerOneId;
+    const isPlayerTwo = userId === game.playerTwoId;
+    if (isPlayerOne) {
+      game.gameState.scoreOpponent = MAX_SCORE;
+    } else if (isPlayerTwo) {
+      game.gameState.score = MAX_SCORE;
     }
     this.finishGame(game, gameRoomId);
   }
