@@ -1,0 +1,18 @@
+.game-rules-page {
+  margin: 0;
+  padding: var(--padding-top-bottom) var(--padding-sides);
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-light);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.game-rules-page-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+}
