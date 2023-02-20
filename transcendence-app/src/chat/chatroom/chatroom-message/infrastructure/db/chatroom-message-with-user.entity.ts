@@ -15,7 +15,6 @@ export interface ChatroomMessageWithUserData extends ChatroomMessageData {
   userCreatedAt: Date;
   userTwoFactorAuthenticationSecret: string | null;
   userIsTwoFactorAuthenticationEnabled: boolean;
-  userLevel: number;
 }
 export class ChatroomMessageWithUser extends ChatroomMessage {
   user: User;
@@ -36,7 +35,6 @@ export class ChatroomMessageWithUser extends ChatroomMessage {
         messageData.userTwoFactorAuthenticationSecret,
       isTwoFactorAuthenticationEnabled:
         messageData.userIsTwoFactorAuthenticationEnabled,
-      level: messageData.userLevel,
     });
   }
 }
