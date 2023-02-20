@@ -1,7 +1,9 @@
-import { LevelCalculatorService } from './infrastructure/utils/level-calc.service';
+import {
+  GameResult,
+  LevelCalculatorService,
+} from './infrastructure/utils/level-calc.service';
 import { IUserLevelRepository } from './infrastructure/db/user-level.repository';
 import { Game } from '../infrastructure/db/game.entity';
-import { GameResult } from '../../../seeds/004_seed_user_levels';
 import { UserLevel } from './infrastructure/db/user-level.entity';
 import { Injectable } from '@nestjs/common';
 import { PaginationQueryDto } from '../../shared/dtos/pagination.query.dto';
