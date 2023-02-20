@@ -6,6 +6,11 @@ import { table } from 'src/shared/db/models';
 import { PostgresPool } from 'src/shared/db/postgres/postgresConnection.provider';
 import { makeQuery } from '../../../../../shared/db/postgres/utils';
 import { PaginationQueryDto } from '../../../../../shared/dtos/pagination.query.dto';
+import { gameKeys } from '../../../../infrastructure/db/game.entity';
+import {
+  UserLevelWithTimestamp,
+  UserLevelWithTimestampData,
+} from '../user-level-with-timestamp.entity';
 
 @Injectable()
 export class UserLevelPostgresRepository
@@ -23,18 +28,24 @@ export class UserLevelPostgresRepository
   async getPaginatedLevels(
     username: string,
     paginationDto: Required<PaginationQueryDto>,
-  ): Promise<UserLevel[] | null> {
+  ): Promise<UserLevelWithTimestampData[] | null> {
     const { limit, offset } = paginationDto;
-    const orderBy = userLevelKeys.TIMESTAMP;
-    const levelsData = await makeQuery<UserLevel>(this.pool, {
-      text: `SELECT *
-      FROM ${this.table}
-      WHERE ${userLevelKeys.USERNAME} LIKE $1
-      ORDER BY ${orderBy}
-      LIMIT $3
-      OFFSET $4;`,
+    const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
+      text: `WITH ulwtstp AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
+                              FROM ${this.table} ul
+                                       INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                              WHERE ul.${userLevelKeys.USERNAME} LIKE $1)
+             select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
+                    ults.${userLevelKeys.USERNAME},
+                    ults.${userLevelKeys.GAMEID},
+                    ults.${userLevelKeys.LEVEL}
+             FROM ulwtstp ults
+             ORDER BY "timestamp"
+             LIMIT $2 OFFSET $3`,
       values: [username, limit, offset],
     });
-    return levelsData ? levelsData.map((level) => new this.ctor(level)) : null;
+    return levelsData
+      ? levelsData.map((level) => new UserLevelWithTimestamp(level))
+      : null;
   }
 }

@@ -7,10 +7,9 @@ export async function up(knex: Knex): Promise<void> {
       (
           "gameId"    UUID REFERENCES Game ("id") ON DELETE CASCADE,
           "username"  VARCHAR(20) NOT NULL REFERENCES Users (username) ON DELETE CASCADE ON UPDATE CASCADE,
-          "timestamp" TIMESTAMPTZ NOT NULL,
           "level"     float8      NOT NULL,
           CHECK ("level" > 0),
-          PRIMARY KEY ("gameId", "username", "timestamp")
+          PRIMARY KEY ("gameId", "username")
       );
   `);
 }
