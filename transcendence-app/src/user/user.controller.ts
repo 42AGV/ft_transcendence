@@ -70,9 +70,12 @@ export class UserController {
   }
 
   @Get('user')
-  @ApiOkResponse({ description: 'Get the authenticated user', type: User })
+  @ApiOkResponse({
+    description: 'Get the authenticated user',
+    type: UserWithLevelDto,
+  })
   getCurrentUser(@GetUser() user: User) {
-    return user;
+    return this.userService.getCurrentUserWithLevel(user);
   }
 
   @Get('users')
@@ -206,13 +209,13 @@ export class UserController {
   @Get('user/friends')
   @ApiOkResponse({
     description: 'List friends of the current user',
-    type: [User],
+    type: [UserWithLevelDto],
   })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async getFriends(
     @GetUser() user: User,
     @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
-  ): Promise<User[]> {
+  ): Promise<UserWithLevelDto[]> {
     const friends = await this.userService.getFriends(
       user.id,
       usersPaginationQueryDto,

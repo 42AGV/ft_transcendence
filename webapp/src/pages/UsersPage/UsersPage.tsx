@@ -11,7 +11,10 @@ import {
   FRIENDS_URL,
   USER_URL,
 } from '../../shared/urls';
-import { User, UserControllerGetUsersRequest } from '../../shared/generated';
+import {
+  UserWithLevelDto,
+  UserControllerGetUsersRequest,
+} from '../../shared/generated';
 import { MainTabTemplate } from '../../shared/components/index';
 import { useCallback } from 'react';
 import { usersApi } from '../../shared/services/ApiService';
@@ -58,7 +61,7 @@ export default function UsersPage() {
     ];
   }
 
-  const mapUserToRow = (user: User): RowItem => {
+  const mapUserToRow = (user: UserWithLevelDto): RowItem => {
     return {
       iconVariant: IconVariant.ARROW_FORWARD,
       avatarProps: {
@@ -71,7 +74,7 @@ export default function UsersPage() {
         user.username
       }`,
       title: user.username,
-      subtitle: 'level x',
+      subtitle: `level ${user.level}`,
       key: user.id,
     };
   };
