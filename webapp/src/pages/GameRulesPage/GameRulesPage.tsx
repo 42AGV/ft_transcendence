@@ -77,22 +77,17 @@ export default function GameRulesPage() {
             </li>
             <li>
               <Text variant={TextVariant.PARAGRAPH}>
-                The ball bounces off the paddles and the walls of the game
-                screen.
-              </Text>
-            </li>
-            <li>
-              <Text variant={TextVariant.PARAGRAPH}>
                 Each time a player misses the ball, the other player scores a
                 point.
               </Text>
             </li>
-            <li>
-              <Text variant={TextVariant.PARAGRAPH}>
-                The game continues until one player reaches 10 points and wins
-                the game.
-              </Text>
-            </li>
+          </ol>
+        </div>
+        <div className="game-rules-page-main-disconnects">
+          <Text variant={TextVariant.SUBHEADING}>
+            Disconnects and quitting:
+          </Text>
+          <ol>
             <li>
               <Text variant={TextVariant.PARAGRAPH}>
                 If one of the players disconnects during the game, the game will
@@ -117,22 +112,6 @@ export default function GameRulesPage() {
               <Text variant={TextVariant.PARAGRAPH}>
                 If a player chooses to quit the game at any point, the other
                 player will be declared the winner.
-              </Text>
-            </li>
-          </ol>
-        </div>
-        <div className="game-rules-page-main-scoring">
-          <Text variant={TextVariant.SUBHEADING}>Scoring:</Text>
-          <ol>
-            <li>
-              <Text variant={TextVariant.PARAGRAPH}>
-                A player scores a point when the ball passes their opponent's
-                paddle.
-              </Text>
-            </li>
-            <li>
-              <Text variant={TextVariant.PARAGRAPH}>
-                The first player to reach 10 points wins the game.
               </Text>
             </li>
           </ol>
