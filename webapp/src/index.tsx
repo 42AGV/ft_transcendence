@@ -67,7 +67,9 @@ import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
 import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
 import { GamePairingProvider } from './shared/context/GamePairingContext';
+import { Chart, registerables } from 'chart.js';
 
+Chart.register(...registerables);
 const container = document.getElementById('root');
 const root = createRoot(container!);
 const developmentMode = process.env.NODE_ENV === 'development';

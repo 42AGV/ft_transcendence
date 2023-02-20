@@ -12,8 +12,16 @@ export default function UserStatsPage() {
               label: '# of Votes',
               data: [12, 19, 3, 5, 2, 3],
               borderWidth: 1,
+              stepped: true,
             },
           ],
+        }}
+        options={{
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
         }}
       />
     </div>
