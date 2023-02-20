@@ -140,9 +140,8 @@ export class GameService {
       if (this.server) {
         if (this.isPausedForTooLong(gameInfo)) {
           if (gameInfo.playerOneLeftAt && gameInfo.playerTwoLeftAt) {
-            this.finishGame(gameInfo, gameId);
-          }
-          if (gameInfo.playerOneLeftAt) {
+            // noop, both players disconnected, keep the current score
+          } else if (gameInfo.playerOneLeftAt) {
             gameInfo.gameState.scoreOpponent = MAX_SCORE;
           } else if (gameInfo.playerTwoLeftAt) {
             gameInfo.gameState.score = MAX_SCORE;
