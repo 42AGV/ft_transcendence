@@ -21,6 +21,9 @@ import { AvatarService } from '../shared/avatar/avatar.service';
 import { SocketService } from '../socket/socket.service';
 import { Password } from '../shared/password';
 import { IFriendRepository } from './infrastructure/db/friend.repository';
+import { UserWithLevelDto } from '../shared/dtos/user-with-level.dto';
+import { IUserLevelRepository } from '../game/stats/infrastructure/db/user-level.repository';
+import { GameMode } from '../game/enums/game-mode.enum';
 
 @Injectable()
 export class UserService {
@@ -31,6 +34,7 @@ export class UserService {
     private friendRepository: IFriendRepository,
     private avatarService: AvatarService,
     private socketService: SocketService,
+    private userLevelRepository: IUserLevelRepository,
   ) {}
 
   retrieveUserWithId(id: string): Promise<User | null> {
@@ -49,6 +53,27 @@ export class UserService {
       sort,
       search,
     });
+  }
+
+  async retrieveUsersWithLevel(
+    paginationQuery: PaginationWithSearchQueryDto,
+  ): Promise<UserWithLevelDto[]> {
+    const users = await this.retrieveUsers(paginationQuery);
+    if (!users) {
+      throw null;
+    }
+    return await Promise.all(
+      users.map(
+        async (user) =>
+          new UserWithLevelDto({
+            level: await this.userLevelRepository.getLastLevel(
+              user.username,
+              GameMode.classic,
+            ),
+            ...user,
+          }),
+      ),
+    );
   }
 
   async retrieveUserWithUserNameWithoutFriend(
