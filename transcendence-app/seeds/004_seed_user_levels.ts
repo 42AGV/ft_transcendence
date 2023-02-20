@@ -2,6 +2,39 @@ import { Knex } from 'knex';
 import { UserLevel } from '../src/game/stats/infrastructure/db/user-level.entity';
 import { GameData } from 'src/game/infrastructure/db/game.entity';
 
+const LevelToElo = (level: number) => {
+  return Math.max(Math.floor(50 * level + 950), 1000);
+};
+
+const EloToLevel = (elo: number) => {
+  return Math.max((elo - 950) / 50, 1);
+};
+
+const K = 128;
+
+enum EloStatus {
+  LOSE = 0,
+  WIN = 1,
+}
+
+const delta = (
+  currentRating: number,
+  opponentRating: number,
+  status: EloStatus,
+) => {
+  const probabilityOfWin =
+    1 / (1 + Math.pow(10, (opponentRating - currentRating) / 400));
+  return Math.round(K * (status - probabilityOfWin));
+};
+
+const getNewEloRating = (
+  currentRating: number,
+  opponentRating: number,
+  status: EloStatus,
+) => {
+  return currentRating + delta(currentRating, opponentRating, status);
+};
+
 const getLastLevel = async (knex: Knex, username: string) => {
   const userLevel = await knex
     .select('*')
@@ -26,12 +59,50 @@ const seedUserLevels = async (knex: Knex) => {
     let playerOneFinalLevel;
     let playerTwoFinalLevel;
     if (game.playerOneScore > game.playerTwoScore) {
-      playerOneFinalLevel = userOneLevel + 0.2;
-      playerTwoFinalLevel = Math.max(userTwoLevel - 0.2, 1);
+      playerOneFinalLevel = EloToLevel(
+        getNewEloRating(
+          LevelToElo(userOneLevel),
+          LevelToElo(userTwoLevel),
+          EloStatus.WIN,
+        ),
+      );
+      playerTwoFinalLevel = EloToLevel(
+        getNewEloRating(
+          LevelToElo(userTwoLevel),
+          LevelToElo(userTwoLevel),
+          EloStatus.LOSE,
+        ),
+      );
     } else {
-      playerOneFinalLevel = Math.max(userOneLevel - 0.2, 1);
-      playerTwoFinalLevel = userTwoLevel + 0.2;
+      playerOneFinalLevel = EloToLevel(
+        getNewEloRating(
+          LevelToElo(userOneLevel),
+          LevelToElo(userTwoLevel),
+          EloStatus.LOSE,
+        ),
+      );
+      playerTwoFinalLevel = EloToLevel(
+        getNewEloRating(
+          LevelToElo(userTwoLevel),
+          LevelToElo(userTwoLevel),
+          EloStatus.WIN,
+        ),
+      );
     }
+    // console.log({
+    //   one: {
+    //     userOneLevel,
+    //     playerOneFinalLevel,
+    //     playerOneScore: game.playerOneScore,
+    //     gameId: game.id,
+    //   },
+    //   two: {
+    //     userTwoLevel,
+    //     playerTwoFinalLevel,
+    //     playerTwoScore: game.playerTwoScore,
+    //     gameId: game.id,
+    //   },
+    // });
     const userOne = new UserLevel({
       username: game.playerOneUsername,
       gameId: game.id,
