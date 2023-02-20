@@ -66,7 +66,7 @@ export class GameController {
     return status;
   }
 
-  @Get('game-stats/:username')
+  @Get('game-levels/:username')
   @ApiOkResponse({
     description:
       `Returns the user level history for the given username,` +
