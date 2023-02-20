@@ -11,4 +11,8 @@ export abstract class IUserLevelRepository {
     paginationDto: Required<PaginationQueryDto>,
   ): Promise<UserLevelWithTimestampData[] | null>;
   abstract getLastLevel(username: string, gameMode: GameMode): Promise<number>;
+  abstract getWinGameRatio(
+    username: string,
+    gameMode?: GameMode,
+  ): Promise<number>;
 }

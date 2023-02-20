@@ -6,7 +6,11 @@ import { table } from '../../../../../shared/db/models';
 import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
 import { makeQuery } from '../../../../../shared/db/postgres/utils';
 import { PaginationQueryDto } from '../../../../../shared/dtos/pagination.query.dto';
-import { gameKeys } from '../../../../infrastructure/db/game.entity';
+import {
+  Game,
+  GameData,
+  gameKeys,
+} from '../../../../infrastructure/db/game.entity';
 import {
   UserLevelWithTimestamp,
   UserLevelWithTimestampData,
@@ -30,9 +34,9 @@ export class UserLevelPostgresRepository
     const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
       text: `WITH ulwtstp AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
                               FROM ${this.table} ul
-                                       INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                                     INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
                               WHERE ul.${userLevelKeys.USERNAME} LIKE $1
-                              AND g.${gameKeys.GAMEMODE} = $2)
+                                AND g.${gameKeys.GAMEMODE} = $2)
              select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
                     ults.${userLevelKeys.USERNAME},
                     ults.${userLevelKeys.GAMEID},
@@ -54,7 +58,7 @@ export class UserLevelPostgresRepository
     const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
       text: `WITH ulwtstp AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
                               FROM ${this.table} ul
-                                       INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                                     INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
                               WHERE ul.${userLevelKeys.USERNAME} LIKE $1)
              select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
                     ults.${userLevelKeys.USERNAME},
@@ -68,5 +72,54 @@ export class UserLevelPostgresRepository
     return levelsData
       ? levelsData.map((level) => new UserLevelWithTimestamp(level))
       : null;
+  }
+
+  private async getPaginatedUserGames(
+    username: string,
+    gameMode?: GameMode,
+  ): Promise<Game[] | null> {
+    let gamesData;
+    if (gameMode) {
+      gamesData = await makeQuery<GameData>(this.pool, {
+        text: `SELECT *
+               FROM ${table.GAME}
+               WHERE (${gameKeys.PLAYERONEUSERNAME} = $1
+                 OR ${gameKeys.PLAYERTWOUSERNAME} = $1)
+                 AND ${gameKeys.GAMEMODE} = $2;`,
+        values: [username, gameMode],
+      });
+    } else {
+      gamesData = await makeQuery<GameData>(this.pool, {
+        text: `SELECT *
+               FROM ${table.GAME}
+               WHERE ${gameKeys.PLAYERONEUSERNAME} = $1
+                 OR ${gameKeys.PLAYERTWOUSERNAME} = $1;`,
+        values: [username],
+      });
+    }
+    return gamesData ? gamesData.map((game) => new Game(game)) : null;
+  }
+
+  async getWinGameRatio(
+    username: string,
+    gameMode?: GameMode,
+  ): Promise<number> {
+    const games = await this.getPaginatedUserGames(username, gameMode);
+    if (!games) {
+      return 0;
+    }
+    let wonGames = 0;
+    games.forEach((game) => {
+      if (game.playerOneUsername === username) {
+        if (game.playerOneScore > game.playerTwoScore) {
+          wonGames++;
+        }
+      } else {
+        if (game.playerTwoScore > game.playerOneScore) {
+          wonGames++;
+        }
+      }
+    });
+    return wonGames / games.length;
   }
 }

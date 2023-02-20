@@ -40,6 +40,8 @@ import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { UserLevelWithTimestamp } from './stats/infrastructure/db/user-level-with-timestamp.entity';
 import { GameStatsService } from './stats/game-stats.service';
 import { PaginationQueryWithGameModeDto } from './stats/dto/pagination-query-with-game-mode.dto';
+import { GameStats } from './stats/dto/game-stats.dto';
+import { GameStatsQueryDto } from './stats/dto/game-stats-query.dto';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -88,6 +90,26 @@ export class GameController {
       throw new ServiceUnavailableException();
     }
     return levels;
+  }
+
+  @Get('game-stats/:username')
+  @ApiOkResponse({
+    description: `Returns the game stats for the given username`,
+    type: GameStats,
+  })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getUserStats(
+    @Param('username') username: string,
+    @Query() queryGameModeDto: GameStatsQueryDto,
+  ): Promise<GameStats> {
+    const stats = await this.statsService.GameStats(
+      username,
+      queryGameModeDto.mode,
+    );
+    if (!stats) {
+      throw new ServiceUnavailableException();
+    }
+    return stats;
   }
 
   @Post('game')
