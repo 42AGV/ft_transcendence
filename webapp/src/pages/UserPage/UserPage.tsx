@@ -156,7 +156,7 @@ export default function UserPage() {
           iconVariant: IconVariant.PLAY,
           children: 'game stats',
           onClick: () => {
-            user && navigate(`${USER_URL}/${user.username}/stats`);
+            user && navigate(`${USER_URL}/${user.username}/history`);
           },
         }}
       >
