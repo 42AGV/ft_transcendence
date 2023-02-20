@@ -66,18 +66,18 @@ class LevelService {
 }
 
 const getLastLevel = async (knex: Knex, username: string) => {
-  const userLevel: UserLevelWithTimestampData[] =
-    await knex.raw(`WITH ulwtstp AS (SELECT ul.*, g."createdAt", g."gameDurationInSeconds"
-                              FROM userlevel ul
-                                       INNER JOIN game g ON ul."gameId" = g."id"
-                              WHERE ul."username" LIKE '${username}')
-             select (ults."createdAt" + interval '1 second' * ults."gameDurationInSeconds") AS "timestamp",
-                    ults."username",
-                    ults."gameId",
-                    ults."level" AS "level"
-             FROM ulwtstp ults
-             ORDER BY "timestamp" DESC;`);
-  console.log(userLevel);
+  const userLevel = await knex
+    .select(
+      'userlevel.gameId',
+      'userlevel.username',
+      'userlevel.level',
+      'game.createdAt',
+      'game.gameDurationInSeconds',
+    )
+    .from('userlevel')
+    .innerJoin('game', 'userlevel.gameId', '=', 'game.id')
+    .where('userlevel.username', username)
+    .orderBy([{ column: 'createdAt', order: 'desc' }]);
   if (userLevel.length === 0) {
     return 1;
   }
