@@ -102,7 +102,7 @@ export class GameController {
     @Param('username') username: string,
     @Query() queryGameModeDto: GameStatsQueryDto,
   ): Promise<GameStats> {
-    const stats = await this.statsService.GameStats(
+    const stats = await this.statsService.getGameStats(
       username,
       queryGameModeDto.mode,
     );
