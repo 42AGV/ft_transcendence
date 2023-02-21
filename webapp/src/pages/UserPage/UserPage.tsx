@@ -153,7 +153,8 @@ export default function UserPage() {
         }
         secondaryButton={
           (!overridePermissions &&
-            user && {
+            user &&
+            user.isFriend !== null && {
               variant: ButtonVariant.ALTERNATIVE,
               iconVariant: IconVariant.PLAY,
               onClick: () => {
@@ -195,21 +196,22 @@ export default function UserPage() {
                 isToggled={isToggled}
                 onToggle={onToggle}
               />
-              {gameQueueStatus ===
-                GamePairingStatusDtoGameQueueStatusEnum.None && (
-                <Button
-                  {...{
-                    variant: ButtonVariant.SUBMIT,
-                    iconVariant: IconVariant.STATS,
-                    children: 'game history',
-                    onClick: () => {
-                      user && navigate(`${USER_URL}/${user.username}/history`);
-                    },
-                  }}
-                />
-              )}
             </>
           )}
+          {!overridePermissions &&
+            gameQueueStatus ===
+              GamePairingStatusDtoGameQueueStatusEnum.None && (
+              <Button
+                {...{
+                  variant: ButtonVariant.SUBMIT,
+                  iconVariant: IconVariant.STATS,
+                  children: 'game history',
+                  onClick: () => {
+                    user && navigate(`${USER_URL}/${user.username}/history`);
+                  },
+                }}
+              />
+            )}
           {userWithAuth && (
             <>
               <ToggleSwitch
