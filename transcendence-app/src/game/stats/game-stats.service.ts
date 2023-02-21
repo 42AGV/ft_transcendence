@@ -6,9 +6,7 @@ import { IUserLevelRepository } from './infrastructure/db/user-level.repository'
 import { Game } from '../infrastructure/db/game.entity';
 import { UserLevel } from './infrastructure/db/user-level.entity';
 import { Injectable } from '@nestjs/common';
-import { PaginationQueryDto } from '../../shared/dtos/pagination.query.dto';
 import { UserLevelWithTimestampData } from './infrastructure/db/user-level-with-timestamp.entity';
-import { MAX_ENTRIES_PER_PAGE } from '../../shared/constants';
 import { GameMode } from '../enums/game-mode.enum';
 import { GameStats } from './dto/game-stats.dto';
 
@@ -83,15 +81,11 @@ export class GameStatsService {
     }
   }
 
-  async getPaginatedLevels(
+  async getUserLevels(
     username: string,
     mode: GameMode = GameMode.classic,
-    { limit = MAX_ENTRIES_PER_PAGE, offset = 0 }: PaginationQueryDto,
   ): Promise<UserLevelWithTimestampData[] | null> {
-    return this.userLevelRepository.getPaginatedLevels(username, mode, {
-      limit,
-      offset,
-    });
+    return this.userLevelRepository.getUserLevels(username, mode);
   }
 
   async getGameStats(

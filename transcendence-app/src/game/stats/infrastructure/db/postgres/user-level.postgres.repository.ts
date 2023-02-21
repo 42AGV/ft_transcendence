@@ -5,7 +5,6 @@ import { BasePostgresRepository } from '../../../../../shared/db/postgres/postgr
 import { table } from '../../../../../shared/db/models';
 import { PostgresPool } from '../../../../../shared/db/postgres/postgresConnection.provider';
 import { makeQuery } from '../../../../../shared/db/postgres/utils';
-import { PaginationQueryDto } from '../../../../../shared/dtos/pagination.query.dto';
 import {
   Game,
   GameData,
@@ -50,25 +49,25 @@ export class UserLevelPostgresRepository
     return levelsData && levelsData[0] ? levelsData[0].level : 1;
   }
 
-  async getPaginatedLevels(
+  async getUserLevels(
     username: string,
     gameMode: GameMode,
-    paginationDto: Required<PaginationQueryDto>,
   ): Promise<UserLevelWithTimestampData[] | null> {
-    const { limit, offset } = paginationDto;
     const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
-      text: `WITH ulwtstp AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
-                              FROM ${this.table} ul
-                                     INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
-                              WHERE ul.${userLevelKeys.USERNAME} LIKE $1)
+      text: `WITH ulwtstp
+                    AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}, g.${gameKeys.GAMEMODE}
+                        FROM ${this.table} ul
+                               INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                        WHERE ul.${userLevelKeys.USERNAME} LIKE $1
+                          AND g.${gameKeys.GAMEMODE} = $2)
              select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
                     ults.${userLevelKeys.USERNAME},
+                    ults.${gameKeys.GAMEMODE},
                     ults.${userLevelKeys.GAMEID},
                     ults.${userLevelKeys.LEVEL}
              FROM ulwtstp ults
-             ORDER BY "timestamp"
-             LIMIT $2 OFFSET $3`,
-      values: [username, limit, offset],
+             ORDER BY "timestamp"`,
+      values: [username, gameMode],
     });
     return levelsData
       ? levelsData.map((level) => new UserLevelWithTimestamp(level))
@@ -94,7 +93,7 @@ export class UserLevelPostgresRepository
         text: `SELECT *
                FROM ${table.GAME}
                WHERE ${gameKeys.PLAYERONEUSERNAME} = $1
-                 OR ${gameKeys.PLAYERTWOUSERNAME} = $1;`,
+                  OR ${gameKeys.PLAYERTWOUSERNAME} = $1;`,
         values: [username],
       });
     }
