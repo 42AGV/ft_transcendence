@@ -4,8 +4,9 @@ import { gameApi, usersApi } from '../../shared/services/ApiService';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  GameControllerGetUserLevelHistoryModeEnum,
   UserLevelWithTimestamp,
+  GameControllerGetUserLevelHistoryModeEnum,
+  GameControllerGetUserStatsModeEnum,
   GameStats,
 } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
@@ -23,8 +24,6 @@ export default function UserStatsPage() {
       gameApi.gameControllerGetUserLevelHistory({
         username: username!,
         mode: GameControllerGetUserLevelHistoryModeEnum.Classic,
-        limit: 20, // maybe we'd need more than 20 results
-        offset: 0,
       }),
     [username],
   );
@@ -33,7 +32,7 @@ export default function UserStatsPage() {
     () =>
       gameApi.gameControllerGetUserStats({
         username: username!,
-        mode: GameControllerGetUserLevelHistoryModeEnum.Classic,
+        mode: GameControllerGetUserStatsModeEnum.Classic,
       }),
     [username],
   );
@@ -49,6 +48,7 @@ export default function UserStatsPage() {
   data.unshift({
     username: user.username,
     timestamp: user.createdAt,
+    gameMode: GameControllerGetUserLevelHistoryModeEnum.Classic,
     level: 1,
     gameId: '', // maybe we should allow null in gameId here,
   });
