@@ -54,7 +54,7 @@ export class GameController {
     private readonly statsService: GameStatsService,
   ) {}
 
-  @Get('game-pairing-status')
+  @Get('game/pairing-status')
   @ApiOkResponse({
     description: `Returns the game pairing status of the authenticated user`,
     type: GamePairingStatusDto,
@@ -68,7 +68,7 @@ export class GameController {
     return status;
   }
 
-  @Get('game-levels/:username')
+  @Get('game/levels/:username')
   @ApiOkResponse({
     description:
       `Returns the user level history for the given username,` +
