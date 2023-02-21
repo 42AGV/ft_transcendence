@@ -10,6 +10,7 @@ import { PaginationQueryDto } from '../../shared/dtos/pagination.query.dto';
 import { UserLevelWithTimestampData } from './infrastructure/db/user-level-with-timestamp.entity';
 import { MAX_ENTRIES_PER_PAGE } from '../../shared/constants';
 import { GameMode } from '../enums/game-mode.enum';
+import { GameStats } from './dto/game-stats.dto';
 
 @Injectable()
 export class GameStatsService {
@@ -90,6 +91,15 @@ export class GameStatsService {
     return this.userLevelRepository.getPaginatedLevels(username, mode, {
       limit,
       offset,
+    });
+  }
+
+  async GameStats(username: string, gameMode?: GameMode): Promise<GameStats> {
+    return new GameStats({
+      winRatio: await this.userLevelRepository.getWinGameRatio(
+        username,
+        gameMode,
+      ),
     });
   }
 }

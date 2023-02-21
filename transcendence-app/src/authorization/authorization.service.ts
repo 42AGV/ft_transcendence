@@ -15,6 +15,8 @@ import { UserWithAuthorizationResponseDto } from './dto/user-with-authorization.
 import { IUserRepository } from '../user/infrastructure/db/user.repository';
 import { CaslAbilityFactory } from './casl-ability.factory';
 import { Action } from '../shared/enums/action.enum';
+import { IUserLevelRepository } from '../game/stats/infrastructure/db/user-level.repository';
+import { GameMode } from '../game/enums/game-mode.enum';
 
 @Injectable()
 export class AuthorizationService {
@@ -24,6 +26,7 @@ export class AuthorizationService {
     private userToRoleRepository: IUserToRoleRepository,
     private userRepository: IUserRepository,
     private caslAbilityFactory: CaslAbilityFactory,
+    private userLevelRepository: IUserLevelRepository,
   ) {
     this.logger = new Logger(AuthorizationService.name);
   }
@@ -144,7 +147,12 @@ export class AuthorizationService {
     }
     const { gOwner, gAdmin, gBanned } =
       await this.getUserWithAuthorizationFromUsername(destUsername);
+    const level = await this.userLevelRepository.getLastLevel(
+      destUsername,
+      GameMode.classic,
+    );
     const ret = new UserWithAuthorizationResponseDto({
+      level,
       isLocal: destUser.password !== null,
       gOwner,
       gAdmin,

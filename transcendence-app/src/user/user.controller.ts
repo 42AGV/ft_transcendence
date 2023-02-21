@@ -42,6 +42,7 @@ import { UserResponseDto } from './dto/user.response.dto';
 import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-search.query.dto';
 import { Friend } from './infrastructure/db/friend.entity';
 import { AvatarFileInterceptor } from '../shared/avatar/interceptors/avatar.file.interceptor';
+import { UserWithLevelDto } from '../shared/dtos/user-with-level.dto';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -69,26 +70,31 @@ export class UserController {
   }
 
   @Get('user')
-  @ApiOkResponse({ description: 'Get the authenticated user', type: User })
+  @ApiOkResponse({
+    description: 'Get the authenticated user',
+    type: UserWithLevelDto,
+  })
   getCurrentUser(@GetUser() user: User) {
-    return user;
+    return this.userService.getCurrentUserWithLevel(user);
   }
 
   @Get('users')
   @ApiOkResponse({
     description: `Lists all users (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [User],
+    type: [UserWithLevelDto],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUsers(
     @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
-  ): Promise<User[]> {
-    const users = await this.userService.retrieveUsers(usersPaginationQueryDto);
-    if (!users) {
+  ): Promise<UserWithLevelDto[]> {
+    const usersWithLevel = await this.userService.retrieveUsersWithLevel(
+      usersPaginationQueryDto,
+    );
+    if (!usersWithLevel) {
       throw new ServiceUnavailableException();
     }
-    return users;
+    return usersWithLevel;
   }
 
   @Get('users/:userName')
@@ -203,13 +209,13 @@ export class UserController {
   @Get('user/friends')
   @ApiOkResponse({
     description: 'List friends of the current user',
-    type: [User],
+    type: [UserWithLevelDto],
   })
   @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async getFriends(
     @GetUser() user: User,
     @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
-  ): Promise<User[]> {
+  ): Promise<UserWithLevelDto[]> {
     const friends = await this.userService.getFriends(
       user.id,
       usersPaginationQueryDto,

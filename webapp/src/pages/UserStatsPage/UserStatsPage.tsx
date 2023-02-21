@@ -10,7 +10,7 @@ import RowsPageTemplate from '../../shared/components/templates/RowsPageTemplate
 import {
   Game,
   GameControllerGetUserGamesRequest,
-  User,
+  UserResponseDto,
 } from '../../shared/generated';
 
 export default function UserStatsPage() {
@@ -19,7 +19,8 @@ export default function UserStatsPage() {
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
-  const { data: user, isLoading: isUserLoading } = useData<User>(getUser);
+  const { data: user, isLoading: isUserLoading } =
+    useData<UserResponseDto>(getUser);
 
   const mapGameToRow = (game: Game): RowItem => {
     const self: { username?: string; score: number } = {
@@ -81,7 +82,7 @@ export default function UserStatsPage() {
         YCoordinate: user ? user.avatarY : 0,
       }}
       avatarLabel={username!}
-      avatarCaption="level x"
+      avatarCaption={`level ${user?.level ?? 1}`}
       avatarLinkTo={`${USER_URL}/${username!}`}
     />
   );
