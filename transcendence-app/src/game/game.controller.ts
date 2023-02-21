@@ -73,7 +73,7 @@ export class GameController {
     description:
       `Returns the user level history for the given username,` +
       ` (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: UserLevelWithTimestamp,
+    type: [UserLevelWithTimestamp],
   })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUserLevelHistory(
