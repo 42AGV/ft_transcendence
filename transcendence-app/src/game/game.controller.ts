@@ -92,7 +92,7 @@ export class GameController {
     return levels;
   }
 
-  @Get('game-stats/:username')
+  @Get('game/stats/:username')
   @ApiOkResponse({
     description: `Returns the game stats for the given username`,
     type: GameStats,
