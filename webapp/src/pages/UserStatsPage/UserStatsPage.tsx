@@ -96,10 +96,10 @@ export default function UserStatsPage() {
         <div className={'pie-chart-wrapper'}>
           <Doughnut
             data={{
-              labels: ['win', 'lose', 'draw'],
+              labels: ['win', 'loss', 'draw'],
               datasets: [
                 {
-                  data: [stats.winRatio, stats.loseRatio, stats.tieRatio],
+                  data: [stats.wins, stats.loses, stats.draws],
                 },
               ],
             }}

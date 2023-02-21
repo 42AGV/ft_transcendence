@@ -10,7 +10,7 @@ export abstract class IUserLevelRepository {
     gameMode: GameMode,
   ): Promise<UserLevelWithTimestampData[] | null>;
   abstract getLastLevel(username: string, gameMode: GameMode): Promise<number>;
-  abstract getWinGameRatio(
+  abstract getGameResults(
     username: string,
     gameMode?: GameMode,
   ): Promise<GameStats>;

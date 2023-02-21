@@ -92,6 +92,6 @@ export class GameStatsService {
     username: string,
     gameMode?: GameMode,
   ): Promise<GameStats> {
-    return this.userLevelRepository.getWinGameRatio(username, gameMode);
+    return this.userLevelRepository.getGameResults(username, gameMode);
   }
 }

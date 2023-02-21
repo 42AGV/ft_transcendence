@@ -1,16 +1,17 @@
 export interface GameStatsData {
-  winRatio: number;
-  tieRatio: number;
+  wins: number;
+  draws: number;
+  loses: number;
 }
 
 export class GameStats {
-  winRatio: number;
-  tieRatio: number;
-  loseRatio: number;
+  wins: number;
+  draws: number;
+  loses: number;
 
-  constructor({ winRatio, tieRatio }: GameStatsData) {
-    this.winRatio = winRatio;
-    this.tieRatio = tieRatio;
-    this.loseRatio = 1 - this.winRatio - this.tieRatio;
+  constructor({ wins, draws, loses }: GameStatsData) {
+    this.wins = wins;
+    this.draws = draws;
+    this.loses = loses;
   }
 }
