@@ -86,7 +86,7 @@ export default function UserMatchHistoryPage() {
       button={{
         variant: ButtonVariant.SUBMIT,
         onClick: () => navigate(`${USER_URL}/${username}/stats`),
-        iconVariant: IconVariant.ARROW_FORWARD,
+        iconVariant: IconVariant.STATS,
       }}
       avatarLabel={username!}
       avatarCaption={`level ${user?.level ?? 1}`}

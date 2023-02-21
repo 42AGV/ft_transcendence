@@ -151,14 +151,20 @@ export default function UserPage() {
             }) ||
           undefined
         }
-        secondaryButton={{
-          variant: ButtonVariant.SUBMIT,
-          iconVariant: IconVariant.PLAY,
-          children: 'game stats',
-          onClick: () => {
-            user && navigate(`${USER_URL}/${user.username}/history`);
-          },
-        }}
+        secondaryButton={
+          (!overridePermissions &&
+            user && {
+              variant: ButtonVariant.ALTERNATIVE,
+              iconVariant: IconVariant.PLAY,
+              onClick: () => {
+                socket.emit(gameQueueClientToServerWsEvents.gameUserChallenge, {
+                  to: { id: user.id },
+                } as GameUserChallengeDto);
+              },
+              children: 'challenge player',
+            }) ||
+          undefined
+        }
       >
         <>
           <Text
@@ -194,17 +200,13 @@ export default function UserPage() {
                 <Button
                   {...{
                     variant: ButtonVariant.SUBMIT,
-                    iconVariant: IconVariant.PLAY,
+                    iconVariant: IconVariant.STATS,
+                    children: 'game history',
                     onClick: () => {
-                      socket.emit(
-                        gameQueueClientToServerWsEvents.gameUserChallenge,
-                        { to: { id: user.id } } as GameUserChallengeDto,
-                      );
+                      user && navigate(`${USER_URL}/${user.username}/history`);
                     },
                   }}
-                >
-                  challenge player
-                </Button>
+                />
               )}
             </>
           )}
