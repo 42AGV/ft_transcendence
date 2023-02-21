@@ -72,6 +72,9 @@ export default function UserStatsPage() {
               ],
             }}
             options={{
+              plugins: {
+                legend: { position: 'left', labels: { boxHeight: 1 } },
+              },
               scales: {
                 x: {
                   type: 'time',
@@ -83,13 +86,17 @@ export default function UserStatsPage() {
                   },
                 },
               },
+              layout: {
+                padding: 20,
+              },
+              maintainAspectRatio: false,
             }}
           />
         </div>
         <div className={'pie-chart-wrapper'}>
           <Doughnut
             data={{
-              labels: ['won', 'lost', 'tyed'],
+              labels: ['win', 'lose', 'draw'],
               datasets: [
                 {
                   data: [stats.winRatio, stats.loseRatio, stats.tieRatio],
@@ -98,6 +105,7 @@ export default function UserStatsPage() {
             }}
             options={{
               radius: '90%',
+              maintainAspectRatio: false,
             }}
           />
         </div>

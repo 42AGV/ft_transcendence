@@ -70,6 +70,7 @@ import { GamePairingProvider } from './shared/context/GamePairingContext';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
+Chart.overrides['doughnut'].plugins.legend.position = 'left';
 const container = document.getElementById('root');
 const root = createRoot(container!);
 const developmentMode = process.env.NODE_ENV === 'development';

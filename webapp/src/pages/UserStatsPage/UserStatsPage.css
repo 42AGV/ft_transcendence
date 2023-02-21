@@ -7,6 +7,8 @@
   gap: 3rem var(--column-gap);
   background-color: var(--color-background);
   color: var(--color-light);
+  max-height: available;
+  overflow: clip;
 }
 
 .stats-page .header {
@@ -18,27 +20,30 @@
 .stats-page .graphs {
   grid-column: 1/-1;
   grid-row: 2/-1;
-  display: grid;
-  grid-template-columns: repeat(var(--column-number), 1fr);
-  grid-template-rows: auto 1fr;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
   gap: var(--row-gap) var(--column-gap);
 }
 
 .stats-page .graphs .line-graph-wrapper {
-  grid-column: 1/-1;
-  grid-row: 1/2;
   display: flex;
   justify-content: center;
+}
+
+.stats-page .graphs .line-graph-wrapper canvas {
+  min-height: 18rem;
+  max-width: 60vw;
 }
 
 .stats-page .graphs .pie-chart-wrapper {
-  height: 20rem;
-  grid-column: 1/-1;
-  grid-row: 2/3;
   display: flex;
   justify-content: center;
+  align-self: center;
+  width: 60%;
+  max-width: 30rem;
 }
 
-.stats-page .graphs .pie-chart-wrapper .canvas {
-  display: flex;
+.stats-page .graphs .pie-chart-wrapper canvas {
+  height: 18rem;
 }
