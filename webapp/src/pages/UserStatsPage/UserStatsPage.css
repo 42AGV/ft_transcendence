@@ -1,9 +1,10 @@
 .stats-page {
   height: 100vh;
+  padding: var(--padding-top-bottom) var(--padding-sides);
   background-color: var(--color-background);
   color: var(--color-light);
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(var(--column-number), 1fr);
   grid-template-rows: 1fr;
 }
 

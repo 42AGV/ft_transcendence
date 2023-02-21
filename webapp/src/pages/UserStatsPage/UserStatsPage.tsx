@@ -34,9 +34,7 @@ export default function UserStatsPage() {
   if (!data || !user) return <NotFoundPage />;
   data.unshift({
     username: user.username,
-    timestamp: new Date(user.createdAt.getTime() - 1000 * 60 * 60 * 24 * 5), // this a patch,
-    // to account for the fact that we're seeding games with dates prior to the creation of the user,
-    // which should not be possible. This should just be user.createdAt
+    timestamp: user.createdAt,
     level: 1,
     gameId: '', // maybe we should allow null in gameId here,
   });
