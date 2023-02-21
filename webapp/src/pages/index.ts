@@ -26,3 +26,5 @@ export { default as EnableTwoFactorAuthPage } from './EnableTwoFactorAuthPage/En
 export { default as ValidateTwoFactorAuthPage } from './ValidateTwoFactorAuthPage/ValidateTwoFactorAuthPage';
 export { default as LoadingPage } from './LoadingPage/LoadingPage';
 export { default as GameRulesPage } from './GameRulesPage/GameRulesPage';
+export { default as UserMatchHistoryPage } from './UserMatchHistoryPage/UserMatchHistoryPage';
+export { default as UserStatsPage } from './UserStatsPage/UserStatsPage';

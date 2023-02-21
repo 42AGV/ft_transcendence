@@ -1,15 +1,15 @@
-import { User } from '../infrastructure/db/user.entity';
+import { UserWithLevelDto } from '../../shared/dtos/user-with-level.dto';
 
 export class UserBlockRelation {
   isUserBlockedByMe!: boolean;
   amIBlockedByUser!: boolean;
 }
-export class UserResponseDto extends User {
+export class UserResponseDto extends UserWithLevelDto {
   blockRelation: UserBlockRelation | null;
   isFriend: boolean | null;
 
   constructor(
-    userEntity: User,
+    userEntity: UserWithLevelDto,
     blockRelation: UserBlockRelation | null,
     isFriend: boolean | null,
   ) {

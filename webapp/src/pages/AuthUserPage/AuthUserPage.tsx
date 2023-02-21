@@ -59,7 +59,7 @@ export default function AuthUserPage() {
         title={authUser?.username ?? ''}
         avatarProps={{
           url: `${AVATAR_EP_URL}/${authUser?.avatarId}`,
-          caption: 'level 4',
+          caption: `level ${authUser?.level}`,
           XCoordinate: authUser?.avatarX,
           YCoordinate: authUser?.avatarY,
         }}

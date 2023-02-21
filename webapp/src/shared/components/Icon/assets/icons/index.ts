@@ -12,3 +12,4 @@ export { ReactComponent as Users } from './users.svg';
 export { ReactComponent as Send } from './send.svg';
 export { ReactComponent as Remove } from './remove.svg';
 export { ReactComponent as Info } from './info.svg';
+export { ReactComponent as Stats } from './stats.svg';

@@ -1,12 +1,16 @@
-import { User, UserData } from '../../user/infrastructure/db/user.entity';
+import {
+  UserWithLevelData,
+  UserWithLevelDto,
+} from '../../shared/dtos/user-with-level.dto';
 
-export interface UserWithAuthorizationResponseDtoData extends UserData {
+export interface UserWithAuthorizationResponseDtoData
+  extends UserWithLevelData {
   readonly isLocal: boolean;
   readonly gOwner: boolean;
   readonly gAdmin: boolean;
   readonly gBanned: boolean;
 }
-export class UserWithAuthorizationResponseDto extends User {
+export class UserWithAuthorizationResponseDto extends UserWithLevelDto {
   public readonly isLocal: boolean;
   public readonly gOwner: boolean;
   public readonly gAdmin: boolean;

@@ -10,6 +10,7 @@ export enum table {
   FRIEND = 'Friend',
   USER_TO_ROLE = 'UserToRole',
   GAME = 'Game',
+  USER_LEVEL = 'UserLevel',
 }
 
 export interface Query {

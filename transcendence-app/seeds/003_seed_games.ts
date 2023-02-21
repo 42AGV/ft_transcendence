@@ -1,20 +1,28 @@
 import { Knex } from 'knex';
-import { faker } from '@faker-js/faker';
 import { defaultUsernames } from './utils';
+import { Game } from '../src/game/infrastructure/db/game.entity';
 
-const GAMES_NUMBER = 30;
+const GAMES_NUMBER = 100;
+
+let startTime = Date.now();
 
 const createRandomGame = (userName1: string, userName2: string) => {
-  if (userName1 === userName2) return;
-  else
-    return {
-      playerOneUsername: userName1,
-      playerTwoUsername: userName2,
-      gameDurationInSeconds: faker.random.numeric(),
-      playerOneScore: faker.random.numeric(),
-      playerTwoScore: faker.random.numeric(),
-      gameMode: 'classic',
-    };
+  let losingScore = Math.floor(Math.random() * 10);
+  const key: keyof Game =
+    losingScore % 2 === 0 ? 'playerOneScore' : 'playerTwoScore';
+  const otherKey: keyof Game =
+    key === 'playerTwoScore' ? 'playerOneScore' : 'playerTwoScore';
+  const oldDate = startTime;
+  startTime = startTime + 120 * 1000;
+  return {
+    createdAt: new Date(oldDate),
+    playerOneUsername: userName1,
+    playerTwoUsername: userName2,
+    gameDurationInSeconds: Math.abs(Math.floor(Math.random() * 100)) + 10,
+    [key]: 10,
+    [otherKey]: losingScore,
+    gameMode: 'classic',
+  };
 };
 const seedGames = async (knex: Knex) => {
   await knex('game').del();
@@ -24,9 +32,14 @@ const seedGames = async (knex: Knex) => {
     .from('users')
     .whereIn('username', defaultUsernames);
   const getRandomUser = () => users[Math.floor(Math.random() * users.length)];
-  const games = Array.from({ length: GAMES_NUMBER }, () =>
-    createRandomGame(getRandomUser().username, getRandomUser().username),
-  );
+  const games = Array.from({ length: GAMES_NUMBER }, () => {
+    const usernameOne = getRandomUser().username;
+    let usernameTwo = getRandomUser().username;
+    while (usernameTwo === usernameOne) {
+      usernameTwo = getRandomUser().username;
+    }
+    return createRandomGame(usernameOne, usernameTwo);
+  });
   // Insert games seed entries
   await knex('game').insert(games);
 };

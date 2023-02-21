@@ -33,9 +33,16 @@ export default function EditUserAvatarPage() {
       usersApi
         .userControllerUploadAvatar({ file })
         .then((updatedUser: User) => {
-          const { isLocal, gOwner, gAdmin, gBanned } = authUser;
+          const { level, isLocal, gOwner, gAdmin, gBanned } = authUser;
           notify('Image uploaded correctly.');
-          setAuthUser({ ...updatedUser, isLocal, gOwner, gAdmin, gBanned });
+          setAuthUser({
+            ...updatedUser,
+            level,
+            isLocal,
+            gOwner,
+            gAdmin,
+            gBanned,
+          });
         })
         .catch((e) => warn(e.response.statusText));
     }

@@ -29,6 +29,7 @@ import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { CreateGameDto } from './dto/create-game.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { GameMode } from './enums/game-mode.enum';
+import { GameStatsService } from './stats/game-stats.service';
 
 type GameId = string;
 type UserId = string;
@@ -54,6 +55,7 @@ export class GameService {
   constructor(
     private readonly gameRepository: IGameRepository,
     private readonly userRepository: IUserRepository,
+    private readonly statsService: GameStatsService,
   ) {}
 
   private async addGameWhenFinished(
@@ -87,6 +89,7 @@ export class GameService {
     if (!game) {
       throw new Error('Game entry could not be added');
     }
+    await this.statsService.addLevelsWhenFinished(game);
   }
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
@@ -140,9 +143,8 @@ export class GameService {
       if (this.server) {
         if (this.isPausedForTooLong(gameInfo)) {
           if (gameInfo.playerOneLeftAt && gameInfo.playerTwoLeftAt) {
-            this.finishGame(gameInfo, gameId);
-          }
-          if (gameInfo.playerOneLeftAt) {
+            // noop, both players disconnected, keep the current score
+          } else if (gameInfo.playerOneLeftAt) {
             gameInfo.gameState.scoreOpponent = MAX_SCORE;
           } else if (gameInfo.playerTwoLeftAt) {
             gameInfo.gameState.score = MAX_SCORE;
