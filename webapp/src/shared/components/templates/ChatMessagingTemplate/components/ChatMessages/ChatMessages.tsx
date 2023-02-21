@@ -33,9 +33,9 @@ export default function ChatMessages({
 
   React.useEffect(() => {
     if (isVisible) {
-      setOffset((prevOffset) => prevOffset + ENTRIES_LIMIT);
+      setOffset(() => messages.length + ENTRIES_LIMIT);
     }
-  }, [isVisible, setOffset]);
+  }, [isVisible, setOffset, messages]);
 
   return (
     <ul className="chat-template-messages-list">
