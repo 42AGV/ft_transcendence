@@ -192,13 +192,11 @@ export default function UserPage() {
             />
           )}
           {!overridePermissions && user && user.isFriend !== null && (
-            <>
-              <ToggleSwitch
-                label={isToggled ? 'Unfollow' : 'Follow'}
-                isToggled={isToggled}
-                onToggle={onToggle}
-              />
-            </>
+            <ToggleSwitch
+              label={isToggled ? 'Unfollow' : 'Follow'}
+              isToggled={isToggled}
+              onToggle={onToggle}
+            />
           )}
           {!overridePermissions && (
             <Button
