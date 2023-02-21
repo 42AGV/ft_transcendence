@@ -115,11 +115,13 @@ export class UserLevelPostgresRepository
       if (game.playerOneUsername === username) {
         if (game.playerOneScore > game.playerTwoScore) {
           wonGames++;
+        } else if (game.playerOneScore === game.playerTwoScore) {
+          tyedGames++;
         }
       } else {
         if (game.playerTwoScore > game.playerOneScore) {
           wonGames++;
-        } else {
+        } else if (game.playerOneScore === game.playerTwoScore) {
           tyedGames++;
         }
       }
