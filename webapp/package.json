@@ -5,6 +5,8 @@
   "dependencies": {
     "@types/react-dom": "^18.0.9",
     "chart.js": "^4.2.1",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^2.29.3",
     "pong-engine": "^1.0.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
