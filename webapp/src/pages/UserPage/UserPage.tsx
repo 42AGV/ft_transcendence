@@ -134,7 +134,7 @@ export default function UserPage() {
         title={user?.username ?? ''}
         avatarProps={{
           url: `${AVATAR_EP_URL}/${user?.avatarId ?? ''}`,
-          caption: 'level 4',
+          caption: `level ${user?.level}`,
           XCoordinate: user?.avatarX ?? 0,
           YCoordinate: user?.avatarY ?? 0,
         }}
