@@ -106,7 +106,7 @@ export class UserLevelPostgresRepository
   ): Promise<GameStats> {
     const games = await this.getPaginatedUserGames(username, gameMode);
     if (!games || games.length === 0) {
-      return new GameStats({ draws: 0, wins: 0, loses: 0 });
+      return new GameStats({ draws: 0, wins: 0, losses: 0 });
     }
     let wonGames = 0;
     let tyedGames = 0;
@@ -128,7 +128,7 @@ export class UserLevelPostgresRepository
     return new GameStats({
       wins: wonGames,
       draws: tyedGames,
-      loses: games.length - wonGames - tyedGames,
+      losses: games.length - wonGames - tyedGames,
     });
   }
 }

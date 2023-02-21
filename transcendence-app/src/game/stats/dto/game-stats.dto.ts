@@ -1,17 +1,17 @@
 export interface GameStatsData {
   wins: number;
   draws: number;
-  loses: number;
+  losses: number;
 }
 
 export class GameStats {
   wins: number;
   draws: number;
-  loses: number;
+  losses: number;
 
-  constructor({ wins, draws, loses }: GameStatsData) {
+  constructor({ wins, draws, losses }: GameStatsData) {
     this.wins = wins;
     this.draws = draws;
-    this.loses = loses;
+    this.losses = losses;
   }
 }

@@ -99,7 +99,7 @@ export default function UserStatsPage() {
               labels: ['win', 'loss', 'draw'],
               datasets: [
                 {
-                  data: [stats.wins, stats.loses, stats.draws],
+                  data: [stats.wins, stats.losses, stats.draws],
                 },
               ],
             }}
