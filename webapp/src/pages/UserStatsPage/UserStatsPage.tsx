@@ -7,6 +7,7 @@ import {
   UserLevelWithTimestamp,
   GameControllerGetUserLevelHistoryModeEnum,
   GameControllerGetUserStatsModeEnum,
+  UserLevelWithTimestampGameModeEnum,
   GameStats,
 } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
@@ -48,7 +49,7 @@ export default function UserStatsPage() {
   data.unshift({
     username: user.username,
     timestamp: user.createdAt,
-    gameMode: GameControllerGetUserLevelHistoryModeEnum.Classic,
+    gameMode: UserLevelWithTimestampGameModeEnum.Classic,
     level: 1,
     gameId: '', // maybe we should allow null in gameId here,
   });
