@@ -7,7 +7,7 @@
   grid-template-rows: 1fr;
 }
 
-.stats-page .line {
+.stats-page .canvas {
   grid-column: 1/-1;
   grid-row: 1/-1;
   align-self: center;
