@@ -30,6 +30,8 @@ import {
   EnableTwoFactorAuthPage,
   ValidateTwoFactorAuthPage,
   GameRulesPage,
+  UserMatchHistoryPage,
+  UserStatsPage,
 } from './pages';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -65,8 +67,10 @@ import { UserBlocklistProvider } from './shared/context/UserBlocklistContext';
 import { UserFriendProvider } from './shared/context/UserFriendContext';
 import RequireAdmin from './shared/components/RequireAdmin/RequireAdmin';
 import { GamePairingProvider } from './shared/context/GamePairingContext';
-import UserStatsPage from './pages/UserStatsPage/UserStatsPage';
+import { Chart, registerables } from 'chart.js';
 
+Chart.register(...registerables);
+Chart.overrides['doughnut'].plugins.legend.position = 'left';
 const container = document.getElementById('root');
 const root = createRoot(container!);
 const developmentMode = process.env.NODE_ENV === 'development';
@@ -179,6 +183,14 @@ function AppRoutes() {
         element={
           <RequireAuth>
             <UserPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path={`${USER_URL}/:username/history`}
+        element={
+          <RequireAuth>
+            <UserMatchHistoryPage />
           </RequireAuth>
         }
       />

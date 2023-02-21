@@ -92,7 +92,7 @@ export class GameController {
     return levels;
   }
 
-  @Get('game-stats/:username')
+  @Get('game/stats/:username')
   @ApiOkResponse({
     description: `Returns the game stats for the given username`,
     type: GameStats,
@@ -102,14 +102,10 @@ export class GameController {
     @Param('username') username: string,
     @Query() queryGameModeDto: GameStatsQueryDto,
   ): Promise<GameStats> {
-    const stats = await this.statsService.GameStats(
+    return await this.statsService.getGameStats(
       username,
       queryGameModeDto.mode,
     );
-    if (!stats) {
-      throw new ServiceUnavailableException();
-    }
-    return stats;
   }
 
   @Post('game')

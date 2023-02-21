@@ -94,12 +94,10 @@ export class GameStatsService {
     });
   }
 
-  async GameStats(username: string, gameMode?: GameMode): Promise<GameStats> {
-    return new GameStats({
-      winRatio: await this.userLevelRepository.getWinGameRatio(
-        username,
-        gameMode,
-      ),
-    });
+  async getGameStats(
+    username: string,
+    gameMode?: GameMode,
+  ): Promise<GameStats> {
+    return this.userLevelRepository.getWinGameRatio(username, gameMode);
   }
 }
