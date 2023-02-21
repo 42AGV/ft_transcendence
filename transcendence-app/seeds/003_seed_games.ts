@@ -4,7 +4,7 @@ import { Game } from '../src/game/infrastructure/db/game.entity';
 
 const GAMES_NUMBER = 100;
 
-let startTime = Date.now() - 5 * 24 * 60 * 60 * 1000;
+let startTime = Date.now();
 
 const createRandomGame = (userName1: string, userName2: string) => {
   let losingScore = Math.floor(Math.random() * 10);

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 export enum GameResult {
   LOSE = 0,
+  DRAW = 0.5,
   WIN = 1,
 }
 

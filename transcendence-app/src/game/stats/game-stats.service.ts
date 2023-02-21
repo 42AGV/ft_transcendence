@@ -40,7 +40,7 @@ export class GameStatsService {
         userOneLevel,
         GameResult.LOSE,
       );
-    } else {
+    } else if (game.playerOneScore < game.playerTwoScore) {
       playerOneFinalLevel = this.levelService.getNewLevel(
         userOneLevel,
         userTwoLevel,
@@ -50,6 +50,17 @@ export class GameStatsService {
         userTwoLevel,
         userOneLevel,
         GameResult.WIN,
+      );
+    } else {
+      playerOneFinalLevel = this.levelService.getNewLevel(
+        userOneLevel,
+        userTwoLevel,
+        GameResult.DRAW,
+      );
+      playerTwoFinalLevel = this.levelService.getNewLevel(
+        userTwoLevel,
+        userOneLevel,
+        GameResult.DRAW,
       );
     }
     const newLevelOne = await this.userLevelRepository.addLevel(
