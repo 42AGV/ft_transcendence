@@ -16,6 +16,7 @@ import {
   UserLevelWithTimestampData,
 } from '../user-level-with-timestamp.entity';
 import { GameMode } from '../../../../enums/game-mode.enum';
+import { GameStats } from '../../../dto/game-stats.dto';
 
 @Injectable()
 export class UserLevelPostgresRepository
@@ -103,12 +104,13 @@ export class UserLevelPostgresRepository
   async getWinGameRatio(
     username: string,
     gameMode?: GameMode,
-  ): Promise<number> {
+  ): Promise<GameStats> {
     const games = await this.getPaginatedUserGames(username, gameMode);
     if (!games) {
-      return 0;
+      return new GameStats({ tieRatio: 1, winRatio: 0 });
     }
     let wonGames = 0;
+    let tyedGames = 0;
     games.forEach((game) => {
       if (game.playerOneUsername === username) {
         if (game.playerOneScore > game.playerTwoScore) {
@@ -118,8 +120,14 @@ export class UserLevelPostgresRepository
         if (game.playerTwoScore > game.playerOneScore) {
           wonGames++;
         }
+        if (game.playerTwoScore === game.playerOneScore) {
+          tyedGames++;
+        }
       }
     });
-    return wonGames / games.length;
+    return new GameStats({
+      winRatio: wonGames / games.length,
+      tieRatio: tyedGames / games.length,
+    });
   }
 }
