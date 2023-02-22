@@ -564,7 +564,7 @@ export class GameService {
     {
       limit = MAX_ENTRIES_PER_PAGE,
       offset = 0,
-      sort = BooleanString.False,
+      sort = BooleanString.True,
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<Game[] | null> {
