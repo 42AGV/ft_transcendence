@@ -172,11 +172,11 @@ const useGameEngine = () => {
       gameStateRef.current = isPlayerOne
         ? {
             ...interpolatedFrame,
-            paddle: localPaddleFrame.paddle,
+            // paddle: localPaddleFrame.paddle,
           }
         : {
             ...interpolatedFrame,
-            paddleOpponent: localPaddleFrame.paddleOpponent,
+            // paddleOpponent: localPaddleFrame.paddleOpponent,
           };
 
       return gameStateRef.current;

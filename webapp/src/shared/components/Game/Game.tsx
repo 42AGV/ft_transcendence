@@ -51,10 +51,7 @@ const Play = ({ isPlayerOne, sendGameCommand }: PlayProps) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const requestFrameRef = React.useRef<number | null>(null);
   const { runGameMultiplayerFrame } = useGameEngine();
-  const { syncArrowCommandWithServer } = useGameControls(
-    sendGameCommand,
-    isPlayerOne,
-  );
+  useGameControls(sendGameCommand, isPlayerOne);
   const [score, setScore] = React.useState<number>(0);
   const [opponentScore, setOpponentScore] = React.useState<number>(0);
   const shouldRunFrameRef = React.useRef(true);
@@ -66,13 +63,11 @@ const Play = ({ isPlayerOne, sendGameCommand }: PlayProps) => {
     setOpponentScore(gameState.scoreOpponent);
     canvasContext &&
       renderMultiplayerFrame(canvasContext, gameState, isPlayerOne);
-    syncArrowCommandWithServer();
     shouldRunFrameRef.current && window.requestAnimationFrame(() => gameLoop());
   }, [
     runGameMultiplayerFrame,
     renderMultiplayerFrame,
     shouldRunFrameRef,
-    syncArrowCommandWithServer,
     isPlayerOne,
   ]);
 

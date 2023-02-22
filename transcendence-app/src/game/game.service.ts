@@ -6,11 +6,14 @@ import {
   newGame,
   paddleDrag,
   paddleOpponentDrag,
-  paddleMoveSync,
-  paddleOpponentMoveSync,
+  paddleMoveLeft,
+  paddleMoveRight,
+  paddleStop,
+  paddleOpponentMoveRight,
+  paddleOpponentMoveLeft,
+  paddleOpponentStop,
   runGameMultiplayerFrame,
   DragPayload,
-  PaddleSyncPayload,
 } from 'pong-engine';
 import { GameStatus, GameStatusUpdateDto } from 'transcendence-shared';
 import { WsException } from '@nestjs/websockets';
@@ -318,7 +321,17 @@ export class GameService {
       return;
     }
     if (isPlayerOne) {
-      if (command === 'paddleDrag') {
+      if (command === 'paddleMoveRight') {
+        this.games.set(gameRoomId, {
+          ...gameInfo,
+          gameState: paddleMoveRight(gameInfo.gameState),
+        });
+      } else if (command === 'paddleMoveLeft') {
+        this.games.set(gameRoomId, {
+          ...gameInfo,
+          gameState: paddleMoveLeft(gameInfo.gameState),
+        });
+      } else if (command === 'paddleDrag') {
         if (!payload) {
           return;
         }
@@ -327,15 +340,24 @@ export class GameService {
           ...gameInfo,
           gameState: paddleDrag(gameInfo.gameState, dragCurrPos, dragPrevPos),
         });
-      } else if (command === 'paddleMoveSync') {
-        const { newPos } = payload as PaddleSyncPayload;
+      } else if (command === 'paddleStop') {
         this.games.set(gameRoomId, {
           ...gameInfo,
-          gameState: paddleMoveSync(gameInfo.gameState, newPos),
+          gameState: paddleStop(gameInfo.gameState),
         });
       }
     } else {
-      if (command === 'paddleDrag') {
+      if (command === 'paddleMoveRight') {
+        this.games.set(gameRoomId, {
+          ...gameInfo,
+          gameState: paddleOpponentMoveRight(gameInfo.gameState),
+        });
+      } else if (command === 'paddleMoveLeft') {
+        this.games.set(gameRoomId, {
+          ...gameInfo,
+          gameState: paddleOpponentMoveLeft(gameInfo.gameState),
+        });
+      } else if (command === 'paddleDrag') {
         if (!payload) {
           return;
         }
@@ -348,11 +370,10 @@ export class GameService {
             dragPrevPos,
           ),
         });
-      } else if (command === 'paddleMoveSync') {
-        const { newPos } = payload as PaddleSyncPayload;
+      } else if (command === 'paddleStop') {
         this.games.set(gameRoomId, {
           ...gameInfo,
-          gameState: paddleOpponentMoveSync(gameInfo.gameState, newPos),
+          gameState: paddleOpponentStop(gameInfo.gameState),
         });
       }
     }

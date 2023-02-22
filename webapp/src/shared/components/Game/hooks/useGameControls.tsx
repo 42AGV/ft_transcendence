@@ -51,16 +51,14 @@ const useGameControls = (
       const key = e.key;
 
       if (key === 'ArrowRight') {
-        gameStateRef.current = isPlayerOne
-          ? paddleMoveRight(gameStateRef.current)
-          : paddleOpponentMoveRight(gameStateRef.current);
+        gameStateRef.current = paddleMoveRight(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleMoveRight');
       } else if (key === 'ArrowLeft') {
-        gameStateRef.current = isPlayerOne
-          ? paddleMoveLeft(gameStateRef.current)
-          : paddleOpponentMoveLeft(gameStateRef.current);
+        gameStateRef.current = paddleMoveLeft(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleMoveLeft');
       }
     },
-    [gameStateRef, isPlayerOne],
+    [sendGameCommandToServer, gameStateRef],
   );
 
   const dragPaddle = React.useCallback(
@@ -89,12 +87,11 @@ const useGameControls = (
       const key = e.key;
 
       if (key === 'ArrowRight' || key === 'ArrowLeft') {
-        gameStateRef.current = isPlayerOne
-          ? paddleStop(gameStateRef.current)
-          : paddleOpponentStop(gameStateRef.current);
+        gameStateRef.current = paddleStop(gameStateRef.current);
+        sendGameCommandToServer && sendGameCommandToServer('paddleStop');
       }
     },
-    [gameStateRef, isPlayerOne],
+    [sendGameCommandToServer, gameStateRef],
   );
 
   const contextMenuHandler = React.useCallback(

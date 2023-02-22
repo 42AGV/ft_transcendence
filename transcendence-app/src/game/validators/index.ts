@@ -1,6 +1,12 @@
 import { registerDecorator } from 'class-validator';
 
-const GAME_COMMANDS = ['paddleMoveSync', 'paddleDrag'];
+const GAME_COMMANDS = [
+  'paddleMoveSync',
+  'paddleDrag',
+  'paddleMoveRight',
+  'paddleMoveLeft',
+  'paddleStop',
+];
 
 // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
 type GameCommandType = (typeof GAME_COMMANDS)[number];
