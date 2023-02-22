@@ -70,23 +70,6 @@ export const paddleOpponentDrag = (
   });
 };
 
-export const paddleMoveSync = (state: GameState, newPos: number): GameState => {
-  return reducer(state, {
-    type: 'paddleMoveSync',
-    payload: { newPos },
-  });
-};
-
-export const paddleOpponentMoveSync = (
-  state: GameState,
-  newPos: number,
-): GameState => {
-  return reducer(state, {
-    type: 'paddleOpponentMoveSync',
-    payload: { newPos },
-  });
-};
-
 export const newGame = (): GameState => ({
   ball: initialBallState(),
   paddle: initialPaddleState(),

@@ -16,13 +16,10 @@ export type GamePaddleOpponentMoveCommand =
 
 export type GamePaddleDragCommand = 'paddleDrag' | 'paddleOpponentDrag';
 
-export type GamePaddleMoveSync = 'paddleMoveSync' | 'paddleOpponentMoveSync';
-
 export type GameCommand =
   | GamePaddleMoveCommand
   | GamePaddleOpponentMoveCommand
-  | GamePaddleDragCommand
-  | GamePaddleMoveSync;
+  | GamePaddleDragCommand;
 
 export type GamePaddle = GameElement & {
   slide: number;

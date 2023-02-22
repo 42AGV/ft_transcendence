@@ -6,45 +6,19 @@ import {
   paddleMoveLeft,
   paddleStop,
   paddleDrag,
-  paddleOpponentMoveRight,
-  paddleOpponentMoveLeft,
-  paddleOpponentStop,
   DragPayload,
   paddleOpponentDrag,
-  runGameMultiplayerFrame,
-  PaddleSyncPayload,
 } from 'pong-engine';
-import useGameAnimation from './useGameAnimation';
 
 const useGameControls = (
   sendGameCommandToServer?: (
     command: GameCommand,
-    payload?: PaddleSyncPayload | DragPayload,
+    payload?: DragPayload,
   ) => void,
   isPlayerOne: boolean = true,
 ) => {
-  const { gameStateRef, paddlesStateRef } = useGameStateContext();
+  const { gameStateRef } = useGameStateContext();
   const dragRef = React.useRef<number>(0);
-
-  const syncArrowCommandWithServer = React.useCallback(() => {
-    if (isPlayerOne) {
-      const paddle = paddlesStateRef.current.paddle;
-      if (paddle.slide) {
-        sendGameCommandToServer &&
-          sendGameCommandToServer('paddleMoveSync', {
-            newPos: paddle.x,
-          });
-      }
-    } else {
-      const paddleOpponent = paddlesStateRef.current.paddleOpponent;
-      if (paddleOpponent.slide) {
-        sendGameCommandToServer &&
-          sendGameCommandToServer('paddleMoveSync', {
-            newPos: paddleOpponent.x,
-          });
-      }
-    }
-  }, [sendGameCommandToServer, paddlesStateRef, isPlayerOne]);
 
   const movePaddle = React.useCallback(
     (e: KeyboardEvent) => {
@@ -113,8 +87,6 @@ const useGameControls = (
       window.removeEventListener('contextmenu', contextMenuHandler);
     };
   }, [movePaddle, stopPaddle, resetDragPaddle, dragPaddle, contextMenuHandler]);
-
-  return { syncArrowCommandWithServer };
 };
 
 export default useGameControls;

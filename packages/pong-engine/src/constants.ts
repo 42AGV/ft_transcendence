@@ -1,5 +1,5 @@
 // speed magnitude is px/second
-export const BALL_SPEED = 600;
+export const BALL_SPEED = 500;
 export const CANVAS_WIDTH = 325;
 export const CANVAS_HEIGHT = 500;
 export const BRICK_WIDTH = 40;

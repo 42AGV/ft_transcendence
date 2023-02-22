@@ -1,11 +1,10 @@
 import { registerDecorator } from 'class-validator';
 
 const GAME_COMMANDS = [
-  'paddleMoveSync',
-  'paddleDrag',
   'paddleMoveRight',
   'paddleMoveLeft',
   'paddleStop',
+  'paddleDrag',
 ];
 
 // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type

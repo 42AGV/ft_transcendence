@@ -22,8 +22,7 @@ type PaddleMovement = 'right' | 'left';
 const ONE_SECOND_IN_MS = 1000;
 
 const useGameEngine = () => {
-  const { gameStateRef, serverFrameBufferRef, paddlesStateRef } =
-    useGameStateContext();
+  const { gameStateRef, serverFrameBufferRef } = useGameStateContext();
   const { deltaTimeRef } = useGameAnimation();
   const interpolatedFramesRef = React.useRef<GameState[]>([]);
 
@@ -158,30 +157,11 @@ const useGameEngine = () => {
 
   const runGameMultiplayerFrame = React.useCallback(
     (isPlayerOne: boolean): GameState => {
-      const interpolatedFrame = runInterpolationFrame(isPlayerOne);
-      const localPaddleFrame = runEngineGameMultiplayerFrame(
-        deltaTimeRef.current,
-        gameStateRef.current,
-      );
-
-      paddlesStateRef.current = {
-        paddle: localPaddleFrame.paddle,
-        paddleOpponent: localPaddleFrame.paddleOpponent,
-      };
-
-      gameStateRef.current = isPlayerOne
-        ? {
-            ...interpolatedFrame,
-            // paddle: localPaddleFrame.paddle,
-          }
-        : {
-            ...interpolatedFrame,
-            // paddleOpponent: localPaddleFrame.paddleOpponent,
-          };
+      gameStateRef.current = runInterpolationFrame(isPlayerOne);
 
       return gameStateRef.current;
     },
-    [gameStateRef, runInterpolationFrame, deltaTimeRef, paddlesStateRef],
+    [gameStateRef, runInterpolationFrame],
   );
 
   const runGameFrame = React.useCallback((): GameState => {
@@ -198,9 +178,3 @@ const useGameEngine = () => {
 };
 
 export default useGameEngine;
-
-// TODO
-// 0. Arreglar vibración pala (drag)
-// 1 Gestionar colisiones con sevidor
-// 2. Evitar mover palas al empezar
-// 3. Gestionar timeout, conexión inestable

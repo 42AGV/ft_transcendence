@@ -13,7 +13,6 @@ import {
   paddleOpponentMoveLeft,
   paddleOpponentStop,
   runGameMultiplayerFrame,
-  DragPayload,
 } from 'pong-engine';
 import { GameStatus, GameStatusUpdateDto } from 'transcendence-shared';
 import { WsException } from '@nestjs/websockets';
@@ -40,7 +39,7 @@ type PlayerId = string;
 const FPS = 60;
 const DELTA_TIME = 1 / FPS;
 const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
-const MAX_SCORE = 100;
+const MAX_SCORE = 10;
 const RESUME_GAME_DELAY_MS = 2000;
 
 @Injectable()
@@ -335,7 +334,7 @@ export class GameService {
         if (!payload) {
           return;
         }
-        const { dragCurrPos, dragPrevPos } = payload as DragPayload;
+        const { dragCurrPos, dragPrevPos } = payload;
         this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleDrag(gameInfo.gameState, dragCurrPos, dragPrevPos),
@@ -361,7 +360,7 @@ export class GameService {
         if (!payload) {
           return;
         }
-        const { dragCurrPos, dragPrevPos } = payload as DragPayload;
+        const { dragCurrPos, dragPrevPos } = payload;
         this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentDrag(
