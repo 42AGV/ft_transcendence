@@ -20,7 +20,7 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 export default function UserStatsPage() {
   const { username } = useParams()!;
   const { goBack } = useNavigation();
-  const getData = useCallback(
+  const getLevelHistory = useCallback(
     () =>
       gameApi.gameControllerGetUserLevelHistory({
         username: username!,
@@ -28,7 +28,8 @@ export default function UserStatsPage() {
       }),
     [username],
   );
-  const { data, isLoading } = useData<UserLevelWithTimestamp[]>(getData);
+  const { data: levels, isLoading: areLevelsLoading } =
+    useData<UserLevelWithTimestamp[]>(getLevelHistory);
   const getStats = useCallback(
     () =>
       gameApi.gameControllerGetUserStats({
@@ -44,9 +45,10 @@ export default function UserStatsPage() {
     [username],
   );
   const { data: user, isLoading: isUserLoading } = useData(getUserByUserName);
-  if (isLoading || isUserLoading || areStatsLoading) return <LoadingPage />;
-  if (!data || !user || !stats) return <NotFoundPage />;
-  data.unshift({
+  if (areLevelsLoading || isUserLoading || areStatsLoading)
+    return <LoadingPage />;
+  if (!levels || !user || !stats) return <NotFoundPage />;
+  levels.unshift({
     username: user.username,
     timestamp: user.createdAt,
     gameMode: UserLevelWithTimestampGameModeEnum.Classic,
@@ -62,11 +64,11 @@ export default function UserStatsPage() {
         <div className="line-graph-wrapper">
           <Line
             data={{
-              labels: data.map((item) => item.timestamp),
+              labels: levels.map((item) => item.timestamp),
               datasets: [
                 {
                   label: 'level',
-                  data: data.map((item) => item.level),
+                  data: levels.map((item) => item.level),
                   borderWidth: 1,
                   stepped: true,
                 },
