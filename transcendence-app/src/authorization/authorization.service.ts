@@ -5,7 +5,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { Role } from 'transcendence-shared';
 import { ChatroomMemberWithAuthorization } from './infrastructure/db/chatroom-member-with-authorization.entity';
 import { UserToRole } from './infrastructure/db/user-to-role.entity';
 import { IUserToRoleRepository } from './infrastructure/db/user-to-role.repository';
@@ -69,41 +68,11 @@ export class AuthorizationService {
     return userToRole;
   }
 
-  async addUserToRoleFromUsername(
-    username: string,
-    role: Role,
-  ): Promise<UserToRole> {
-    const userToRole = await this.userToRoleRepository.addUserToRole(
-      username,
-      role,
-      false,
-    );
-    if (!userToRole) {
-      throw new NotFoundException();
-    }
-    return userToRole;
-  }
-
   async deleteUserToRole(user: UserToRole): Promise<UserToRole> {
     const userToRole = await this.userToRoleRepository.deleteUserToRole(
       user.id,
       user.role,
       true,
-    );
-    if (!userToRole) {
-      throw new NotFoundException();
-    }
-    return userToRole;
-  }
-
-  async deleteUserToRoleFromUsername(
-    username: string,
-    role: Role,
-  ): Promise<UserToRole> {
-    const userToRole = await this.userToRoleRepository.deleteUserToRole(
-      username,
-      role,
-      false,
     );
     if (!userToRole) {
       throw new NotFoundException();

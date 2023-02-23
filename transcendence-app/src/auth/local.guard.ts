@@ -16,8 +16,8 @@ export class LocalGuard extends AuthGuard('local') {
     const result = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest();
     const authUser =
-      await this.authorizationService.getUserWithAuthorizationFromUsername(
-        request.user?.username,
+      await this.authorizationService.getUserWithAuthorizationFromId(
+        request.user?.id,
       );
     const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
     if (ability.cannot(Action.Join, 'transcendence-app')) return false;
