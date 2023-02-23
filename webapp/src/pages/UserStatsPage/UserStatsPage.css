@@ -4,7 +4,7 @@
   display: grid;
   grid-template-columns: repeat(var(--column-number), 1fr);
   grid-template-rows: auto 1fr;
-  gap: 6rem var(--column-gap);
+  gap: var(--row-gap) var(--column-gap);
   background-color: var(--color-background);
   color: var(--color-light);
 }
@@ -29,5 +29,5 @@
 }
 
 .stats-page .graphs .pie-chart-wrapper canvas {
-  min-height: 18rem;
+  height: 18rem;
 }
