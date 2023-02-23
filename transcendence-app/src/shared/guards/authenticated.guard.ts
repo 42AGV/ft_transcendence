@@ -23,6 +23,9 @@ export class AuthenticatedGuard implements CanActivate {
       await this.authorizationService.getUserWithAuthorizationFromId(
         request.user?.id,
       );
+    if (!authUser) {
+      return false;
+    }
     const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
     return ability.can(Action.Join, 'transcendence-app');
   }

@@ -47,11 +47,11 @@ export class AuthorizationService {
 
   async getUserWithAuthorizationFromId(
     id: string,
-  ): Promise<UserWithAuthorization> {
+  ): Promise<UserWithAuthorization | null> {
     const userWithRoles =
       await this.userToRoleRepository.getUserWithAuthorization(id, true);
     if (!userWithRoles) {
-      throw new NotFoundException();
+      return null;
     }
     return userWithRoles;
   }
@@ -86,6 +86,9 @@ export class AuthorizationService {
   ): Promise<ChatroomMemberWithAuthorization | null> {
     try {
       const g_user = await this.getUserWithAuthorizationFromId(userId);
+      if (!g_user) {
+        return null;
+      }
       const crm = await this.chatroomMemberRepository.getById(chatId, userId);
       return new ChatroomMemberWithAuthorization({
         ...g_user,
