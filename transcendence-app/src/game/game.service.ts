@@ -36,7 +36,7 @@ type UserId = string;
 type ClientId = string;
 type PlayerId = string;
 
-const FPS = 30;
+const FPS = 60;
 const DELTA_TIME = 1 / FPS;
 const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
 const MAX_SCORE = 10;
