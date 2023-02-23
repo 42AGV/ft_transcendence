@@ -59,10 +59,18 @@ const Play = ({ gameId }: GameProps) => {
     <div className="game-multiplayer">
       <div className="game-multiplayer-score">
         <Score
-          playerOneAvatar={{ url: `${AVATAR_EP_URL}/${playerOne!.avatarId}` }}
+          playerOneAvatar={{
+            url: `${AVATAR_EP_URL}/${playerOne!.avatarId}`,
+            XCoordinate: playerOne!.avatarX,
+            YCoordinate: playerOne!.avatarY,
+          }}
           playerOneScore={score}
           playerOneUserName={playerOne!.username}
-          playerTwoAvatar={{ url: `${AVATAR_EP_URL}/${playerTwo!.avatarId}` }}
+          playerTwoAvatar={{
+            url: `${AVATAR_EP_URL}/${playerTwo!.avatarId}`,
+            XCoordinate: playerTwo!.avatarX,
+            YCoordinate: playerTwo!.avatarY,
+          }}
           playerTwoScore={opponentScore}
           playerTwoUserName={playerTwo!.username}
         />
