@@ -4,8 +4,10 @@ import { gameApi, usersApi } from '../../shared/services/ApiService';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  GameControllerGetUserLevelHistoryModeEnum,
   UserLevelWithTimestamp,
+  GameControllerGetUserLevelHistoryModeEnum,
+  GameControllerGetUserStatsModeEnum,
+  UserLevelWithTimestampGameModeEnum,
   GameStats,
 } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
@@ -18,22 +20,21 @@ import { useNavigation } from '../../shared/hooks/UseNavigation';
 export default function UserStatsPage() {
   const { username } = useParams()!;
   const { goBack } = useNavigation();
-  const getData = useCallback(
+  const getLevelHistory = useCallback(
     () =>
       gameApi.gameControllerGetUserLevelHistory({
         username: username!,
         mode: GameControllerGetUserLevelHistoryModeEnum.Classic,
-        limit: 20, // maybe we'd need more than 20 results
-        offset: 0,
       }),
     [username],
   );
-  const { data, isLoading } = useData<UserLevelWithTimestamp[]>(getData);
+  const { data: levels, isLoading: areLevelsLoading } =
+    useData<UserLevelWithTimestamp[]>(getLevelHistory);
   const getStats = useCallback(
     () =>
       gameApi.gameControllerGetUserStats({
         username: username!,
-        mode: GameControllerGetUserLevelHistoryModeEnum.Classic,
+        mode: GameControllerGetUserStatsModeEnum.Classic,
       }),
     [username],
   );
@@ -44,11 +45,13 @@ export default function UserStatsPage() {
     [username],
   );
   const { data: user, isLoading: isUserLoading } = useData(getUserByUserName);
-  if (isLoading || isUserLoading || areStatsLoading) return <LoadingPage />;
-  if (!data || !user || !stats) return <NotFoundPage />;
-  data.unshift({
+  if (areLevelsLoading || isUserLoading || areStatsLoading)
+    return <LoadingPage />;
+  if (!levels || !user || !stats) return <NotFoundPage />;
+  levels.unshift({
     username: user.username,
     timestamp: user.createdAt,
+    gameMode: UserLevelWithTimestampGameModeEnum.Classic,
     level: 1,
     gameId: '', // maybe we should allow null in gameId here,
   });
@@ -61,11 +64,11 @@ export default function UserStatsPage() {
         <div className="line-graph-wrapper">
           <Line
             data={{
-              labels: data.map((item) => item.timestamp),
+              labels: levels.map((item) => item.timestamp),
               datasets: [
                 {
                   label: 'level',
-                  data: data.map((item) => item.level),
+                  data: levels.map((item) => item.level),
                   borderWidth: 1,
                   stepped: true,
                 },
@@ -96,10 +99,10 @@ export default function UserStatsPage() {
         <div className={'pie-chart-wrapper'}>
           <Doughnut
             data={{
-              labels: ['win', 'lose', 'draw'],
+              labels: ['win', 'loss', 'draw'],
               datasets: [
                 {
-                  data: [stats.winRatio, stats.loseRatio, stats.tieRatio],
+                  data: [stats.wins, stats.losses, stats.draws],
                 },
               ],
             }}

@@ -39,7 +39,6 @@ import { GlobalPoliciesGuard } from '../authorization/guards/global-policies.gua
 import { CheckPolicies } from '../authorization/decorators/policies.decorator';
 import { UserLevelWithTimestamp } from './stats/infrastructure/db/user-level-with-timestamp.entity';
 import { GameStatsService } from './stats/game-stats.service';
-import { PaginationQueryWithGameModeDto } from './stats/dto/pagination-query-with-game-mode.dto';
 import { GameStats } from './stats/dto/game-stats.dto';
 import { GameStatsQueryDto } from './stats/dto/game-stats-query.dto';
 
@@ -78,14 +77,10 @@ export class GameController {
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUserLevelHistory(
     @Param('username') username: string,
-    @Query() queryWithGameModeDto: PaginationQueryWithGameModeDto,
+    @Query() gameStatsQueryDto: GameStatsQueryDto,
   ): Promise<UserLevelWithTimestamp[]> {
-    const { mode, ...rest } = queryWithGameModeDto;
-    const levels = await this.statsService.getPaginatedLevels(
-      username,
-      mode,
-      rest,
-    );
+    const { mode } = gameStatsQueryDto;
+    const levels = await this.statsService.getUserLevels(username, mode);
     if (!levels) {
       throw new ServiceUnavailableException();
     }
