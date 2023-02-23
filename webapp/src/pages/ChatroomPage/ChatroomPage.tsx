@@ -87,12 +87,12 @@ function Chatroom({
     useData(getChatroomMember);
 
   useEffect(() => {
-    socket.emit('joinChatroom', { chatroomId });
+    if (chatroomMember) socket.emit('joinChatroom', { chatroomId });
 
     return () => {
-      socket.emit('leaveChatroom', { chatroomId });
+      if (chatroomMember) socket.emit('leaveChatroom', { chatroomId });
     };
-  }, [chatroomId]);
+  }, [chatroomMember, chatroomId]);
 
   if (isChatroomLoading || isChatroomMemberLoading) {
     return <LoadingPage />;
