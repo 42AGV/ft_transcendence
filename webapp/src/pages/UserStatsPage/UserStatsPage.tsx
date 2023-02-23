@@ -60,57 +60,59 @@ export default function UserStatsPage() {
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
         {`game stats for '${user.username}'`}
       </Header>
-      <div className="graphs">
-        <div className="line-graph-wrapper">
-          <Line
-            data={{
-              labels: levels.map((item) => item.timestamp),
-              datasets: [
-                {
-                  label: 'level',
-                  data: levels.map((item) => item.level),
-                  borderWidth: 1,
-                  stepped: true,
+      <div className={'graphs-wrapper'}>
+        <div className="graphs">
+          <div className="line-graph-wrapper">
+            <Line
+              data={{
+                labels: levels.map((item) => item.timestamp),
+                datasets: [
+                  {
+                    label: 'level',
+                    data: levels.map((item) => item.level),
+                    borderWidth: 1,
+                    stepped: true,
+                  },
+                ],
+              }}
+              options={{
+                plugins: {
+                  legend: { position: 'left', labels: { boxHeight: 1 } },
                 },
-              ],
-            }}
-            options={{
-              plugins: {
-                legend: { position: 'left', labels: { boxHeight: 1 } },
-              },
-              scales: {
-                x: {
-                  type: 'time',
-                  time: {
-                    unit: 'hour',
-                    displayFormats: {
-                      quarter: 'MMM YYYY',
+                scales: {
+                  x: {
+                    type: 'time',
+                    time: {
+                      unit: 'hour',
+                      displayFormats: {
+                        quarter: 'MMM YYYY',
+                      },
                     },
                   },
                 },
-              },
-              layout: {
-                padding: 20,
-              },
-              maintainAspectRatio: false,
-            }}
-          />
-        </div>
-        <div className={'pie-chart-wrapper'}>
-          <Doughnut
-            data={{
-              labels: ['win', 'loss', 'draw'],
-              datasets: [
-                {
-                  data: [stats.wins, stats.losses, stats.draws],
+                layout: {
+                  padding: 20,
                 },
-              ],
-            }}
-            options={{
-              radius: '90%',
-              maintainAspectRatio: false,
-            }}
-          />
+                maintainAspectRatio: false,
+              }}
+            />
+          </div>
+          <div className={'pie-chart-wrapper'}>
+            <Doughnut
+              data={{
+                labels: ['win', 'loss', 'draw'],
+                datasets: [
+                  {
+                    data: [stats.wins, stats.losses, stats.draws],
+                  },
+                ],
+              }}
+              options={{
+                radius: '90%',
+                maintainAspectRatio: false,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
