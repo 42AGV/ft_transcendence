@@ -47,12 +47,17 @@
 }
 
 .main-tab-buttons {
-  justify-self: flex-end;
   grid-column: 1/-1;
   grid-row: 1/2;
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+}
+
+@media all and (max-width: 767px) {
+  .main-tab-buttons {
+    justify-self: flex-end;
+    gap: 0.5rem;
+  }
 }
 
 @media all and (min-width: 768px) {
@@ -99,12 +104,12 @@
   }
 
   .main-tab-buttons {
-    justify-self: center;
-    grid-column: 1/-1;
-    grid-row: 3/4;
     display: flex;
     flex-direction: row;
-    gap: 4rem;
+    margin-top: var(--row-gap);
+    grid-column: 1 / -1;
+    grid-row: 3 / -1;
+    justify-content: space-evenly;
   }
 }
 
