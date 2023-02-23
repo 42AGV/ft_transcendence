@@ -60,3 +60,5 @@ export { default as Score } from './Score/Score';
 export { default as Timer } from './Timer/Timer';
 
 export { default as LandingAnimationPageTemplate } from './templates/LandingAnimationPageTemplate/LandingAnimationPageTemplate';
+
+export { default as ScoreRow } from './Row/ScoreRow';
