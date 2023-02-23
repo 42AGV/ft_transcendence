@@ -1,7 +1,7 @@
 import './UserPage.css';
 import {
   AvatarPageTemplate,
-  Button,
+  Row,
   ButtonVariant,
   IconVariant,
   Text,
@@ -198,16 +198,11 @@ export default function UserPage() {
               onToggle={onToggle}
             />
           )}
-          {!overridePermissions && (
-            <Button
-              {...{
-                variant: ButtonVariant.SUBMIT,
-                iconVariant: IconVariant.STATS,
-                children: 'game history',
-                onClick: () => {
-                  user && navigate(`${USER_URL}/${user.username}/history`);
-                },
-              }}
+          {!overridePermissions && user && (
+            <Row
+              iconVariant={IconVariant.STATS}
+              url={`${USER_URL}/${user.username}/history`}
+              title={'Game history'}
             />
           )}
           {userWithAuth && (
