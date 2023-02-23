@@ -1,14 +1,14 @@
 import './UserPage.css';
 import {
+  AvatarPageTemplate,
+  Row,
+  ButtonVariant,
   IconVariant,
   Text,
   TextColor,
   TextVariant,
   TextWeight,
   ToggleSwitch,
-  ButtonVariant,
-  AvatarPageTemplate,
-  Button,
 } from '../../shared/components';
 import {
   ADMIN_URL,
@@ -33,9 +33,9 @@ import socket from '../../shared/socket';
 import { handleRequestError } from '../../shared/utils/HandleRequestError';
 import { useGamePairing } from '../../shared/hooks/UseGamePairing';
 import {
-  Role,
   gameQueueClientToServerWsEvents,
   GameUserChallengeDto,
+  Role,
 } from 'transcendence-shared';
 
 export default function UserPage() {
@@ -153,7 +153,10 @@ export default function UserPage() {
         }
         secondaryButton={
           (!overridePermissions &&
-            user && {
+            user &&
+            user.isFriend !== null &&
+            gameQueueStatus ===
+              GamePairingStatusDtoGameQueueStatusEnum.None && {
               variant: ButtonVariant.ALTERNATIVE,
               iconVariant: IconVariant.PLAY,
               onClick: () => {
@@ -189,26 +192,18 @@ export default function UserPage() {
             />
           )}
           {!overridePermissions && user && user.isFriend !== null && (
-            <>
-              <ToggleSwitch
-                label={isToggled ? 'Unfollow' : 'Follow'}
-                isToggled={isToggled}
-                onToggle={onToggle}
-              />
-              {gameQueueStatus ===
-                GamePairingStatusDtoGameQueueStatusEnum.None && (
-                <Button
-                  {...{
-                    variant: ButtonVariant.SUBMIT,
-                    iconVariant: IconVariant.STATS,
-                    children: 'game history',
-                    onClick: () => {
-                      user && navigate(`${USER_URL}/${user.username}/history`);
-                    },
-                  }}
-                />
-              )}
-            </>
+            <ToggleSwitch
+              label={isToggled ? 'Unfollow' : 'Follow'}
+              isToggled={isToggled}
+              onToggle={onToggle}
+            />
+          )}
+          {!overridePermissions && user && (
+            <Row
+              iconVariant={IconVariant.STATS}
+              url={`${USER_URL}/${user.username}/history`}
+              title={'Game history'}
+            />
           )}
           {userWithAuth && (
             <>
