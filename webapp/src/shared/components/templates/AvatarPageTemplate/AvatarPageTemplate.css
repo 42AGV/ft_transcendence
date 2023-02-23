@@ -9,7 +9,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
   grid-row-gap: calc(var(--row-gap) * 1.5);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .avatar-page-center-element-wrapper {
