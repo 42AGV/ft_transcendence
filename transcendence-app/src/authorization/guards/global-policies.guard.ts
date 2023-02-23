@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
@@ -21,7 +21,7 @@ export class GlobalPoliciesGuard extends PoliciesGuard {
     const userWithAuthorization: UserWithAuthorization | null =
       await this.authorizationService.getUserWithAuthorizationFromId(authId);
     if (!userWithAuthorization) {
-      throw new NotFoundException();
+      return null;
     }
     return this.caslAbilityFactory.defineAbilitiesFor(userWithAuthorization);
   }
