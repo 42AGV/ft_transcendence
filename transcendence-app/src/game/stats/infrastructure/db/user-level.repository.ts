@@ -13,5 +13,5 @@ export abstract class IUserLevelRepository {
   abstract getGameResults(
     username: string,
     gameMode?: GameMode,
-  ): Promise<GameStats>;
+  ): Promise<GameStats | null>;
 }

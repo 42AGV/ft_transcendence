@@ -64,7 +64,7 @@ export class GamePostgresRepository
         AND ${gameKeys.PLAYERTWOUSERNAME} ILIKE $1)
       OR (${gameKeys.PLAYERTWOUSERNAME} = $4
         AND ${gameKeys.PLAYERONEUSERNAME} ILIKE $1)
-      ORDER BY ${orderBy}, ${gameKeys.ID}
+      ORDER BY ${orderBy} DESC, ${gameKeys.ID}
       LIMIT $2
       OFFSET $3;`,
       values: [`%${search}%`, limit, offset, username],

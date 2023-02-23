@@ -92,6 +92,11 @@ export class GameStatsService {
     username: string,
     gameMode?: GameMode,
   ): Promise<GameStats> {
-    return this.userLevelRepository.getGameResults(username, gameMode);
+    const stats = await this.userLevelRepository.getGameResults(
+      username,
+      gameMode,
+    );
+    if (stats) return stats;
+    return new GameStats({ wins: 0, draws: 0, losses: 0 });
   }
 }
