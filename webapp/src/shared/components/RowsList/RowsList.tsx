@@ -4,6 +4,7 @@ import { useIsElementVisible } from '../../hooks/UseIsElementVisible';
 import Row, { RowProps } from '../Row/Row';
 
 import './RowsList.css';
+import { removeDuplicatesFromArray } from '../../utils/removeDuplicatesFromArray';
 
 export type RowItem = RowProps & {
   key: string;
@@ -27,7 +28,7 @@ export default function RowsList({ rows, onLastRowVisible }: RowsListProps) {
   return (
     <ul className="rows-list">
       {rows &&
-        rows.map((rowItem, index) => {
+        removeDuplicatesFromArray(rows, 'key').map((rowItem, index) => {
           const { key, altText, ...rowProps } = rowItem;
           return (
             <li
