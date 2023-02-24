@@ -102,8 +102,8 @@ export function useOnlineGame(gameId: string) {
       if (updateTimestamp.current) {
         now - updateTimestamp.current > MAX_CONNECTION_LAG_IN_MS &&
           warn('slow connection', 'top');
-        updateTimestamp.current = now;
       }
+      updateTimestamp.current = now;
       setOnlineGameState(info.gameState);
       setGameMode(info.gameMode);
     }
