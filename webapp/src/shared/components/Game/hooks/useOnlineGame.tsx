@@ -10,6 +10,7 @@ import { useAuth } from '../../../hooks/UseAuth';
 import { useNavigate } from 'react-router-dom';
 import socket from '../../../socket';
 import { PLAY_URL } from '../../../urls';
+import { User } from '../../../generated';
 
 const GAME_COMMAND = 'gameCommand';
 const UPDATE_GAME = 'updateGame';
@@ -33,6 +34,8 @@ export function useOnlineGame(gameId: string) {
   const [onlineGameState, setOnlineGameState] =
     React.useState<GameState | null>(null);
   const [gameJoined, setGameJoined] = React.useState(false);
+  const [playerOne, setPlayerOne] = React.useState<User | null>(null);
+  const [playerTwo, setPlayerTwo] = React.useState<User | null>(null);
 
   const sendGameCommand = React.useCallback(
     (command: GameCommand, payload?: DragPayload) => {
@@ -56,12 +59,23 @@ export function useOnlineGame(gameId: string) {
   React.useEffect(() => {
     let timeoutId: NodeJS.Timeout | undefined;
 
-    function handleGameJoined(info: GameInfoClient) {
+    function handleGameJoined({
+      gameInfo,
+      playerOne,
+      playerTwo,
+    }: {
+      gameInfo: GameInfoClient;
+      playerOne: User;
+      playerTwo: User;
+    }) {
       setIsPlayer(
-        authUser?.id === info.playerOneId || authUser?.id === info.playerTwoId,
+        authUser?.id === gameInfo.playerOneId ||
+          authUser?.id === gameInfo.playerTwoId,
       );
-      setIsPlayerOne(authUser?.id === info.playerOneId);
+      setIsPlayerOne(authUser?.id === gameInfo.playerOneId);
       setGameJoined(true);
+      setPlayerOne(playerOne);
+      setPlayerTwo(playerTwo);
     }
 
     function handleUpdateGame(info: GameInfoClient) {
@@ -134,5 +148,7 @@ export function useOnlineGame(gameId: string) {
     onlineGameState,
     joinGame,
     sendGameCommand,
+    playerOne,
+    playerTwo,
   };
 }
