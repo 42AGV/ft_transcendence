@@ -9,8 +9,10 @@ import {
   GameBall,
   GamePaddle,
   GameState,
-  PADDLE_WIDTH,
   PADDLE_HEIGHT,
+  MISTERY_ZONE_HEIGH,
+  GameMode,
+  getPaddleWidth,
 } from 'pong-engine';
 
 const useGameAnimation = () => {
@@ -32,7 +34,12 @@ const useGameAnimation = () => {
   const drawPaddle = React.useCallback(
     (context: CanvasRenderingContext2D, paddle: GamePaddle) => {
       context.fillStyle = paddle.color;
-      context.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+      context.fillRect(
+        paddle.x,
+        paddle.y,
+        getPaddleWidth(paddle.short),
+        paddle.height,
+      );
     },
     [],
   );
@@ -46,6 +53,14 @@ const useGameAnimation = () => {
       BRICK_HEIGHT,
     );
   }, []);
+
+  const drawMisteryZone = React.useCallback(
+    (context: CanvasRenderingContext2D) => {
+      context.fillStyle = '#191b1f';
+      context.fillRect(0, CANVAS_HEIGHT / 2, CANVAS_WIDTH, MISTERY_ZONE_HEIGH);
+    },
+    [],
+  );
 
   const getScreenRefreshRate = React.useCallback((): Promise<number> => {
     // We want to calculate how many frames are rendered in one second (fps)
@@ -93,11 +108,11 @@ const useGameAnimation = () => {
       canvasContext: CanvasRenderingContext2D,
       state: GameState,
       isPlayerOne: boolean,
+      gameMode: GameMode | null,
     ) => {
       const ball = state.ball;
       const paddle = state.paddle;
       const paddleOpponent = state.paddleOpponent;
-
       canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       if (isPlayerOne) {
         drawBall(canvasContext, ball);
@@ -111,20 +126,23 @@ const useGameAnimation = () => {
         };
         const paddleRotated = {
           ...paddle,
-          x: CANVAS_WIDTH - paddle.x - PADDLE_WIDTH,
+          x: CANVAS_WIDTH - paddle.x - getPaddleWidth(paddle.short),
           y: CANVAS_HEIGHT - paddle.y - PADDLE_HEIGHT,
         };
         const paddleOpponentRotated = {
           ...paddleOpponent,
-          x: CANVAS_WIDTH - paddleOpponent.x - PADDLE_WIDTH,
+          x: CANVAS_WIDTH - paddleOpponent.x - getPaddleWidth(paddle.short),
           y: CANVAS_HEIGHT - paddleOpponent.y - PADDLE_HEIGHT,
         };
         drawBall(canvasContext, ballRotated);
         drawPaddle(canvasContext, paddleRotated);
         drawPaddle(canvasContext, paddleOpponentRotated);
       }
+      if (gameMode === 'misteryZone') {
+        drawMisteryZone(canvasContext);
+      }
     },
-    [drawBall, drawPaddle],
+    [drawBall, drawPaddle, drawMisteryZone],
   );
 
   return { renderFrame, renderMultiplayerFrame, deltaTimeRef };

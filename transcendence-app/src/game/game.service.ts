@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
+  calcInitialPaddleX,
   GameInfoClient,
   GameInfoServer,
   newGame,
@@ -13,6 +14,7 @@ import {
   paddleOpponentStop,
   paddleStop,
   runGameMultiplayerFrame,
+  GameMode,
 } from 'pong-engine';
 import { GameStatus, GameStatusUpdateDto } from 'transcendence-shared';
 import { WsException } from '@nestjs/websockets';
@@ -28,8 +30,10 @@ import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-sea
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { CreateGameDto } from './dto/create-game.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { GameMode } from './enums/game-mode.enum';
+import { GameMode as GameModeEnum } from './enums/game-mode.enum';
 import { GameStatsService } from './stats/game-stats.service';
+import { GameConfigDto } from './dto/game-config.dto';
+import { isGameModeType } from './validators';
 
 type GameId = string;
 type UserId = string;
@@ -83,13 +87,26 @@ export class GameService {
         gameDurationInSeconds: duration,
         playerOneScore: gameInfo.gameState.score,
         playerTwoScore: gameInfo.gameState.scoreOpponent,
-        gameMode: GameMode.classic,
+        gameMode: this.mapGameModeToEnum(gameInfo.gameMode),
       }),
     );
     if (!game) {
       throw new Error('Game entry could not be added');
     }
     await this.statsService.addLevelsWhenFinished(game);
+  }
+
+  private mapGameModeToEnum(gameMode: GameMode | null): GameModeEnum {
+    switch (gameMode) {
+      case 'classic':
+        return GameModeEnum.classic;
+      case 'shortPaddle':
+        return GameModeEnum.shortPaddle;
+      case 'misteryZone':
+        return GameModeEnum.misteryZone;
+      default:
+        return GameModeEnum.unknown;
+    }
   }
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
@@ -160,22 +177,25 @@ export class GameService {
           );
           const newGameInfo: GameInfoServer = { ...gameInfo, gameState };
           this.games.set(gameId, newGameInfo);
-          const { playState, playerOneId, playerTwoId } = gameInfo;
+          const { playState, playerOneId, playerTwoId, gameMode } = gameInfo;
           const newGameInfoClient: GameInfoClient = {
             gameState,
             playState,
             playerOneId,
             playerTwoId,
+            gameMode,
           };
           this.server.to(gameId).emit('updateGame', newGameInfoClient);
         } else {
           // Game is paused, send the current game info
-          const { gameState, playState, playerOneId, playerTwoId } = gameInfo;
+          const { gameState, playState, playerOneId, playerTwoId, gameMode } =
+            gameInfo;
           const gameInfoClient = {
             gameState,
             playState,
             playerOneId,
             playerTwoId,
+            gameMode,
           };
           this.server.to(gameId).emit('updateGame', gameInfoClient);
         }
@@ -472,6 +492,7 @@ export class GameService {
       pausedAt: now,
       playerOneLeftAt: now,
       playerTwoLeftAt: now,
+      gameMode: null,
     });
     this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
     this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
@@ -497,6 +518,7 @@ export class GameService {
         playerOneId: gamePairing.userOneId,
         playerTwoId: gamePairing.userTwoId,
       });
+      this.server.to(gamePairing.userOneId).emit('configureGame');
     }
   }
 
@@ -578,5 +600,39 @@ export class GameService {
       sort,
       search,
     });
+  }
+
+  handleGameConfig(client: Socket, gameConfigDto: GameConfigDto) {
+    const userId = client.request.user.id;
+    const gameInfo = this.games.get(gameConfigDto.gameRoomId);
+    const gameMode = gameConfigDto.gameMode;
+
+    if (gameInfo) {
+      const isPlayerOne = userId === gameInfo.playerOneId;
+      if (
+        isPlayerOne &&
+        gameInfo.gameMode === null &&
+        isGameModeType(gameMode)
+      ) {
+        const isShortPaddleMode = gameMode === 'shortPaddle';
+        this.games.set(gameConfigDto.gameRoomId, {
+          ...gameInfo,
+          gameState: {
+            ...gameInfo.gameState,
+            paddle: {
+              ...gameInfo.gameState.paddle,
+              x: calcInitialPaddleX(isShortPaddleMode),
+              short: isShortPaddleMode,
+            },
+            paddleOpponent: {
+              ...gameInfo.gameState.paddleOpponent,
+              x: calcInitialPaddleX(isShortPaddleMode),
+              short: isShortPaddleMode,
+            },
+          },
+          gameMode,
+        });
+      }
+    }
   }
 }

@@ -25,6 +25,7 @@ export type GamePaddle = GameElement & {
   slide: number;
   width: number;
   height: number;
+  short?: boolean;
 };
 
 export type GameBall = GameElement & {
@@ -48,11 +49,14 @@ export type GameState = {
 
 export type PlayState = 'playing' | 'paused';
 
+export type GameMode = 'classic' | 'shortPaddle' | 'misteryZone';
+
 export type GameInfoClient = {
   gameState: GameState;
   playState: PlayState;
   playerOneId: string;
   playerTwoId: string;
+  gameMode: GameMode | null;
 };
 
 export type GameInfoServer = GameInfoClient & {
