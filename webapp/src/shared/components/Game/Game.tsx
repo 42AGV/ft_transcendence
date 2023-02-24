@@ -169,11 +169,11 @@ const ConfigureGame = ({ submitGameConfig, joinGame }: ConfigureGameProps) => {
     },
     {
       onClick: () => {
-        submitGameConfig('misteryZone');
+        submitGameConfig('mysteryZone');
         joinGame();
       },
-      title: 'Mistery zone',
-      key: 'Mistery zone',
+      title: 'Mystery zone',
+      key: 'Mystery zone',
       iconVariant: IconVariant.ADD,
     },
   ];

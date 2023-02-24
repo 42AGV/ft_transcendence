@@ -49,7 +49,7 @@ export type GameState = {
 
 export type PlayState = 'playing' | 'paused';
 
-export type GameMode = 'classic' | 'shortPaddle' | 'misteryZone';
+export type GameMode = 'classic' | 'shortPaddle' | 'mysteryZone';
 
 export type GameInfoClient = {
   gameState: GameState;

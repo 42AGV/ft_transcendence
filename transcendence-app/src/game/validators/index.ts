@@ -8,7 +8,7 @@ const GAME_COMMANDS = [
   'paddleDrag',
 ];
 
-const GAME_MODES = ['classic', 'shortPaddle', 'misteryZone'];
+const GAME_MODES = ['classic', 'shortPaddle', 'mysteryZone'];
 
 // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
 type GameCommandType = (typeof GAME_COMMANDS)[number];
@@ -44,7 +44,7 @@ export function IsGameMode() {
       target: object.constructor,
       propertyName: propertyName,
       options: {
-        message: 'The value passed as command is not a valid game command',
+        message: 'The value passed as command is not a valid game mode',
       },
       validator: {
         validate(value: string) {

@@ -54,10 +54,15 @@ const useGameAnimation = () => {
     );
   }, []);
 
-  const drawMisteryZone = React.useCallback(
+  const drawMysteryZone = React.useCallback(
     (context: CanvasRenderingContext2D) => {
       context.fillStyle = '#191b1f';
-      context.fillRect(0, CANVAS_HEIGHT / 2, CANVAS_WIDTH, MISTERY_ZONE_HEIGH);
+      context.fillRect(
+        0,
+        CANVAS_HEIGHT / 2 - MISTERY_ZONE_HEIGH / 2,
+        CANVAS_WIDTH,
+        MISTERY_ZONE_HEIGH,
+      );
     },
     [],
   );
@@ -138,11 +143,11 @@ const useGameAnimation = () => {
         drawPaddle(canvasContext, paddleRotated);
         drawPaddle(canvasContext, paddleOpponentRotated);
       }
-      if (gameMode === 'misteryZone') {
-        drawMisteryZone(canvasContext);
+      if (gameMode === 'mysteryZone') {
+        drawMysteryZone(canvasContext);
       }
     },
-    [drawBall, drawPaddle, drawMisteryZone],
+    [drawBall, drawPaddle, drawMysteryZone],
   );
 
   return { renderFrame, renderMultiplayerFrame, deltaTimeRef };

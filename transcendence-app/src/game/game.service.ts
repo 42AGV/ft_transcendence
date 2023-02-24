@@ -102,8 +102,8 @@ export class GameService {
         return GameModeEnum.classic;
       case 'shortPaddle':
         return GameModeEnum.shortPaddle;
-      case 'misteryZone':
-        return GameModeEnum.misteryZone;
+      case 'mysteryZone':
+        return GameModeEnum.mysteryZone;
       default:
         return GameModeEnum.unknown;
     }

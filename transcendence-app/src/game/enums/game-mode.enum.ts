@@ -2,6 +2,6 @@ export enum GameMode {
   training = 'training',
   classic = 'classic',
   shortPaddle = 'shortPaddle',
-  misteryZone = 'misteryZone',
+  mysteryZone = 'mysteryZone',
   unknown = 'unknown',
 }
