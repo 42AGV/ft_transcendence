@@ -6,7 +6,7 @@ const NOTIFICATION_SPAN_MS = 4000;
 
 type Context = {
   notify: (message: any) => void;
-  warn: (message: any) => void;
+  warn: (message: any, position?: SnackbarPosition) => void;
   hide: () => void;
 };
 
@@ -43,7 +43,7 @@ export const NotificationContextProvider = ({
     }
   }, []);
 
-  const warn = React.useCallback((arg: any) => {
+  const warn = React.useCallback((arg: any, position?: SnackbarPosition) => {
     if (arg) {
       let message: string;
       if (typeof arg === 'object') {
@@ -52,7 +52,11 @@ export const NotificationContextProvider = ({
         message = String(arg);
       }
       if (message.length) {
-        setNotification({ message, type: 'warning', position: 'bottom' });
+        setNotification({
+          message,
+          type: 'warning',
+          position: position ?? 'bottom',
+        });
         setVisible(true);
       }
     }

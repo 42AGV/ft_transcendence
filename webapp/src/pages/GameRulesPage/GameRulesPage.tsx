@@ -58,8 +58,17 @@ export default function GameRulesPage() {
           <ol>
             <li>
               <Text variant={TextVariant.PARAGRAPH}>
-                At the start of the game, both players need to click the "Ready"
-                button to indicate they are ready to play.
+                At the start of the game, the player one (the one who joined
+                earlier) will see a list of different game modes to choose from.
+                Once an option is chosen, the game will start once the opponent
+                is ready.
+              </Text>
+            </li>
+            <li>
+              <Text variant={TextVariant.PARAGRAPH}>
+                At the start of the game, the player two (the one who joined
+                later) will have to click a "Ready" button to indicate whether
+                is ready to play.
               </Text>
             </li>
             <li>

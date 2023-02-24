@@ -15,6 +15,13 @@
   margin: auto;
 }
 
+.game-configuration {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .game-wait {
   margin: auto;
   display: flex;
