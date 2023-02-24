@@ -18,8 +18,11 @@ export class GlobalPoliciesGuard extends PoliciesGuard {
   override async getAbilityFromRequest(req: Request, param?: string) {
     void param;
     const authId = req.user.id;
-    const userWithAuthorization: UserWithAuthorization =
+    const userWithAuthorization: UserWithAuthorization | null =
       await this.authorizationService.getUserWithAuthorizationFromId(authId);
+    if (!userWithAuthorization) {
+      return null;
+    }
     return this.caslAbilityFactory.defineAbilitiesFor(userWithAuthorization);
   }
 }

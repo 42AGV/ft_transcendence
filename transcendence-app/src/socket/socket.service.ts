@@ -93,6 +93,9 @@ export class SocketService {
       await this.authorizationService.getUserWithAuthorizationFromId(
         userToRoleDto.id,
       );
+    if (!destAuthUser) {
+      throw new WsException('Destination user does not exist');
+    }
     if (
       ability.cannot(Action.Update, destAuthUser) ||
       ability.cannot(Action.Create, new UserToRole(userToRoleDto))
@@ -134,6 +137,9 @@ export class SocketService {
       await this.authorizationService.getUserWithAuthorizationFromId(
         userToRoleDto.id,
       );
+    if (!destAuthUser) {
+      throw new WsException('Destination user does not exist');
+    }
     if (
       ability.cannot(Action.Update, destAuthUser) ||
       ability.cannot(Action.Delete, new UserToRole(userToRoleDto))

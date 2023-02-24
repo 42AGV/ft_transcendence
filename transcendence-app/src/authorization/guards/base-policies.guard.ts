@@ -34,7 +34,7 @@ export abstract class PoliciesGuard implements CanActivate {
   abstract getAbilityFromRequest(
     req: Request,
     param?: string,
-  ): Promise<AnyMongoAbility>;
+  ): Promise<AnyMongoAbility | null>;
 
   public async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const policyHandlers =
@@ -50,6 +50,9 @@ export abstract class PoliciesGuard implements CanActivate {
       this.reflector.get<string>(CONFIG_PARAM_KEY, ctx.getHandler()) ||
       'chatroomId';
     const ability = await this.getAbilityFromRequest(request, param);
+    if (!ability) {
+      return false;
+    }
     const subjects: SubjectCtors[] =
       this.reflector.get<SubjectCtors[]>(SET_SUBJECTS_KEY, ctx.getHandler()) ||
       [];
