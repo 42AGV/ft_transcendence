@@ -8,6 +8,7 @@ import { useAuth } from '../../../../../hooks/UseAuth';
 import { useBlocklist } from '../../../../../hooks/UseBlocklist';
 
 import './ChatMessages.css';
+import { removeDuplicatesFromArray } from '../../../../../utils/removeDuplicatesFromArray';
 
 export type ChatMessage = {
   id: string;
@@ -39,7 +40,7 @@ export default function ChatMessages({
 
   return (
     <ul className="chat-template-messages-list">
-      {messages
+      {removeDuplicatesFromArray(messages, 'id')
         .filter((message) => !userBlocks(message.userId))
         .map((message, index, array) => {
           const isConsecutive =
