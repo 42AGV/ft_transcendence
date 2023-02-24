@@ -127,6 +127,11 @@ export class GameService {
     this.addGameWhenFinished(gameInfo, gameId).catch((error: Error) => {
       this.logger.error(error.message);
     });
+    this.games.delete(gameId);
+    if (this.games.size === 0) {
+      clearInterval(this.intervalId);
+      this.intervalId = undefined;
+    }
     this.server.socketsLeave(gameId);
     this.playerToClients.delete(gameInfo.playerOneId);
     this.playerToClients.delete(gameInfo.playerTwoId);
@@ -134,11 +139,6 @@ export class GameService {
     this.userToGame.delete(gameInfo.playerTwoId);
     this.playerToUser.delete(gameInfo.playerOneId);
     this.playerToUser.delete(gameInfo.playerTwoId);
-    this.games.delete(gameId);
-    if (this.games.size === 0) {
-      clearInterval(this.intervalId);
-      this.intervalId = undefined;
-    }
   }
 
   private isPausedForTooLong(gameInfo: GameInfoServer) {
@@ -481,6 +481,8 @@ export class GameService {
     }
     this.playerToUser.set(playerOne.id, playerOne);
     this.playerToUser.set(playerTwo.id, playerTwo);
+    this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
+    this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
     const gameState = newGame();
     const now = Date.now();
     this.games.set(gamePairing.gameRoomId, {
@@ -494,8 +496,6 @@ export class GameService {
       playerTwoLeftAt: now,
       gameMode: null,
     });
-    this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
-    this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
     if (!this.intervalId) {
       // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
       this.intervalId = setInterval(() => {
