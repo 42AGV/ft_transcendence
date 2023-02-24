@@ -23,9 +23,12 @@ export class OAuth42Guard extends AuthGuard('oauth42') {
     const result = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest();
     const authUser =
-      await this.authorizationService.getUserWithAuthorizationFromUsername(
-        request.user?.username,
+      await this.authorizationService.getUserWithAuthorizationFromId(
+        request.user?.id,
       );
+    if (!authUser) {
+      return false;
+    }
     const ability = this.caslAbilityFactory.defineAbilitiesFor(authUser);
     if (ability.cannot(Action.Join, 'transcendence-app')) return false;
     await super.logIn(request);

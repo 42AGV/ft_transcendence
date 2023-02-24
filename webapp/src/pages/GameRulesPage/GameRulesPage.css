@@ -12,7 +12,7 @@
 .game-rules-page-buttons {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 4rem;
+  margin-top: var(--row-gap);
+  gap: 1.5rem;
+  justify-content: space-evenly;
 }

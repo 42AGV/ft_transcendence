@@ -11,6 +11,8 @@ import { useNavigation } from '../../hooks/UseNavigation';
 import './Game.css';
 import Button, { ButtonVariant } from '../Button/Button';
 import { useOnlineGame } from './hooks/useOnlineGame';
+import Score from '../Score/Score';
+import { AVATAR_EP_URL } from '../../urls';
 
 type GameProps = {
   gameId: string;
@@ -20,6 +22,8 @@ const Play = ({ gameId }: GameProps) => {
   const { renderMultiplayerFrame } = useGameAnimation();
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const {
+    playerOne,
+    playerTwo,
     isPlayerOne,
     gameJoined,
     onlineGameState,
@@ -53,18 +57,30 @@ const Play = ({ gameId }: GameProps) => {
 
   return (
     <div className="game-multiplayer">
-      <h1 className="game-multiplayer-score heading-bold">
-        {isPlayerOne ? opponentScore : score}
-      </h1>
+      <div className="game-multiplayer-score">
+        <Score
+          playerOneAvatar={{
+            url: `${AVATAR_EP_URL}/${playerOne!.avatarId}`,
+            XCoordinate: playerOne!.avatarX,
+            YCoordinate: playerOne!.avatarY,
+          }}
+          playerOneScore={score}
+          playerOneUserName={playerOne!.username}
+          playerTwoAvatar={{
+            url: `${AVATAR_EP_URL}/${playerTwo!.avatarId}`,
+            XCoordinate: playerTwo!.avatarX,
+            YCoordinate: playerTwo!.avatarY,
+          }}
+          playerTwoScore={opponentScore}
+          playerTwoUserName={playerTwo!.username}
+        />
+      </div>
       <canvas
         className="game-multiplayer-arena"
         ref={canvasRef}
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
       />
-      <h1 className="game-multiplayer-score heading-bold">
-        {isPlayerOne ? score : opponentScore}
-      </h1>
     </div>
   );
 };

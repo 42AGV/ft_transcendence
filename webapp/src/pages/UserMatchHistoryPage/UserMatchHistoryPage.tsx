@@ -11,6 +11,7 @@ import {
   Game,
   GameControllerGetUserGamesRequest,
   UserResponseDto,
+  GameControllerGetUserGamesSortEnum,
 } from '../../shared/generated';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
@@ -65,6 +66,7 @@ export default function UserMatchHistoryPage() {
     <T extends Query>(requestParameters: T) =>
       gameApi.gameControllerGetUserGames({
         ...requestParameters,
+        sort: GameControllerGetUserGamesSortEnum.True,
         limit: ENTRIES_LIMIT,
         userName: username!,
       } as GameControllerGetUserGamesRequest),
