@@ -560,7 +560,6 @@ export class GameService {
         playerOneId: gamePairing.userOneId,
         playerTwoId: gamePairing.userTwoId,
       });
-      this.server.to(gamePairing.userOneId).emit('configureGame');
     }
   }
 
@@ -674,7 +673,20 @@ export class GameService {
           },
           gameMode,
         });
+        if (this.server) {
+          this.server
+            .to(gameInfo.playerOneId)
+            .emit('shouldConfigureGame', false);
+        }
       }
     }
+  }
+
+  getShouldConfigureGame(userId: string): boolean {
+    const gameInfo = this.getGameInfoFromUserId(userId);
+    if (!gameInfo) {
+      return false;
+    }
+    return gameInfo.playerOneId === userId && gameInfo.gameMode === null;
   }
 }

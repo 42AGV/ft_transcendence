@@ -78,4 +78,12 @@ export class GameGateway {
   ) {
     this.gameService.handleGameConfig(client, gameConfigDto);
   }
+
+  @SubscribeMessage('getShouldConfigureGame')
+  handleGetShouldConfigureGame(@ConnectedSocket() client: Socket) {
+    client.emit(
+      'shouldConfigureGame',
+      this.gameService.getShouldConfigureGame(client.request.user.id),
+    );
+  }
 }

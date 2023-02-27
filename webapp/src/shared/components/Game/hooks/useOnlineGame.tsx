@@ -25,7 +25,8 @@ const GAME_START_PAUSED = 'gameStartPaused';
 const GAME_START_RESUMED = 'gameStartResumed';
 const GAME_PAUSED = 'gamePaused';
 const GAME_RESUMED = 'gameResumed';
-const CONFIGURE_GAME = 'configureGame';
+const SHOULD_CONFIGURE_GAME = 'shouldConfigureGame';
+const GET_SHOULD_CONFIGURE_GAME = 'getShouldConfigureGame';
 const GAME_CONFIG_SUBMIT = 'gameConfigSubmit';
 const MAX_CONNECTION_LAG_IN_MS = 100;
 
@@ -42,8 +43,9 @@ export function useOnlineGame(gameId: string) {
   const [playerOne, setPlayerOne] = React.useState<User | null>(null);
   const [playerTwo, setPlayerTwo] = React.useState<User | null>(null);
   const [isGamePaused, setIsGamePaused] = React.useState<boolean>(false);
-  const [shouldConfigureGame, setShouldConfigureGame] =
-    React.useState<boolean>(false);
+  const [shouldConfigureGame, setShouldConfigureGame] = React.useState<
+    boolean | null
+  >(null);
   const updateTimestamp = React.useRef<number | undefined>();
 
   const sendGameCommand = React.useCallback(
@@ -69,7 +71,6 @@ export function useOnlineGame(gameId: string) {
     (gameMode: GameMode) => {
       if (shouldConfigureGame) {
         socket.emit(GAME_CONFIG_SUBMIT, { gameRoomId: gameId, gameMode });
-        setShouldConfigureGame(false);
       }
     },
     [gameId, shouldConfigureGame],
@@ -140,8 +141,8 @@ export function useOnlineGame(gameId: string) {
       notify('Game resuming soon');
     }
 
-    function handleGameConfigure() {
-      setShouldConfigureGame(true);
+    function handleShouldGameConfigure(shouldConfigure: boolean) {
+      setShouldConfigureGame(shouldConfigure);
     }
 
     socket.on(GAME_JOINED, handleGameJoined);
@@ -152,7 +153,8 @@ export function useOnlineGame(gameId: string) {
     socket.on(GAME_START_RESUMED, handleGameStartResumed);
     socket.on(GAME_PAUSED, handleGamePaused);
     socket.on(GAME_RESUMED, handleGameResumed);
-    socket.on(CONFIGURE_GAME, handleGameConfigure);
+    socket.on(SHOULD_CONFIGURE_GAME, handleShouldGameConfigure);
+    socket.emit(GET_SHOULD_CONFIGURE_GAME);
 
     return () => {
       socket.emit(LEAVE_GAME, { gameRoomId: gameId });
@@ -164,6 +166,7 @@ export function useOnlineGame(gameId: string) {
       socket.off(GAME_START_RESUMED);
       socket.off(GAME_PAUSED);
       socket.off(GAME_RESUMED);
+      socket.off(SHOULD_CONFIGURE_GAME);
       clearTimeout(timeoutId);
     };
   }, [
