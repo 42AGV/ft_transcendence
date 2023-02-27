@@ -69,6 +69,10 @@ const GameStatusHandler = ({ gameId }: GameStatusHandlerProps) => {
     );
   }
 
+  if (shouldConfigureGame === null) {
+    return <Wait />;
+  }
+
   if (!gameJoined) {
     return (
       <div className="game-start">
