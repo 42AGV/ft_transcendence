@@ -298,7 +298,7 @@ export class GameService {
     if (hasGameResumedNow) {
       this.updateGameInfo(gameRoomId, {
         ...game,
-        pausedAt: game.pausedAt - RESUME_GAME_DELAY_MS * 2,
+        pausedAt: game.pausedAt + RESUME_GAME_DELAY_MS * 2,
       });
       setTimeout(() => {
         this.updateGameInfo(gameRoomId, gameInfo);
