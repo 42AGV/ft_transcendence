@@ -121,17 +121,21 @@ export class GameService {
   }
 
   private setPlayerOneMaxScore(gameId: string, gameInfo: GameInfoServer) {
-    this.updateGameInfo(gameId, {
+    const updatedGameInfo: GameInfoServer = {
       ...gameInfo,
       gameState: { ...gameInfo.gameState, score: MAX_SCORE },
-    });
+    };
+    this.updateGameInfo(gameId, updatedGameInfo);
+    return updatedGameInfo;
   }
 
   private setPlayerTwoMaxScore(gameId: string, gameInfo: GameInfoServer) {
-    this.updateGameInfo(gameId, {
+    const updatedGameInfo: GameInfoServer = {
       ...gameInfo,
       gameState: { ...gameInfo.gameState, scoreOpponent: MAX_SCORE },
-    });
+    };
+    this.updateGameInfo(gameId, updatedGameInfo);
+    return updatedGameInfo;
   }
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
@@ -186,14 +190,15 @@ export class GameService {
         if (this.hasPlayerWon(gameInfo)) {
           this.finishGame(gameInfo, gameId);
         } else if (this.isPausedForTooLong(gameInfo)) {
+          let updatedGameInfo = gameInfo;
           if (gameInfo.playerOneLeftAt && gameInfo.playerTwoLeftAt) {
             // noop, both players disconnected, keep the current score
           } else if (gameInfo.playerOneLeftAt) {
-            this.setPlayerTwoMaxScore(gameId, gameInfo);
+            updatedGameInfo = this.setPlayerTwoMaxScore(gameId, gameInfo);
           } else if (gameInfo.playerTwoLeftAt) {
-            this.setPlayerOneMaxScore(gameId, gameInfo);
+            updatedGameInfo = this.setPlayerOneMaxScore(gameId, gameInfo);
           }
-          this.finishGame(gameInfo, gameId);
+          this.finishGame(updatedGameInfo, gameId);
         } else if (gameInfo.playState === 'playing') {
           // Game is playing, update the game info
           const gameState = runGameMultiplayerFrame(
@@ -447,12 +452,13 @@ export class GameService {
     }
     const isPlayerOne = userId === game.playerOneId;
     const isPlayerTwo = userId === game.playerTwoId;
+    let updatedGameInfo = game;
     if (isPlayerOne) {
-      this.setPlayerTwoMaxScore(gameRoomId, game);
+      updatedGameInfo = this.setPlayerTwoMaxScore(gameRoomId, game);
     } else if (isPlayerTwo) {
-      this.setPlayerTwoMaxScore(gameRoomId, game);
+      updatedGameInfo = this.setPlayerOneMaxScore(gameRoomId, game);
     }
-    this.finishGame(game, gameRoomId);
+    this.finishGame(updatedGameInfo, gameRoomId);
   }
 
   getGameId(userId: string): GameId | null {
