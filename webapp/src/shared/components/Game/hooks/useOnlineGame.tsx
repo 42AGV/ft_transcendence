@@ -48,7 +48,7 @@ export function useOnlineGame(gameId: string) {
     boolean | null
   >(null);
   const updateTimestamp = React.useRef<number | undefined>();
-  const lastWarningTimestamp = React.useRef<number>(Date.now());
+  const lastWarningTimestamp = React.useRef<number>(0);
 
   const sendGameCommand = React.useCallback(
     (command: GameCommand, payload?: DragPayload) => {
