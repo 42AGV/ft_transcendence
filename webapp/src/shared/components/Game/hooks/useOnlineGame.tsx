@@ -29,6 +29,7 @@ const SHOULD_CONFIGURE_GAME = 'shouldConfigureGame';
 const GET_SHOULD_CONFIGURE_GAME = 'getShouldConfigureGame';
 const GAME_CONFIG_SUBMIT = 'gameConfigSubmit';
 const MAX_CONNECTION_LAG_IN_MS = 100;
+const WARN_INTERVAL_IN_MS = 5000;
 
 export function useOnlineGame(gameId: string) {
   const { notify, warn } = useNotificationContext();
@@ -47,6 +48,7 @@ export function useOnlineGame(gameId: string) {
     boolean | null
   >(null);
   const updateTimestamp = React.useRef<number | undefined>();
+  const lastWarningTimestamp = React.useRef<number>(Date.now());
 
   const sendGameCommand = React.useCallback(
     (command: GameCommand, payload?: DragPayload) => {
@@ -101,8 +103,14 @@ export function useOnlineGame(gameId: string) {
     function handleUpdateGame(info: GameInfoClient) {
       const now = Date.now();
       if (updateTimestamp.current) {
-        now - updateTimestamp.current > MAX_CONNECTION_LAG_IN_MS &&
+        const hasSlowConnection =
+          now - updateTimestamp.current > MAX_CONNECTION_LAG_IN_MS;
+        const timeSinceLastWarning = now - lastWarningTimestamp.current;
+        const shouldWarn = timeSinceLastWarning > WARN_INTERVAL_IN_MS;
+        if (hasSlowConnection && shouldWarn) {
           warn('slow connection', 'top');
+          lastWarningTimestamp.current = now;
+        }
       }
       updateTimestamp.current = now;
       setOnlineGameState(info.gameState);
