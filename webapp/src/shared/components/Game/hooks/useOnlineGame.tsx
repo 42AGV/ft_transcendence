@@ -29,7 +29,7 @@ const SHOULD_CONFIGURE_GAME = 'shouldConfigureGame';
 const GET_SHOULD_CONFIGURE_GAME = 'getShouldConfigureGame';
 const GAME_CONFIG_SUBMIT = 'gameConfigSubmit';
 const MAX_CONNECTION_LAG_IN_MS = 100;
-const WARN_INTERVAL_IN_MS = 5000;
+const WARN_INTERVAL_IN_MS = 10000;
 
 export function useOnlineGame(gameId: string) {
   const { notify, warn } = useNotificationContext();
@@ -106,8 +106,8 @@ export function useOnlineGame(gameId: string) {
         const hasSlowConnection =
           now - updateTimestamp.current > MAX_CONNECTION_LAG_IN_MS;
         const timeSinceLastWarning = now - lastWarningTimestamp.current;
-        const shouldWarn = timeSinceLastWarning > WARN_INTERVAL_IN_MS;
-        if (hasSlowConnection && shouldWarn) {
+        const canWarn = timeSinceLastWarning > WARN_INTERVAL_IN_MS;
+        if (hasSlowConnection && canWarn) {
           warn('slow connection', 'top');
           lastWarningTimestamp.current = now;
         }
