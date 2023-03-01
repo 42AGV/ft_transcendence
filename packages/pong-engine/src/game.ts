@@ -70,10 +70,10 @@ export const paddleOpponentDrag = (
   });
 };
 
-export const newGame = (): GameState => ({
+export const newGame = (paddleShort = false): GameState => ({
   ball: initialBallState(),
-  paddle: initialPaddleState(),
-  paddleOpponent: initialPaddleOpponentState(),
+  paddle: initialPaddleState(paddleShort),
+  paddleOpponent: initialPaddleOpponentState(paddleShort),
   score: 0,
   scoreOpponent: 0,
 });

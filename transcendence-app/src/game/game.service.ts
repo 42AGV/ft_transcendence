@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import {
+  calcInitialPaddleX,
   GameInfoClient,
   GameInfoServer,
   newGame,
@@ -13,6 +14,7 @@ import {
   paddleOpponentStop,
   paddleStop,
   runGameMultiplayerFrame,
+  GameMode,
 } from 'pong-engine';
 import { GameStatus, GameStatusUpdateDto } from 'transcendence-shared';
 import { WsException } from '@nestjs/websockets';
@@ -28,15 +30,22 @@ import { PaginationWithSearchQueryDto } from '../shared/dtos/pagination-with-sea
 import { BooleanString } from '../shared/enums/boolean-string.enum';
 import { CreateGameDto } from './dto/create-game.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { GameMode } from './enums/game-mode.enum';
+import { GameMode as GameModeEnum } from './enums/game-mode.enum';
 import { GameStatsService } from './stats/game-stats.service';
+import { GameConfigDto } from './dto/game-config.dto';
+import { isGameModeType } from './validators';
 
 type GameId = string;
 type UserId = string;
 type ClientId = string;
 type PlayerId = string;
+type GameWithPlayers = {
+  gameId: string;
+  playerOne: User;
+  playerTwo: User;
+};
 
-const FPS = 30;
+const FPS = 60;
 const DELTA_TIME = 1 / FPS;
 const MAX_PAUSED_TIME_MS = 30 * 1000; // 30 seconds
 const MAX_SCORE = 10;
@@ -83,13 +92,50 @@ export class GameService {
         gameDurationInSeconds: duration,
         playerOneScore: gameInfo.gameState.score,
         playerTwoScore: gameInfo.gameState.scoreOpponent,
-        gameMode: GameMode.classic,
+        gameMode: this.mapGameModeToEnum(gameInfo.gameMode),
       }),
     );
     if (!game) {
       throw new Error('Game entry could not be added');
     }
     await this.statsService.addLevelsWhenFinished(game);
+  }
+
+  private mapGameModeToEnum(gameMode: GameMode | null): GameModeEnum {
+    switch (gameMode) {
+      case 'classic':
+        return GameModeEnum.classic;
+      case 'shortPaddle':
+        return GameModeEnum.shortPaddle;
+      case 'mysteryZone':
+        return GameModeEnum.mysteryZone;
+      default:
+        return GameModeEnum.unknown;
+    }
+  }
+
+  private updateGameInfo(gameId: string, gameInfo: GameInfoServer) {
+    if (this.games.has(gameId)) {
+      this.games.set(gameId, gameInfo);
+    }
+  }
+
+  private setPlayerOneMaxScore(gameId: string, gameInfo: GameInfoServer) {
+    const updatedGameInfo: GameInfoServer = {
+      ...gameInfo,
+      gameState: { ...gameInfo.gameState, score: MAX_SCORE },
+    };
+    this.updateGameInfo(gameId, updatedGameInfo);
+    return updatedGameInfo;
+  }
+
+  private setPlayerTwoMaxScore(gameId: string, gameInfo: GameInfoServer) {
+    const updatedGameInfo: GameInfoServer = {
+      ...gameInfo,
+      gameState: { ...gameInfo.gameState, scoreOpponent: MAX_SCORE },
+    };
+    this.updateGameInfo(gameId, updatedGameInfo);
+    return updatedGameInfo;
   }
 
   private finishGame(gameInfo: GameInfoServer, gameId: string) {
@@ -110,6 +156,11 @@ export class GameService {
     this.addGameWhenFinished(gameInfo, gameId).catch((error: Error) => {
       this.logger.error(error.message);
     });
+    this.games.delete(gameId);
+    if (this.games.size === 0) {
+      clearInterval(this.intervalId);
+      this.intervalId = undefined;
+    }
     this.server.socketsLeave(gameId);
     this.playerToClients.delete(gameInfo.playerOneId);
     this.playerToClients.delete(gameInfo.playerTwoId);
@@ -117,11 +168,6 @@ export class GameService {
     this.userToGame.delete(gameInfo.playerTwoId);
     this.playerToUser.delete(gameInfo.playerOneId);
     this.playerToUser.delete(gameInfo.playerTwoId);
-    this.games.delete(gameId);
-    if (this.games.size === 0) {
-      clearInterval(this.intervalId);
-      this.intervalId = undefined;
-    }
   }
 
   private isPausedForTooLong(gameInfo: GameInfoServer) {
@@ -141,17 +187,18 @@ export class GameService {
   private runServerGameFrame() {
     this.games.forEach((gameInfo: GameInfoServer, gameId: GameId) => {
       if (this.server) {
-        if (this.isPausedForTooLong(gameInfo)) {
+        if (this.hasPlayerWon(gameInfo)) {
+          this.finishGame(gameInfo, gameId);
+        } else if (this.isPausedForTooLong(gameInfo)) {
+          let updatedGameInfo = gameInfo;
           if (gameInfo.playerOneLeftAt && gameInfo.playerTwoLeftAt) {
             // noop, both players disconnected, keep the current score
           } else if (gameInfo.playerOneLeftAt) {
-            gameInfo.gameState.scoreOpponent = MAX_SCORE;
+            updatedGameInfo = this.setPlayerTwoMaxScore(gameId, gameInfo);
           } else if (gameInfo.playerTwoLeftAt) {
-            gameInfo.gameState.score = MAX_SCORE;
+            updatedGameInfo = this.setPlayerOneMaxScore(gameId, gameInfo);
           }
-          this.finishGame(gameInfo, gameId);
-        } else if (this.hasPlayerWon(gameInfo)) {
-          this.finishGame(gameInfo, gameId);
+          this.finishGame(updatedGameInfo, gameId);
         } else if (gameInfo.playState === 'playing') {
           // Game is playing, update the game info
           const gameState = runGameMultiplayerFrame(
@@ -159,28 +206,74 @@ export class GameService {
             gameInfo.gameState,
           );
           const newGameInfo: GameInfoServer = { ...gameInfo, gameState };
-          this.games.set(gameId, newGameInfo);
-          const { playState, playerOneId, playerTwoId } = gameInfo;
+          this.updateGameInfo(gameId, newGameInfo);
+          const { playState, playerOneId, playerTwoId, gameMode } = gameInfo;
           const newGameInfoClient: GameInfoClient = {
             gameState,
             playState,
             playerOneId,
             playerTwoId,
+            gameMode,
           };
           this.server.to(gameId).emit('updateGame', newGameInfoClient);
         } else {
           // Game is paused, send the current game info
-          const { gameState, playState, playerOneId, playerTwoId } = gameInfo;
+          const { gameState, playState, playerOneId, playerTwoId, gameMode } =
+            gameInfo;
           const gameInfoClient = {
             gameState,
             playState,
             playerOneId,
             playerTwoId,
+            gameMode,
           };
           this.server.to(gameId).emit('updateGame', gameInfoClient);
         }
       }
     });
+  }
+
+  private getPlayerJoinGameInfo(
+    userId: string,
+    gameInfo: GameInfoServer,
+  ): GameInfoServer {
+    const isPlayerOne = userId === gameInfo.playerOneId;
+    const isPlayerTwo = userId === gameInfo.playerTwoId;
+    const playerOneLeftAt = isPlayerOne ? null : gameInfo.playerOneLeftAt;
+    const playerTwoLeftAt = isPlayerTwo ? null : gameInfo.playerTwoLeftAt;
+    const pausedAt =
+      playerOneLeftAt === null && playerTwoLeftAt === null
+        ? null
+        : gameInfo.pausedAt;
+    const playState = pausedAt ? 'paused' : 'playing';
+    const updatedGameInfo: GameInfoServer = {
+      ...gameInfo,
+      playState,
+      pausedAt,
+      playerOneLeftAt,
+      playerTwoLeftAt,
+    };
+    return updatedGameInfo;
+  }
+
+  private resumeGameDelay(
+    clientId: string,
+    userId: string,
+    gameRoomId: string,
+  ) {
+    setTimeout(() => {
+      const playerClients = this.playerToClients.get(userId);
+      if (!playerClients) {
+        return;
+      }
+      const hasClient = playerClients.has(clientId);
+      const gameInfo = this.games.get(gameRoomId);
+      if (!hasClient || !gameInfo) {
+        return;
+      }
+      const updatedGameInfo = this.getPlayerJoinGameInfo(userId, gameInfo);
+      this.updateGameInfo(gameRoomId, updatedGameInfo);
+    }, RESUME_GAME_DELAY_MS);
   }
 
   handleGameJoin(client: Socket, gameRoomId: string) {
@@ -216,13 +309,9 @@ export class GameService {
     if (!game.pausedAt) {
       return;
     }
-    const playerOneLeftAt = isPlayerOne ? null : game.playerOneLeftAt;
-    const playerTwoLeftAt = isPlayerTwo ? null : game.playerTwoLeftAt;
-    const pausedAt =
-      playerOneLeftAt === null && playerTwoLeftAt === null
-        ? null
-        : game.pausedAt;
-    const playState = pausedAt === null ? 'playing' : 'paused';
+
+    const gameInfo = this.getPlayerJoinGameInfo(userId, game);
+    const { pausedAt } = gameInfo;
     if (pausedAt) {
       if (pausedAt === game.createdAt) {
         this.server.to(client.id).emit('gameStartPaused');
@@ -238,20 +327,34 @@ export class GameService {
         this.server.to(gameRoomId).emit('gameResumed');
       }
     }
-    const gameInfo: GameInfoServer = {
+    if (hasGameResumedNow) {
+      this.updateGameInfo(gameRoomId, {
+        ...game,
+        pausedAt: game.pausedAt + RESUME_GAME_DELAY_MS * 2,
+      });
+      this.resumeGameDelay(client.id, userId, gameRoomId);
+    } else {
+      this.updateGameInfo(gameRoomId, gameInfo);
+    }
+  }
+
+  private getPlayerLeaveGameInfo(
+    userId: string,
+    game: GameInfoServer,
+  ): GameInfoServer {
+    const isPlayerOne = userId === game.playerOneId;
+    const isPlayerTwo = userId === game.playerTwoId;
+    const playerOneLeftAt = isPlayerOne ? Date.now() : game.playerOneLeftAt;
+    const playerTwoLeftAt = isPlayerTwo ? Date.now() : game.playerTwoLeftAt;
+    const pausedAt = game.pausedAt ? game.pausedAt : Date.now();
+    const updatedGameInfo: GameInfoServer = {
       ...game,
-      playState,
+      playState: 'paused',
       pausedAt,
       playerOneLeftAt,
       playerTwoLeftAt,
     };
-    if (hasGameResumedNow) {
-      setTimeout(() => {
-        this.games.set(gameRoomId, gameInfo);
-      }, RESUME_GAME_DELAY_MS);
-    } else {
-      this.games.set(gameRoomId, gameInfo);
-    }
+    return updatedGameInfo;
   }
 
   private playerClientLeaveGame({
@@ -272,18 +375,8 @@ export class GameService {
     playerClients.delete(clientId);
     if (playerClients.size === 0) {
       // Pause the game when a player close all the tabs
-      const isPlayerOne = userId === game.playerOneId;
-      const isPlayerTwo = userId === game.playerTwoId;
-      const playerOneLeftAt = isPlayerOne ? Date.now() : game.playerOneLeftAt;
-      const playerTwoLeftAt = isPlayerTwo ? Date.now() : game.playerTwoLeftAt;
-      const pausedAt = game.pausedAt ? game.pausedAt : Date.now();
-      this.games.set(gameId, {
-        ...game,
-        playState: 'paused',
-        pausedAt,
-        playerOneLeftAt,
-        playerTwoLeftAt,
-      });
+      const updatedGameInfo = this.getPlayerLeaveGameInfo(userId, game);
+      this.updateGameInfo(gameId, updatedGameInfo);
       const hasGamePausedNow = game.pausedAt === null;
       if (hasGamePausedNow) {
         if (this.server) {
@@ -330,12 +423,12 @@ export class GameService {
     }
     if (isPlayerOne) {
       if (command === 'paddleMoveRight') {
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleMoveRight(gameInfo.gameState),
         });
       } else if (command === 'paddleMoveLeft') {
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleMoveLeft(gameInfo.gameState),
         });
@@ -344,24 +437,24 @@ export class GameService {
           return;
         }
         const { dragCurrPos, dragPrevPos } = payload;
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleDrag(gameInfo.gameState, dragCurrPos, dragPrevPos),
         });
       } else if (command === 'paddleStop') {
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleStop(gameInfo.gameState),
         });
       }
     } else {
       if (command === 'paddleMoveRight') {
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentMoveRight(gameInfo.gameState),
         });
       } else if (command === 'paddleMoveLeft') {
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentMoveLeft(gameInfo.gameState),
         });
@@ -370,7 +463,7 @@ export class GameService {
           return;
         }
         const { dragCurrPos, dragPrevPos } = payload;
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentDrag(
             gameInfo.gameState,
@@ -379,7 +472,7 @@ export class GameService {
           ),
         });
       } else if (command === 'paddleStop') {
-        this.games.set(gameRoomId, {
+        this.updateGameInfo(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentStop(gameInfo.gameState),
         });
@@ -398,12 +491,13 @@ export class GameService {
     }
     const isPlayerOne = userId === game.playerOneId;
     const isPlayerTwo = userId === game.playerTwoId;
+    let updatedGameInfo = game;
     if (isPlayerOne) {
-      game.gameState.scoreOpponent = MAX_SCORE;
+      updatedGameInfo = this.setPlayerTwoMaxScore(gameRoomId, game);
     } else if (isPlayerTwo) {
-      game.gameState.score = MAX_SCORE;
+      updatedGameInfo = this.setPlayerOneMaxScore(gameRoomId, game);
     }
-    this.finishGame(game, gameRoomId);
+    this.finishGame(updatedGameInfo, gameRoomId);
   }
 
   getGameId(userId: string): GameId | null {
@@ -427,11 +521,18 @@ export class GameService {
   }
 
   getOngoingGames() {
-    return [...this.games.entries()].map(([gameId, gameInfo]) => ({
-      gameId,
-      playerOne: this.playerToUser.get(gameInfo.playerOneId),
-      playerTwo: this.playerToUser.get(gameInfo.playerTwoId),
-    }));
+    return [...this.games.entries()].reduce<GameWithPlayers[]>(
+      (ongoingGames, currentEntry) => {
+        const [gameId, gameInfo] = currentEntry;
+        const playerOne = this.playerToUser.get(gameInfo.playerOneId);
+        const playerTwo = this.playerToUser.get(gameInfo.playerTwoId);
+        if (playerOne && playerTwo) {
+          return [...ongoingGames, { gameId, playerOne, playerTwo }];
+        }
+        return ongoingGames;
+      },
+      [],
+    );
   }
 
   getPlayingUsers() {
@@ -461,6 +562,8 @@ export class GameService {
     }
     this.playerToUser.set(playerOne.id, playerOne);
     this.playerToUser.set(playerTwo.id, playerTwo);
+    this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
+    this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
     const gameState = newGame();
     const now = Date.now();
     this.games.set(gamePairing.gameRoomId, {
@@ -472,9 +575,8 @@ export class GameService {
       pausedAt: now,
       playerOneLeftAt: now,
       playerTwoLeftAt: now,
+      gameMode: null,
     });
-    this.userToGame.set(gamePairing.userOneId, gamePairing.gameRoomId);
-    this.userToGame.set(gamePairing.userTwoId, gamePairing.gameRoomId);
     if (!this.intervalId) {
       // buscar una mejor manera de hacer esto -> instanciar un gameRunner?
       this.intervalId = setInterval(() => {
@@ -578,5 +680,52 @@ export class GameService {
       sort,
       search,
     });
+  }
+
+  handleGameConfig(client: Socket, gameConfigDto: GameConfigDto) {
+    const userId = client.request.user.id;
+    const gameInfo = this.games.get(gameConfigDto.gameRoomId);
+    const gameMode = gameConfigDto.gameMode;
+
+    if (gameInfo) {
+      const isPlayerOne = userId === gameInfo.playerOneId;
+      if (
+        isPlayerOne &&
+        gameInfo.gameMode === null &&
+        isGameModeType(gameMode)
+      ) {
+        const isShortPaddleMode = gameMode === 'shortPaddle';
+        this.updateGameInfo(gameConfigDto.gameRoomId, {
+          ...gameInfo,
+          gameState: {
+            ...gameInfo.gameState,
+            paddle: {
+              ...gameInfo.gameState.paddle,
+              x: calcInitialPaddleX(isShortPaddleMode),
+              short: isShortPaddleMode,
+            },
+            paddleOpponent: {
+              ...gameInfo.gameState.paddleOpponent,
+              x: calcInitialPaddleX(isShortPaddleMode),
+              short: isShortPaddleMode,
+            },
+          },
+          gameMode,
+        });
+        if (this.server) {
+          this.server
+            .to(gameInfo.playerOneId)
+            .emit('shouldConfigureGame', false);
+        }
+      }
+    }
+  }
+
+  getShouldConfigureGame(userId: string): boolean {
+    const gameInfo = this.getGameInfoFromUserId(userId);
+    if (!gameInfo) {
+      return false;
+    }
+    return gameInfo.playerOneId === userId && gameInfo.gameMode === null;
   }
 }

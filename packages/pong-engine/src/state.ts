@@ -19,9 +19,9 @@ import {
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
-  PADDLE_WIDTH,
   PADDLE_HEIGHT,
   BALL_RADIUS,
+  getPaddleWidth,
 } from './constants';
 
 type EmptyPayload = object;
@@ -60,22 +60,27 @@ export const initialBallState = (): GameBall => {
   };
 };
 
-export const initialPaddleState = (): GamePaddle => ({
-  x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
+export const calcInitialPaddleX = (short = false): number =>
+  CANVAS_WIDTH / 2 - getPaddleWidth(short) / 2;
+
+export const initialPaddleState = (short = false): GamePaddle => ({
+  x: calcInitialPaddleX(short),
   y: CANVAS_HEIGHT - 2 * PADDLE_HEIGHT,
   slide: 0,
-  width: PADDLE_WIDTH,
+  width: getPaddleWidth(short),
   height: PADDLE_HEIGHT,
   color: '#FFF',
+  short,
 });
 
-export const initialPaddleOpponentState = (): GamePaddle => ({
-  x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
+export const initialPaddleOpponentState = (short = false): GamePaddle => ({
+  x: CANVAS_WIDTH / 2 - getPaddleWidth(short) / 2,
   y: PADDLE_HEIGHT,
   slide: 0,
-  width: PADDLE_WIDTH,
+  width: getPaddleWidth(short),
   height: PADDLE_HEIGHT,
   color: '#FFF',
+  short,
 });
 
 export const reducer = (

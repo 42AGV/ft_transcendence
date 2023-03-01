@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../casl-ability.factory';
 import { AuthorizationService } from '../authorization.service';
@@ -24,7 +24,7 @@ export class CrMemberPoliciesGuard extends PoliciesGuard {
         chatId,
       );
     if (!authCrm) {
-      throw new NotFoundException();
+      return null;
     }
     return this.caslAbilityFactory.defineAbilitiesFor(authCrm);
   }

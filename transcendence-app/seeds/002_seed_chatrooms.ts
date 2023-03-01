@@ -20,7 +20,9 @@ let startTime = new Date(Date.now());
 
 const createRandomChatroomMessage = (chatroomId: string, userId: string) => {
   const oldDate = startTime;
-  startTime = new Date(startTime.setSeconds(1 + startTime.getSeconds()));
+  startTime = new Date(
+    startTime.setMilliseconds(1 + startTime.getMilliseconds()),
+  );
   return {
     chatroomId,
     userId,

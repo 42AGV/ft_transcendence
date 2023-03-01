@@ -9,7 +9,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
   grid-row-gap: calc(var(--row-gap) * 1.5);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .avatar-page-center-element-wrapper {
@@ -99,9 +99,13 @@
     display: flex;
     flex-direction: row;
     margin-top: var(--row-gap);
-    grid-column: 1 / var(--column-end);
+    grid-column: 1 / -1;
     grid-row: 5 / 6;
     justify-content: space-evenly;
+  }
+
+  .avatar-page-buttons-wrapper > * {
+    max-width: 15rem;
   }
 }
 

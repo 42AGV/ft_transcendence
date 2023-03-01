@@ -15,6 +15,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { BadRequestTransformationFilter } from '../shared/filters/bad-request-transformation.filter';
 import { TwoFactorAuthenticatedGuard } from '../shared/guards/two-factor-authenticated.guard';
+import { GameConfigDto } from './dto/game-config.dto';
 import { GameInputDto } from './dto/game-input.dto';
 import { GameService } from './game.service';
 
@@ -68,5 +69,21 @@ export class GameGateway {
   @SubscribeMessage('getPlayingUsers')
   handleGetPlayingUsers(@ConnectedSocket() client: Socket) {
     client.emit('playingUsers', [...this.gameService.getPlayingUsers()]);
+  }
+
+  @SubscribeMessage('gameConfigSubmit')
+  handleGameConfigSubmit(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() gameConfigDto: GameConfigDto,
+  ) {
+    this.gameService.handleGameConfig(client, gameConfigDto);
+  }
+
+  @SubscribeMessage('getShouldConfigureGame')
+  handleGetShouldConfigureGame(@ConnectedSocket() client: Socket) {
+    client.emit(
+      'shouldConfigureGame',
+      this.gameService.getShouldConfigureGame(client.request.user.id),
+    );
   }
 }

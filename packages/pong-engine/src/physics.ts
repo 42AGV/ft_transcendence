@@ -5,10 +5,10 @@ import {
   MIN_PADDLE_BOUNCE_ANGLE,
   MAX_PADDLE_OPPONENT_BOUNCE_ANGLE,
   MIN_PADDLE_OPPONENT_BOUNCE_ANGLE,
-  PADDLE_WIDTH,
   PADDLE_SLIDE_SPEED,
   BALL_RADIUS,
   PADDLE_HEIGHT,
+  getPaddleWidth,
 } from './constants';
 import { GameBall, GamePaddle, Coord } from './models';
 
@@ -59,7 +59,7 @@ const bounceArkanoid = (
   const paddleBallDistance = ball.x - paddle.x;
   const bounceAngle =
     MAX_PADDLE_BOUNCE_ANGLE -
-    (paddleBallDistance / PADDLE_WIDTH) *
+    (paddleBallDistance / getPaddleWidth(paddle.short)) *
       (MAX_PADDLE_BOUNCE_ANGLE - MIN_PADDLE_BOUNCE_ANGLE);
   return getArkanoidBounce(ball, bounceAngle, deltaTime);
 };
@@ -72,7 +72,7 @@ const bounceArkanoidOpponent = (
   const paddleBallDistance = ball.x - paddle.x;
   const bounceAngle =
     MAX_PADDLE_OPPONENT_BOUNCE_ANGLE -
-    (paddleBallDistance / PADDLE_WIDTH) *
+    (paddleBallDistance / getPaddleWidth(paddle.short)) *
       (MAX_PADDLE_OPPONENT_BOUNCE_ANGLE - MIN_PADDLE_OPPONENT_BOUNCE_ANGLE);
   return getArkanoidBounce(ball, bounceAngle, deltaTime);
 };
@@ -107,7 +107,7 @@ const paddleCollision = (ball: GameBall, paddle: GamePaddle) =>
   ball.x < paddle.x + paddle.width + BALL_RADIUS;
 
 export const calcInitialBallSpeed = (): Coord => {
-  const coef = Math.ceil(3 * Math.random());
+  const coef = Math.floor(Math.random() * 4);
   const angle = (Math.PI / 2) * coef + Math.PI / 4;
 
   return {
@@ -155,13 +155,15 @@ export const getPaddlePos = (
   paddle: GamePaddle,
   deltaTime: number,
 ): GamePaddle => {
+  const newPaddleX = paddle.x + paddle.slide * deltaTime;
+
   if (
-    (paddle.x > 0 && paddle.slide < 0) ||
-    (paddle.x < CANVAS_WIDTH - PADDLE_WIDTH && paddle.slide > 0)
+    newPaddleX > 0 &&
+    newPaddleX < CANVAS_WIDTH - getPaddleWidth(paddle.short)
   ) {
     return {
       ...paddle,
-      x: paddle.x + paddle.slide * deltaTime,
+      x: newPaddleX,
     };
   }
   return paddle;
@@ -176,8 +178,8 @@ export const dragPaddle = (
 
   if (deltaX < 0) {
     deltaX = 0;
-  } else if (deltaX > CANVAS_WIDTH - PADDLE_WIDTH) {
-    deltaX = CANVAS_WIDTH - PADDLE_WIDTH;
+  } else if (deltaX > CANVAS_WIDTH - getPaddleWidth(paddle.short)) {
+    deltaX = CANVAS_WIDTH - getPaddleWidth(paddle.short);
   }
 
   return {
