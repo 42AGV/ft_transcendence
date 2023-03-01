@@ -233,6 +233,49 @@ export class GameService {
     });
   }
 
+  private getPlayerJoinGameInfo(
+    userId: string,
+    gameInfo: GameInfoServer,
+  ): GameInfoServer {
+    const isPlayerOne = userId === gameInfo.playerOneId;
+    const isPlayerTwo = userId === gameInfo.playerTwoId;
+    const playerOneLeftAt = isPlayerOne ? null : gameInfo.playerOneLeftAt;
+    const playerTwoLeftAt = isPlayerTwo ? null : gameInfo.playerTwoLeftAt;
+    const pausedAt =
+      playerOneLeftAt === null && playerTwoLeftAt === null
+        ? null
+        : gameInfo.pausedAt;
+    const playState = pausedAt ? 'paused' : 'playing';
+    const updatedGameInfo: GameInfoServer = {
+      ...gameInfo,
+      playState,
+      pausedAt,
+      playerOneLeftAt,
+      playerTwoLeftAt,
+    };
+    return updatedGameInfo;
+  }
+
+  private resumeGameDelay(
+    clientId: string,
+    userId: string,
+    gameRoomId: string,
+  ) {
+    setTimeout(() => {
+      const playerClients = this.playerToClients.get(userId);
+      if (!playerClients) {
+        return;
+      }
+      const hasClient = playerClients.has(clientId);
+      const gameInfo = this.games.get(gameRoomId);
+      if (!hasClient || !gameInfo) {
+        return;
+      }
+      const updatedGameInfo = this.getPlayerJoinGameInfo(userId, gameInfo);
+      this.updateGameInfo(gameRoomId, updatedGameInfo);
+    }, RESUME_GAME_DELAY_MS);
+  }
+
   handleGameJoin(client: Socket, gameRoomId: string) {
     if (!this.server) {
       return;
@@ -266,13 +309,9 @@ export class GameService {
     if (!game.pausedAt) {
       return;
     }
-    const playerOneLeftAt = isPlayerOne ? null : game.playerOneLeftAt;
-    const playerTwoLeftAt = isPlayerTwo ? null : game.playerTwoLeftAt;
-    const pausedAt =
-      playerOneLeftAt === null && playerTwoLeftAt === null
-        ? null
-        : game.pausedAt;
-    const playState = pausedAt === null ? 'playing' : 'paused';
+
+    const gameInfo = this.getPlayerJoinGameInfo(userId, game);
+    const { pausedAt } = gameInfo;
     if (pausedAt) {
       if (pausedAt === game.createdAt) {
         this.server.to(client.id).emit('gameStartPaused');
@@ -288,24 +327,34 @@ export class GameService {
         this.server.to(gameRoomId).emit('gameResumed');
       }
     }
-    const gameInfo: GameInfoServer = {
-      ...game,
-      playState,
-      pausedAt,
-      playerOneLeftAt,
-      playerTwoLeftAt,
-    };
     if (hasGameResumedNow) {
       this.updateGameInfo(gameRoomId, {
         ...game,
         pausedAt: game.pausedAt + RESUME_GAME_DELAY_MS * 2,
       });
-      setTimeout(() => {
-        this.updateGameInfo(gameRoomId, gameInfo);
-      }, RESUME_GAME_DELAY_MS);
+      this.resumeGameDelay(client.id, userId, gameRoomId);
     } else {
       this.updateGameInfo(gameRoomId, gameInfo);
     }
+  }
+
+  private getPlayerLeaveGameInfo(
+    userId: string,
+    game: GameInfoServer,
+  ): GameInfoServer {
+    const isPlayerOne = userId === game.playerOneId;
+    const isPlayerTwo = userId === game.playerTwoId;
+    const playerOneLeftAt = isPlayerOne ? Date.now() : game.playerOneLeftAt;
+    const playerTwoLeftAt = isPlayerTwo ? Date.now() : game.playerTwoLeftAt;
+    const pausedAt = game.pausedAt ? game.pausedAt : Date.now();
+    const updatedGameInfo: GameInfoServer = {
+      ...game,
+      playState: 'paused',
+      pausedAt,
+      playerOneLeftAt,
+      playerTwoLeftAt,
+    };
+    return updatedGameInfo;
   }
 
   private playerClientLeaveGame({
@@ -326,18 +375,8 @@ export class GameService {
     playerClients.delete(clientId);
     if (playerClients.size === 0) {
       // Pause the game when a player close all the tabs
-      const isPlayerOne = userId === game.playerOneId;
-      const isPlayerTwo = userId === game.playerTwoId;
-      const playerOneLeftAt = isPlayerOne ? Date.now() : game.playerOneLeftAt;
-      const playerTwoLeftAt = isPlayerTwo ? Date.now() : game.playerTwoLeftAt;
-      const pausedAt = game.pausedAt ? game.pausedAt : Date.now();
-      this.updateGameInfo(gameId, {
-        ...game,
-        playState: 'paused',
-        pausedAt,
-        playerOneLeftAt,
-        playerTwoLeftAt,
-      });
+      const updatedGameInfo = this.getPlayerLeaveGameInfo(userId, game);
+      this.updateGameInfo(gameId, updatedGameInfo);
       const hasGamePausedNow = game.pausedAt === null;
       if (hasGamePausedNow) {
         if (this.server) {
