@@ -114,18 +114,12 @@ export class GameService {
     }
   }
 
-  private updateGameInfo(gameId: string, gameInfo: GameInfoServer) {
-    if (this.games.has(gameId)) {
-      this.games.set(gameId, gameInfo);
-    }
-  }
-
   private setPlayerOneMaxScore(gameId: string, gameInfo: GameInfoServer) {
     const updatedGameInfo: GameInfoServer = {
       ...gameInfo,
       gameState: { ...gameInfo.gameState, score: MAX_SCORE },
     };
-    this.updateGameInfo(gameId, updatedGameInfo);
+    this.games.set(gameId, updatedGameInfo);
     return updatedGameInfo;
   }
 
@@ -134,7 +128,7 @@ export class GameService {
       ...gameInfo,
       gameState: { ...gameInfo.gameState, scoreOpponent: MAX_SCORE },
     };
-    this.updateGameInfo(gameId, updatedGameInfo);
+    this.games.set(gameId, updatedGameInfo);
     return updatedGameInfo;
   }
 
@@ -206,7 +200,7 @@ export class GameService {
             gameInfo.gameState,
           );
           const newGameInfo: GameInfoServer = { ...gameInfo, gameState };
-          this.updateGameInfo(gameId, newGameInfo);
+          this.games.set(gameId, newGameInfo);
           const { playState, playerOneId, playerTwoId, gameMode } = gameInfo;
           const newGameInfoClient: GameInfoClient = {
             gameState,
@@ -272,7 +266,7 @@ export class GameService {
         return;
       }
       const updatedGameInfo = this.getPlayerJoinGameInfo(userId, gameInfo);
-      this.updateGameInfo(gameRoomId, updatedGameInfo);
+      this.games.set(gameRoomId, updatedGameInfo);
     }, RESUME_GAME_DELAY_MS);
   }
 
@@ -328,13 +322,13 @@ export class GameService {
       }
     }
     if (hasGameResumedNow) {
-      this.updateGameInfo(gameRoomId, {
+      this.games.set(gameRoomId, {
         ...game,
         pausedAt: game.pausedAt + RESUME_GAME_DELAY_MS * 2,
       });
       this.resumeGameDelay(client.id, userId, gameRoomId);
     } else {
-      this.updateGameInfo(gameRoomId, gameInfo);
+      this.games.set(gameRoomId, gameInfo);
     }
   }
 
@@ -376,7 +370,7 @@ export class GameService {
     if (playerClients.size === 0) {
       // Pause the game when a player close all the tabs
       const updatedGameInfo = this.getPlayerLeaveGameInfo(userId, game);
-      this.updateGameInfo(gameId, updatedGameInfo);
+      this.games.set(gameId, updatedGameInfo);
       const hasGamePausedNow = game.pausedAt === null;
       if (hasGamePausedNow) {
         if (this.server) {
@@ -423,12 +417,12 @@ export class GameService {
     }
     if (isPlayerOne) {
       if (command === 'paddleMoveRight') {
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleMoveRight(gameInfo.gameState),
         });
       } else if (command === 'paddleMoveLeft') {
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleMoveLeft(gameInfo.gameState),
         });
@@ -437,24 +431,24 @@ export class GameService {
           return;
         }
         const { dragCurrPos, dragPrevPos } = payload;
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleDrag(gameInfo.gameState, dragCurrPos, dragPrevPos),
         });
       } else if (command === 'paddleStop') {
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleStop(gameInfo.gameState),
         });
       }
     } else {
       if (command === 'paddleMoveRight') {
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentMoveRight(gameInfo.gameState),
         });
       } else if (command === 'paddleMoveLeft') {
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentMoveLeft(gameInfo.gameState),
         });
@@ -463,7 +457,7 @@ export class GameService {
           return;
         }
         const { dragCurrPos, dragPrevPos } = payload;
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentDrag(
             gameInfo.gameState,
@@ -472,7 +466,7 @@ export class GameService {
           ),
         });
       } else if (command === 'paddleStop') {
-        this.updateGameInfo(gameRoomId, {
+        this.games.set(gameRoomId, {
           ...gameInfo,
           gameState: paddleOpponentStop(gameInfo.gameState),
         });
@@ -695,7 +689,7 @@ export class GameService {
         isGameModeType(gameMode)
       ) {
         const isShortPaddleMode = gameMode === 'shortPaddle';
-        this.updateGameInfo(gameConfigDto.gameRoomId, {
+        this.games.set(gameConfigDto.gameRoomId, {
           ...gameInfo,
           gameState: {
             ...gameInfo.gameState,
