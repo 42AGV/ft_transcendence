@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/42AGV/ft_transcendence#readme",
   "devDependencies": {
-    "eslint": "^8.29.0",
-    "prettier": "2.8.3"
+    "eslint": "^8.35.0",
+    "prettier": "2.8.4"
   }
 }

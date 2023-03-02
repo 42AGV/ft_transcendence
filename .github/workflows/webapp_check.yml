@@ -13,7 +13,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18.12.1'
+          node-version: '18.14.2'
           cache: 'npm'
           cache-dependency-path: |
             ./package-lock.json
