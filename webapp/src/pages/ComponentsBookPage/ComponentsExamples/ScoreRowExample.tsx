@@ -14,6 +14,12 @@ const scoreProps = {
 };
 export const ScoreRowExample = () => (
   <BookSection title="ScoreRow component">
-    <ScoreRow scoreProps={scoreProps} url="/" />
+    <ScoreRow
+      scoreProps={scoreProps}
+      url="/"
+      gameMode="Classic"
+      gameDuration={30}
+      date={new Date(Date.now())}
+    />
   </BookSection>
 );

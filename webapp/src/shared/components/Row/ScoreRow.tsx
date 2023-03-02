@@ -6,12 +6,21 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import { ScoreProps } from '../Score/Score';
 
-type ScoreRowProps = {
+export type ScoreRowProps = {
   scoreProps: ScoreProps;
   url?: string;
+  gameMode?: string;
+  gameDuration?: number;
+  date?: Date;
 };
 
-export default function ScoreRow({ scoreProps, url }: ScoreRowProps) {
+export default function ScoreRow({
+  scoreProps,
+  url,
+  gameMode,
+  gameDuration,
+  date,
+}: ScoreRowProps) {
   const cursorStyle = {
     cursor: 'pointer',
   };
@@ -47,13 +56,33 @@ export default function ScoreRow({ scoreProps, url }: ScoreRowProps) {
           </Text>
         </div>
         <div className="scorerow_text_lower_wrapper">
-          <Text
-            variant={TextVariant.HEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
-          >
-            {scoreProps.playerOneUserName}
-          </Text>
+          {gameMode && (
+            <Text
+              variant={TextVariant.PARAGRAPH}
+              color={TextColor.LIGHT}
+              weight={TextWeight.REGULAR}
+            >
+              {`Mode: ${gameMode} `}
+            </Text>
+          )}
+          {gameDuration && (
+            <Text
+              variant={TextVariant.PARAGRAPH}
+              color={TextColor.LIGHT}
+              weight={TextWeight.REGULAR}
+            >
+              {`Duration: ${gameDuration}sec.`}
+            </Text>
+          )}
+          {date && (
+            <Text
+              variant={TextVariant.PARAGRAPH}
+              color={TextColor.LIGHT}
+              weight={TextWeight.REGULAR}
+            >
+              {`Date: ${date.toLocaleString('en-GB')}`}
+            </Text>
+          )}
         </div>
       </div>
       {scoreProps.playerOneAvatar && (

@@ -56,6 +56,16 @@
   align-items: center;
   flex-direction: row;
 }
+.scorerow_text_wrapper .scorerow_text_upper_wrapper > *,
+.scorerow_text_wrapper .scorerow_text_lower_wrapper > * {
+  margin: 0;
+  overflow: hidden;
+  grid-column: span 1;
+  max-width: 70vw;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0;
+}
 
 .scorerow_text_upper_wrapper {
   display: flex;
@@ -63,5 +73,5 @@
 }
 .scorerow_text_lower_wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
