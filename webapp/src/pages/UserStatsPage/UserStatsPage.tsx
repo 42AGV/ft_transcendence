@@ -1,5 +1,4 @@
 import './UserStatsPage.css';
-import 'chartjs-adapter-date-fns';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { gameApi, usersApi } from '../../shared/services/ApiService';
 import { useCallback } from 'react';
@@ -13,6 +12,7 @@ import {
 import { useData } from '../../shared/hooks/UseData';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
 import { LoadingPage } from '../index';
+import 'chartjs-adapter-date-fns';
 import { Header, IconVariant } from '../../shared/components';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
