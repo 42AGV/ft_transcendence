@@ -29,6 +29,9 @@ export { default as ScoreRow } from './Row/ScoreRow';
 export { default as RowsList } from './RowsList/RowsList';
 export * from './RowsList/RowsList';
 
+export { default as ScoreRowsList } from './RowsList/ScoreRowsList';
+export * from './RowsList/ScoreRowsList';
+
 export { default as SearchForm } from './Input/SearchForm';
 
 export { default as MainTabTemplate } from './templates/MainTabPageTemplate/MainTabPageTemplate';

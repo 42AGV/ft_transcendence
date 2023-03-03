@@ -71,7 +71,7 @@ export default function ScoreRow({
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
-              {`Duration: ${gameDuration}sec.`}
+              {`Duration: ${gameDuration}sec. `}
             </Text>
           )}
           {date && (

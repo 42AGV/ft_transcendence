@@ -1,6 +1,18 @@
-import { ButtonVariant, IconVariant, RowItem } from '../../shared/components';
+import {
+  ButtonVariant,
+  Header,
+  IconVariant,
+  MediumAvatar,
+  ScoreRowItem,
+  ScoreRowsList,
+  SearchForm,
+  TextColor,
+  TextVariant,
+  TextWeight,
+  Text,
+} from '../../shared/components';
 import { AVATAR_EP_URL, USER_URL } from '../../shared/urls';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import React, { useCallback } from 'react';
 import { gameApi, usersApi } from '../../shared/services/ApiService';
 import { useData } from '../../shared/hooks/UseData';
@@ -14,53 +26,70 @@ import {
   GameControllerGetUserGamesSortEnum,
 } from '../../shared/generated';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
+import LoadingPage from '../LoadingPage/LoadingPage';
+import {
+  SearchContextProvider,
+  useSearchContext,
+} from '../../shared/context/SearchContext';
 
 export default function UserMatchHistoryPage() {
   const { username } = useParams();
   const { navigate } = useNavigation();
-  const getUser = useCallback(
+  const { goBack } = useNavigation();
+  const { result, fetchMoreResults } = useSearchContext();
+  const getSelf = useCallback(
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
-  const { data: user, isLoading: isUserLoading } =
-    useData<UserResponseDto>(getUser);
+  const { data: self, isLoading: isSelfLoading } =
+    useData<UserResponseDto>(getSelf);
 
-  const mapGameToRow = (game: Game): RowItem => {
-    const self: { username?: string; score: number } = {
-      username: username,
-      score:
-        username === game.playerOneUsername
-          ? game.playerOneScore
-          : game.playerTwoScore,
-    };
-    const other: { username?: string; score: number } = {
-      username:
-        username === game.playerOneUsername
-          ? game.playerTwoUsername
-          : game.playerOneUsername,
-      score:
-        username === game.playerOneUsername
-          ? game.playerTwoScore
-          : game.playerOneScore,
-    };
-    const getStringResult = () => {
-      return self.score < other.score
-        ? 'losing'
-        : self.score === other.score
-        ? 'tying'
-        : 'winning';
+  const mapGameToScoreRow = (game: Game): ScoreRowItem => {
+    const getOther = useCallback(
+      () =>
+        usersApi.userControllerGetUserByUserName({
+          userName:
+            username === game.playerOneUsername
+              ? game.playerTwoUsername
+              : game.playerOneUsername,
+        }),
+      [username],
+    );
+    const { data: other, isLoading: isOtherLoading } =
+      useData<UserResponseDto>(getOther);
+    const playerOne = self!.username === game.playerOneUsername ? self : other;
+    const playerTwo = self!.username === game.playerOneUsername ? other : self;
+    const scoreProps = {
+      playerOneAvatar: {
+        url: `${AVATAR_EP_URL}/${playerOne!.avatarId}`,
+        XCoordinate: playerOne!.avatarX,
+        YCoordinate: playerOne!.avatarY,
+      },
+      playerTwoAvatar: {
+        url: `${AVATAR_EP_URL}/${playerTwo!.avatarId}`,
+        XCoordinate: playerTwo!.avatarX,
+        YCoordinate: playerTwo!.avatarY,
+      },
+      playerOneUserName: playerOne!.username,
+      playerTwoUserName: playerTwo!.username,
+      playerOneScore: game.playerOneScore,
+      playerTwoScore: game.playerTwoScore,
     };
     return {
-      title:
-        `'${self.username}' scored ${self.score} points VS ` +
-        `'${other.username}' that scored ${
-          other.score
-        } points, ${getStringResult()} the game`,
-      subtitle: `a ${game.gameMode} game ran for ${game.gameDurationInSeconds} seconds`,
+      scoreProps: scoreProps,
       key: game.id,
-      altText: `Game started on ${game.createdAt}`,
+      gameMode: game.gameMode,
+      gameDuration: game.gameDurationInSeconds,
+      date: game.createdAt,
     };
   };
+
+  const data = ((array: object): ScoreRowItem[] | null => {
+    if (!Array.isArray(array)) {
+      return null;
+    }
+    return array.map((el) => mapGameToScoreRow(el));
+  })(result.data);
 
   const getUserGames = useCallback(
     <T extends Query>(requestParameters: T) =>
@@ -72,27 +101,60 @@ export default function UserMatchHistoryPage() {
       } as GameControllerGetUserGamesRequest),
     [username],
   );
-
+  if (isSelfLoading) {
+    return <LoadingPage />;
+  }
   return (
-    <RowsPageTemplate
-      title="games played"
-      isLoading={isUserLoading}
-      isNotFound={!user}
-      fetchFn={getUserGames}
-      dataMapper={mapGameToRow}
-      avatarProps={{
-        url: user ? `${AVATAR_EP_URL}/${user.avatarId}` : '',
-        XCoordinate: user ? user.avatarX : 0,
-        YCoordinate: user ? user.avatarY : 0,
-      }}
-      button={{
-        variant: ButtonVariant.SUBMIT,
-        onClick: () => navigate(`${USER_URL}/${username}/stats`),
-        iconVariant: IconVariant.STATS,
-      }}
-      avatarLabel={username!}
-      avatarCaption={`level ${user?.level ?? 1}`}
-      avatarLinkTo={`${USER_URL}/${username!}`}
-    />
+    <div className="rows-page">
+      <Header
+        icon={IconVariant.ARROW_BACK}
+        onClick={goBack}
+        statusVariant="button"
+        buttonProps={{
+          variant: ButtonVariant.SUBMIT,
+          onClick: () => navigate(`${USER_URL}/${username}/stats`),
+          iconVariant: IconVariant.STATS,
+        }}
+      >
+        games played
+      </Header>
+      <div className="rows-page-summary">
+        <Link to={`${USER_URL}/${username!}`}>
+          <MediumAvatar
+            {...{
+              url: self ? `${AVATAR_EP_URL}/${self.avatarId}` : '',
+              XCoordinate: self ? self.avatarX : 0,
+              YCoordinate: self ? self.avatarY : 0,
+            }}
+          />
+        </Link>
+        <div className="rows-page-text-info">
+          <Text
+            variant={TextVariant.SUBHEADING}
+            color={TextColor.LIGHT}
+            weight={TextWeight.MEDIUM}
+          >
+            {username!}
+          </Text>
+          <Text
+            variant={TextVariant.PARAGRAPH}
+            color={TextColor.LIGHT}
+            weight={TextWeight.MEDIUM}
+          >
+            {`level ${self?.level ?? 1}`}
+          </Text>
+        </div>
+      </div>
+      <SearchContextProvider fetchFn={getUserGames} maxEntries={ENTRIES_LIMIT}>
+        <>
+          <div className="rows-list-template-search">
+            <SearchForm />
+          </div>
+          <div className="rows-list-template-rows">
+            <ScoreRowsList rows={data!} onLastRowVisible={fetchMoreResults} />
+          </div>
+        </>
+      </SearchContextProvider>
+    </div>
   );
 }
