@@ -6,8 +6,8 @@ import { useParams } from 'react-router-dom';
 import {
   GameControllerGetUserLevelHistoryModeEnum,
   GameControllerGetUserStatsModeEnum,
-  GameStats,
   UserLevelWithTimestamp,
+  GameStats,
 } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
