@@ -4,9 +4,9 @@ import { gameApi, usersApi } from '../../shared/services/ApiService';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  UserLevelWithTimestamp,
   GameControllerGetUserLevelHistoryModeEnum,
   GameControllerGetUserStatsModeEnum,
-  UserLevelWithTimestamp,
   GameStats,
 } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
