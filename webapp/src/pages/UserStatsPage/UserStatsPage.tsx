@@ -114,6 +114,9 @@ export default function UserStatsPage() {
   if (areLevelsLoading || isUserLoading || areStatsLoading)
     return <LoadingPage />;
   if (!levels || !user || !stats) return <NotFoundPage />;
+  const toArray = (stats: GameStats) => {
+    return [stats.wins, stats.losses, stats.draws];
+  };
   return (
     <div className="stats-page">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
@@ -165,11 +168,15 @@ export default function UserStatsPage() {
               labels: ['win', 'loss', 'draw'],
               datasets: [
                 {
-                  data: stats.map((stat) => [
-                    stat.wins,
-                    stat.losses,
-                    stat.draws,
-                  ]),
+                  data: toArray(
+                    stats.reduce((prev, curr) => {
+                      return {
+                        wins: prev.wins + curr.wins,
+                        losses: prev.losses + curr.losses,
+                        draws: prev.draws + curr.draws,
+                      };
+                    }),
+                  ),
                 },
               ],
             }}
