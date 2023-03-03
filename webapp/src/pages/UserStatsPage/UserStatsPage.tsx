@@ -1,5 +1,5 @@
-import 'chartjs-adapter-date-fns';
 import './UserStatsPage.css';
+import 'chartjs-adapter-date-fns';
 import { Doughnut, Line } from 'react-chartjs-2';
 import { gameApi, usersApi } from '../../shared/services/ApiService';
 import { useCallback } from 'react';
