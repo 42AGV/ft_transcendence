@@ -15,6 +15,7 @@ import {
   AVATAR_EP_URL,
   EDIT_USER_URL,
   TWO_FACTOR_AUTH_ENABLE_URL,
+  USER_URL,
 } from '../../shared/urls';
 import { authApi } from '../../shared/services/ApiService';
 import { useNavigate } from 'react-router-dom';
@@ -95,6 +96,11 @@ export default function AuthUserPage() {
             iconVariant={IconVariant.USERS}
             url={EDIT_USER_URL}
             title="Edit profile"
+          />
+          <Row
+            iconVariant={IconVariant.STATS}
+            url={`${USER_URL}/${authUser?.username ?? ''}/history`}
+            title={'Game history'}
           />
         </>
       </AvatarPageTemplate>
