@@ -41,7 +41,7 @@ import { UserLevelWithTimestamp } from './stats/infrastructure/db/user-level-wit
 import { GameStatsService } from './stats/game-stats.service';
 import { GameStats } from './stats/dto/game-stats.dto';
 import { GameStatsQueryDto } from './stats/dto/game-stats-query.dto';
-import { GameWithUsers } from './dto/game-with-users';
+import { GameWithUsers } from './infrastructure/db/game-with-users.entity';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)

@@ -34,7 +34,7 @@ import { GameMode as GameModeEnum } from './enums/game-mode.enum';
 import { GameStatsService } from './stats/game-stats.service';
 import { GameConfigDto } from './dto/game-config.dto';
 import { isGameModeType } from './validators';
-import { GameWithUsers } from './dto/game-with-users';
+import { GameWithUsers } from './infrastructure/db/game-with-users.entity';
 
 type GameId = string;
 type UserId = string;
@@ -692,34 +692,12 @@ export class GameService {
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<GameWithUsers[] | null> {
-    const player = await this.userRepository.getByUsername(username);
-    const games = await this.retrieveUserGames(username, {
+    return this.gameRepository.getPaginatedUserGamesWithUsers(username, {
       limit,
       offset,
       sort,
       search,
     });
-    let gamesWithUsers;
-    if (player && games) {
-      gamesWithUsers = games.map(async (game) => {
-        const opponent = await this.userRepository.getById(username);
-        if (opponent) {
-          game.playerOneUsername === username
-            ? (game = new GameWithUsers({
-                ...game,
-                playerOne: player,
-                playerTwo: opponent,
-              }))
-            : (game = new GameWithUsers({
-                ...game,
-                playerOne: opponent,
-                playerTwo: player,
-              }));
-        }
-        return game as GameWithUsers;
-      });
-    }
-    return gamesWithUsers ? gamesWithUsers : null;
   }
 
   handleGameConfig(client: Socket, gameConfigDto: GameConfigDto) {

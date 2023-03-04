@@ -1,4 +1,5 @@
 import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
+import { GameWithUsers } from './game-with-users.entity';
 import { Game } from './game.entity';
 
 export abstract class IGameRepository {
@@ -12,4 +13,8 @@ export abstract class IGameRepository {
     username: string,
     paginationDto: Required<PaginationWithSearchQueryDto>,
   ): Promise<Game[] | null>;
+  abstract getPaginatedUserGamesWithUsers(
+    username: string,
+    paginationDto: Required<PaginationWithSearchQueryDto>,
+  ): Promise<GameWithUsers[] | null>;
 }

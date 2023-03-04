@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { table } from '../../../../../../shared/db/models';
 import { BasePostgresRepository } from '../../../../../../shared/db/postgres/postgres.repository';
 import { PostgresPool } from '../../../../../../shared/db/postgres/postgresConnection.provider';
-import { makeQuery } from '../../../../../../shared/db/postgres/utils';
-import { PaginationQueryDto } from '../../../../../../shared/dtos/pagination.query.dto';
 import {
-  capitalizeFirstLetter,
-  removeDoubleQuotes,
-} from '../../../../../../shared/utils';
+  makeQuery,
+  renameColumnsWithPrefix,
+} from '../../../../../../shared/db/postgres/utils';
+import { PaginationQueryDto } from '../../../../../../shared/dtos/pagination.query.dto';
 import { userKeys } from '../../../../../../user/infrastructure/db/user.entity';
 import {
   ChatroomMessageWithUser,
@@ -28,21 +27,6 @@ export class ChatroomMessagePostgresRepository
     super(pool, table.CHATROOM_MESSAGE, ChatroomMessage);
   }
 
-  private renameWithPrefix(
-    tableName: string,
-    columnNames: string[],
-    prefix: string,
-  ) {
-    return columnNames
-      .map(
-        (name) =>
-          `${tableName}.${name} AS "${prefix}${capitalizeFirstLetter(
-            removeDoubleQuotes(name),
-          )}"`,
-      )
-      .join(', ');
-  }
-
   async getWithUser(
     chatRoomId: string,
     { limit, offset }: Required<PaginationQueryDto>,
@@ -51,7 +35,7 @@ export class ChatroomMessagePostgresRepository
       this.pool,
       {
         text: `SELECT m.*,
-        ${this.renameWithPrefix('u', Object.values(userKeys), 'user')}
+        ${renameColumnsWithPrefix('u', Object.values(userKeys), 'user')}
       FROM ${this.table} m
       INNER JOIN ${table.USERS} u
         ON (m.${ChatroomMessageKeys.USER_ID} =

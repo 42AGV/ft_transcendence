@@ -3,7 +3,6 @@ import { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';
 import { MediumAvatar } from '../Avatar/Avatar';
 import { Link } from 'react-router-dom';
-import React from 'react';
 import { ScoreProps } from '../Score/Score';
 
 export type ScoreRowProps = {
@@ -58,7 +57,7 @@ export default function ScoreRow({
         <div className="scorerow_text_lower_wrapper">
           {gameMode && (
             <Text
-              variant={TextVariant.PARAGRAPH}
+              variant={TextVariant.CAPTION}
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
@@ -67,7 +66,7 @@ export default function ScoreRow({
           )}
           {gameDuration && (
             <Text
-              variant={TextVariant.PARAGRAPH}
+              variant={TextVariant.CAPTION}
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
@@ -76,11 +75,11 @@ export default function ScoreRow({
           )}
           {date && (
             <Text
-              variant={TextVariant.PARAGRAPH}
+              variant={TextVariant.CAPTION}
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
-              {`Date: ${date.toLocaleString('en-GB')}`}
+              {`Date: ${date.toLocaleString('en-GB', { dateStyle: 'short' })}`}
             </Text>
           )}
         </div>

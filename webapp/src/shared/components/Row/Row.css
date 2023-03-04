@@ -62,14 +62,14 @@
   overflow: hidden;
   grid-column: span 1;
   max-width: 70vw;
-  white-space: nowrap;
+  white-space: pre;
   text-overflow: ellipsis;
   padding: 0;
 }
 
 .scorerow_text_upper_wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 .scorerow_text_lower_wrapper {
   display: flex;
