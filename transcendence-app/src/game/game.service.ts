@@ -34,6 +34,7 @@ import { GameMode as GameModeEnum } from './enums/game-mode.enum';
 import { GameStatsService } from './stats/game-stats.service';
 import { GameConfigDto } from './dto/game-config.dto';
 import { isGameModeType } from './validators';
+import { GameWithUsers } from './dto/game-with-users';
 
 type GameId = string;
 type UserId = string;
@@ -665,7 +666,7 @@ export class GameService {
     });
   }
 
-  retrieveUserGames(
+  async retrieveUserGames(
     username: string,
     {
       limit = MAX_ENTRIES_PER_PAGE,
@@ -674,12 +675,51 @@ export class GameService {
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<Game[] | null> {
-    return this.gameRepository.getPaginatedUserGames(username, {
+    return await this.gameRepository.getPaginatedUserGames(username, {
       limit,
       offset,
       sort,
       search,
     });
+  }
+
+  async retrieveUserGamesWithUsers(
+    username: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ): Promise<GameWithUsers[] | null> {
+    const player = await this.userRepository.getByUsername(username);
+    const games = await this.retrieveUserGames(username, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
+    let gamesWithUsers;
+    if (player && games) {
+      gamesWithUsers = games.map(async (game) => {
+        const opponent = await this.userRepository.getById(username);
+        if (opponent) {
+          game.playerOneUsername === username
+            ? (game = new GameWithUsers({
+                ...game,
+                playerOne: player,
+                playerTwo: opponent,
+              }))
+            : (game = new GameWithUsers({
+                ...game,
+                playerOne: opponent,
+                playerTwo: player,
+              }));
+        }
+        return game as GameWithUsers;
+      });
+    }
+    return gamesWithUsers ? gamesWithUsers : null;
   }
 
   handleGameConfig(client: Socket, gameConfigDto: GameConfigDto) {

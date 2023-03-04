@@ -41,6 +41,7 @@ import { UserLevelWithTimestamp } from './stats/infrastructure/db/user-level-wit
 import { GameStatsService } from './stats/game-stats.service';
 import { GameStats } from './stats/dto/game-stats.dto';
 import { GameStatsQueryDto } from './stats/dto/game-stats-query.dto';
+import { GameWithUsers } from './dto/game-with-users';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -179,6 +180,27 @@ export class GameController {
     @Query() gamesPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<Game[]> {
     const games = await this.gameService.retrieveUserGames(
+      userName,
+      gamesPaginationQueryDto,
+    );
+    if (!games) {
+      throw new ServiceUnavailableException();
+    }
+    return games;
+  }
+
+  @Get('games/users/:userName')
+  @ApiOkResponse({
+    description: `List all games of a user, with users)`,
+    type: [GameWithUsers],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getUserGamesWithUsers(
+    @Param('userName') userName: string,
+    @Query() gamesPaginationQueryDto: PaginationWithSearchQueryDto,
+  ): Promise<GameWithUsers[]> {
+    const games = await this.gameService.retrieveUserGamesWithUsers(
       userName,
       gamesPaginationQueryDto,
     );

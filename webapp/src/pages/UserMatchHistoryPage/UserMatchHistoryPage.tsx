@@ -45,33 +45,19 @@ export default function UserMatchHistoryPage() {
     useData<UserResponseDto>(getSelf);
 
   const mapGameToScoreRow = (game: Game): ScoreRowItem => {
-    const getOther = useCallback(
-      () =>
-        usersApi.userControllerGetUserByUserName({
-          userName:
-            username === game.playerOneUsername
-              ? game.playerTwoUsername
-              : game.playerOneUsername,
-        }),
-      [username],
-    );
-    const { data: other, isLoading: isOtherLoading } =
-      useData<UserResponseDto>(getOther);
-    const playerOne = self!.username === game.playerOneUsername ? self : other;
-    const playerTwo = self!.username === game.playerOneUsername ? other : self;
     const scoreProps = {
       playerOneAvatar: {
-        url: `${AVATAR_EP_URL}/${playerOne!.avatarId}`,
-        XCoordinate: playerOne!.avatarX,
-        YCoordinate: playerOne!.avatarY,
+        url: `${AVATAR_EP_URL}/${game.playerOne!.avatarId}`,
+        XCoordinate: game.playerOne!.avatarX,
+        YCoordinate: game.playerOne!.avatarY,
       },
       playerTwoAvatar: {
-        url: `${AVATAR_EP_URL}/${playerTwo!.avatarId}`,
-        XCoordinate: playerTwo!.avatarX,
-        YCoordinate: playerTwo!.avatarY,
+        url: `${AVATAR_EP_URL}/${game.playerTwo!.avatarId}`,
+        XCoordinate: game.playerTwo!.avatarX,
+        YCoordinate: game.playerTwo!.avatarY,
       },
-      playerOneUserName: playerOne!.username,
-      playerTwoUserName: playerTwo!.username,
+      playerOneUserName: game.playerOne!.username,
+      playerTwoUserName: game.playerTwo!.username,
       playerOneScore: game.playerOneScore,
       playerTwoScore: game.playerTwoScore,
     };
@@ -101,9 +87,6 @@ export default function UserMatchHistoryPage() {
       } as GameControllerGetUserGamesRequest),
     [username],
   );
-  if (isSelfLoading) {
-    return <LoadingPage />;
-  }
   return (
     <div className="rows-page">
       <Header
