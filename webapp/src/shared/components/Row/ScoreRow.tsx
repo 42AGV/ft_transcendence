@@ -44,7 +44,9 @@ export default function ScoreRow({
             color={TextColor.LIGHT}
             weight={TextWeight.BOLD}
           >
-            {`${scoreProps.playerOneScore?.toString()} - ${scoreProps.playerTwoScore?.toString()} `}
+            {scoreProps.playerOneScore && scoreProps.playerTwoScore
+              ? `${scoreProps.playerOneScore?.toString()} - ${scoreProps.playerTwoScore?.toString()} `
+              : ' - '}
           </Text>
           <Text
             variant={TextVariant.HEADING}
