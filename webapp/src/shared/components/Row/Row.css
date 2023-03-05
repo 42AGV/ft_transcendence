@@ -69,7 +69,7 @@
 
 .scorerow_text_upper_wrapper {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
 }
 .scorerow_text_lower_wrapper {
   display: flex;

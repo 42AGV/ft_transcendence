@@ -57,7 +57,7 @@ export default function ScoreRow({
         <div className="scorerow_text_lower_wrapper">
           {gameMode && (
             <Text
-              variant={TextVariant.CAPTION}
+              variant={TextVariant.PARAGRAPH}
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
@@ -66,7 +66,7 @@ export default function ScoreRow({
           )}
           {gameDuration && (
             <Text
-              variant={TextVariant.CAPTION}
+              variant={TextVariant.PARAGRAPH}
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
@@ -75,11 +75,11 @@ export default function ScoreRow({
           )}
           {date && (
             <Text
-              variant={TextVariant.CAPTION}
+              variant={TextVariant.PARAGRAPH}
               color={TextColor.LIGHT}
               weight={TextWeight.REGULAR}
             >
-              {`Date: ${date.toLocaleString('en-GB', { dateStyle: 'short' })}`}
+              {`Date: ${date.toLocaleString('en-GB')}`}
             </Text>
           )}
         </div>
