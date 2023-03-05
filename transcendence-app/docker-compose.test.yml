@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   test-db:
-    image: postgres:14.6-alpine3.17
+    image: postgres:14.7-alpine3.17
     restart: always
     ports:
       - "5433:5432"
@@ -10,7 +10,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=ft_transcendence
   memcached:
-    image: memcached:1.6.17-alpine3.17
+    image: memcached:1.6.18-alpine3.17
     restart: always
     ports:
       - "11212:11211"

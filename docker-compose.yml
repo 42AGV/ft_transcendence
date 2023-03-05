@@ -37,12 +37,12 @@ services:
       - MEMCACHED_SECRET=${MEMCACHED_SECRET:?required}
 
   db:
-    image: postgres:14.6-alpine3.17
+    image: postgres:14.7-alpine3.17
     restart: always
     user: postgres
     environment:
       - POSTGRES_DB=ft_transcendence
 
   memcached:
-    image: memcached:1.6.17-alpine3.17
+    image: memcached:1.6.18-alpine3.17
     restart: always
