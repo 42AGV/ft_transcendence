@@ -6,9 +6,8 @@ import { useParams } from 'react-router-dom';
 import {
   UserLevelWithTimestamp,
   GameControllerGetUserLevelHistoryModeEnum,
-  GameControllerGetUserStatsModeEnum,
-  UserLevelWithTimestampGameModeEnum,
   GameStats,
+  User,
 } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
@@ -17,44 +16,109 @@ import 'chartjs-adapter-date-fns';
 import { Header, IconVariant } from '../../shared/components';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
+type GameModeLevels = {
+  [key in GameControllerGetUserLevelHistoryModeEnum]: UserLevelWithTimestamp[];
+};
+
 export default function UserStatsPage() {
   const { username } = useParams()!;
   const { goBack } = useNavigation();
-  const getLevelHistory = useCallback(
-    () =>
-      gameApi.gameControllerGetUserLevelHistory({
-        username: username!,
-        mode: GameControllerGetUserLevelHistoryModeEnum.Classic,
-      }),
+  const getUserByUserName = useCallback(
+    () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
-  const { data: levels, isLoading: areLevelsLoading } =
-    useData<UserLevelWithTimestamp[]>(getLevelHistory);
+  const { data: user, isLoading: isUserLoading } =
+    useData<User>(getUserByUserName);
+  const getLevelHistory = useCallback(async (): Promise<
+    UserLevelWithTimestamp[]
+  > => {
+    if (!user) {
+      return Promise.reject('Unresolved');
+    }
+    return gameApi.gameControllerGetUserLevelHistory({
+      username: username!,
+    });
+  }, [user, username]);
+  const { data: levels, isLoading: areLevelsLoading } = useData<
+    UserLevelWithTimestamp[]
+  >(
+    getLevelHistory,
+    useCallback(() => {}, []),
+  );
+
+  const getInitialUserLevelEntry = (
+    lUser: User,
+    key: GameControllerGetUserLevelHistoryModeEnum,
+  ): UserLevelWithTimestamp[] => {
+    return [
+      {
+        username: lUser.username,
+        timestamp: lUser.createdAt,
+        gameMode: key,
+        level: 1,
+        gameId: '',
+      },
+    ];
+  };
+  const getGameModeLevels = (): GameModeLevels | null => {
+    if (!user) {
+      return null;
+    }
+    const initialGameModeLevels: GameModeLevels = {
+      training: getInitialUserLevelEntry(user, 'training'),
+      classic: getInitialUserLevelEntry(user, 'classic'),
+      shortPaddle: getInitialUserLevelEntry(user, 'shortPaddle'),
+      mysteryZone: getInitialUserLevelEntry(user, 'mysteryZone'),
+      unknown: getInitialUserLevelEntry(user, 'unknown'),
+    };
+    if (!levels) {
+      return initialGameModeLevels;
+    }
+    return levels.reduce<GameModeLevels>((gameModeLevels, level) => {
+      switch (level.gameMode) {
+        case 'training':
+          return {
+            ...gameModeLevels,
+            training: [...gameModeLevels.training, level],
+          };
+        case 'classic':
+          return {
+            ...gameModeLevels,
+            classic: [...gameModeLevels.classic, level],
+          };
+        case 'mysteryZone':
+          return {
+            ...gameModeLevels,
+            mysteryZone: [...gameModeLevels.mysteryZone, level],
+          };
+        case 'shortPaddle':
+          return {
+            ...gameModeLevels,
+            shortPaddle: [...gameModeLevels.shortPaddle, level],
+          };
+        case 'unknown':
+          return {
+            ...gameModeLevels,
+            unknown: [...gameModeLevels.unknown, level],
+          };
+        default:
+          return gameModeLevels;
+      }
+    }, initialGameModeLevels);
+  };
+
   const getStats = useCallback(
     () =>
       gameApi.gameControllerGetUserStats({
         username: username!,
-        mode: GameControllerGetUserStatsModeEnum.Classic,
       }),
     [username],
   );
   const { data: stats, isLoading: areStatsLoading } =
     useData<GameStats>(getStats);
-  const getUserByUserName = useCallback(
-    () => usersApi.userControllerGetUserByUserName({ userName: username! }),
-    [username],
-  );
-  const { data: user, isLoading: isUserLoading } = useData(getUserByUserName);
   if (areLevelsLoading || isUserLoading || areStatsLoading)
     return <LoadingPage />;
   if (!levels || !user || !stats) return <NotFoundPage />;
-  levels.unshift({
-    username: user.username,
-    timestamp: user.createdAt,
-    gameMode: UserLevelWithTimestampGameModeEnum.Classic,
-    level: 1,
-    gameId: '', // maybe we should allow null in gameId here,
-  });
   return (
     <div className="stats-page">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
@@ -64,15 +128,18 @@ export default function UserStatsPage() {
         <div className="line-graph-wrapper">
           <Line
             data={{
-              labels: levels.map((item) => item.timestamp),
-              datasets: [
-                {
-                  label: 'level',
-                  data: levels.map((item) => item.level),
+              datasets: Object.entries(getGameModeLevels()!).map((entry) => {
+                const [gameMode, gameModeLevels] = entry;
+                return {
+                  label: gameMode,
+                  data: gameModeLevels.map((item) => ({
+                    x: item.timestamp,
+                    y: item.level,
+                  })),
                   borderWidth: 1,
                   stepped: true,
-                },
-              ],
+                };
+              }),
             }}
             options={{
               plugins: {
