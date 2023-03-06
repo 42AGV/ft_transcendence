@@ -32,16 +32,12 @@ export default function UserStatsPage() {
   const getLevelHistory = useCallback(async (): Promise<
     UserLevelWithTimestamp[]
   > => {
-    try {
-      if (!user) {
-        return Promise.reject('Unresolved');
-      }
-      return gameApi.gameControllerGetUserLevelHistory({
-        username: username!,
-      });
-    } catch (e) {
+    if (!user) {
       return Promise.reject('Unresolved');
     }
+    return gameApi.gameControllerGetUserLevelHistory({
+      username: username!,
+    });
   }, [user, username]);
   const { data: levels, isLoading: areLevelsLoading } = useData<
     UserLevelWithTimestamp[]
