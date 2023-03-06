@@ -3,10 +3,12 @@ import { WILDCARD_AVATAR_URL } from '../../../shared/urls';
 import { BookSection, BookSubsection } from '../BookSection';
 
 const randomAvatar = WILDCARD_AVATAR_URL;
+const randomAvatar2 = 'https://i.pravatar.cc/2000';
 const avProps = { url: randomAvatar };
+const avProps2 = { url: randomAvatar2 };
 const scoreProps = {
   playerOneAvatar: avProps,
-  playerTwoAvatar: avProps,
+  playerTwoAvatar: avProps2,
   playerOneUserName: 'pepito',
   playerTwoUserName: 'juanito',
   playerOneScore: 10,
@@ -27,11 +29,10 @@ export const ScoreRowExample = () => (
       <ScoreRow
         scoreProps={{
           playerOneAvatar: avProps,
-          playerTwoAvatar: avProps,
+          playerTwoAvatar: avProps2,
           playerOneUserName: 'pepito',
           playerTwoUserName: 'juanito',
         }}
-        gameMode="Classic"
       />
     </BookSubsection>
   </BookSection>
