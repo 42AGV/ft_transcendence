@@ -6,8 +6,8 @@ import { useParams } from 'react-router-dom';
 import {
   UserLevelWithTimestamp,
   GameControllerGetUserLevelHistoryModeEnum,
-  GameControllerGetUserStatsModeEnum,
   GameStats,
+  User,
 } from '../../shared/generated';
 import { useData } from '../../shared/hooks/UseData';
 import NotFoundPage from '../NotFoundPage/NotFoundPage';
@@ -27,7 +27,8 @@ export default function UserStatsPage() {
     () => usersApi.userControllerGetUserByUserName({ userName: username! }),
     [username],
   );
-  const { data: user, isLoading: isUserLoading } = useData(getUserByUserName);
+  const { data: user, isLoading: isUserLoading } =
+    useData<User>(getUserByUserName);
   const getLevelHistory = useCallback(async (): Promise<
     UserLevelWithTimestamp[]
   > => {
@@ -49,56 +50,30 @@ export default function UserStatsPage() {
     useCallback(() => {}, []),
   );
 
+  const getInitialUserLevelEntry = (
+    lUser: User,
+    key: GameControllerGetUserLevelHistoryModeEnum,
+  ): UserLevelWithTimestamp[] => {
+    return [
+      {
+        username: lUser.username,
+        timestamp: lUser.createdAt,
+        gameMode: key,
+        level: 1,
+        gameId: '',
+      },
+    ];
+  };
   const getGameModeLevels = (): GameModeLevels | null => {
     if (!user) {
       return null;
     }
     const initialGameModeLevels: GameModeLevels = {
-      training: [
-        {
-          username: user.username,
-          timestamp: user.createdAt,
-          gameMode: 'training',
-          level: 1,
-          gameId: '',
-        },
-      ],
-      classic: [
-        {
-          username: user.username,
-          timestamp: user.createdAt,
-          gameMode: 'classic',
-          level: 1,
-          gameId: '',
-        },
-      ],
-      shortPaddle: [
-        {
-          username: user.username,
-          timestamp: user.createdAt,
-          gameMode: 'shortPaddle',
-          level: 1,
-          gameId: '',
-        },
-      ],
-      mysteryZone: [
-        {
-          username: user.username,
-          timestamp: user.createdAt,
-          gameMode: 'mysteryZone',
-          level: 1,
-          gameId: '',
-        },
-      ],
-      unknown: [
-        {
-          username: user.username,
-          timestamp: user.createdAt,
-          gameMode: 'unknown',
-          level: 1,
-          gameId: '',
-        },
-      ],
+      training: getInitialUserLevelEntry(user, 'training'),
+      classic: getInitialUserLevelEntry(user, 'classic'),
+      shortPaddle: getInitialUserLevelEntry(user, 'shortPaddle'),
+      mysteryZone: getInitialUserLevelEntry(user, 'mysteryZone'),
+      unknown: getInitialUserLevelEntry(user, 'unknown'),
     };
     if (!levels) {
       return initialGameModeLevels;
@@ -138,30 +113,16 @@ export default function UserStatsPage() {
 
   const getStats = useCallback(
     () =>
-      Promise.all(
-        [
-          GameControllerGetUserStatsModeEnum.Classic,
-          GameControllerGetUserStatsModeEnum.ShortPaddle,
-          GameControllerGetUserStatsModeEnum.MysteryZone,
-          GameControllerGetUserStatsModeEnum.Training,
-          GameControllerGetUserStatsModeEnum.Unknown,
-        ].map((mode) => {
-          return gameApi.gameControllerGetUserStats({
-            username: username!,
-            mode,
-          });
-        }),
-      ),
+      gameApi.gameControllerGetUserStats({
+        username: username!,
+      }),
     [username],
   );
   const { data: stats, isLoading: areStatsLoading } =
-    useData<GameStats[]>(getStats);
+    useData<GameStats>(getStats);
   if (areLevelsLoading || isUserLoading || areStatsLoading)
     return <LoadingPage />;
   if (!levels || !user || !stats) return <NotFoundPage />;
-  const toArray = (stats: GameStats) => {
-    return [stats.wins, stats.losses, stats.draws];
-  };
   return (
     <div className="stats-page">
       <Header icon={IconVariant.ARROW_BACK} onClick={goBack}>
@@ -212,15 +173,7 @@ export default function UserStatsPage() {
               labels: ['win', 'loss', 'draw'],
               datasets: [
                 {
-                  data: toArray(
-                    stats.reduce((prev, curr) => {
-                      return {
-                        wins: prev.wins + curr.wins,
-                        losses: prev.losses + curr.losses,
-                        draws: prev.draws + curr.draws,
-                      };
-                    }),
-                  ),
+                  data: [stats.wins, stats.losses, stats.draws],
                 },
               ],
             }}
