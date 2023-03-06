@@ -16,11 +16,10 @@ import 'chartjs-adapter-date-fns';
 import { Header, IconVariant } from '../../shared/components';
 import { useNavigation } from '../../shared/hooks/UseNavigation';
 
-type FiveArray<T> = [T, T, T, T, T];
-type proArray = [
-  UserLevelWithTimestamp[],
-  GameControllerGetUserLevelHistoryModeEnum,
-];
+type GameModeLevels = {
+  [key in GameControllerGetUserLevelHistoryModeEnum]: UserLevelWithTimestamp[];
+};
+
 export default function UserStatsPage() {
   const { username } = useParams()!;
   const { goBack } = useNavigation();
@@ -30,67 +29,113 @@ export default function UserStatsPage() {
   );
   const { data: user, isLoading: isUserLoading } = useData(getUserByUserName);
   const getLevelHistory = useCallback(async (): Promise<
-    FiveArray<UserLevelWithTimestamp[]>
+    UserLevelWithTimestamp[]
   > => {
     try {
       if (!user) {
         return Promise.reject('Unresolved');
       }
-      let pclassic: proArray = [
-        await gameApi.gameControllerGetUserLevelHistory({
-          username: username!,
-          mode: GameControllerGetUserLevelHistoryModeEnum.Classic,
-        }),
-        GameControllerGetUserLevelHistoryModeEnum.Classic,
-      ];
-      let pmystery: proArray = [
-        await gameApi.gameControllerGetUserLevelHistory({
-          username: username!,
-          mode: GameControllerGetUserLevelHistoryModeEnum.MysteryZone,
-        }),
-        GameControllerGetUserLevelHistoryModeEnum.MysteryZone,
-      ];
-      let pshort: proArray = [
-        await gameApi.gameControllerGetUserLevelHistory({
-          username: username!,
-          mode: GameControllerGetUserLevelHistoryModeEnum.ShortPaddle,
-        }),
-        GameControllerGetUserLevelHistoryModeEnum.ShortPaddle,
-      ];
-      let ptrain: proArray = [
-        await gameApi.gameControllerGetUserLevelHistory({
-          username: username!,
-          mode: GameControllerGetUserLevelHistoryModeEnum.Training,
-        }),
-        GameControllerGetUserLevelHistoryModeEnum.Training,
-      ];
-      let punknown: proArray = [
-        await gameApi.gameControllerGetUserLevelHistory({
-          username: username!,
-          mode: GameControllerGetUserLevelHistoryModeEnum.Unknown,
-        }),
-        GameControllerGetUserLevelHistoryModeEnum.Unknown,
-      ];
-      [pclassic, pmystery, pshort, ptrain, punknown].map((levels) => {
-        return levels[0].unshift({
-          username: user.username,
-          timestamp: user.createdAt,
-          gameMode: levels[1],
-          level: 1,
-          gameId: '', // maybe we should allow null in gameId here,
-        });
+      return gameApi.gameControllerGetUserLevelHistory({
+        username: username!,
       });
-      return [pclassic[0], pmystery[0], pshort[0], ptrain[0], punknown[0]];
     } catch (e) {
       return Promise.reject('Unresolved');
     }
   }, [user, username]);
   const { data: levels, isLoading: areLevelsLoading } = useData<
-    FiveArray<UserLevelWithTimestamp[]>
+    UserLevelWithTimestamp[]
   >(
     getLevelHistory,
     useCallback(() => {}, []),
   );
+
+  const getGameModeLevels = (): GameModeLevels | null => {
+    if (!user) {
+      return null;
+    }
+    const initialGameModeLevels: GameModeLevels = {
+      training: [
+        {
+          username: user.username,
+          timestamp: user.createdAt,
+          gameMode: 'training',
+          level: 1,
+          gameId: '',
+        },
+      ],
+      classic: [
+        {
+          username: user.username,
+          timestamp: user.createdAt,
+          gameMode: 'classic',
+          level: 1,
+          gameId: '',
+        },
+      ],
+      shortPaddle: [
+        {
+          username: user.username,
+          timestamp: user.createdAt,
+          gameMode: 'shortPaddle',
+          level: 1,
+          gameId: '',
+        },
+      ],
+      mysteryZone: [
+        {
+          username: user.username,
+          timestamp: user.createdAt,
+          gameMode: 'mysteryZone',
+          level: 1,
+          gameId: '',
+        },
+      ],
+      unknown: [
+        {
+          username: user.username,
+          timestamp: user.createdAt,
+          gameMode: 'unknown',
+          level: 1,
+          gameId: '',
+        },
+      ],
+    };
+    if (!levels) {
+      return initialGameModeLevels;
+    }
+    return levels.reduce<GameModeLevels>((gameModeLevels, level) => {
+      switch (level.gameMode) {
+        case 'training':
+          return {
+            ...gameModeLevels,
+            training: [...gameModeLevels.training, level],
+          };
+        case 'classic':
+          return {
+            ...gameModeLevels,
+            classic: [...gameModeLevels.classic, level],
+          };
+        case 'mysteryZone':
+          return {
+            ...gameModeLevels,
+            mysteryZone: [...gameModeLevels.mysteryZone, level],
+          };
+        case 'shortPaddle':
+          return {
+            ...gameModeLevels,
+            shortPaddle: [...gameModeLevels.shortPaddle, level],
+          };
+        case 'unknown':
+          return {
+            ...gameModeLevels,
+            unknown: [...gameModeLevels.unknown, level],
+          };
+        default:
+          return gameModeLevels;
+      }
+    }, initialGameModeLevels);
+  };
+
   const getStats = useCallback(
     () =>
       Promise.all(
@@ -126,15 +171,14 @@ export default function UserStatsPage() {
         <div className="line-graph-wrapper">
           <Line
             data={{
-              datasets: levels.map((level) => {
+              datasets: Object.entries(getGameModeLevels()!).map((entry) => {
+                const [gameMode, gameModeLevels] = entry;
                 return {
-                  label: level[0].gameMode,
-                  data: level.map((item) => {
-                    return {
-                      x: item.timestamp,
-                      y: item.level,
-                    };
-                  }),
+                  label: gameMode,
+                  data: gameModeLevels.map((item) => ({
+                    x: item.timestamp,
+                    y: item.level,
+                  })),
                   borderWidth: 1,
                   stepped: true,
                 };

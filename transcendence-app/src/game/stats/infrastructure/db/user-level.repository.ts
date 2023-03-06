@@ -7,7 +7,7 @@ export abstract class IUserLevelRepository {
   abstract addLevel(userLevel: UserLevel): Promise<UserLevel | null>;
   abstract getUserLevels(
     username: string,
-    gameMode: GameMode,
+    gameMode?: GameMode,
   ): Promise<UserLevelWithTimestampData[] | null>;
   abstract getLastLevel(username: string, gameMode: GameMode): Promise<number>;
   abstract getGameResults(
