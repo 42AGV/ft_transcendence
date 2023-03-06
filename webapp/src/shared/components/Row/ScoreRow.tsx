@@ -44,9 +44,10 @@ export default function ScoreRow({
             color={TextColor.LIGHT}
             weight={TextWeight.BOLD}
           >
-            {scoreProps.playerOneScore && scoreProps.playerTwoScore
-              ? `${scoreProps.playerOneScore?.toString()} - ${scoreProps.playerTwoScore?.toString()} `
-              : ' - '}
+            {scoreProps.playerOneScore === undefined ||
+            scoreProps.playerTwoScore === undefined
+              ? ' - '
+              : `${scoreProps.playerOneScore!.toString()} - ${scoreProps.playerTwoScore!.toString()} `}
           </Text>
           <Text
             variant={TextVariant.HEADING}
@@ -86,9 +87,9 @@ export default function ScoreRow({
           )}
         </div>
       </div>
-      {scoreProps.playerOneAvatar && (
+      {scoreProps.playerTwoAvatar && (
         <div className="row-avatar-right">
-          <MediumAvatar {...scoreProps.playerOneAvatar} />
+          <MediumAvatar {...scoreProps.playerTwoAvatar} />
         </div>
       )}
     </>

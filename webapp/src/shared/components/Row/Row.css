@@ -75,3 +75,9 @@
   display: flex;
   justify-content: space-evenly;
 }
+
+@media (max-width: 768px) {
+  .scorerow_text_lower_wrapper {
+    display: none;
+  }
+}
