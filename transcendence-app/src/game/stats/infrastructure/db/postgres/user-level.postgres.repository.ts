@@ -47,10 +47,13 @@ export class UserLevelPostgresRepository
 
   async getUserLevels(
     username: string,
-    gameMode: GameMode,
+    gameMode?: GameMode,
   ): Promise<UserLevelWithTimestampData[] | null> {
-    const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
-      text: `WITH ulwtstp
+    if (gameMode) {
+      const levelsData = await makeQuery<UserLevelWithTimestampData>(
+        this.pool,
+        {
+          text: `WITH ulwtstp
                     AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}, g.${gameKeys.GAMEMODE}
                         FROM ${this.table} ul
                                INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
@@ -63,7 +66,27 @@ export class UserLevelPostgresRepository
                     ults.${userLevelKeys.LEVEL}
              FROM ulwtstp ults
              ORDER BY "timestamp"`,
-      values: [username, gameMode],
+          values: [username, gameMode],
+        },
+      );
+      return levelsData
+        ? levelsData.map((level) => new UserLevelWithTimestamp(level))
+        : null;
+    }
+    const levelsData = await makeQuery<UserLevelWithTimestampData>(this.pool, {
+      text: `WITH ulwtstp
+                  AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}, g.${gameKeys.GAMEMODE}
+                      FROM ${this.table} ul
+                             INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                      WHERE ul.${userLevelKeys.USERNAME} LIKE $1)
+           select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
+                  ults.${userLevelKeys.USERNAME},
+                  ults.${gameKeys.GAMEMODE},
+                  ults.${userLevelKeys.GAMEID},
+                  ults.${userLevelKeys.LEVEL}
+           FROM ulwtstp ults
+           ORDER BY "timestamp"`,
+      values: [username],
     });
     return levelsData
       ? levelsData.map((level) => new UserLevelWithTimestamp(level))

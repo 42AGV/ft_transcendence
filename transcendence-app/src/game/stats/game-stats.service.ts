@@ -83,7 +83,7 @@ export class GameStatsService {
 
   async getUserLevels(
     username: string,
-    mode: GameMode = GameMode.classic,
+    mode?: GameMode,
   ): Promise<UserLevelWithTimestampData[] | null> {
     return this.userLevelRepository.getUserLevels(username, mode);
   }
