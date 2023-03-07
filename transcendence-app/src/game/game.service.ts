@@ -669,6 +669,10 @@ export class GameService {
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<Game[] | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
     return await this.gameRepository.getPaginatedUserGames(username, {
       limit,
       offset,
@@ -686,6 +690,10 @@ export class GameService {
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<GameWithUsers[] | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
     return this.gameRepository.getPaginatedUserGamesWithUsers(username, {
       limit,
       offset,

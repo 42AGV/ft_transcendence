@@ -174,6 +174,7 @@ export class GameController {
     type: [Game],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'User Not found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUserGames(
     @Param('userName') userName: string,
@@ -195,6 +196,7 @@ export class GameController {
     type: [GameWithUsers],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'User Not found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUserGamesWithUsers(
     @Param('userName') userName: string,

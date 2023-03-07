@@ -14,7 +14,7 @@ import {
 import { AVATAR_EP_URL, USER_URL } from '../../shared/urls';
 import { Link, useParams } from 'react-router-dom';
 import { useCallback } from 'react';
-import { gameApi } from '../../shared/services/ApiService';
+import { gameApi, usersApi } from '../../shared/services/ApiService';
 import { ENTRIES_LIMIT } from '../../shared/constants';
 import { Query } from '../../shared/types';
 import {
@@ -27,8 +27,9 @@ import {
   SearchContextProvider,
   useSearchContext,
 } from '../../shared/context/SearchContext';
-import { useAuth } from '../../shared/hooks/UseAuth';
 import LoadingPage from '../LoadingPage/LoadingPage';
+import { useData } from '../../shared/hooks/UseData';
+import NotFoundPage from '../NotFoundPage/NotFoundPage';
 
 type ScoreRowListTemplateProps<T> = {
   dataMapper: (data: T) => ScoreRowItem;
@@ -66,7 +67,18 @@ export default function UserMatchHistoryPage() {
   const { username } = useParams();
   const { navigate } = useNavigation();
   const { goBack } = useNavigation();
-  const { authUser } = useAuth();
+  const fetchUser = useCallback(
+    () =>
+      usersApi.userControllerGetUserByUserName({
+        userName: username!,
+      }),
+    [username],
+  );
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    error: userError,
+  } = useData(fetchUser);
 
   const mapGameToScoreRow = (game: GameWithUsers): ScoreRowItem => {
     const scoreProps = {
@@ -105,6 +117,14 @@ export default function UserMatchHistoryPage() {
     [username],
   );
 
+  if (isUserLoading) {
+    return <LoadingPage />;
+  }
+
+  if (userError) {
+    return <NotFoundPage />;
+  }
+
   return (
     <div className="rows-page">
       <Header
@@ -123,9 +143,9 @@ export default function UserMatchHistoryPage() {
         <Link to={`${USER_URL}/${username!}`}>
           <MediumAvatar
             {...{
-              url: authUser ? `${AVATAR_EP_URL}/${authUser.avatarId}` : '',
-              XCoordinate: authUser ? authUser.avatarX : 0,
-              YCoordinate: authUser ? authUser.avatarY : 0,
+              url: user ? `${AVATAR_EP_URL}/${user.avatarId}` : '',
+              XCoordinate: user ? user.avatarX : 0,
+              YCoordinate: user ? user.avatarY : 0,
             }}
           />
         </Link>
@@ -142,7 +162,7 @@ export default function UserMatchHistoryPage() {
             color={TextColor.LIGHT}
             weight={TextWeight.MEDIUM}
           >
-            {`level ${authUser?.level ?? 1}`}
+            {`level ${user?.level ?? 1}`}
           </Text>
         </div>
       </div>

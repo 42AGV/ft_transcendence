@@ -1,4 +1,4 @@
-import './Row.css';
+import './ScoreRow.css';
 import { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import { default as Text } from '../Text/Text';
 import { MediumAvatar } from '../Avatar/Avatar';
