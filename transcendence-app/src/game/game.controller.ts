@@ -41,6 +41,7 @@ import { UserLevelWithTimestamp } from './stats/infrastructure/db/user-level-wit
 import { GameStatsService } from './stats/game-stats.service';
 import { GameStats } from './stats/dto/game-stats.dto';
 import { GameStatsQueryDto } from './stats/dto/game-stats-query.dto';
+import { GameWithUsers } from './infrastructure/db/game-with-users.entity';
 
 @Controller()
 @UseGuards(TwoFactorAuthenticatedGuard)
@@ -173,12 +174,35 @@ export class GameController {
     type: [Game],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'User Not found' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUserGames(
     @Param('userName') userName: string,
     @Query() gamesPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<Game[]> {
     const games = await this.gameService.retrieveUserGames(
+      userName,
+      gamesPaginationQueryDto,
+    );
+    if (!games) {
+      throw new ServiceUnavailableException();
+    }
+    return games;
+  }
+
+  @Get('games/users/:userName')
+  @ApiOkResponse({
+    description: `List all games of a user, with users)`,
+    type: [GameWithUsers],
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiNotFoundResponse({ description: 'User Not found' })
+  @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
+  async getUserGamesWithUsers(
+    @Param('userName') userName: string,
+    @Query() gamesPaginationQueryDto: PaginationWithSearchQueryDto,
+  ): Promise<GameWithUsers[]> {
+    const games = await this.gameService.retrieveUserGamesWithUsers(
       userName,
       gamesPaginationQueryDto,
     );

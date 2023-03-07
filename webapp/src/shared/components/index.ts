@@ -24,9 +24,13 @@ export { default as NavigationBar } from './NavigationBar/NavigationBar';
 export { default as Header } from './Header/Header';
 
 export { default as Row } from './Row/Row';
+export { default as ScoreRow } from './Row/ScoreRow';
 
 export { default as RowsList } from './RowsList/RowsList';
 export * from './RowsList/RowsList';
+
+export { default as ScoreRowsList } from './RowsList/ScoreRowsList';
+export * from './RowsList/ScoreRowsList';
 
 export { default as SearchForm } from './Input/SearchForm';
 

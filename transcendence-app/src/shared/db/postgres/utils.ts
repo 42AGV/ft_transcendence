@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { DatabaseError, PoolClient } from 'pg';
 import { Query, MappedQuery } from '../models';
 import { PostgresPool } from './postgresConnection.provider';
+import { capitalizeFirstLetter, removeDoubleQuotes } from '../../utils';
 
 const PostgresLogger = new Logger('Database');
 
@@ -70,4 +71,19 @@ export function isCriticalDatabaseError(err: unknown): err is DatabaseError {
     err instanceof DatabaseError &&
     (err.severity === 'FATAL' || err.severity === 'PANIC')
   );
+}
+
+export function renameColumnsWithPrefix(
+  tableName: string,
+  columnNames: string[],
+  prefix: string,
+) {
+  return columnNames
+    .map(
+      (name) =>
+        `${tableName}.${name} AS "${prefix}${capitalizeFirstLetter(
+          removeDoubleQuotes(name),
+        )}"`,
+    )
+    .join(', ');
 }

@@ -2,13 +2,13 @@ import { AvatarProps, MediumAvatar } from '../Avatar/Avatar';
 import Text, { TextColor, TextVariant, TextWeight } from '../Text/Text';
 import './Score.css';
 
-type ScoreProps = {
-  playerOneAvatar: AvatarProps;
-  playerTwoAvatar: AvatarProps;
+export type ScoreProps = {
+  playerOneAvatar?: AvatarProps;
+  playerTwoAvatar?: AvatarProps;
   playerOneUserName: string;
   playerTwoUserName: string;
-  playerOneScore: number;
-  playerTwoScore: number;
+  playerOneScore?: number;
+  playerTwoScore?: number;
 };
 
 export default function Score({
@@ -22,7 +22,7 @@ export default function Score({
   return (
     <div className="score-container">
       <div className="player-one">
-        <MediumAvatar {...playerOneAvatar} />
+        {playerOneAvatar && <MediumAvatar {...playerOneAvatar} />}
         <Text
           variant={TextVariant.PARAGRAPH}
           color={TextColor.LIGHT}
@@ -39,7 +39,7 @@ export default function Score({
         />
       </div>
       <div className="player-two">
-        <MediumAvatar {...playerTwoAvatar} />
+        {playerTwoAvatar && <MediumAvatar {...playerTwoAvatar} />}
         <Text
           variant={TextVariant.PARAGRAPH}
           color={TextColor.LIGHT}

@@ -34,6 +34,7 @@ import { GameMode as GameModeEnum } from './enums/game-mode.enum';
 import { GameStatsService } from './stats/game-stats.service';
 import { GameConfigDto } from './dto/game-config.dto';
 import { isGameModeType } from './validators';
+import { GameWithUsers } from './infrastructure/db/game-with-users.entity';
 
 type GameId = string;
 type UserId = string;
@@ -659,7 +660,7 @@ export class GameService {
     });
   }
 
-  retrieveUserGames(
+  async retrieveUserGames(
     username: string,
     {
       limit = MAX_ENTRIES_PER_PAGE,
@@ -668,7 +669,32 @@ export class GameService {
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<Game[] | null> {
-    return this.gameRepository.getPaginatedUserGames(username, {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return await this.gameRepository.getPaginatedUserGames(username, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
+  }
+
+  async retrieveUserGamesWithUsers(
+    username: string,
+    {
+      limit = MAX_ENTRIES_PER_PAGE,
+      offset = 0,
+      sort = BooleanString.False,
+      search = '',
+    }: PaginationWithSearchQueryDto,
+  ): Promise<GameWithUsers[] | null> {
+    const user = await this.userRepository.getByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    return this.gameRepository.getPaginatedUserGamesWithUsers(username, {
       limit,
       offset,
       sort,
