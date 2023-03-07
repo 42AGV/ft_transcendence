@@ -9,8 +9,8 @@ import {
   MediumAvatar,
   NavigationBar,
   ReactiveButton,
-  RowItem,
-  RowsList,
+  ScoreRowItem,
+  ScoreRowsList,
 } from '../../shared/components';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -43,8 +43,22 @@ export default function PlayPage() {
   const { authUser } = useAuth();
   const [search, setSearch] = React.useState('');
 
-  function gameMapper(): RowItem[] {
-    return ongoingGames.reduce<RowItem[]>((rowItems, currentGame) => {
+  function gameMapper(): ScoreRowItem[] {
+    return ongoingGames.reduce<ScoreRowItem[]>((rowItems, currentGame) => {
+      const scoreProps = {
+        playerOneAvatar: {
+          url: `${AVATAR_EP_URL}/${currentGame.playerOne.avatarId}`,
+          XCoordinate: currentGame.playerOne.avatarX,
+          YCoordinate: currentGame.playerOne.avatarY,
+        },
+        playerTwoAvatar: {
+          url: `${AVATAR_EP_URL}/${currentGame.playerTwo.avatarId}`,
+          XCoordinate: currentGame.playerTwo.avatarX,
+          YCoordinate: currentGame.playerTwo.avatarY,
+        },
+        playerOneUserName: currentGame.playerOne.username,
+        playerTwoUserName: currentGame.playerTwo.username,
+      };
       if (
         currentGame.playerOne.username.includes(search) ||
         currentGame.playerTwo.username.includes(search)
@@ -52,8 +66,7 @@ export default function PlayPage() {
         const rowItem = {
           key: currentGame.gameId,
           url: `${PLAY_GAME_URL}/${currentGame.gameId}`,
-          title: `${currentGame.playerOne.username} vs ${currentGame.playerTwo.username}`,
-          iconVariant: IconVariant.ARROW_FORWARD,
+          scoreProps: scoreProps,
         };
         return [...rowItems, rowItem];
       }
@@ -136,7 +149,7 @@ export default function PlayPage() {
         </div>
       </div>
       <div className="play-page-games">
-        <RowsList rows={gameMapper()} />
+        <ScoreRowsList rows={gameMapper()} />
       </div>
       <div className="play-page-navigation">
         <NavigationBar />
