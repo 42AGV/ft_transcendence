@@ -32,30 +32,36 @@ export default function ScoreRow({
       )}
       <div className="scorerow_text_wrapper">
         <div className="scorerow_text_upper_wrapper">
-          <Text
-            variant={TextVariant.HEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
-          >
-            {scoreProps.playerOneUserName}
-          </Text>
-          <Text
-            variant={TextVariant.HEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
-          >
-            {scoreProps.playerOneScore === undefined ||
-            scoreProps.playerTwoScore === undefined
-              ? ' - '
-              : `${scoreProps.playerOneScore!.toString()} - ${scoreProps.playerTwoScore!.toString()} `}
-          </Text>
-          <Text
-            variant={TextVariant.HEADING}
-            color={TextColor.LIGHT}
-            weight={TextWeight.BOLD}
-          >
-            {scoreProps.playerTwoUserName}
-          </Text>
+          <div className="scorerow_text_upper_wrapper_p1">
+            <Text
+              variant={TextVariant.SUBHEADING}
+              color={TextColor.LIGHT}
+              weight={TextWeight.BOLD}
+            >
+              {scoreProps.playerOneUserName}
+            </Text>
+          </div>
+          <div className="scorerow_text_upper_wrapper_score">
+            <Text
+              variant={TextVariant.HEADING}
+              color={TextColor.LIGHT}
+              weight={TextWeight.BOLD}
+            >
+              {scoreProps.playerOneScore === undefined ||
+              scoreProps.playerTwoScore === undefined
+                ? ' - '
+                : `${scoreProps.playerOneScore!.toString()} - ${scoreProps.playerTwoScore!.toString()} `}
+            </Text>
+          </div>
+          <div className="scorerow_text_upper_wrapper_p2">
+            <Text
+              variant={TextVariant.SUBHEADING}
+              color={TextColor.LIGHT}
+              weight={TextWeight.BOLD}
+            >
+              {scoreProps.playerTwoUserName}
+            </Text>
+          </div>
         </div>
         <div className="scorerow_text_lower_wrapper">
           {gameMode && (
