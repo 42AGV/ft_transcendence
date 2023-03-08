@@ -45,24 +45,24 @@ export default function PlayPage() {
 
   function gameMapper(): ScoreRowItem[] {
     return ongoingGames.reduce<ScoreRowItem[]>((rowItems, currentGame) => {
-      const scoreProps = {
-        playerOneAvatar: {
-          url: `${AVATAR_EP_URL}/${currentGame.playerOne.avatarId}`,
-          XCoordinate: currentGame.playerOne.avatarX,
-          YCoordinate: currentGame.playerOne.avatarY,
-        },
-        playerTwoAvatar: {
-          url: `${AVATAR_EP_URL}/${currentGame.playerTwo.avatarId}`,
-          XCoordinate: currentGame.playerTwo.avatarX,
-          YCoordinate: currentGame.playerTwo.avatarY,
-        },
-        playerOneUserName: currentGame.playerOne.username,
-        playerTwoUserName: currentGame.playerTwo.username,
-      };
       if (
         currentGame.playerOne.username.includes(search) ||
         currentGame.playerTwo.username.includes(search)
       ) {
+        const scoreProps = {
+          playerOneAvatar: {
+            url: `${AVATAR_EP_URL}/${currentGame.playerOne.avatarId}`,
+            XCoordinate: currentGame.playerOne.avatarX,
+            YCoordinate: currentGame.playerOne.avatarY,
+          },
+          playerTwoAvatar: {
+            url: `${AVATAR_EP_URL}/${currentGame.playerTwo.avatarId}`,
+            XCoordinate: currentGame.playerTwo.avatarX,
+            YCoordinate: currentGame.playerTwo.avatarY,
+          },
+          playerOneUserName: currentGame.playerOne.username,
+          playerTwoUserName: currentGame.playerTwo.username,
+        };
         const rowItem = {
           key: currentGame.gameId,
           url: `${PLAY_GAME_URL}/${currentGame.gameId}`,
