@@ -5,9 +5,9 @@
   grid-template-rows: 1fr;
   width: 100%;
   min-width: fit-content;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border-radius: 0.5rem;
-  column-gap: 1.25rem;
+  column-gap: 0.5rem;
   color: var(--color-light);
   background-color: var(--color-dark);
   border: 0;
@@ -27,9 +27,9 @@
 
 .scorerow_text_upper_wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) 4.2rem minmax(0, 1fr);
   grid-template-rows: 1fr;
-  column-gap: 1.25rem;
+  column-gap: 0.5rem;
   width: 100%;
   min-width: fit-content;
   align-items: center;

@@ -36,7 +36,7 @@ export default function ScoreRow({
             <Text
               variant={TextVariant.SUBHEADING}
               color={TextColor.LIGHT}
-              weight={TextWeight.BOLD}
+              weight={TextWeight.REGULAR}
             >
               {scoreProps.playerOneUserName}
             </Text>
@@ -57,7 +57,7 @@ export default function ScoreRow({
             <Text
               variant={TextVariant.SUBHEADING}
               color={TextColor.LIGHT}
-              weight={TextWeight.BOLD}
+              weight={TextWeight.REGULAR}
             >
               {scoreProps.playerTwoUserName}
             </Text>
