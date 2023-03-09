@@ -5,37 +5,93 @@
   grid-template-rows: 1fr;
   width: 100%;
   min-width: fit-content;
-  padding: 0.5rem 1.75rem;
+  padding: 0.5rem 0.5rem;
   border-radius: 0.5rem;
-  column-gap: 1.25rem;
+  column-gap: 0.5rem;
   color: var(--color-light);
   background-color: var(--color-dark);
   border: 0;
   align-items: center;
   flex-direction: row;
 }
-.scorerow_text_wrapper .scorerow_text_upper_wrapper > *,
-.scorerow_text_wrapper .scorerow_text_lower_wrapper > * {
+
+.scorerow_text_upper_wrapper_p1 > *,
+.scorerow_text_upper_wrapper_score > *,
+.scorerow_text_upper_wrapper_p2 > *,
+.scorerow_text_lower_wrapper_mode > *,
+.scorerow_text_lower_wrapper_duration > *,
+.scorerow_text_lower_wrapper_date > * {
   margin: 0;
   overflow: hidden;
-  grid-column: span 1;
-  max-width: 70vw;
-  white-space: pre;
+  white-space: nowrap;
   text-overflow: ellipsis;
   padding: 0;
 }
 
 .scorerow_text_upper_wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-.scorerow_text_lower_wrapper {
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.2rem minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  column-gap: 0.5rem;
+  width: 100%;
+  min-width: fit-content;
+  align-items: center;
+  flex-direction: row;
 }
 
+.scorerow_text_lower_wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  column-gap: 0.5rem;
+  width: 100%;
+  min-width: fit-content;
+  align-items: center;
+  flex-direction: row;
+}
+
+.scorerow_text_upper_wrapper_p1 {
+  grid-column: 1 / 2;
+}
+
+.scorerow_text_upper_wrapper_score {
+  grid-column: 2 / 3;
+  text-align: center;
+}
+
+.scorerow_text_upper_wrapper_p2 {
+  grid-column: 3 / 4;
+  text-align: right;
+}
+
+.scorerow_text_lower_wrapper_mode {
+  grid-column: 1 / 2;
+  text-align: center;
+}
+
+.scorerow_text_lower_wrapper_duration {
+  grid-column: 2 / 3;
+  text-align: center;
+}
+
+.scorerow_text_lower_wrapper_date {
+  grid-column: 3 / 4;
+  text-align: center;
+}
+
+@media (min-width: 767px) {
+  .row-avatar-left-small,
+  .row-avatar-right-small {
+    display: none;
+  }
+}
 @media (max-width: 768px) {
   .scorerow_text_lower_wrapper {
+    display: none;
+  }
+
+  .row-avatar-left-medium,
+  .row-avatar-right-medium {
     display: none;
   }
 }
