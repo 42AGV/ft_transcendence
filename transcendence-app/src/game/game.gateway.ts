@@ -86,4 +86,12 @@ export class GameGateway {
       this.gameService.getShouldConfigureGame(client.request.user.id),
     );
   }
+
+  @SubscribeMessage('getPlayerGame')
+  handleGetPlayerGame(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('playerId', ParseUUIDPipe) playerId: string,
+  ) {
+    this.gameService.handleGetPlayerGame(client, playerId);
+  }
 }
