@@ -120,25 +120,26 @@ const Play = ({
       renderMultiplayerFrame(canvasCtx, onlineGameState, isPlayerOne, gameMode);
     }
   }
-
+  const p1 = isPlayerOne ? playerTwo : playerOne;
+  const p2 = isPlayerOne ? playerOne : playerTwo;
   return (
     <div className="game-multiplayer">
       <div className="game-multiplayer-score">
         <Score
           playerOneAvatar={{
-            url: `${AVATAR_EP_URL}/${playerOne!.avatarId}`,
-            XCoordinate: playerOne!.avatarX,
-            YCoordinate: playerOne!.avatarY,
+            url: `${AVATAR_EP_URL}/${p1!.avatarId}`,
+            XCoordinate: p1!.avatarX,
+            YCoordinate: p1!.avatarY,
           }}
-          playerOneScore={score}
-          playerOneUserName={playerOne!.username}
+          playerOneScore={isPlayerOne ? opponentScore : score}
+          playerOneUserName={p1!.username}
           playerTwoAvatar={{
-            url: `${AVATAR_EP_URL}/${playerTwo!.avatarId}`,
-            XCoordinate: playerTwo!.avatarX,
-            YCoordinate: playerTwo!.avatarY,
+            url: `${AVATAR_EP_URL}/${p2!.avatarId}`,
+            XCoordinate: p2!.avatarX,
+            YCoordinate: p2!.avatarY,
           }}
-          playerTwoScore={opponentScore}
-          playerTwoUserName={playerTwo!.username}
+          playerTwoScore={isPlayerOne ? score : opponentScore}
+          playerTwoUserName={p2!.username}
         />
       </div>
       <canvas
