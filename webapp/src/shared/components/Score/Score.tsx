@@ -30,12 +30,28 @@ export default function Score({
           children={playerOneUserName}
         />
       </div>
-      <div className="score">
+      <div className="score-p1">
         <Text
           variant={TextVariant.TITLE}
           color={TextColor.LIGHT}
           weight={TextWeight.BOLD}
-          children={`${playerOneScore} - ${playerTwoScore}`}
+          children={`${playerOneScore}`}
+        />
+      </div>
+      <div className="score--">
+        <Text
+          variant={TextVariant.TITLE}
+          color={TextColor.LIGHT}
+          weight={TextWeight.BOLD}
+          children={` - `}
+        />
+      </div>
+      <div className="score-p2">
+        <Text
+          variant={TextVariant.TITLE}
+          color={TextColor.LIGHT}
+          weight={TextWeight.BOLD}
+          children={`${playerTwoScore}`}
         />
       </div>
       <div className="player-two">
