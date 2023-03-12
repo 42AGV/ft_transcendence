@@ -14,6 +14,7 @@ import {
   ADMIN_URL,
   AVATAR_EP_URL,
   CHAT_URL,
+  PLAY_GAME_URL,
   USER_URL,
 } from '../../shared/urls';
 import { useData } from '../../shared/hooks/UseData';
@@ -76,6 +77,18 @@ export default function UserPage() {
       setIsToggled(user.isFriend);
     }
   }, [user]);
+
+  useEffect(() => {
+    function handlePlayerGame(gameId: string) {
+      navigate(`${PLAY_GAME_URL}/${gameId}`);
+    }
+
+    socket.on('playerGame', handlePlayerGame);
+
+    return () => {
+      socket.off('playerGame');
+    };
+  }, [navigate]);
 
   const onToggle = async () => {
     setIsToggled(!isToggled);
@@ -152,6 +165,17 @@ export default function UserPage() {
           undefined
         }
         secondaryButton={
+          (!overridePermissions &&
+            user &&
+            user.isFriend !== null &&
+            userStatus(user.id) === 'playing' && {
+              variant: ButtonVariant.ALTERNATIVE,
+              iconVariant: IconVariant.PLAY,
+              onClick: () => {
+                socket.emit('getPlayerGame', { playerId: user.id });
+              },
+              children: 'watch live game',
+            }) ||
           (!overridePermissions &&
             user &&
             user.isFriend !== null &&

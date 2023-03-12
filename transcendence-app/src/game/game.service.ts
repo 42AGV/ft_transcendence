@@ -748,4 +748,11 @@ export class GameService {
     }
     return gameInfo.playerOneId === userId && gameInfo.gameMode === null;
   }
+
+  handleGetPlayerGame(client: Socket, playerId: string) {
+    const gameId = this.getGameId(playerId);
+    if (gameId && this.server) {
+      this.server.to(client.id).emit('playerGame', gameId);
+    }
+  }
 }
