@@ -174,7 +174,7 @@ export default function UserPage() {
               onClick: () => {
                 socket.emit('getPlayerGame', { playerId: user.id });
               },
-              children: 'spectate player',
+              children: 'watch live game',
             }) ||
           (!overridePermissions &&
             user &&
