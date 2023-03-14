@@ -12,6 +12,8 @@ import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.service';
 import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
+import { gameKeys } from '../../../../game/infrastructure/db/game.entity';
+import { userLevelKeys } from '../../../../game/stats/infrastructure/db/user-level.entity';
 
 @Injectable()
 export class UserPostgresRepository
@@ -57,12 +59,31 @@ export class UserPostgresRepository
     const orderBy =
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
     const usersData = await makeQuery<User>(this.pool, {
-      text: `SELECT *
-      FROM ${this.table}
-      WHERE ${userKeys.USERNAME} ILIKE $1
-      ORDER BY ${orderBy}
-      LIMIT $2
-      OFFSET $3;`,
+      text: `
+          WITH ulevelwithgame AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
+                                  FROM ${table.USER_LEVEL} ul
+                                           INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}),
+               ulevelwithtime
+                   as (select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
+                              ults.${userLevelKeys.USERNAME},
+                              ults.${userLevelKeys.LEVEL}                                                                  AS "level"
+                       FROM ulevelwithgame ults),
+               partlevel as (select ul.${userLevelKeys.USERNAME},
+                                    ul."level",
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY ul.${userLevelKeys.USERNAME}
+                                        ORDER BY ul."timestamp" DESC
+                                        ) AS "rowNumber"
+                             from ulevelwithtime ul),
+               levelprovider as (select lp.*
+                                 from partlevel lp
+                                 WHERE lp."rowNumber" = 1)
+          SELECT CASE WHEN (l."level" IS NULL) THEN 1 ELSE (l."level") END as ${userKeys.LEVEL}, u.*
+          from ${this.table} u
+                   LEFT JOIN levelprovider l ON u.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
+          WHERE ${userKeys.USERNAME} ILIKE $1
+          ORDER BY ${orderBy}
+          LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
     return usersData ? usersData.map((user) => new this.ctor(user)) : null;
