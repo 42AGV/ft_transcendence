@@ -46,7 +46,7 @@ export class UserService {
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: PaginationWithSearchQueryDto): Promise<User[] | null> {
+  }: PaginationWithSearchQueryDto): Promise<UserWithLevelDto[] | null> {
     return this.userRepository.getPaginatedUsers({
       limit,
       offset,
@@ -256,7 +256,7 @@ export class UserService {
       sort = BooleanString.False,
       search = '',
     }: PaginationWithSearchQueryDto,
-  ): Promise<User[] | null> {
+  ): Promise<UserWithLevelDto[] | null> {
     return this.friendRepository.getPaginatedFriends(followerId, {
       limit,
       offset,

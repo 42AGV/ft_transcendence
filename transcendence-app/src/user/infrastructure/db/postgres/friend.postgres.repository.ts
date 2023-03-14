@@ -10,6 +10,10 @@ import { User, UserData, userKeys } from '../user.entity';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { gameKeys } from '../../../../game/infrastructure/db/game.entity';
 import { userLevelKeys } from '../../../../game/stats/infrastructure/db/user-level.entity';
+import {
+  UserWithLevelData,
+  UserWithLevelDto,
+} from '../../../../shared/dtos/user-with-level.dto';
 
 @Injectable()
 export class FriendPostgresRepository
@@ -69,11 +73,11 @@ export class FriendPostgresRepository
   async getPaginatedFriends(
     followerId: string,
     paginationDto: Required<PaginationWithSearchQueryDto>,
-  ): Promise<User[] | null> {
+  ): Promise<UserWithLevelDto[] | null> {
     const { limit, offset, sort, search } = paginationDto;
     const orderBy =
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
-    const usersData = await makeQuery<User>(this.pool, {
+    const usersData = await makeQuery<UserWithLevelData>(this.pool, {
       text: `
           WITH ulevelwithgame AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
                                   FROM ${table.USER_LEVEL} ul
@@ -97,7 +101,7 @@ export class FriendPostgresRepository
                            FROM ${this.table} f
                                     JOIN ${table.USERS} u ON (f.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
                            WHERE f.${FriendKeys.FOLLOWER_ID} = $1)
-          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS ${userKeys.LEVEL},
+          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS "level",
                  f.*
           FROM friends f
                    LEFT JOIN levelprovider l ON f.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
@@ -106,6 +110,8 @@ export class FriendPostgresRepository
           LIMIT $3 OFFSET $4;`,
       values: [followerId, `%${search}%`, limit, offset],
     });
-    return usersData ? usersData.map((userData) => new User(userData)) : null;
+    return usersData
+      ? usersData.map((userData) => new UserWithLevelDto(userData))
+      : null;
   }
 }

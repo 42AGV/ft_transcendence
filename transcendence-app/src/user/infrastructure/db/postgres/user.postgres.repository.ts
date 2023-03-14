@@ -14,6 +14,10 @@ import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.s
 import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
 import { gameKeys } from '../../../../game/infrastructure/db/game.entity';
 import { userLevelKeys } from '../../../../game/stats/infrastructure/db/user-level.entity';
+import {
+  UserWithLevelData,
+  UserWithLevelDto,
+} from '../../../../shared/dtos/user-with-level.dto';
 
 @Injectable()
 export class UserPostgresRepository
@@ -54,11 +58,11 @@ export class UserPostgresRepository
 
   async getPaginatedUsers(
     paginationDto: Required<PaginationWithSearchQueryDto>,
-  ): Promise<User[] | null> {
+  ): Promise<UserWithLevelDto[] | null> {
     const { limit, offset, sort, search } = paginationDto;
     const orderBy =
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
-    const usersData = await makeQuery<User>(this.pool, {
+    const usersData = await makeQuery<UserWithLevelData>(this.pool, {
       text: `
           WITH ulevelwithgame AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
                                   FROM ${table.USER_LEVEL} ul
@@ -78,7 +82,7 @@ export class UserPostgresRepository
                levelprovider AS (SELECT lp.*
                                  FROM partlevel lp
                                  WHERE lp."rowNumber" = 1)
-          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS ${userKeys.LEVEL},
+          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS "level",
                  u.*
           FROM ${this.table} u
                    LEFT JOIN levelprovider l ON u.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
@@ -87,7 +91,9 @@ export class UserPostgresRepository
           LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
-    return usersData ? usersData.map((user) => new this.ctor(user)) : null;
+    return usersData
+      ? usersData.map((user) => new UserWithLevelDto(user))
+      : null;
   }
 
   async addAvatarAndAddUser(
