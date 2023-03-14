@@ -83,7 +83,7 @@ export class FriendPostgresRepository
           WITH ulevelwithgame AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
                                   FROM ${table.USER_LEVEL} ul
                                            INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
-                                  WHERE g.${gameKeys.GAMEMODE} = ${GameMode.classic}),
+                                  WHERE g.${gameKeys.GAMEMODE} = '${GameMode.classic}'),
                ulevelwithtime
                    AS (SELECT (ulg.${gameKeys.CREATED_AT} + INTERVAL '1 second' * ulg.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
                               ulg.${userLevelKeys.USERNAME},
