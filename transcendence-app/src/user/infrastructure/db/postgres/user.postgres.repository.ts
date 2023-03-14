@@ -69,7 +69,7 @@ export class UserPostgresRepository
                               ults.${userLevelKeys.LEVEL}                                                                  AS "level"
                        FROM ulevelwithgame ults),
                partlevel as (select ul.${userLevelKeys.USERNAME},
-                                    ul."level",
+                                    ul.${userLevelKeys.LEVEL},
                                     ROW_NUMBER() OVER (
                                         PARTITION BY ul.${userLevelKeys.USERNAME}
                                         ORDER BY ul."timestamp" DESC
@@ -78,7 +78,8 @@ export class UserPostgresRepository
                levelprovider as (select lp.*
                                  from partlevel lp
                                  WHERE lp."rowNumber" = 1)
-          SELECT CASE WHEN (l."level" IS NULL) THEN 1 ELSE (l."level") END as ${userKeys.LEVEL}, u.*
+          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END as ${userKeys.LEVEL},
+                 u.*
           from ${this.table} u
                    LEFT JOIN levelprovider l ON u.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
           WHERE ${userKeys.USERNAME} ILIKE $1
