@@ -8,6 +8,8 @@ import { Friend, FriendKeys } from '../friend.entity';
 import { IFriendRepository } from '../friend.repository';
 import { User, UserData, userKeys } from '../user.entity';
 import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
+import { gameKeys } from '../../../../game/infrastructure/db/game.entity';
+import { userLevelKeys } from '../../../../game/stats/infrastructure/db/user-level.entity';
 
 @Injectable()
 export class FriendPostgresRepository
@@ -72,13 +74,36 @@ export class FriendPostgresRepository
     const orderBy =
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
     const usersData = await makeQuery<User>(this.pool, {
-      text: `SELECT u.*
-      FROM ${this.table} f
-      JOIN ${table.USERS} u ON (f.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
-      WHERE f.${FriendKeys.FOLLOWER_ID} = $1 AND u.${userKeys.USERNAME} ILIKE $2
-      ORDER BY ${orderBy}
-      LIMIT $3
-      OFFSET $4;`,
+      text: `
+          WITH ulevelwithgame AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
+                                  FROM ${table.USER_LEVEL} ul
+                                           INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}),
+               ulevelwithtime
+                   AS (SELECT (ulg.${gameKeys.CREATED_AT} + INTERVAL '1 second' * ulg.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
+                              ulg.${userLevelKeys.USERNAME},
+                              ulg.${userLevelKeys.LEVEL}                                                                 AS "level"
+                       FROM ulevelwithgame ulg),
+               partlevel AS (SELECT ult.${userLevelKeys.USERNAME},
+                                    ult.${userLevelKeys.LEVEL},
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY ult.${userLevelKeys.USERNAME}
+                                        ORDER BY ult."timestamp" DESC
+                                        ) AS "rowNumber"
+                             FROM ulevelwithtime ult),
+               levelprovider AS (SELECT lp.*
+                                 FROM partlevel lp
+                                 WHERE lp."rowNumber" = 1),
+               friends AS (SELECT u.*
+                           FROM ${this.table} f
+                                    JOIN ${table.USERS} u ON (f.${FriendKeys.FOLLOWED_ID} = u.${userKeys.ID})
+                           WHERE f.${FriendKeys.FOLLOWER_ID} = $1)
+          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS ${userKeys.LEVEL},
+                 f.*
+          FROM friends f
+                   LEFT JOIN levelprovider l ON f.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
+          WHERE f.${userKeys.USERNAME} ILIKE $2
+          ORDER BY ${orderBy}
+          LIMIT $3 OFFSET $4;`,
       values: [followerId, `%${search}%`, limit, offset],
     });
     return usersData ? usersData.map((userData) => new User(userData)) : null;

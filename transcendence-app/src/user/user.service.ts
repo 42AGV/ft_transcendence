@@ -256,29 +256,13 @@ export class UserService {
       sort = BooleanString.False,
       search = '',
     }: PaginationWithSearchQueryDto,
-  ): Promise<UserWithLevelDto[] | null> {
-    const friends = await this.friendRepository.getPaginatedFriends(
-      followerId,
-      {
-        limit,
-        offset,
-        sort,
-        search,
-      },
-    );
-    if (!friends) {
-      throw new UnprocessableEntityException();
-    }
-    return Promise.all(
-      friends.map(async (user: User) => {
-        const { username } = user;
-        const level = await this.userLevelRepository.getLastLevel(
-          username,
-          GameMode.classic,
-        );
-        return { ...user, level };
-      }),
-    );
+  ): Promise<User[] | null> {
+    return this.friendRepository.getPaginatedFriends(followerId, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
   }
 
   async getCurrentUserWithLevel(userMe: User): Promise<UserWithLevelDto> {

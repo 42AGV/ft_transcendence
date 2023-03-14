@@ -215,7 +215,7 @@ export class UserController {
   async getFriends(
     @GetUser() user: User,
     @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
-  ): Promise<UserWithLevelDto[]> {
+  ): Promise<User[]> {
     const friends = await this.userService.getFriends(
       user.id,
       usersPaginationQueryDto,
