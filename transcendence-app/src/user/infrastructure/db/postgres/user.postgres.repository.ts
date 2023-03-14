@@ -64,23 +64,23 @@ export class UserPostgresRepository
                                   FROM ${table.USER_LEVEL} ul
                                            INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}),
                ulevelwithtime
-                   as (select (ults.${gameKeys.CREATED_AT} + interval '1 second' * ults.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
-                              ults.${userLevelKeys.USERNAME},
-                              ults.${userLevelKeys.LEVEL}                                                                  AS "level"
-                       FROM ulevelwithgame ults),
-               partlevel as (select ul.${userLevelKeys.USERNAME},
-                                    ul.${userLevelKeys.LEVEL},
+                   AS (SELECT (ulg.${gameKeys.CREATED_AT} + INTERVAL '1 second' * ulg.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
+                              ulg.${userLevelKeys.USERNAME},
+                              ulg.${userLevelKeys.LEVEL}                                                                  AS "level"
+                       FROM ulevelwithgame ulg),
+               partlevel AS (SELECT ult.${userLevelKeys.USERNAME},
+                                    ult.${userLevelKeys.LEVEL},
                                     ROW_NUMBER() OVER (
-                                        PARTITION BY ul.${userLevelKeys.USERNAME}
-                                        ORDER BY ul."timestamp" DESC
+                                        PARTITION BY ult.${userLevelKeys.USERNAME}
+                                        ORDER BY ult."timestamp" DESC
                                         ) AS "rowNumber"
-                             from ulevelwithtime ul),
-               levelprovider as (select lp.*
-                                 from partlevel lp
+                             FROM ulevelwithtime ult),
+               levelprovider  AS (SELECT lp.*
+                                 FROM partlevel lp
                                  WHERE lp."rowNumber" = 1)
-          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END as ${userKeys.LEVEL},
+          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS ${userKeys.LEVEL},
                  u.*
-          from ${this.table} u
+          FROM ${this.table} u
                    LEFT JOIN levelprovider l ON u.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
           WHERE ${userKeys.USERNAME} ILIKE $1
           ORDER BY ${orderBy}
