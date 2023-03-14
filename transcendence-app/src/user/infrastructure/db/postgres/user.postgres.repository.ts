@@ -66,7 +66,7 @@ export class UserPostgresRepository
                ulevelwithtime
                    AS (SELECT (ulg.${gameKeys.CREATED_AT} + INTERVAL '1 second' * ulg.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
                               ulg.${userLevelKeys.USERNAME},
-                              ulg.${userLevelKeys.LEVEL}                                                                  AS "level"
+                              ulg.${userLevelKeys.LEVEL}                                                                 AS "level"
                        FROM ulevelwithgame ulg),
                partlevel AS (SELECT ult.${userLevelKeys.USERNAME},
                                     ult.${userLevelKeys.LEVEL},
@@ -75,7 +75,7 @@ export class UserPostgresRepository
                                         ORDER BY ult."timestamp" DESC
                                         ) AS "rowNumber"
                              FROM ulevelwithtime ult),
-               levelprovider  AS (SELECT lp.*
+               levelprovider AS (SELECT lp.*
                                  FROM partlevel lp
                                  WHERE lp."rowNumber" = 1)
           SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS ${userKeys.LEVEL},
