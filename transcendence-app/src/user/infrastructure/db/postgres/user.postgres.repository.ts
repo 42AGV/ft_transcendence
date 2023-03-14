@@ -18,6 +18,7 @@ import {
   UserWithLevelData,
   UserWithLevelDto,
 } from '../../../../shared/dtos/user-with-level.dto';
+import { GameMode } from '../../../../game/enums/game-mode.enum';
 
 @Injectable()
 export class UserPostgresRepository
@@ -66,7 +67,8 @@ export class UserPostgresRepository
       text: `
           WITH ulevelwithgame AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
                                   FROM ${table.USER_LEVEL} ul
-                                           INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}),
+                                           INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                                  WHERE g.${gameKeys.GAMEMODE} = ${GameMode.classic}),
                ulevelwithtime
                    AS (SELECT (ulg.${gameKeys.CREATED_AT} + INTERVAL '1 second' * ulg.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
                               ulg.${userLevelKeys.USERNAME},
