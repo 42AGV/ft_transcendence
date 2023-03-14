@@ -41,7 +41,7 @@ export class UserService {
     return this.userRepository.getById(id);
   }
 
-  private retrieveUsers({
+  retrieveUsers({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
@@ -53,27 +53,6 @@ export class UserService {
       sort,
       search,
     });
-  }
-
-  async retrieveUsersWithLevel(
-    paginationQuery: PaginationWithSearchQueryDto,
-  ): Promise<UserWithLevelDto[]> {
-    const users = await this.retrieveUsers(paginationQuery);
-    if (!users) {
-      throw null;
-    }
-    return await Promise.all(
-      users.map(
-        async (user) =>
-          new UserWithLevelDto({
-            level: await this.userLevelRepository.getLastLevel(
-              user.username,
-              GameMode.classic,
-            ),
-            ...user,
-          }),
-      ),
-    );
   }
 
   async retrieveUserWithUserNameWithoutFriend(

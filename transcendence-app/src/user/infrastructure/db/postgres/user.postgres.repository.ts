@@ -82,7 +82,7 @@ export class UserPostgresRepository
                  u.*
           FROM ${this.table} u
                    LEFT JOIN levelprovider l ON u.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
-          WHERE ${userKeys.USERNAME} ILIKE $1
+          WHERE u.${userKeys.USERNAME} ILIKE $1
           ORDER BY ${orderBy}
           LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],

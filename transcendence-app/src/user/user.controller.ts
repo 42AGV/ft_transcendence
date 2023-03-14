@@ -81,14 +81,14 @@ export class UserController {
   @Get('users')
   @ApiOkResponse({
     description: `Lists all users (max ${MAX_ENTRIES_PER_PAGE})`,
-    type: [UserWithLevelDto],
+    type: [User],
   })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiServiceUnavailableResponse({ description: 'Service unavailable' })
   async getUsers(
     @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
-  ): Promise<UserWithLevelDto[]> {
-    const usersWithLevel = await this.userService.retrieveUsersWithLevel(
+  ): Promise<User[]> {
+    const usersWithLevel = await this.userService.retrieveUsers(
       usersPaginationQueryDto,
     );
     if (!usersWithLevel) {
