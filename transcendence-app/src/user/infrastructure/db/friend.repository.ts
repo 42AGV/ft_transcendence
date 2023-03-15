@@ -1,6 +1,7 @@
 import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
 import { Friend } from './friend.entity';
 import { User } from './user.entity';
+import { UserWithLevelDto } from '../../../shared/dtos/user-with-level.dto';
 
 export abstract class IFriendRepository {
   abstract addFriend(friend: Friend): Promise<Friend | null>;
@@ -16,5 +17,5 @@ export abstract class IFriendRepository {
   abstract getPaginatedFriends(
     followerId: string,
     paginationDto: Required<PaginationWithSearchQueryDto>,
-  ): Promise<User[] | null>;
+  ): Promise<UserWithLevelDto[] | null>;
 }

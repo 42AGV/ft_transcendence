@@ -12,6 +12,13 @@ import { BooleanString } from '../../../../shared/enums/boolean-string.enum';
 import { LocalFile } from '../../../../shared/local-file/infrastructure/db/local-file.entity';
 import { AuthProviderType } from '../../../../auth/auth-provider/auth-provider.service';
 import { PaginationWithSearchQueryDto } from '../../../../shared/dtos/pagination-with-search.query.dto';
+import { gameKeys } from '../../../../game/infrastructure/db/game.entity';
+import { userLevelKeys } from '../../../../game/stats/infrastructure/db/user-level.entity';
+import {
+  UserWithLevelData,
+  UserWithLevelDto,
+} from '../../../../shared/dtos/user-with-level.dto';
+import { GameMode } from '../../../../game/enums/game-mode.enum';
 
 @Injectable()
 export class UserPostgresRepository
@@ -52,20 +59,43 @@ export class UserPostgresRepository
 
   async getPaginatedUsers(
     paginationDto: Required<PaginationWithSearchQueryDto>,
-  ): Promise<User[] | null> {
+  ): Promise<UserWithLevelDto[] | null> {
     const { limit, offset, sort, search } = paginationDto;
     const orderBy =
       sort === BooleanString.True ? userKeys.USERNAME : userKeys.ID;
-    const usersData = await makeQuery<User>(this.pool, {
-      text: `SELECT *
-      FROM ${this.table}
-      WHERE ${userKeys.USERNAME} ILIKE $1
-      ORDER BY ${orderBy}
-      LIMIT $2
-      OFFSET $3;`,
+    const usersData = await makeQuery<UserWithLevelData>(this.pool, {
+      text: `
+          WITH ulevelwithgame AS (SELECT ul.*, g.${gameKeys.CREATED_AT}, g.${gameKeys.GAMEDURATIONINSECONDS}
+                                  FROM ${table.USER_LEVEL} ul
+                                           INNER JOIN ${table.GAME} g ON ul.${userLevelKeys.GAMEID} = g.${gameKeys.ID}
+                                  WHERE g.${gameKeys.GAMEMODE} = '${GameMode.classic}'),
+               ulevelwithtime
+                   AS (SELECT (ulg.${gameKeys.CREATED_AT} + INTERVAL '1 second' * ulg.${gameKeys.GAMEDURATIONINSECONDS}) AS "timestamp",
+                              ulg.${userLevelKeys.USERNAME},
+                              ulg.${userLevelKeys.LEVEL}                                                                 AS "level"
+                       FROM ulevelwithgame ulg),
+               partlevel AS (SELECT ult.${userLevelKeys.USERNAME},
+                                    ult.${userLevelKeys.LEVEL},
+                                    ROW_NUMBER() OVER (
+                                        PARTITION BY ult.${userLevelKeys.USERNAME}
+                                        ORDER BY ult."timestamp" DESC
+                                        ) AS "rowNumber"
+                             FROM ulevelwithtime ult),
+               levelprovider AS (SELECT lp.*
+                                 FROM partlevel lp
+                                 WHERE lp."rowNumber" = 1)
+          SELECT CASE WHEN (l.${userLevelKeys.LEVEL} IS NULL) THEN 1 ELSE (l.${userLevelKeys.LEVEL}) END AS "level",
+                 u.*
+          FROM ${this.table} u
+                   LEFT JOIN levelprovider l ON u.${userKeys.USERNAME} = l.${userLevelKeys.USERNAME}
+          WHERE u.${userKeys.USERNAME} ILIKE $1
+          ORDER BY ${orderBy}
+          LIMIT $2 OFFSET $3;`,
       values: [`%${search}%`, limit, offset],
     });
-    return usersData ? usersData.map((user) => new this.ctor(user)) : null;
+    return usersData
+      ? usersData.map((user) => new UserWithLevelDto(user))
+      : null;
   }
 
   async addAvatarAndAddUser(

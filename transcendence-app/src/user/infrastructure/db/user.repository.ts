@@ -2,6 +2,7 @@ import { AuthProviderType } from '../../../auth/auth-provider/auth-provider.serv
 import { PaginationWithSearchQueryDto } from '../../../shared/dtos/pagination-with-search.query.dto';
 import { LocalFile } from '../../../shared/local-file/infrastructure/db/local-file.entity';
 import { User } from './user.entity';
+import { UserWithLevelDto } from '../../../shared/dtos/user-with-level.dto';
 
 export abstract class IUserRepository {
   abstract getById(id: string): Promise<User | null>;
@@ -15,7 +16,7 @@ export abstract class IUserRepository {
   abstract add(user: User): Promise<User | null>;
   abstract getPaginatedUsers(
     queryDto: Required<PaginationWithSearchQueryDto>,
-  ): Promise<User[] | null>;
+  ): Promise<UserWithLevelDto[] | null>;
   abstract addAvatarAndAddUser(
     avatar: LocalFile,
     user: User,
