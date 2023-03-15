@@ -16,7 +16,6 @@
 }
 
 .scorerow_text_upper_wrapper_p1 > *,
-.scorerow_text_upper_wrapper_score > *,
 .scorerow_text_upper_wrapper_p2 > *,
 .scorerow_text_lower_wrapper_mode > *,
 .scorerow_text_lower_wrapper_duration > *,
@@ -30,7 +29,7 @@
 
 .scorerow_text_upper_wrapper {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 4.2rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
   grid-template-rows: 1fr;
   column-gap: 0.5rem;
   width: 100%;
