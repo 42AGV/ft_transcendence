@@ -27,6 +27,11 @@
   padding: 0;
 }
 
+.scorerow_text_upper_wrapper_score > * {
+  margin: 0;
+  padding: 0;
+}
+
 .scorerow_text_upper_wrapper {
   display: grid;
   grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
