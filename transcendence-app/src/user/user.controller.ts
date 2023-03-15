@@ -88,7 +88,7 @@ export class UserController {
   async getUsers(
     @Query() usersPaginationQueryDto: PaginationWithSearchQueryDto,
   ): Promise<UserWithLevelDto[]> {
-    const usersWithLevel = await this.userService.retrieveUsersWithLevel(
+    const usersWithLevel = await this.userService.retrieveUsers(
       usersPaginationQueryDto,
     );
     if (!usersWithLevel) {

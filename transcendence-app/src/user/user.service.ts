@@ -41,39 +41,18 @@ export class UserService {
     return this.userRepository.getById(id);
   }
 
-  private retrieveUsers({
+  retrieveUsers({
     limit = MAX_ENTRIES_PER_PAGE,
     offset = 0,
     sort = BooleanString.False,
     search = '',
-  }: PaginationWithSearchQueryDto): Promise<User[] | null> {
+  }: PaginationWithSearchQueryDto): Promise<UserWithLevelDto[] | null> {
     return this.userRepository.getPaginatedUsers({
       limit,
       offset,
       sort,
       search,
     });
-  }
-
-  async retrieveUsersWithLevel(
-    paginationQuery: PaginationWithSearchQueryDto,
-  ): Promise<UserWithLevelDto[]> {
-    const users = await this.retrieveUsers(paginationQuery);
-    if (!users) {
-      throw null;
-    }
-    return await Promise.all(
-      users.map(
-        async (user) =>
-          new UserWithLevelDto({
-            level: await this.userLevelRepository.getLastLevel(
-              user.username,
-              GameMode.classic,
-            ),
-            ...user,
-          }),
-      ),
-    );
   }
 
   async retrieveUserWithUserNameWithoutFriend(
@@ -278,28 +257,12 @@ export class UserService {
       search = '',
     }: PaginationWithSearchQueryDto,
   ): Promise<UserWithLevelDto[] | null> {
-    const friends = await this.friendRepository.getPaginatedFriends(
-      followerId,
-      {
-        limit,
-        offset,
-        sort,
-        search,
-      },
-    );
-    if (!friends) {
-      throw new UnprocessableEntityException();
-    }
-    return Promise.all(
-      friends.map(async (user: User) => {
-        const { username } = user;
-        const level = await this.userLevelRepository.getLastLevel(
-          username,
-          GameMode.classic,
-        );
-        return { ...user, level };
-      }),
-    );
+    return this.friendRepository.getPaginatedFriends(followerId, {
+      limit,
+      offset,
+      sort,
+      search,
+    });
   }
 
   async getCurrentUserWithLevel(userMe: User): Promise<UserWithLevelDto> {
