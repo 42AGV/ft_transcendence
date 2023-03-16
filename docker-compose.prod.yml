@@ -30,6 +30,21 @@ services:
       - WEBSITE_OWNER_PASSWORD=${WEBSITE_OWNER_PASSWORD:?required}
       - WEBSITE_OWNER_USERNAME=${WEBSITE_OWNER_USERNAME:?required}
 
+  migrations:
+    image: ft_transcendence/transcendence-app-prod
+    build:
+      context: .
+      dockerfile: ./transcendence-app/Dockerfile
+      target: production
+    volumes:
+      - transcendence-app-data-prod:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?required}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?required}
+      - WEBSITE_OWNER_PASSWORD=${WEBSITE_OWNER_PASSWORD:?required}
+      - WEBSITE_OWNER_USERNAME=${WEBSITE_OWNER_USERNAME:?required}
+    command: npm run knex:migrate:prod -w transcendence-app
+
   db:
     volumes:
       - transcendence-db-prod:/var/lib/postgresql/data
