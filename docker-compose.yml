@@ -57,7 +57,7 @@ services:
     environment:
       - POSTGRES_DB=ft_transcendence
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 5s
       timeout: 10s
       retries: 5
