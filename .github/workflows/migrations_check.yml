@@ -17,11 +17,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: |
             ./package-lock.json
-      - name: Test migrations dev
+      - name: Test migrations prod
         run: |
           set -euxo pipefail;
           for _ in {1..300}; do
-            docker-compose up -f docker-compose.yml -f docker-compose.prod.yml up --build -d && \
+            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d && \
             docker-compose -f docker-compose.yml -f docker-compose.prod.yml down && \
             docker volume prune -f;
           done
