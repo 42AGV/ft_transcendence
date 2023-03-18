@@ -30,17 +30,6 @@ jobs:
           tags: ft_transcendence/transcendence-app-prod:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      - name: Build swagger docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./transcendence-app/Dockerfile
-          target: swagger
-          push: false
-          load: true
-          tags: ft_transcendence/swagger:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - name: Build webapp docker image
         uses: docker/build-push-action@v2
         with:
