@@ -1,0 +1,31 @@
+name: migrations check
+
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out Github repository
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.14.2'
+          cache: 'npm'
+          cache-dependency-path: |
+            ./package-lock.json
+      - name: Test migrations dev
+        run: set -euxo pipefail; for _ in {1..300}; do docker-compose up --build -d && docker-compose down && docker volume prune -f; done
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          FORTYTWO_APP_ID: ${{ secrets.FORTYTWO_APP_ID }}
+          FORTYTWO_APP_SECRET: ${{ secrets.FORTYTWO_APP_SECRET }}
+          FORTYTWO_APP_CALLBACK_URL: ${{ secrets.FORTYTWO_APP_CALLBACK_URL }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          MEMCACHED_SECRET: ${{ secrets.MEMCACHED_SECRET }}
+          WEBSITE_OWNER_PASSWORD: ${{ secrets.WEBSITE_OWNER_PASSWORD }}
+          WEBSITE_OWNER_USERNAME: ${{ secrets.WEBSITE_OWNER_USERNAME }}
