@@ -171,21 +171,6 @@ and then, to build packages:
 
 You may want to add a new dependency to a service. Just run `npm i` inside of the service path as you would do normally.
 
-### OpenAPI <a name = "start-openapi"></a>
-
-We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the OpenAPI specifications at `transcendence-app/swagger-spec/swagger-spec.yaml`.
-
-Please don't modify these files manually.
-
-#### generate-openapi
-
-To generate the files, run the following command from the root directory:
-```shell
-make gen
-```
-
-`make gen` creates both yaml file and generated webapp files. To generate only webapp generated files run `make gen-webapp`. To generate only swagger spec run `make spec`.
-
 ### Migrate the database schema <a name = "start-migrations"></a>
 
 We use knex to migrate the database schema, more info [here](https://knexjs.org/guide/migrations.html#migration-cli).

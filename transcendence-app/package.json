@@ -14,7 +14,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "swagger:gen": "nest start -c swagger.nest-cli.json",
     "knex:seed:run": "knex seed:run",
     "knex:migrate:dev": "knex migrate:latest",
     "knex:migrate:prod": "knex --knexfile ./dist/knexfile.js migrate:latest",
