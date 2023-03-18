@@ -173,7 +173,7 @@ You may want to add a new dependency to a service. Just run `npm i` inside of th
 
 ### OpenAPI <a name = "start-openapi"></a>
 
-We use OpenAPI Generator to autogenerate the files at `webapp/src/shared/generated` from the OpenAPI specifications at `transcendence-app/swagger-spec/swagger-spec.yaml`.
+We use OpenAPI Generator to generate the files at `webapp/src/shared/generated` from the OpenAPI specifications at `transcendence-app/swagger-spec/swagger-spec.yaml`.
 
 Please don't modify these files manually.
 

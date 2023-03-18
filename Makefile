@@ -1,11 +1,10 @@
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_ROOT := $(realpath $(dir $(MKFILE_PATH)))
-TRANSCENDENCE_DEPS := $(shell $(PROJECT_ROOT)/scripts/get-swagger-spec-dependencies.sh)
 DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 
 # all runs in development mode
 .PHONY: all
-all: gen
+all:
 	$(DOCKER_COMPOSE) up --build -d
 	make seed
 	npm run build-packages
@@ -15,7 +14,7 @@ down:
 	$(DOCKER_COMPOSE) down
 
 .PHONY: prod
-prod: gen
+prod:
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 
 .PHONY: prod-down
@@ -41,14 +40,10 @@ gen:
 .PHONY: clean
 clean:
 	make down
-	rm -rf $(PROJECT_ROOT)/webapp/src/shared/generated || true
-	rm $(PROJECT_ROOT)/transcendence-app/swagger-spec/swagger-spec.yaml || true
 
 .PHONY: prod-clean
 prod-clean:
 	make prod-down
-	rm -rf $(PROJECT_ROOT)/webapp/src/shared/generated || true
-	rm $(PROJECT_ROOT)/transcendence-app/swagger-spec/swagger-spec.yaml || true
 
 
 .PHONY: re

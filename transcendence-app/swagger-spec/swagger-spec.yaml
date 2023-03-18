@@ -1,0 +1,1935 @@
+openapi: 3.0.0
+paths:
+  /api/v1/auth/login:
+    get:
+      operationId: AuthController_oauth42Login
+      parameters: []
+      responses:
+        "200":
+          description: Login successfully
+        "302":
+          description: Redirect to 42 OAuth server
+        "503":
+          description: Service unavailable
+      tags: &a1
+        - auth
+  /api/v1/auth/logout:
+    delete:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        "200":
+          description: Logout successfully
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+      tags: *a1
+  /api/v1/auth/local/register:
+    post:
+      operationId: AuthController_registerLocalUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUserDto"
+      responses:
+        "201":
+          description: Login successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+      tags: *a1
+  /api/v1/auth/local/login:
+    post:
+      operationId: AuthController_loginLocalUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUserDto"
+      responses:
+        "201":
+          description: Login successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+      tags: *a1
+  "/api/v1/auth/authorization/{username}":
+    get:
+      operationId: AuthController_retrieveUserWithRoles
+      parameters:
+        - name: username
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Retrieve user with roles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithAuthorizationResponseDto"
+        "400":
+          description: Bad Request
+        "403":
+          description: Not authorized to read roles
+        "404":
+          description: Username not found
+      tags: *a1
+  /api/v1/auth/authorization:
+    get:
+      operationId: AuthController_retrieveAuthUserWithRoles
+      parameters: []
+      responses:
+        "200":
+          description: Retrieve authenticated user with roles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithAuthorizationResponseDto"
+        "400":
+          description: Bad Request
+        "403":
+          description: Not authorized to read roles
+        "404":
+          description: Username not found
+      tags: *a1
+  /api/v1/auth/2fa/qrcode:
+    get:
+      operationId: AuthController_twoFactorQrCode
+      parameters: []
+      responses:
+        "200":
+          description: Display a QR code for TOTP 2FA
+          content:
+            image/png:
+              schema:
+                type: file
+                format: binary
+        "403":
+          description: Forbidden
+      tags: *a1
+  /api/v1/auth/2fa/enable:
+    post:
+      operationId: AuthController_enableTwoFactorAuthentication
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TwoFactorAuthenticationCodeDto"
+      responses:
+        "204":
+          description: Enable 2FA
+        "400":
+          description: Wrong authentication code
+        "403":
+          description: Forbidden
+        "503":
+          description: Service Unavailable
+      tags: *a1
+  /api/v1/auth/2fa/disable:
+    delete:
+      operationId: AuthController_disableTwoFactorAuthentication
+      parameters: []
+      responses:
+        "204":
+          description: Disable 2FA
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "503":
+          description: Service Unavailable
+      tags: *a1
+  /api/v1/auth/2fa/validate:
+    post:
+      operationId: AuthController_validateTwoFactorAuthentication
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TwoFactorAuthenticationCodeDto"
+      responses:
+        "200":
+          description: Validate 2FA
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Wrong authentication code
+        "403":
+          description: Forbidden
+      tags: *a1
+  /api/v1/user:
+    patch:
+      operationId: UserController_updateCurrentUser
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: Update the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+        "403": &a2
+          description: Forbidden
+        "422":
+          description: Unprocessable Entity
+      tags: &a3
+        - users
+    get:
+      operationId: UserController_getCurrentUser
+      parameters: []
+      responses:
+        "200":
+          description: Get the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithLevelDto"
+        "403": *a2
+      tags: *a3
+  /api/v1/users:
+    get:
+      operationId: UserController_getUsers
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all users (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserWithLevelDto"
+        "400":
+          description: Bad Request
+        "403": *a2
+        "503":
+          description: Service unavailable
+      tags: *a3
+  "/api/v1/users/{userName}":
+    get:
+      operationId: UserController_getUserByUserName
+      parameters:
+        - name: userName
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDto"
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+  /api/v1/user/avatar:
+    put:
+      operationId: UserController_uploadAvatar
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Update a user avatar
+          content:
+            image/jpeg:
+              schema:
+                $ref: "#/components/schemas/User"
+        "403": *a2
+        "413":
+          description: Payload Too Large
+        "422":
+          description: Unprocessable Entity
+        "503":
+          description: Service Unavailable
+      tags: *a3
+  /api/v1/user/block:
+    get:
+      operationId: UserController_getBlocks
+      parameters: []
+      responses:
+        "200":
+          description: List users blocked by the authenticated user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "403": *a2
+        "503":
+          description: Service Unavailable
+      tags: *a3
+  "/api/v1/user/block/{userId}":
+    post:
+      operationId: UserController_blockUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Block a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "422":
+          description: Unprocessable Entity
+      tags: *a3
+    delete:
+      operationId: UserController_unblockUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Unblock a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+  "/api/v1/user/friend/{userId}":
+    get:
+      operationId: UserController_getFriend
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Check if the current user follows another one
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Friend"
+        "403": *a2
+        "404":
+          description: Service Unavailable
+      tags: *a3
+    post:
+      operationId: UserController_followUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Follow a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "422":
+          description: Unprocessable Entity
+      tags: *a3
+    delete:
+      operationId: UserController_unfollowUser
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Unfollow a user
+        "400":
+          description: Bad Request
+        "403": *a2
+        "404":
+          description: Not Found
+      tags: *a3
+  /api/v1/user/friends:
+    get:
+      operationId: UserController_getFriends
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: List friends of the current user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserWithLevelDto"
+        "403": *a2
+        "503":
+          description: Service Unavailable
+      tags: *a3
+  "/api/v1/avatar/{avatarId}":
+    get:
+      operationId: AvatarController_getAvatarByAvatarId
+      parameters:
+        - name: avatarId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            image/jpeg:
+              schema:
+                type: file
+                format: binary
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+      tags:
+        - avatar
+  /api/v1/chat/room:
+    post:
+      operationId: ChatController_createChatroom
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChatroomDto"
+      responses:
+        "201":
+          description: Create a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "400":
+          description: Bad Request
+        "403": &a4
+          description: Forbidden
+        "422":
+          description: Unprocessable entity
+      tags: &a5
+        - chat
+    get:
+      operationId: ChatController_getChatrooms
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all chatrooms (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GenericChat"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "503":
+          description: Service unavailable
+      tags: *a5
+  "/api/v1/chat/room/{chatroomId}/members":
+    post:
+      operationId: ChatController_createChatroomMember
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JoinChatroomDto"
+      responses:
+        "201":
+          description: Add a member to a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "422":
+          description: Unprocessable entity
+      tags: *a5
+    delete:
+      operationId: ChatController_leaveChatroom
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Authenticated user leaves the given chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "404":
+          description: Not Found
+        "503":
+          description: Service Unavailable
+      tags: *a5
+    get:
+      operationId: ChatController_getChatroomMembers
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lists chat members for a given room (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatroomMemberWithUser"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "503":
+          description: Service unavailable
+      tags: *a5
+  "/api/v1/chat/room/{chatroomId}/members/{userId}":
+    delete:
+      operationId: ChatController_removeChatroomMember
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Chatroom admin removes chatroom member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "404":
+          description: Not Found
+        "503":
+          description: Service Unavailable
+      tags: *a5
+    get:
+      operationId: ChatController_getChatroomMember
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a chatroom member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "404":
+          description: Not Found
+      tags: *a5
+    patch:
+      operationId: ChatController_updateChatroomMember
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChatroomMemberDto"
+      responses:
+        "200":
+          description: Update a chatroom member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatroomMember"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "404":
+          description: Not Found
+        "503":
+          description: Service unavailable
+      tags: *a5
+  /api/v1/chat/room/member:
+    get:
+      operationId: ChatController_getAuthChatrooms
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all chatrooms the auth user is subscribed to (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GenericChat"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "503":
+          description: Service unavailable
+      tags: *a5
+  "/api/v1/chat/room/{id}":
+    get:
+      operationId: ChatController_getChatroomById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "404":
+          description: Not Found
+      tags: *a5
+  "/api/v1/chat/room/{chatroomId}/messages":
+    get:
+      operationId: ChatController_getChatroomMessages
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all messages in a chatroom (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatroomMessageWithUser"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "404":
+          description: Not Found
+        "503":
+          description: Service unavailable
+      tags: *a5
+  "/api/v1/chat/room/{chatroomId}":
+    patch:
+      operationId: ChatController_updateChatroom
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChatroomDto"
+      responses:
+        "200":
+          description: Update a chatroom
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "422":
+          description: Unprocessable Entity
+      tags: *a5
+    delete:
+      operationId: ChatController_deleteChatroom
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "503":
+          description: Service unavailabe
+      tags: *a5
+  "/api/v1/chat/{userId}/messages":
+    get:
+      operationId: ChatController_getChatMessages
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Get chat messages in a one to one conversation(max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessageWithUser"
+        "400":
+          description: Bad Request
+        "403": *a4
+        "503":
+          description: Service unavailable
+      tags: *a5
+  "/api/v1/chat/room/{chatroomId}/avatar":
+    put:
+      operationId: ChatController_uploadAvatar
+      parameters:
+        - name: chatroomId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Update a chatroom avatar
+          content:
+            image/jpeg:
+              schema:
+                $ref: "#/components/schemas/Chatroom"
+        "403": *a4
+        "404":
+          description: Not Found
+        "413":
+          description: Payload Too Large
+        "422":
+          description: Unprocessable Entity
+        "503":
+          description: Service Unavailable
+      tags: *a5
+  /api/v1/game/pairing-status:
+    get:
+      operationId: GameController_getPairingStatus
+      parameters: []
+      responses:
+        "200":
+          description: Returns the game pairing status of the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GamePairingStatusDto"
+        "403": &a6
+          description: Forbidden
+        "503":
+          description: Service unavailable
+      tags: &a7
+        - game
+  "/api/v1/game/levels/{username}":
+    get:
+      operationId: GameController_getUserLevelHistory
+      parameters:
+        - name: username
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: mode
+          required: false
+          in: query
+          schema:
+            enum:
+              - training
+              - classic
+              - shortPaddle
+              - mysteryZone
+              - unknown
+            type: string
+      responses:
+        "200":
+          description: Returns the user level history for the given username, (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserLevelWithTimestamp"
+        "403": *a6
+        "503":
+          description: Service unavailable
+      tags: *a7
+  "/api/v1/game/stats/{username}":
+    get:
+      operationId: GameController_getUserStats
+      parameters:
+        - name: username
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: mode
+          required: false
+          in: query
+          schema:
+            enum:
+              - training
+              - classic
+              - shortPaddle
+              - mysteryZone
+              - unknown
+            type: string
+      responses:
+        "200":
+          description: Returns the game stats for the given username
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameStats"
+        "403": *a6
+        "503":
+          description: Service unavailable
+      tags: *a7
+  /api/v1/game:
+    post:
+      operationId: GameController_addGame
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGameDto"
+      responses:
+        "201":
+          description: Add a game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "422":
+          description: Unprocessable entity
+      tags: *a7
+  "/api/v1/game/{gameId}":
+    delete:
+      operationId: GameController_removeGame
+      parameters:
+        - name: gameId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "503":
+          description: Service Unavailable
+      tags: *a7
+    get:
+      operationId: GameController_getGame
+      parameters:
+        - name: gameId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a game
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Game"
+        "400":
+          description: Bad Request
+        "403": *a6
+        "503":
+          description: Service unavailable
+      tags: *a7
+  /api/v1/games:
+    get:
+      operationId: GameController_getGames
+      parameters:
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: Lists all games (max 20)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Game"
+        "400":
+          description: Bad Request
+        "403": *a6
+        "503":
+          description: Service unavailable
+      tags: *a7
+  "/api/v1/games/{userName}":
+    get:
+      operationId: GameController_getUserGames
+      parameters:
+        - name: userName
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: List all games of a user)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Game"
+        "400":
+          description: Bad Request
+        "403": *a6
+        "404":
+          description: User Not found
+        "503":
+          description: Service unavailable
+      tags: *a7
+  "/api/v1/games/users/{userName}":
+    get:
+      operationId: GameController_getUserGamesWithUsers
+      parameters:
+        - name: userName
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: limit
+          required: false
+          in: query
+          description: The number of results (max 20)
+          schema:
+            minimum: 0
+            maximum: 20
+            type: number
+        - name: sort
+          required: false
+          in: query
+          schema:
+            enum:
+              - "true"
+              - "false"
+            type: string
+        - name: search
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: offset
+          required: false
+          in: query
+          schema:
+            minimum: 0
+            type: number
+      responses:
+        "200":
+          description: List all games of a user, with users)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GameWithUsers"
+        "400":
+          description: Bad Request
+        "403": *a6
+        "404":
+          description: User Not found
+        "503":
+          description: Service unavailable
+      tags: *a7
+info:
+  title: transcendence-app
+  description: The transcendence-app API description
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    RegisterUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        confirmationPassword:
+          type: string
+      required:
+        - username
+        - fullName
+        - email
+        - password
+        - confirmationPassword
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        isTwoFactorAuthenticationEnabled:
+          type: boolean
+      required:
+        - id
+        - username
+        - email
+        - fullName
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - isTwoFactorAuthenticationEnabled
+    LoginUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+    UserWithAuthorizationResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        isTwoFactorAuthenticationEnabled:
+          type: boolean
+        isLocal:
+          type: boolean
+        gOwner:
+          type: boolean
+        gAdmin:
+          type: boolean
+        gBanned:
+          type: boolean
+        level:
+          type: number
+      required:
+        - id
+        - username
+        - email
+        - fullName
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - isTwoFactorAuthenticationEnabled
+        - isLocal
+        - gOwner
+        - gAdmin
+        - gBanned
+        - level
+    TwoFactorAuthenticationCodeDto:
+      type: object
+      properties:
+        code:
+          type: string
+      required:
+        - code
+    UpdateUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        avatarX:
+          type: number
+        avatarY:
+          type: number
+        oldPassword:
+          type: string
+        password:
+          type: string
+        confirmationPassword:
+          type: string
+    UserWithLevelDto:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        isTwoFactorAuthenticationEnabled:
+          type: boolean
+        level:
+          type: number
+      required:
+        - id
+        - username
+        - email
+        - fullName
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - isTwoFactorAuthenticationEnabled
+        - level
+    UserBlockRelation:
+      type: object
+      properties:
+        isUserBlockedByMe:
+          type: boolean
+        amIBlockedByUser:
+          type: boolean
+      required:
+        - isUserBlockedByMe
+        - amIBlockedByUser
+    UserResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        isTwoFactorAuthenticationEnabled:
+          type: boolean
+        level:
+          type: number
+        blockRelation:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/UserBlockRelation"
+        isFriend:
+          type: boolean
+          nullable: true
+      required:
+        - id
+        - username
+        - email
+        - fullName
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - isTwoFactorAuthenticationEnabled
+        - level
+        - blockRelation
+        - isFriend
+    Friend:
+      type: object
+      properties:
+        followerId:
+          type: string
+        followedId:
+          type: string
+      required:
+        - followerId
+        - followedId
+    CreateChatroomDto:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+          nullable: true
+        confirmationPassword:
+          type: string
+          nullable: true
+      required:
+        - name
+        - password
+        - confirmationPassword
+    Chatroom:
+      type: object
+      properties:
+        isPublic:
+          type: boolean
+        id:
+          type: string
+        name:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        createdAt:
+          format: date-time
+          type: string
+        ownerId:
+          type: string
+      required:
+        - isPublic
+        - id
+        - name
+        - avatarId
+        - avatarX
+        - avatarY
+        - createdAt
+        - ownerId
+    JoinChatroomDto:
+      type: object
+      properties:
+        password:
+          type: string
+    ChatroomMember:
+      type: object
+      properties:
+        chatId:
+          type: string
+        userId:
+          type: string
+        joinedAt:
+          format: date-time
+          type: string
+          nullable: true
+        owner:
+          type: boolean
+        admin:
+          type: boolean
+          default: false
+        muted:
+          type: boolean
+          default: false
+        banned:
+          type: boolean
+          default: false
+      required:
+        - chatId
+        - userId
+        - joinedAt
+        - admin
+        - muted
+        - banned
+    GenericChat:
+      type: object
+      properties:
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+        avatarY:
+          type: number
+        chatType:
+          enum:
+            - oneToOne
+            - chatroom
+          type: string
+        name:
+          type: string
+        id:
+          type: string
+        isPublic:
+          type: boolean
+          nullable: true
+        lastMsgSenderUsername:
+          type: string
+          nullable: true
+        lastMessage:
+          type: string
+          nullable: true
+        lastMessageDate:
+          format: date-time
+          type: string
+      required:
+        - avatarId
+        - avatarX
+        - avatarY
+        - chatType
+        - name
+        - id
+        - isPublic
+        - lastMsgSenderUsername
+        - lastMessage
+        - lastMessageDate
+    ChatroomMemberWithUser:
+      type: object
+      properties:
+        username:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+          default: 0
+        avatarY:
+          type: number
+          default: 0
+        owner:
+          type: boolean
+        admin:
+          type: boolean
+          default: false
+        muted:
+          type: boolean
+          default: false
+        banned:
+          type: boolean
+          default: false
+        userId:
+          type: string
+      required:
+        - username
+        - avatarId
+        - avatarX
+        - avatarY
+        - owner
+        - admin
+        - muted
+        - banned
+        - userId
+    UpdateChatroomMemberDto:
+      type: object
+      properties:
+        admin:
+          type: boolean
+        muted:
+          type: boolean
+        banned:
+          type: boolean
+    ChatroomMessageWithUser:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        id:
+          type: string
+        chatroomId:
+          type: string
+        userId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+      required:
+        - user
+        - id
+        - chatroomId
+        - userId
+        - content
+        - createdAt
+    UpdateChatroomDto:
+      type: object
+      properties:
+        name:
+          type: string
+        oldPassword:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+        confirmationPassword:
+          type: string
+          nullable: true
+        avatarX:
+          type: number
+        avatarY:
+          type: number
+    ChatMessageWithUser:
+      type: object
+      properties:
+        id:
+          type: string
+        avatarId:
+          type: string
+        avatarX:
+          type: number
+        avatarY:
+          type: number
+        username:
+          type: string
+        senderId:
+          type: string
+        recipientId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - avatarId
+        - avatarX
+        - avatarY
+        - username
+        - senderId
+        - recipientId
+        - content
+        - createdAt
+    GamePairingStatusDto:
+      type: object
+      properties:
+        gameRoomId:
+          type: string
+          nullable: true
+        gameQueueStatus:
+          type: string
+          enum:
+            - none
+            - playing
+            - waiting
+      required:
+        - gameRoomId
+        - gameQueueStatus
+    UserLevelWithTimestamp:
+      type: object
+      properties:
+        gameId:
+          type: string
+        username:
+          type: string
+        gameMode:
+          type: string
+          enum:
+            - training
+            - classic
+            - shortPaddle
+            - mysteryZone
+            - unknown
+        timestamp:
+          format: date-time
+          type: string
+        level:
+          type: number
+      required:
+        - gameId
+        - username
+        - gameMode
+        - timestamp
+        - level
+    GameStats:
+      type: object
+      properties:
+        wins:
+          type: number
+        draws:
+          type: number
+        losses:
+          type: number
+      required:
+        - wins
+        - draws
+        - losses
+    CreateGameDto:
+      type: object
+      properties:
+        playerOneUsername:
+          type: string
+        playerTwoUsername:
+          type: string
+        gameDurationInSeconds:
+          type: number
+          minimum: 1
+        playerOneScore:
+          type: number
+          minimum: 0
+        playerTwoScore:
+          type: number
+          minimum: 0
+        gameMode:
+          type: string
+          enum:
+            - training
+            - classic
+            - shortPaddle
+            - mysteryZone
+            - unknown
+      required:
+        - playerOneUsername
+        - playerTwoUsername
+        - gameDurationInSeconds
+        - playerOneScore
+        - playerTwoScore
+        - gameMode
+    Game:
+      type: object
+      properties:
+        id:
+          type: string
+        playerOneUsername:
+          type: string
+        playerTwoUsername:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        gameDurationInSeconds:
+          type: number
+        playerOneScore:
+          type: number
+        playerTwoScore:
+          type: number
+        gameMode:
+          enum: &a8
+            - training
+            - classic
+            - shortPaddle
+            - mysteryZone
+            - unknown
+          type: string
+      required:
+        - id
+        - playerOneUsername
+        - playerTwoUsername
+        - createdAt
+        - gameDurationInSeconds
+        - playerOneScore
+        - playerTwoScore
+        - gameMode
+    GameWithUsers:
+      type: object
+      properties:
+        id:
+          type: string
+        playerOneUsername:
+          type: string
+        playerTwoUsername:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        gameDurationInSeconds:
+          type: number
+        playerOneScore:
+          type: number
+        playerTwoScore:
+          type: number
+        gameMode:
+          enum: *a8
+          type: string
+        playerOne:
+          $ref: "#/components/schemas/User"
+        playerTwo:
+          $ref: "#/components/schemas/User"
+      required:
+        - id
+        - playerOneUsername
+        - playerTwoUsername
+        - createdAt
+        - gameDurationInSeconds
+        - playerOneScore
+        - playerTwoScore
+        - gameMode
+        - playerOne
+        - playerTwo
