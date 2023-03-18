@@ -21,6 +21,22 @@ prod:
 prod-down:
 	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.prod.yml down
 
+transcendence-app/swagger-spec/swagger-spec.yaml: $(TRANSCENDENCE_DEPS)
+	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-gen
+
+.PHONY: gen-webapp
+gen-webapp:
+	$(PROJECT_ROOT)/scripts/generate-openapi.sh --no-spec
+
+.PHONY: spec
+spec:
+	make transcendence-app/swagger-spec/swagger-spec.yaml
+
+.PHONY: gen
+gen:
+	make spec
+	make gen-webapp
+
 .PHONY: clean
 clean:
 	make down
