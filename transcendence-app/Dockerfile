@@ -36,3 +36,6 @@ USER node
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["node", "transcendence-app/dist/src/main"]
+
+FROM development AS swagger
+ENTRYPOINT ["npm", "run", "build-swagger-api"]
