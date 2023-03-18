@@ -14,11 +14,6 @@ build
 dist
 lib
 
-# generated code
-transcendence-app/swagger-spec/swagger-spec.yaml
-transcendence-app/swagger-spec/swagger-spec.test.yaml
-webapp/src/shared/generated
-
 # misc
 .DS_Store
 .env.local
