@@ -10,7 +10,7 @@
   "scripts": {
     "build-packages": "for workspace in $(ls packages); do npm run build -w packages/${workspace}; done",
     "start-webapp": "npm run start -w webapp",
-    "start-app-dev": "npm run start:dev -w transcendence-app",
+    "start-app-dev": "npm run start:dev -w transcendence-app"
   },
   "repository": {
     "type": "git",
