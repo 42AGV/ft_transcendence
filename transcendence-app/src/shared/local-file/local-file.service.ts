@@ -84,6 +84,10 @@ export class LocalFileService {
     );
     const dataStream = Readable.from(data);
 
+    dataStream.on('error', (err) => {
+      outStream.destroy(err);
+    });
+
     outStream.on('error', (err) => {
       dataStream.destroy(err);
     });
