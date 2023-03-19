@@ -6,8 +6,8 @@ services:
     depends_on:
       - "webapp"
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/proxy.conf:/etc/nginx/proxy.conf
+      - ./srcs/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./srcs/proxy.conf:/etc/nginx/proxy.conf
 
   webapp:
     restart: always
