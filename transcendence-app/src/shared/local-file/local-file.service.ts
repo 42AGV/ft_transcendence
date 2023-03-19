@@ -10,6 +10,7 @@ import { ILocalFileRepository } from './infrastructure/db/local-file.repository'
 import generateAvatar = require('github-like-avatar-generator');
 import { AVATARS_PATH } from '../constants';
 import { mkdir } from 'node:fs/promises';
+import { Readable } from 'stream';
 
 @Injectable()
 export class LocalFileService {
@@ -81,9 +82,13 @@ export class LocalFileService {
       path,
       mimetype,
     );
+    const dataStream = Readable.from(data);
 
-    outStream.write(data);
-    outStream.end();
+    dataStream.pipe(outStream);
+
+    outStream.on('error', (err) => {
+      dataStream.destroy(err);
+    });
 
     return outStreamPromise;
   }
