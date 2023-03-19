@@ -22,14 +22,14 @@ jobs:
           set -euo pipefail;
           for _ in $(seq 1 300); do
             docker-compose up --build 2>&1 & PID=$!;
-            while ! { docker ps | grep migration ; } do \
+            while ! { docker ps | grep migration > /dev/null ; } do \
               sleep 0.2;
             done && \
-            while { docker ps | grep migration ; } do \
+            while { docker ps | grep migration > /dev/null ; } do \
                 sleep 0.2;
             done && \
             kill -s SIGINT $PID && \
-            while ! { ps -aux | grep $PID ; } do \
+            while ! { ps -aux | grep $PID > /dev/null ; } do \
                 sleep 0.2;
             done && docker-compose down && docker volume prune -f \
             || break
