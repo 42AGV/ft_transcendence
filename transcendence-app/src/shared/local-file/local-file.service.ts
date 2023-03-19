@@ -11,6 +11,7 @@ import generateAvatar = require('github-like-avatar-generator');
 import { AVATARS_PATH } from '../constants';
 import { mkdir } from 'node:fs/promises';
 import { Readable } from 'stream';
+import { pipeline } from 'node:stream/promises';
 
 @Injectable()
 export class LocalFileService {
@@ -68,7 +69,7 @@ export class LocalFileService {
       mimetype,
     );
 
-    data.pipe(outStream);
+    await pipeline(data, outStream);
 
     return outStreamPromise;
   }
@@ -84,15 +85,7 @@ export class LocalFileService {
     );
     const dataStream = Readable.from(data);
 
-    dataStream.on('error', (err) => {
-      outStream.destroy(err);
-    });
-
-    outStream.on('error', (err) => {
-      dataStream.destroy(err);
-    });
-
-    dataStream.pipe(outStream);
+    await pipeline(dataStream, outStream);
 
     return outStreamPromise;
   }
