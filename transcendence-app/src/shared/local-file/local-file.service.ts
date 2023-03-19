@@ -84,11 +84,11 @@ export class LocalFileService {
     );
     const dataStream = Readable.from(data);
 
-    dataStream.pipe(outStream);
-
     outStream.on('error', (err) => {
       dataStream.destroy(err);
     });
+
+    dataStream.pipe(outStream);
 
     return outStreamPromise;
   }
