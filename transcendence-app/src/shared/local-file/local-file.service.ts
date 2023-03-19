@@ -3,12 +3,13 @@ import { LocalFileDto } from './local-file.dto';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { join } from 'path';
-import { createWriteStream, mkdir, ReadStream, unlink } from 'fs';
+import { createWriteStream, ReadStream, unlink } from 'fs';
 import { LocalFileConfig } from './local-file.config.interface';
 import { LocalFile } from './infrastructure/db/local-file.entity';
 import { ILocalFileRepository } from './infrastructure/db/local-file.repository';
 import generateAvatar = require('github-like-avatar-generator');
 import { AVATARS_PATH } from '../constants';
+import { mkdir } from 'node:fs/promises';
 
 @Injectable()
 export class LocalFileService {
@@ -19,22 +20,24 @@ export class LocalFileService {
     private localFileRepository: ILocalFileRepository,
   ) {}
 
-  private createDirectory(directory: string) {
-    return mkdir(directory, { recursive: true }, (err) => {
-      if (err) {
+  private async createDirectory(directory: string) {
+    try {
+      await mkdir(directory, { recursive: true });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
         this.logger.error(err.message);
-        throw err;
       }
-    });
+      throw err;
+    }
   }
 
-  private createWriteOutStream(path: string, mimetype: string) {
+  private async createWriteOutStream(path: string, mimetype: string) {
     const filesPath = this.configService.get(
       'TRANSCENDENCE_APP_DATA',
     ) as string;
     const filename = randomBytes(16).toString('hex');
     const directory = join(filesPath, path);
-    this.createDirectory(directory);
+    await this.createDirectory(directory);
     const finalPath = join(directory, filename);
     const outStream = createWriteStream(finalPath);
 
@@ -59,7 +62,7 @@ export class LocalFileService {
     path: string,
     mimetype: string,
   ): Promise<LocalFileDto> {
-    const { outStream, outStreamPromise } = this.createWriteOutStream(
+    const { outStream, outStreamPromise } = await this.createWriteOutStream(
       path,
       mimetype,
     );
@@ -74,7 +77,7 @@ export class LocalFileService {
     path: string,
     mimetype: string,
   ): Promise<LocalFileDto> {
-    const { outStream, outStreamPromise } = this.createWriteOutStream(
+    const { outStream, outStreamPromise } = await this.createWriteOutStream(
       path,
       mimetype,
     );
@@ -118,6 +121,17 @@ export class LocalFileService {
     const prefix = 'data:image/svg+xml;base64,';
     const base64Encoded = newAvatar.base64.slice(prefix.length);
     const buff = Buffer.from(base64Encoded, 'base64');
-    return this.saveFileDataFromBuffer(buff, AVATARS_PATH, 'image/svg+xml');
+    try {
+      return await this.saveFileDataFromBuffer(
+        buff,
+        AVATARS_PATH,
+        'image/svg+xml',
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        this.logger.error(err.message);
+      }
+      return null;
+    }
   }
 }

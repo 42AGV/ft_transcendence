@@ -106,6 +106,7 @@ export class AuthController {
   @ApiCreatedResponse({ description: 'Login successfully', type: User })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable Entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async registerLocalUser(
     @Body() registerUserDto: RegisterUserDto,
   ): Promise<User> {

@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { BooleanString } from '../shared/enums/boolean-string.enum';
@@ -77,6 +78,9 @@ export class ChatService {
   async createChatroom(ownerId: string, chatroom: CreateChatroomDto) {
     const { confirmationPassword: _, ...newChat } = chatroom;
     const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
+    if (!avatarDto) {
+      throw new ServiceUnavailableException();
+    }
     const avatarId = uuidv4();
     if (chatroom.password) {
       if (chatroom.password !== chatroom.confirmationPassword) {

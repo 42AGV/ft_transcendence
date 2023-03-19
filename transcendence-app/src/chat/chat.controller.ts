@@ -80,6 +80,7 @@ export class ChatController {
   @ApiCreatedResponse({ description: 'Create a chatroom', type: Chatroom })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnprocessableEntityResponse({ description: 'Unprocessable entity' })
+  @ApiServiceUnavailableResponse({ description: 'Service Unavailable' })
   async createChatroom(
     @GetUser() user: User,
     @Body() createChatDto: CreateChatroomDto,

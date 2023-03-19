@@ -20,6 +20,9 @@ export const createRandomAvatar = async () => {
     localFileRepository,
   );
   const avatarDto = await localFileService.createRandomSVGFile(12, 512);
+  if (!avatarDto) {
+    throw new Error('Could not create a random avatar');
+  }
 
   return { id: uuidv4(), ...avatarDto };
 };
