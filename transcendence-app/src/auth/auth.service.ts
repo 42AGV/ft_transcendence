@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  ServiceUnavailableException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -60,6 +61,9 @@ export class AuthService {
     const { confirmationPassword: _, ...newUser } = user;
 
     const avatarDto = await this.localFileService.createRandomSVGFile(12, 512);
+    if (!avatarDto) {
+      throw new ServiceUnavailableException();
+    }
     const avatarId = uuidv4();
     const userDto: CreateUserDto = {
       ...newUser,
