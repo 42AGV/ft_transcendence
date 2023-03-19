@@ -79,7 +79,13 @@ export class LocalFileService {
       mimetype,
     );
 
-    outStream.write(data);
+    outStream.write(data, (e) => {
+      if (e !== undefined) {
+        console.log(e);
+        console.trace();
+        throw e;
+      }
+    });
     outStream.end();
 
     return outStreamPromise;

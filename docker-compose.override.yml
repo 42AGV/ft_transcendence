@@ -1,41 +1,5 @@
 version: "3.4"
 services:
-  nginx:
-    ports:
-      - "3000:80"
-
-  webapp:
-    image: ft_transcendence/webapp-dev
-    build:
-      context: .
-      dockerfile: ./webapp/Dockerfile
-      target: development
-    volumes:
-      - ./webapp/src:/service/webapp/src:ro
-    environment:
-      - REACT_APP_NAME=webapp-dev
-      - PORT=80
-      - WDS_SOCKET_PORT=0
-
-  transcendence-app:
-    image: ft_transcendence/transcendence-app-dev
-    build:
-      context: .
-      dockerfile: ./transcendence-app/Dockerfile
-      target: development
-    volumes:
-      - transcendence-app-data-dev:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
-      - ./transcendence-app/src:/service/transcendence-app/src:ro
-      - ./transcendence-app/test:/service/transcendence-app/test:ro
-      - ./transcendence-app/seeds:/service/transcendence-app/seeds:ro
-      - ./transcendence-app/migrations:/service/transcendence-app/migrations:ro
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - WEBSITE_OWNER_PASSWORD=admin
-      - WEBSITE_OWNER_USERNAME=admin
-      - FORTYTWO_APP_CALLBACK_URL=http://localhost:3000/api/v1/auth/login
-
   migrations:
     image: ft_transcendence/transcendence-app-dev
     build:
@@ -59,18 +23,6 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-
-  pg-admin:
-    image: ft_transcendence/pgadmin
-    build: ./pg-admin
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-      - PGADMIN_LISTEN_PORT=5050
-    volumes:
-    - ./pg-admin/servers.json:/pgadmin4/servers.json
-    ports:
-      - "5050:5050"
 
 volumes:
   transcendence-db-dev:

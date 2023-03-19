@@ -18,7 +18,22 @@ jobs:
           cache-dependency-path: |
             ./package-lock.json
       - name: Test migrations dev
-        run: set -euxo pipefail; for _ in {1..300}; do docker-compose up --build -d && docker-compose down && docker volume prune -f; done
+        run: |
+          set -euo pipefail;
+          for _ in $(seq 1 300); do
+            docker-compose up --build 2>&1 & PID=$!;
+            while ! { docker ps | grep migration ; } do \
+              sleep 0.2;
+            done && \
+            while { docker ps | grep migration ; } do \
+                sleep 0.2;
+            done && \
+            kill -s SIGINT $PID && \
+            while ! { ps -aux | grep $PID ; } do \
+                sleep 0.2;
+            done && docker-compose down && docker volume prune -f \
+            || break
+          done
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
