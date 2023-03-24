@@ -17,7 +17,7 @@ RUN npm clean-install && npm run build-packages
 RUN npm run build -w transcendence-app
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["sh", "-c", "npm run knex:migrate:dev -w transcendence-app && npm run knex:seed:run -w transcendence-app && npm run start-app-dev"]
+CMD ["sh", "-c", "npm run knex:migrate:dev -w transcendence-app && npm run start-app-dev"]
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS production
 ARG TRANSCENDENCE_APP_DATA
