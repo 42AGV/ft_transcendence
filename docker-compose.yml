@@ -18,7 +18,7 @@ services:
     restart: always
     depends_on:
       migrations:
-        condition: service_completed_successfully
+        condition: service_healthy
       memcached:
         condition: service_started
     build:
@@ -49,6 +49,11 @@ services:
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
       - POSTGRES_DB=ft_transcendence
+    healthcheck:
+      test: [ "CMD-SHELL", "! { ps aux | grep 'npm run knex:migrate' | grep -v grep > /dev/null; }" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
   db:
     image: postgres:14.7-alpine3.17
