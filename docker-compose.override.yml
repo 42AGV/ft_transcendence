@@ -36,23 +36,6 @@ services:
       - WEBSITE_OWNER_USERNAME=admin
       - FORTYTWO_APP_CALLBACK_URL=http://localhost:3000/api/v1/auth/login
 
-  migrations:
-    image: ft_transcendence/transcendence-app-dev
-    build:
-      context: .
-      dockerfile: ./transcendence-app/Dockerfile
-      target: development
-    volumes:
-      - transcendence-app-data-dev:${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
-      - ./transcendence-app/src:/service/transcendence-app/src:ro
-      - ./transcendence-app/migrations:/service/transcendence-app/migrations:ro
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - WEBSITE_OWNER_PASSWORD=admin
-      - WEBSITE_OWNER_USERNAME=admin
-    command: npm run knex:migrate:dev -w transcendence-app
-
   db:
     volumes:
       - transcendence-db-dev:/var/lib/postgresql/data

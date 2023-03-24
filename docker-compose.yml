@@ -17,8 +17,8 @@ services:
   transcendence-app:
     restart: always
     depends_on:
-      migrations:
-        condition: service_completed_successfully
+      db:
+        condition: service_healthy
       memcached:
         condition: service_started
     build:
@@ -37,18 +37,6 @@ services:
       - FORTYTWO_APP_SECRET=${FORTYTWO_APP_SECRET:?required}
       - SESSION_SECRET=${SESSION_SECRET:?required}
       - MEMCACHED_SECRET=${MEMCACHED_SECRET:?required}
-
-  migrations:
-    depends_on:
-      db:
-        condition: service_healthy
-    build:
-      args:
-        - TRANSCENDENCE_APP_DATA=${TRANSCENDENCE_APP_DATA:-/var/lib/transcendence-app}
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=ft_transcendence
 
   db:
     image: postgres:14.7-alpine3.17

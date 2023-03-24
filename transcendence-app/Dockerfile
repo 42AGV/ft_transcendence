@@ -17,7 +17,7 @@ RUN npm clean-install && npm run build-packages
 RUN npm run build -w transcendence-app
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["npm", "run", "start-app-dev"]
+CMD ["sh", "-c", "npm run knex:migrate:dev -w transcendence-app && npm run start-app-dev"]
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS production
 ARG TRANSCENDENCE_APP_DATA
@@ -35,7 +35,7 @@ RUN npm clean-install --omit=dev
 USER node
 VOLUME ${TRANSCENDENCE_APP_DATA}
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["node", "transcendence-app/dist/src/main"]
+CMD ["sh", "-c", "npm run knex:migrate:prod -w transcendence-app && node transcendence-app/dist/src/main"]
 
 FROM development AS swagger
 ENTRYPOINT ["npm", "run", "build-swagger-api"]

@@ -7,7 +7,6 @@ DOCKER_COMPOSE := $(shell $(PROJECT_ROOT)/scripts/get-docker-compose.sh)
 .PHONY: all
 all:
 	$(DOCKER_COMPOSE) up --build -d
-	make seed
 	npm run build-packages
 
 .PHONY: down
